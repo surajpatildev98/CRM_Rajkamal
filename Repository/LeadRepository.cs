@@ -15,55 +15,7 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
-        #region old CreateLead method (commented out)
-        //public async Task<ApiResponse> CreateLead(LeadRegisterRequest model)
-        //{
-        //    string contactsJson = model.Contacts != null && model.Contacts.Count > 0 ? JsonSerializer.Serialize(model.Contacts)  : null;
 
-        //    string requirementsJson = model.Requirements != null && model.Requirements.Count > 0 ? JsonSerializer.Serialize(model.Requirements): null;
-
-        //    string savedAttachmentPath;
-        //    try
-        //    {
-        //        savedAttachmentPath = SaveBase64Attachment(model.AttachmentBase64, model.AttachmentFileName);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ApiResponse { Status = false, Message = ex.Message };
-        //    }
-
-
-        //    var dt = await _database.ExecuteDataTableAsync(
-        //        "USP_CRM_LeadManagement",
-
-        //        new SqlParameter("@Status", "CREATE_LEAD"),
-
-        //        new SqlParameter("@CustomerName", model.CustomerName),
-        //        new SqlParameter("@Address", (object?)model.Address ?? DBNull.Value),
-        //        new SqlParameter("@Ref_CountryId", (object?)model.Ref_CountryId ?? DBNull.Value),
-        //        new SqlParameter("@Ref_StateId", (object?)model.Ref_StateId ?? DBNull.Value),
-        //        new SqlParameter("@Ref_CityId", (object?)model.Ref_CityId ?? DBNull.Value),
-        //        new SqlParameter("@PinCode", (object?)model.PinCode ?? DBNull.Value),
-        //        new SqlParameter("@Gst", (object?)model.Gst ?? DBNull.Value),
-        //        new SqlParameter("@Pan", (object?)model.Pan ?? DBNull.Value),
-
-        //        new SqlParameter("@Contacts", (object?)contactsJson ?? DBNull.Value),
-        //        new SqlParameter("@Requirements", (object?)requirementsJson ?? DBNull.Value),
-
-        //        new SqlParameter("@Requirement", model.Requirement),
-        //        new SqlParameter("@Ref_LeadSourceId", model.Ref_LeadSourceId),
-        //        new SqlParameter("@LeadRemark", (object?)model.LeadRemark ?? DBNull.Value),
-
-        //        new SqlParameter("@AssignedToEmployeeId", (object?)model.AssignedToEmployeeId ?? DBNull.Value),
-        //        new SqlParameter("@AssignmentRemark", (object?)model.AssignmentRemark ?? DBNull.Value),
-        //        new SqlParameter("@AttachmentPath", (object?)model.savedAttachmentPath ?? DBNull.Value),
-
-        //        new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
-        //    );
-
-        //    return MapResponse(dt, isCreate: true);
-        //}
-        #endregion
 
         private static readonly string[] AllowedExtensions = { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png" };
         private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
@@ -168,7 +120,7 @@ namespace CRMWebServices.Repository
             );
 
             return MapResponse(dt, isCreate: true);
-        }      
+        }
 
 
         public async Task<ApiResponse> TransferLead(LeadTransferRequest model)
@@ -259,110 +211,6 @@ namespace CRMWebServices.Repository
 
             return response;
         }
-
-        #region OLD CreateActivity method (commented out)
-        //public async Task<ApiResponse> CreateActivity(LeadActivityRequest model)
-        //{
-
-        //    List<object> savedAttachments = new();
-
-        //    if (model.Attachments != null)
-        //    {
-        //        foreach (var att in model.Attachments)
-        //        {
-        //            if (string.IsNullOrWhiteSpace(att.Base64) ||
-        //                string.IsNullOrWhiteSpace(att.FileName))
-        //                continue;
-
-        //            try
-        //            {
-        //                var relativePath = SaveBase64Attachment(
-        //                    att.Base64,
-        //                    att.FileName,
-        //                    "LeadActivityAttachments");
-
-        //                savedAttachments.Add(new
-        //                {
-        //                    FileName = att.FileName,
-        //                    FilePath = relativePath,
-        //                    FileType = Path.GetExtension(att.FileName).TrimStart('.'),
-        //                    FileSize = Convert.FromBase64String(
-        //                        att.Base64.Contains(",")
-        //                            ? att.Base64.Substring(att.Base64.IndexOf(",") + 1)
-        //                            : att.Base64
-        //                    ).Length
-        //                });
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                return new ApiResponse
-        //                {
-        //                    Status = false,
-        //                    Message = ex.Message
-        //                };
-        //            }
-        //        }
-        //    }
-
-        //    string attachmentsMetaJson = savedAttachments.Count > 0 ? JsonSerializer.Serialize(savedAttachments)    : null;
-
-        //    byte? priority = model.FollowUpPriority?.Trim().ToUpper() switch
-        //    {
-        //        "LOW" => 1,
-        //        "MEDIUM" => 2,
-        //        "HIGH" => 3,
-        //        "URGENT" => 4,
-        //        _ => null
-        //    };
-
-        //    var dt = await _database.ExecuteDataTableAsync(
-        //        "USP_CRM_LeadManagement",
-
-        //        new SqlParameter("@Status", "CREATE_ACTIVITY"),
-        //        new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
-        //        new SqlParameter("@Ref_ActivityTypeId", model.Ref_ActivityTypeId),
-        //        new SqlParameter("@Subject", model.Subject),
-        //        new SqlParameter("@Description", model.Description),
-        //        new SqlParameter("@Outcome", (object?)model.Outcome ?? DBNull.Value),
-        //        new SqlParameter("@ActivityDateTime", model.ActivityDateTime),
-        //        new SqlParameter("@DurationInMinutes", (object?)model.DurationInMinutes ?? DBNull.Value),
-
-        //        new SqlParameter("@NextFollowUpDate", (object?)model.NextFollowUpDate ?? DBNull.Value),
-        //        //new SqlParameter("@FollowUpPriority", (object?)model.FollowUpPriority ?? DBNull.Value),
-        //        new SqlParameter("@FollowUpPriority", (object?)priority ?? DBNull.Value),
-        //        //new SqlParameter( "@FollowUpPriority", model.FollowUpPriority.HasValue ? (byte)model.FollowUpPriority.Value : DBNull.Value),
-        //        new SqlParameter("@FollowUpRemarks", (object?)model.FollowUpRemarks ?? DBNull.Value),
-        //        new SqlParameter("@FollowUpAssignedEmployeeId", (object?)model.FollowUpAssignedEmployeeId ?? DBNull.Value),
-
-        //        new SqlParameter("@Latitude", (object?)model.Latitude ?? DBNull.Value),
-        //        new SqlParameter("@Longitude", (object?)model.Longitude ?? DBNull.Value),
-
-        //        new SqlParameter("@AttachmentsMeta", (object?)attachmentsMetaJson ?? DBNull.Value),
-
-        //        new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
-        //    );
-
-        //    var response = new ApiResponse();
-
-        //    if (dt == null || dt.Rows.Count == 0)
-        //    {
-        //        response.Status = false;
-        //        response.Message = "No response returned from database.";
-        //        return response;
-        //    }
-
-        //    var row = dt.Rows[0];
-        //    bool status = Convert.ToInt32(row["Status"]) == 1;
-
-        //    response.Status = status;
-        //    response.Message = row["Message"]?.ToString();
-        //    response.Data = status
-        //        ? new { ActivityId = Convert.ToInt32(row["ActivityId"]) }
-        //        : null;
-
-        //    return response;
-        //}
-        #endregion
 
 
         public async Task<ApiResponse> CreateActivity(LeadActivityRequest model)

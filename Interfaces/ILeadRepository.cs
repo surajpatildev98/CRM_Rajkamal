@@ -7,10 +7,7 @@ namespace CRMWebServices.Interfaces
     {
         Task<ApiResponse> CreateLead(LeadRegisterRequest model);
         Task<ApiResponse> TransferLead(LeadTransferRequest model);
-        Task<ApiResponse> UpdateLeadStatus(LeadStatusUpdateRequest model);
-
-        //Task<ApiResponse> CreateActivity(LeadActivityRequest model);
-
+        Task<ApiResponse> UpdateLeadStatus(LeadStatusUpdateRequest model);        
         Task<ApiResponse> CreateActivity(LeadActivityRequest model);
         Task<ApiResponse> CreateFollowUp(LeadFollowUpRequest model);
 

@@ -170,6 +170,7 @@ D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Debug\net8.0\CRMWebSer
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Debug\net8.0\CRMWebServices.csproj.CoreCompileInputs.cache
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Debug\net8.0\CRMWebServices.MvcApplicationPartsAssemblyInfo.cs
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Debug\net8.0\CRMWebServices.MvcApplicationPartsAssemblyInfo.cache
+D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Debug\net8.0\CRMWebServices.sourcelink.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Debug\net8.0\rjimswa.dswa.cache.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
