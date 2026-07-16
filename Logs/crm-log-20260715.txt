@@ -1,0 +1,255 @@
+2026-07-15 11:32:43.727 +05:30 [INF] Starting CRM Web Services
+2026-07-15 11:32:44.650 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 11:32:45.022 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 11:32:45.073 +05:30 [INF] Hosting environment: Development
+2026-07-15 11:32:45.097 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 11:32:46.545 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 258.6107 ms
+2026-07-15 11:32:47.062 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 52.8193 ms
+2026-07-15 11:33:05.677 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 11:33:14.298 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 8631.8826 ms
+2026-07-15 11:34:59.295 +05:30 [INF] HTTP POST /api/Lead/UploadAttachment responded 200 in 252.5077 ms
+2026-07-15 11:35:55.021 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 158.1763 ms
+2026-07-15 11:38:15.550 +05:30 [INF] Starting CRM Web Services
+2026-07-15 11:38:16.143 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 11:38:16.673 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 11:38:16.677 +05:30 [INF] Hosting environment: Development
+2026-07-15 11:38:16.681 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 11:38:17.532 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 233.8955 ms
+2026-07-15 11:38:17.803 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 27.5811 ms
+2026-07-15 11:38:47.277 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 11:38:49.175 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1906.3262 ms
+2026-07-15 11:40:30.497 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 25765.5936 ms
+2026-07-15 11:41:04.624 +05:30 [INF] HTTP POST /api/Lead/UploadAttachment responded 200 in 114.7151 ms
+2026-07-15 11:41:40.994 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 4665.2603 ms
+2026-07-15 11:48:03.941 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 5941.3715 ms
+2026-07-15 11:48:31.111 +05:30 [INF] HTTP POST /api/Lead/Register responded 200 in 4991.1326 ms
+2026-07-15 11:56:34.248 +05:30 [INF] Starting CRM Web Services
+2026-07-15 11:56:34.881 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 11:56:35.131 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 11:56:35.138 +05:30 [INF] Hosting environment: Development
+2026-07-15 11:56:35.143 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 11:56:36.475 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 262.8316 ms
+2026-07-15 11:56:36.773 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 33.5037 ms
+2026-07-15 12:16:48.654 +05:30 [INF] Starting CRM Web Services
+2026-07-15 12:16:49.239 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 12:16:49.733 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 12:16:49.736 +05:30 [INF] Hosting environment: Development
+2026-07-15 12:16:49.739 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 12:16:50.803 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 194.4998 ms
+2026-07-15 12:16:51.107 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 28.2844 ms
+2026-07-15 12:17:32.755 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 12:17:40.791 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 8045.7384 ms
+2026-07-15 12:21:10.743 +05:30 [INF] HTTP POST /api/Employee/Register responded 200 in 624.1606 ms
+2026-07-15 12:21:51.146 +05:30 [INF] HTTP POST /api/auth/login responded 400 in 89.0577 ms
+2026-07-15 12:22:06.693 +05:30 [INF] HTTP POST /api/auth/login responded 400 in 58.3741 ms
+2026-07-15 12:22:57.660 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 402.0384 ms
+2026-07-15 12:23:11.347 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 378.5934 ms
+2026-07-15 12:24:47.871 +05:30 [INF] HTTP POST /api/Employee/Register responded 400 in 394.0001 ms
+2026-07-15 12:35:09.196 +05:30 [INF] Starting CRM Web Services
+2026-07-15 12:35:09.937 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 12:35:10.225 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 12:35:10.231 +05:30 [INF] Hosting environment: Development
+2026-07-15 12:35:10.238 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 12:35:11.883 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 271.7123 ms
+2026-07-15 12:35:12.226 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 52.7959 ms
+2026-07-15 12:35:57.568 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 12:35:59.576 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2019.4129 ms
+2026-07-15 12:36:49.872 +05:30 [INF] HTTP POST /api/Employee/Register responded 400 in 682.4000 ms
+2026-07-15 12:38:12.231 +05:30 [INF] HTTP POST /api/Employee/Register responded 400 in 405.4806 ms
+2026-07-15 12:43:35.282 +05:30 [INF] HTTP POST /api/Employee/Register responded 200 in 661.0398 ms
+2026-07-15 13:32:26.612 +05:30 [INF] Starting CRM Web Services
+2026-07-15 13:32:27.063 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 13:32:27.511 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 13:32:27.513 +05:30 [INF] Hosting environment: Development
+2026-07-15 13:32:27.515 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 13:32:29.434 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 244.7481 ms
+2026-07-15 13:32:29.751 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 35.8678 ms
+2026-07-15 13:32:59.738 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 13:33:00.930 +05:30 [INF] HTTP POST /api/auth/login responded 400 in 1201.6115 ms
+2026-07-15 13:33:34.614 +05:30 [INF] HTTP POST /api/auth/login responded 400 in 75.5409 ms
+2026-07-15 13:34:05.453 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 628.5013 ms
+2026-07-15 13:35:02.727 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 26671.5404 ms
+2026-07-15 13:35:37.818 +05:30 [INF] HTTP POST /api/Lead/Register responded 200 in 11771.0518 ms
+2026-07-15 15:41:51.646 +05:30 [INF] Starting CRM Web Services
+2026-07-15 15:41:52.382 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 15:41:53.109 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 15:41:53.119 +05:30 [INF] Hosting environment: Development
+2026-07-15 15:41:53.123 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 15:41:54.495 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 236.7079 ms
+2026-07-15 15:41:54.832 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 47.0953 ms
+2026-07-15 15:42:25.659 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 15:42:34.063 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 8413.4987 ms
+2026-07-15 15:44:42.128 +05:30 [INF] HTTP POST /api/Lead/CreateActivity responded 400 in 312.1396 ms
+2026-07-15 15:46:31.332 +05:30 [INF] HTTP POST /api/Lead/CreateActivity responded 400 in 31.9649 ms
+2026-07-15 15:47:49.153 +05:30 [INF] HTTP GET /api/master/activity-types responded 200 in 100.0255 ms
+2026-07-15 15:51:18.822 +05:30 [INF] Starting CRM Web Services
+2026-07-15 15:51:19.374 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 15:51:19.955 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 15:51:19.976 +05:30 [INF] Hosting environment: Development
+2026-07-15 15:51:19.994 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 15:51:20.684 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 203.2242 ms
+2026-07-15 15:51:20.966 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 39.9259 ms
+2026-07-15 15:52:34.146 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 15:52:42.708 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 8570.6282 ms
+2026-07-15 15:53:15.160 +05:30 [INF] HTTP POST /api/Lead/CreateActivity responded 401 in 32.0497 ms
+2026-07-15 15:53:23.436 +05:30 [INF] HTTP POST /api/Lead/CreateActivity responded 401 in 4.8907 ms
+2026-07-15 16:07:18.641 +05:30 [INF] Starting CRM Web Services
+2026-07-15 16:07:19.226 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 16:07:19.527 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 16:07:19.562 +05:30 [INF] Hosting environment: Development
+2026-07-15 16:07:19.591 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 16:07:21.835 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 310.7837 ms
+2026-07-15 16:07:22.205 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 31.1615 ms
+2026-07-15 16:08:22.150 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 16:08:24.156 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2015.4708 ms
+2026-07-15 16:09:59.744 +05:30 [INF] HTTP POST /api/Lead/CreateActivity responded 400 in 32270.9246 ms
+2026-07-15 16:10:49.562 +05:30 [INF] HTTP POST /api/Lead/CreateActivity responded 400 in 81.7846 ms
+2026-07-15 16:11:19.930 +05:30 [INF] HTTP POST /api/Lead/CreateActivity responded 400 in 3353.0945 ms
+2026-07-15 16:14:04.423 +05:30 [INF] Starting CRM Web Services
+2026-07-15 16:14:05.226 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 16:14:05.748 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 16:14:05.752 +05:30 [INF] Hosting environment: Development
+2026-07-15 16:14:05.755 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 16:14:07.570 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 259.0450 ms
+2026-07-15 16:14:07.902 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 41.0886 ms
+2026-07-15 16:14:24.553 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 16:14:26.609 +05:30 [INF] HTTP POST /api/auth/login responded 400 in 2065.7208 ms
+2026-07-15 16:14:32.713 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 485.2619 ms
+2026-07-15 16:16:12.891 +05:30 [INF] HTTP POST /api/Lead/CreateActivity responded 400 in 28525.6023 ms
+2026-07-15 16:16:57.708 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 0.9988 ms
+2026-07-15 16:16:58.110 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 70.1328 ms
+2026-07-15 16:17:25.472 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 460.6811 ms
+2026-07-15 16:18:19.089 +05:30 [INF] HTTP POST /api/Lead/CreateActivity responded 200 in 3372.8514 ms
+2026-07-15 16:22:48.765 +05:30 [INF] HTTP GET /api/master/activity-types responded 200 in 84.5834 ms
+2026-07-15 17:03:26.600 +05:30 [INF] Starting CRM Web Services
+2026-07-15 17:03:27.558 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 17:03:28.094 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 17:03:28.097 +05:30 [INF] Hosting environment: Development
+2026-07-15 17:03:28.101 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 17:03:29.791 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 291.8022 ms
+2026-07-15 17:03:30.174 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 60.5431 ms
+2026-07-15 17:03:58.900 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 17:04:00.905 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2013.7761 ms
+2026-07-15 17:05:36.596 +05:30 [INF] HTTP GET /api/Lead/2/Details responded 200 in 358.9361 ms
+2026-07-15 17:05:51.505 +05:30 [INF] HTTP GET /api/Lead/2/Contacts responded 200 in 83.6305 ms
+2026-07-15 17:06:03.178 +05:30 [INF] HTTP GET /api/Lead/2/Requirements responded 200 in 72.7867 ms
+2026-07-15 17:06:07.221 +05:30 [INF] HTTP GET /api/Lead/2/Requirements responded 200 in 48.6749 ms
+2026-07-15 17:06:38.550 +05:30 [ERR] Unhandled exception on GET /api/Lead/2/List
+Microsoft.Data.SqlClient.SqlException (0x80131904): Could not find stored procedure 'USP_CRM_LeadActivityManagement'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean isRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& executeTask, Boolean& usedCache, Boolean asyncWrite, Boolean isRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   at CRMWebServices.Services.DatabaseService.<>c__DisplayClass2_1.<ExecuteDataTableAsync>b__0() in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CRMWebServices.Services.DatabaseService.ExecuteDataTableAsync(String storedProcedure, SqlParameter[] parameters) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at CRMWebServices.Repository.LeadRepository.GetActivitiesByLead(Int32 leadId) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Repository\LeadRepository.cs:line 432
+   at CRMWebServices.Controllers.LeadController.List(Int32 leadId) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Controllers\LeadController.cs:line 139
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at CRMWebServices.Helpers.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Helpers\GlobalExceptionMiddleware.cs:line 22
+ClientConnectionId:57833bc1-05d7-4b11-b8d2-71f9cedee583
+Error Number:2812,State:62,Class:16
+2026-07-15 17:06:38.715 +05:30 [ERR] HTTP GET /api/Lead/2/List responded 500 in 18740.2328 ms
+2026-07-15 17:07:32.971 +05:30 [ERR] Unhandled exception on GET /api/Lead/2/List
+Microsoft.Data.SqlClient.SqlException (0x80131904): Could not find stored procedure 'USP_CRM_LeadActivityManagement'.
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlDataReader.TryConsumeMetaData()
+   at Microsoft.Data.SqlClient.SqlDataReader.get_MetaData()
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean isRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& executeTask, Boolean& usedCache, Boolean asyncWrite, Boolean isRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteReader(CommandBehavior behavior)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteDbDataReader(CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   at CRMWebServices.Services.DatabaseService.<>c__DisplayClass2_1.<ExecuteDataTableAsync>b__0()
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CRMWebServices.Services.DatabaseService.ExecuteDataTableAsync(String storedProcedure, SqlParameter[] parameters)
+   at CRMWebServices.Repository.LeadRepository.GetActivitiesByLead(Int32 leadId)
+   at CRMWebServices.Controllers.LeadController.List(Int32 leadId)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at CRMWebServices.Helpers.GlobalExceptionMiddleware.InvokeAsync(HttpContext context)
+ClientConnectionId:57833bc1-05d7-4b11-b8d2-71f9cedee583
+Error Number:2812,State:62,Class:16
+2026-07-15 17:07:33.046 +05:30 [ERR] HTTP GET /api/Lead/2/List responded 500 in 4914.8539 ms
+2026-07-15 17:07:34.536 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 0.9675 ms
+2026-07-15 17:07:34.865 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 34.6246 ms
+2026-07-15 17:07:48.795 +05:30 [INF] HTTP GET /api/Lead/List responded 401 in 8.9593 ms
+2026-07-15 17:08:17.081 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 374.0942 ms
+2026-07-15 17:08:43.751 +05:30 [INF] HTTP GET /api/Lead/List responded 400 in 59.9509 ms
+2026-07-15 17:08:57.195 +05:30 [INF] HTTP GET /api/Lead/List responded 200 in 71.7481 ms
+2026-07-15 17:20:44.132 +05:30 [INF] Starting CRM Web Services
+2026-07-15 17:20:44.695 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 17:20:44.946 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 17:20:44.954 +05:30 [INF] Hosting environment: Development
+2026-07-15 17:20:44.964 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 17:20:47.789 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 258.0739 ms
+2026-07-15 17:20:48.114 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 43.5753 ms
+2026-07-15 17:21:14.124 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 17:21:16.248 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2132.2531 ms
+2026-07-15 17:21:42.869 +05:30 [INF] HTTP GET /api/Lead/2/FullDetails responded 200 in 497.7703 ms
+2026-07-15 17:27:42.142 +05:30 [INF] HTTP GET /api/Lead/2/FullDetails responded 200 in 441.9597 ms
+2026-07-15 17:32:04.400 +05:30 [INF] HTTP GET /api/Lead/6/FullDetails responded 200 in 284.6691 ms
+2026-07-15 19:02:17.334 +05:30 [INF] Starting CRM Web Services
+2026-07-15 19:02:17.933 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-15 19:02:18.156 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-15 19:02:18.159 +05:30 [INF] Hosting environment: Development
+2026-07-15 19:02:18.162 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-15 19:02:20.091 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 252.1466 ms
+2026-07-15 19:02:20.403 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 37.2399 ms
+2026-07-15 19:02:37.382 +05:30 [WRN] Failed to determine the https port for redirect.
+2026-07-15 19:02:45.888 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 8516.5405 ms
+2026-07-15 19:03:10.712 +05:30 [INF] HTTP GET /api/Lead/2/FullDetails responded 401 in 217.0184 ms
+2026-07-15 19:03:18.605 +05:30 [INF] HTTP GET /api/Lead/2/FullDetails responded 401 in 9.9237 ms
+2026-07-15 19:03:27.787 +05:30 [INF] HTTP GET /api/Lead/2/FullDetails responded 401 in 5.1222 ms
+2026-07-15 19:03:50.331 +05:30 [INF] HTTP GET /api/Lead/2/FullDetails responded 200 in 225.5076 ms
