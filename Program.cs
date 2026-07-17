@@ -4,11 +4,13 @@ using CRMWebServices.Interfaces;
 using CRMWebServices.Repository;
 using CRMWebServices.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using Serilog.Exceptions;
 using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -118,6 +120,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseStaticFiles(); // serves wwwroot as usual (if you use it elsewhere)
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
+    RequestPath = "/files"
+});
 app.UseCors("AllowFlutterWeb");
 
 app.UseAuthentication();   // must come BEFORE UseAuthorization

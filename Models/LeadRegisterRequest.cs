@@ -71,7 +71,7 @@
         public int Ref_ActivityTypeId { get; set; }
         public string Subject { get; set; }
         public string Description { get; set; }
-        public string Outcome { get; set; }
+        public string? Outcome { get; set; }
         public DateTime ActivityDateTime { get; set; }
         public int? DurationInMinutes { get; set; }
 
@@ -91,7 +91,7 @@
         public int Ref_LeadId { get; set; }
         public int? Ref_ActivityId { get; set; }         // optional link to a specific activity
         public DateTime NextFollowUpDate { get; set; }
-        public string FollowUpPriorityName { get; set; } // "LOW"/"MEDIUM"/"HIGH"/"URGENT" from UI
+        //public byte? FollowUpPriority { get; set; } // 1=LOW, 2=MEDIUM, 3=HIGH, 4=URGENT
         public string FollowUpRemarks { get; set; }
         public int? FollowUpAssignedEmployeeId { get; set; }
         public int? CreatedBy { get; set; }

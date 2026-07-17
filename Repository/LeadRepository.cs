@@ -2,6 +2,7 @@
 using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
 using Microsoft.Data.SqlClient;
+using System.Data;
 using System.Text.Json;
 
 namespace CRMWebServices.Repository
@@ -14,8 +15,6 @@ namespace CRMWebServices.Repository
         {
             _database = database;
         }
-
-
 
         private static readonly string[] AllowedExtensions = { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png" };
         private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
@@ -66,6 +65,17 @@ namespace CRMWebServices.Repository
             File.WriteAllBytes(filePath, fileBytes);
 
             return Path.Combine("Uploads", folderName, uniqueFileName).Replace("\\", "/");
+        }
+
+        private string BuildFileUrl(string filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return null;
+
+            var relative = filePath.Replace("Uploads/", "").Replace("Uploads\\", "");
+            var segments = relative.Split('/').Select(Uri.EscapeDataString);
+
+            return "/files/" + string.Join("/", segments);
         }
 
         public async Task<ApiResponse> CreateLead(LeadRegisterRequest model)
@@ -291,27 +301,18 @@ namespace CRMWebServices.Repository
 
         public async Task<ApiResponse> CreateFollowUp(LeadFollowUpRequest model)
         {
-            byte? priority = model.FollowUpPriorityName?.Trim().ToUpper() switch
-            {
-                "LOW" => 1,
-                "MEDIUM" => 2,
-                "HIGH" => 3,
-                "URGENT" => 4,
-                _ => null
-            };
-
             var dt = await _database.ExecuteDataTableAsync(
-                "USP_CRM_LeadManagement",
+                    "USP_CRM_LeadManagement",
 
-                new SqlParameter("@Status", "CREATE_FOLLOWUP"),
-                new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
-                new SqlParameter("@Ref_ActivityId", (object?)model.Ref_ActivityId ?? DBNull.Value),
-                new SqlParameter("@NextFollowUpDate", model.NextFollowUpDate),
-                new SqlParameter("@FollowUpPriority", (object?)priority ?? DBNull.Value),
-                new SqlParameter("@FollowUpRemarks", (object?)model.FollowUpRemarks ?? DBNull.Value),
-                new SqlParameter("@FollowUpAssignedEmployeeId", (object?)model.FollowUpAssignedEmployeeId ?? DBNull.Value),
-                new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
-            );
+                    new SqlParameter("@Status", "CREATE_FOLLOWUP"),
+                    new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
+                    new SqlParameter("@Ref_ActivityId", (object?)model.Ref_ActivityId ?? DBNull.Value),
+                    new SqlParameter("@NextFollowUpDate", model.NextFollowUpDate),
+                    //new SqlParameter("@FollowUpPriority", (object?)model.FollowUpPriority ?? DBNull.Value),
+                    new SqlParameter("@FollowUpRemarks", (object?)model.FollowUpRemarks ?? DBNull.Value),
+                    new SqlParameter("@FollowUpAssignedEmployeeId", (object?)model.FollowUpAssignedEmployeeId ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
+                );
 
             var response = new ApiResponse();
 
@@ -334,6 +335,10 @@ namespace CRMWebServices.Repository
 
         public async Task<ApiResponse> GetLeadFullDetails(int leadId)
         {
+            try
+            {
+
+           
             var ds = await _database.ExecuteDataSetAsync(
                 "USP_CRM_LeadManagement",
                 new SqlParameter("@Status", "GET_LEAD_FULL_DETAILS"),
@@ -358,6 +363,7 @@ namespace CRMWebServices.Repository
                 },
                 expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                 leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
+                attachmentUrl = leadRow["AttachmentPath"] == DBNull.Value ? null : BuildFileUrl(leadRow["AttachmentPath"].ToString()),
                 assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
                 assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
                 leadSource = leadRow["LeadSource"] == DBNull.Value ? null : leadRow["LeadSource"].ToString(),
@@ -401,18 +407,47 @@ namespace CRMWebServices.Repository
                 activityType = r["ActivityType"] == DBNull.Value ? null : r["ActivityType"].ToString(),
                 activityDate = Convert.ToDateTime(r["ActivityDate"]),
                 subject = r["Subject"]?.ToString(),
-                outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                outcome = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
                 createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString()
             }).ToList();
+
+            //var files = ds.Tables[4].Rows.Cast<System.Data.DataRow>().Select(r => new
+            //{
+            //    attachmentId = Convert.ToInt32(r["AttachmentId"]),
+            //    fileName = r["FileName"]?.ToString(),
+            //    fileType = Path.GetExtension(r["FileName"]?.ToString() ?? "").TrimStart('.').ToUpper()
+            //}).ToList();
 
             var files = ds.Tables[4].Rows.Cast<System.Data.DataRow>().Select(r => new
             {
                 attachmentId = Convert.ToInt32(r["AttachmentId"]),
                 fileName = r["FileName"]?.ToString(),
-                fileType = Path.GetExtension(r["FileName"]?.ToString() ?? "").TrimStart('.').ToUpper()
+                fileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
+                fileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
+                //fileUrl = "/files/" + (r["FilePath"]?.ToString() ?? "").Replace("Uploads/", "").Replace("Uploads\\", "")
+                fileUrl = BuildFileUrl(r["FilePath"]?.ToString())
             }).ToList();
 
-            return new ApiResponse
+                var followUps = ds.Tables[5].Rows
+                     .Cast<DataRow>()
+                     .Select(r => new
+                     {
+                         followUpId = Convert.ToInt32(r["FollowUpId"]),
+                         activityId = r["Ref_ActivityId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_ActivityId"]),
+                         assignedEmployeeId = Convert.ToInt32(r["Ref_AssignedEmployeeId"]),
+                         assignedTo = r["AssignedTo"]?.ToString(),
+                         followUpStatus = r["FollowUpStatus"]?.ToString(),
+                         nextFollowUpDate = Convert.ToDateTime(r["NextFollowUpDate"]),
+                         priority = Convert.ToInt32(r["Priority"]),
+                         remarks = r["Remarks"]?.ToString(),
+                         isCompleted = Convert.ToBoolean(r["IsCompleted"]),
+                         completedOn = r["CompletedOn"] == DBNull.Value
+                             ? (DateTime?)null
+                             : Convert.ToDateTime(r["CompletedOn"]),
+                         createdOn = Convert.ToDateTime(r["CreatedOn"])
+                     }).ToList();
+
+                return new ApiResponse
             {
                 Status = true,
                 Message = "Lead details fetched successfully.",
@@ -422,13 +457,36 @@ namespace CRMWebServices.Repository
                     contacts,
                     requirements,
                     activities,
-                    files
+                    files,
+                    followUps
                 }
             };
+
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
         }
 
         public async Task<ApiResponse> GetLeadList(LeadListFilterRequest filter)
         {
+            try
+            {
+
+           
             var ds = await _database.ExecuteDataSetAsync(
                 "USP_CRM_LeadManagement",
                 new SqlParameter("@Status", "GET_LEAD_LIST_FULL"),
@@ -447,6 +505,10 @@ namespace CRMWebServices.Repository
             var requirementRows = ds.Tables[2].Rows.Cast<System.Data.DataRow>().ToList();
             var activityRows = ds.Tables[3].Rows.Cast<System.Data.DataRow>().ToList();
             var fileRows = ds.Tables[4].Rows.Cast<System.Data.DataRow>().ToList();
+            var followUpRows = ds.Tables[5]
+                     .Rows
+                     .Cast<DataRow>()
+                     .ToList();
 
             var result = new List<object>();
 
@@ -484,22 +546,43 @@ namespace CRMWebServices.Repository
                         activityType = r["ActivityType"] == DBNull.Value ? null : r["ActivityType"].ToString(),
                         activityDate = Convert.ToDateTime(r["ActivityDate"]),
                         subject = r["Subject"]?.ToString(),
-                        outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                        outcome = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
                         createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString()
                     }).ToList();
 
-                var files = fileRows
-                    .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
-                    .Select(r => new
+                    var files = ds.Tables[4].Rows.Cast<System.Data.DataRow>().Select(r => new
                     {
                         attachmentId = Convert.ToInt32(r["AttachmentId"]),
                         fileName = r["FileName"]?.ToString(),
-                        filePath = r["FilePath"]?.ToString(),
                         fileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
-                        fileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"])
+                        fileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
+                        //fileUrl = "/files/" + (r["FilePath"]?.ToString() ?? "").Replace("Uploads/", "").Replace("Uploads\\", "")
+                        fileUrl = BuildFileUrl(r["FilePath"]?.ToString())
                     }).ToList();
 
-                result.Add(new
+
+                    var followUps = followUpRows
+                            .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                            .Select(r => new
+                            {
+                                followUpId = Convert.ToInt32(r["FollowUpId"]),
+                                activityId = r["Ref_ActivityId"] == DBNull.Value
+                                    ? (int?)null
+                                    : Convert.ToInt32(r["Ref_ActivityId"]),
+                                assignedEmployeeId = Convert.ToInt32(r["Ref_AssignedEmployeeId"]),
+                                assignedTo = r["AssignedTo"]?.ToString(),
+                                followUpStatus = r["FollowUpStatus"]?.ToString(),
+                                nextFollowUpDate = Convert.ToDateTime(r["NextFollowUpDate"]),
+                                priority = Convert.ToInt32(r["Priority"]),
+                                remarks = r["Remarks"]?.ToString(),
+                                isCompleted = Convert.ToBoolean(r["IsCompleted"]),
+                                completedOn = r["CompletedOn"] == DBNull.Value
+                                    ? (DateTime?)null
+                                    : Convert.ToDateTime(r["CompletedOn"]),
+                                createdOn = Convert.ToDateTime(r["CreatedOn"])
+                            }).ToList();
+
+                    result.Add(new
                 {
                     lead = new
                     {
@@ -512,6 +595,7 @@ namespace CRMWebServices.Repository
                         },
                         expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                         leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
+                        attachmentUrl = leadRow["AttachmentPath"] == DBNull.Value ? null : BuildFileUrl(leadRow["AttachmentPath"].ToString()),
                         assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
                         assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
                         leadSource = leadRow["LeadSource"] == DBNull.Value ? null : leadRow["LeadSource"].ToString(),
@@ -532,7 +616,8 @@ namespace CRMWebServices.Repository
                     contacts,
                     requirements,
                     activities,
-                    files
+                    files,
+                    followUps
                 });
             }
 
@@ -542,6 +627,24 @@ namespace CRMWebServices.Repository
                 Message = "Lead list fetched successfully.",
                 Data = result
             };
+
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
         }
 
     }

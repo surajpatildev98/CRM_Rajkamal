@@ -745,10 +745,6 @@
             "type": "string",
             "format": "date-time"
           },
-          "followUpPriorityName": {
-            "type": "string",
-            "nullable": true
-          },
           "followUpRemarks": {
             "type": "string",
             "nullable": true
