@@ -1,3 +1,9 @@
 <Solution>
+  <Configurations>
+    <BuildType Name="Debug" />
+    <BuildType Name="Office" />
+    <BuildType Name="Outside" />
+    <BuildType Name="Release" />
+  </Configurations>
   <Project Path="CRMWebServices.csproj" />
 </Solution>
