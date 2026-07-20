@@ -33,6 +33,22 @@
   },
   {
     "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "Close",
+    "RelativePath": "api/Lead/CloseLead",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LeadCloseRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
     "Method": "CreateActivity",
     "RelativePath": "api/Lead/CreateActivity",
     "HttpMethod": "POST",
@@ -121,6 +137,22 @@
       {
         "Name": "request",
         "Type": "CRMWebServices.Models.LeadTransferRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "UpdateFollowUpStatus",
+    "RelativePath": "api/Lead/UpdateFollowUpStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.FollowUpStatusUpdateRequest",
         "IsRequired": true
       }
     ],

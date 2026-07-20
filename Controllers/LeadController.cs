@@ -73,23 +73,6 @@ namespace CRMWebServices.Controllers
         }
 
 
-        //[HttpPost]
-        //[Route("CreateActivity")]
-        //public async Task<IActionResult> Create([FromBody] LeadActivityRequest request)
-        //{
-        //    try
-        //    {
-        //        var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-        //        request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-        //        var response = await _repository.CreateActivity(request);
-        //        return response.Status ? Ok(response) : BadRequest(response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
-        //    }
-        //}
 
         [HttpPost]
         [Route("CreateActivity")]
@@ -127,6 +110,44 @@ namespace CRMWebServices.Controllers
             }
         }
 
+
+        [HttpPost]
+        [Route("UpdateFollowUpStatus")]
+        public async Task<IActionResult> UpdateFollowUpStatus([FromBody] FollowUpStatusUpdateRequest request)
+        {
+            try
+            {
+                var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+                request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+                var response = await _repository.UpdateFollowUpStatus(request);
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
+            }
+        }       
+
+
+        [HttpPost]
+        [Route("CloseLead")]
+        public async Task<IActionResult> Close([FromBody] LeadCloseRequest request)
+        {
+            try
+            {
+                var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+                request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+                var response = await _repository.CloseLead(request);
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
+            }
+        }
+
         [HttpGet]
         [Route("Details")]
         public async Task<IActionResult> Details([FromQuery] int? leadId, [FromQuery] LeadListFilterRequest filter)
@@ -144,7 +165,5 @@ namespace CRMWebServices.Controllers
                 return detailsResponse.Status ? Ok(detailsResponse) : NotFound(detailsResponse);
             }
         }
-
-
     }
 }

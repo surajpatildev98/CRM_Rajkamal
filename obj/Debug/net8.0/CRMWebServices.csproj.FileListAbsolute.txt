@@ -47,6 +47,7 @@ D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\Microsoft
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\Microsoft.OpenApi.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\Microsoft.SqlServer.Server.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\Mono.TextTemplating.dll
+D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\Newtonsoft.Json.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\Serilog.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\Serilog.AspNetCore.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\Serilog.Exceptions.dll

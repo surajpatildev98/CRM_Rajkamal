@@ -222,6 +222,68 @@
         }
       }
     },
+    "/api/Lead/UpdateFollowUpStatus": {
+      "post": {
+        "tags": [
+          "Lead"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowUpStatusUpdateRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowUpStatusUpdateRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowUpStatusUpdateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Lead/CloseLead": {
+      "post": {
+        "tags": [
+          "Lead"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadCloseRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadCloseRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadCloseRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Lead/Details": {
       "get": {
         "tags": [
@@ -625,6 +687,34 @@
         },
         "additionalProperties": false
       },
+      "FollowUpStatusUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "followUpId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_ActivityStatusId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newScheduledOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "statusRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "LeadActivityAttachmentItem": {
         "type": "object",
         "properties": {
@@ -706,6 +796,48 @@
         },
         "additionalProperties": false
       },
+      "LeadAttachmentItem": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "base64Content": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LeadCloseRequest": {
+        "type": "object",
+        "properties": {
+          "ref_LeadId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_LeadStatusIdClose": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_LostReasonId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "closureRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "LeadContactRequest": {
         "type": "object",
         "properties": {
@@ -735,11 +867,6 @@
           "ref_LeadId": {
             "type": "integer",
             "format": "int32"
-          },
-          "ref_ActivityId": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
           },
           "nextFollowUpDate": {
             "type": "string",
@@ -840,12 +967,11 @@
             },
             "nullable": true
           },
-          "attachmentBase64": {
-            "type": "string",
-            "nullable": true
-          },
-          "attachmentFileName": {
-            "type": "string",
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LeadAttachmentItem"
+            },
             "nullable": true
           }
         },

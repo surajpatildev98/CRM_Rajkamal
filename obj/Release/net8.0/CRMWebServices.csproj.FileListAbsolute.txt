@@ -187,3 +187,4 @@ D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\CRMWebS
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\ref\CRMWebServices.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Release\net8.0\Serilog.Exceptions.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\CRMWebServices.sourcelink.json
+D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Release\net8.0\Newtonsoft.Json.dll

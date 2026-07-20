@@ -14,5 +14,9 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> GetLeadFullDetails(int leadId);
         Task<ApiResponse> GetLeadList(LeadListFilterRequest filter);
 
+        Task<ApiResponse> UpdateFollowUpStatus(FollowUpStatusUpdateRequest model);
+
+        Task<ApiResponse> CloseLead(LeadCloseRequest model);
+
     }
 }

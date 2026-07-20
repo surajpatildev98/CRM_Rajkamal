@@ -34,6 +34,7 @@ D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\Microsoft.IdentityModel.Tokens.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\Microsoft.OpenApi.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\Microsoft.SqlServer.Server.dll
+D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\Newtonsoft.Json.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\Serilog.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\Serilog.AspNetCore.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\Serilog.Exceptions.dll
