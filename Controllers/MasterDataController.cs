@@ -88,5 +88,14 @@ namespace CRMWebServices.Controllers
         [HttpGet("activity-types")]
         public async Task<IActionResult> ActivityTypes()
             => Ok(new ApiResponse { Status = true, Data = await _repo.GetActivityTypes() });
+
+
+        [HttpGet("lead-close-statuses")]
+        public async Task<IActionResult> LeadCloseStatuses()
+            => Ok(new ApiResponse { Status = true, Data = await _repo.GetLeadCloseStatuses() });
+
+        [HttpGet("followup-statuses")]
+        public async Task<IActionResult> FollowUpStatuses()
+            => Ok(new ApiResponse { Status = true, Data = await _repo.GetFollowUpStatuses() });
     }
 }

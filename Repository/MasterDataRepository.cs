@@ -174,5 +174,21 @@ namespace CRMWebServices.Repository
                 new SqlParameter("@Status", "GET_ACTIVITY_TYPES"));
             return MapToDropdown(dt);
         }
+
+        public async Task<List<DropdownItem>> GetLeadCloseStatuses()
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_CRM_LeadManagement",
+                new SqlParameter("@Status", "GET_LEAD_CLOSE_STATUSES"));
+            return MapToDropdown(dt);
+        }
+
+        public async Task<List<DropdownItem>> GetFollowUpStatuses()
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_CRM_LeadManagement",
+                new SqlParameter("@Status", "GET_FOLLOWUP_STATUSES"));
+            return MapToDropdown(dt);
+        }
     }
 }
