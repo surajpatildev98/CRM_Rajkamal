@@ -1,6 +1,7 @@
 ﻿using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
+using CRMWebServices.Services;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Data;
@@ -1023,6 +1024,26 @@ namespace CRMWebServices.Repository
             response.Status = Convert.ToInt32(row["Status"]) == 1;
             response.Message = row["Message"]?.ToString();
             return response;
+        }
+
+        public async Task<int?> GetAssignedEmployeeId(int leadId)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Status", "GET_ASSIGNED_EMPLOYEE"),
+                new SqlParameter("@Ref_LeadId", leadId)
+            };
+
+            DataTable dt = await _database.ExecuteDataTableAsync(
+                "USP_CRM_LeadManagement",
+                parameters);
+
+            if (dt.Rows.Count == 0)
+                return null;
+
+            return dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value
+                ? null
+                : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
         }
 
     }

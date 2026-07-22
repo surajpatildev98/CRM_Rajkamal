@@ -31,5 +31,7 @@ namespace CRMWebServices.Interfaces
         /// Gets the close status dropdown for leads
         Task<List<DropdownItem>> GetLeadCloseStatuses();
         Task<List<DropdownItem>> GetFollowUpStatuses();
+
+        Task<List<DropdownItem>> GetStatusesForDashbord();
     }
 }

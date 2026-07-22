@@ -97,5 +97,9 @@ namespace CRMWebServices.Controllers
         [HttpGet("followup-statuses")]
         public async Task<IActionResult> FollowUpStatuses()
             => Ok(new ApiResponse { Status = true, Data = await _repo.GetFollowUpStatuses() });
+
+        [HttpGet("dashboard-statuses")]
+        public async Task<IActionResult> DashboardStatuses()
+            => Ok(new ApiResponse { Status = true, Data = await _repo.GetStatusesForDashbord() });
     }
 }

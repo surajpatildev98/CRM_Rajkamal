@@ -1,11 +1,13 @@
 ﻿using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
+using CRMWebServices.Services;
+using Microsoft.Data.SqlClient;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using Microsoft.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using static CRMWebServices.Models.OpportunityModels;
@@ -21,42 +23,185 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
-        #region  GET WON LEADS (LIST)
+       
+        private string BuildFileUrl(string filePath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(filePath))
+                    return null;
+
+                var relative = filePath.Replace("Uploads/", "").Replace("Uploads\\", "");
+                var segments = relative.Split('/').Select(Uri.EscapeDataString);
+
+                return "/files/" + string.Join("/", segments);
+            }
+            catch (Exception ex)
+            {
+                // Log ex here
+                throw new Exception("Error while building attachment URL.", ex);
+            }
+
+        }
+        #region GET WON LEADS (LIST - Full Data like GetLeadList)
+        //public async Task<ApiResponse> GetWonLeads(string? searchText, int? assignedEmployeeId)
         public async Task<ApiResponse> GetWonLeads(string searchText = null)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
+                var ds = await _database.ExecuteDataSetAsync(
                     "USP_CRM_OpportunityManagement",
-                    new SqlParameter("@Status", "GET_WON_LEADS"),
+                    new SqlParameter("@Status", "GET_WON_LEADS_LIST_FULL"),
                     new SqlParameter("@SearchText", (object?)searchText ?? DBNull.Value)
+                    //new SqlParameter("@FilterAssignedToId", (object?)assignedEmployeeId ?? DBNull.Value)
                 );
 
-                if (dt == null || dt.Rows.Count == 0)
+                if (ds.Tables.Count == 0)
                 {
                     return new ApiResponse
                     {
                         Status = true,
                         Message = "No Won leads available for conversion.",
-                        Data = new List<WonLeadResponse>()
+                        Data = new List<object>()
                     };
                 }
 
-                var result = new List<WonLeadResponse>();
-                foreach (DataRow row in dt.Rows)
+                var leadRows = ds.Tables[0].Rows.Cast<System.Data.DataRow>().ToList();
+                var contactRows = ds.Tables[1].Rows.Cast<System.Data.DataRow>().ToList();
+                var requirementRows = ds.Tables[2].Rows.Cast<System.Data.DataRow>().ToList();
+                var activityRows = ds.Tables[3].Rows.Cast<System.Data.DataRow>().ToList();
+                var fileRows = ds.Tables[4].Rows.Cast<System.Data.DataRow>().ToList();
+                var followUpRows = ds.Tables[5].Rows.Cast<System.Data.DataRow>().ToList();
+
+                var result = new List<object>();
+
+                foreach (var leadRow in leadRows)
                 {
-                    result.Add(new WonLeadResponse
+                    int leadId = Convert.ToInt32(leadRow["LeadId"]);
+
+                    // Parse LeadAttachmentsJson
+                    List<object> leadAttachments = new List<object>();
+                    if (leadRow["LeadAttachmentsJson"] != DBNull.Value)
                     {
-                        LeadId = Convert.ToInt32(row["LeadId"]),
-                        LeadNo = row["LeadNo"]?.ToString(),
-                        LeadTitle = row["LeadTitle"]?.ToString(),
-                        CompanyName = row["CompanyName"]?.ToString(),
-                        ExpectedValue = row["ExpectedValue"] == DBNull.Value ? null : Convert.ToDecimal(row["ExpectedValue"]),
-                        CreatedOn = Convert.ToDateTime(row["CreatedOn"]),
-                        AssignedToEmployeeId = row["AssignedToEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(row["AssignedToEmployeeId"]),
-                        AssignedToEmployee = row["AssignedToEmployee"]?.ToString(),
-                        LeadStatus = row["LeadStatus"]?.ToString(),
-                        IsConverted = Convert.ToBoolean(row["IsConverted"])
+                        var json = leadRow["LeadAttachmentsJson"].ToString();
+                        if (!string.IsNullOrEmpty(json))
+                        {
+                            var attachments = JsonConvert.DeserializeObject<List<dynamic>>(json);
+                            leadAttachments = attachments.Select(a => new
+                            {
+                                attachmentId = Convert.ToInt32(a.AttachmentId),
+                                fileName = a.FileName?.ToString(),
+                                fileType = a.FileType?.ToString(),
+                                fileSize = a.FileSize != null ? Convert.ToInt64(a.FileSize) : (long?)null,
+                                fileUrl = BuildFileUrl(a.FilePath?.ToString()),
+                                uploadedOn = Convert.ToDateTime(a.CreatedOn?.ToString())
+                            }).Cast<object>().ToList();
+                        }
+                    }
+
+                    var contacts = contactRows
+                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                        .Select(r => new
+                        {
+                            contactId = Convert.ToInt32(r["LeadContactId"]),
+                            contactPerson = r["ContactPerson"]?.ToString(),
+                            designation = r["DesignationName"] == DBNull.Value ? null : r["DesignationName"].ToString(),
+                            mobileNo = r["MobileNo"]?.ToString(),
+                            email = r["Email"] == DBNull.Value ? null : r["Email"].ToString()
+                        }).ToList();
+
+                    var requirements = requirementRows
+                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                        .Select(r => new
+                        {
+                            leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
+                            offeringId = Convert.ToInt32(r["OfferingId"]),
+                            offeringName = r["OfferingName"]?.ToString(),
+                            remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
+                            quantity = Convert.ToDecimal(r["Quantity"]),
+                            unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
+                        }).ToList();
+
+                    var activities = activityRows
+                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                        .Select(r => new
+                        {
+                            activityId = Convert.ToInt32(r["ActivityId"]),
+                            activityType = r["ActivityType"] == DBNull.Value ? null : r["ActivityType"].ToString(),
+                            activityDate = Convert.ToDateTime(r["ActivityDate"]),
+                            subject = r["Subject"]?.ToString(),
+                            outcome = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                            createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString(),
+                            activityStatus = r["ActivityStatus"] == DBNull.Value ? null : r["ActivityStatus"].ToString(),
+                            activityStatusColor = r["ActivityStatusColor"] == DBNull.Value ? null : r["ActivityStatusColor"].ToString()
+                        }).ToList();
+
+                    var files = fileRows
+                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                        .Select(r => new
+                        {
+                            attachmentId = Convert.ToInt32(r["AttachmentId"]),
+                            fileName = r["FileName"]?.ToString(),
+                            fileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
+                            fileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
+                            fileUrl = BuildFileUrl(r["FilePath"]?.ToString())
+                        }).ToList();
+
+                    var followUps = followUpRows
+                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                        .Select(r => new
+                        {
+                            followUpId = Convert.ToInt32(r["FollowUpId"]),
+                            activityId = r["ActivityId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["ActivityId"]),
+                            assignedEmployeeId = r["AssignedEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["AssignedEmployeeId"]),
+                            assignedTo = r["AssignedTo"]?.ToString(),
+                            followUpDate = Convert.ToDateTime(r["FollowUpDate"]),
+                            priority = Convert.ToInt32(r["Priority"]),
+                            remarks = r["Remarks"]?.ToString(),
+                            isCompleted = Convert.ToBoolean(r["IsCompleted"]),
+                            completedOn = r["CompletedOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(r["CompletedOn"]),
+                            followUpStatus = r["FollowUpStatus"]?.ToString(),
+                            followUpStatusColor = r["FollowUpStatusColor"]?.ToString(),
+                            createdOn = Convert.ToDateTime(r["CreatedOn"]),
+                            createdByName = r["CreatedByName"]?.ToString()
+                        }).ToList();
+
+                    result.Add(new
+                    {
+                        lead = new
+                        {
+                            leadId,
+                            leadNo = leadRow["LeadNo"]?.ToString(),
+                            leadStatus = new
+                            {
+                                statusId = leadRow["StatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["StatusId"]),
+                                statusName = leadRow["StatusName"]?.ToString()
+                            },
+                            expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
+                            leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
+                            attachments = leadAttachments.Any() ? leadAttachments : null,
+                            assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
+                            assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
+                            leadSource = leadRow["LeadSource"] == DBNull.Value ? null : leadRow["LeadSource"].ToString(),
+                            createdOn = Convert.ToDateTime(leadRow["CreatedOn"]),
+                            company = new
+                            {
+                                organizationId = Convert.ToInt32(leadRow["LeadOrganizationId"]),
+                                companyName = leadRow["CompanyName"]?.ToString(),
+                                address = leadRow["Address"] == DBNull.Value ? null : leadRow["Address"].ToString(),
+                                country = leadRow["CountryName"] == DBNull.Value ? null : leadRow["CountryName"].ToString(),
+                                state = leadRow["StateName"] == DBNull.Value ? null : leadRow["StateName"].ToString(),
+                                city = leadRow["CityName"] == DBNull.Value ? null : leadRow["CityName"].ToString(),
+                                pincode = leadRow["PinCode"] == DBNull.Value ? null : leadRow["PinCode"].ToString(),
+                                gstNo = leadRow["GstNo"] == DBNull.Value ? null : leadRow["GstNo"].ToString(),
+                                panNo = leadRow["PanNo"] == DBNull.Value ? null : leadRow["PanNo"].ToString()
+                            }
+                        },
+                        contacts,
+                        requirements,
+                        activities,
+                        files,
+                        followUps
                     });
                 }
 
@@ -84,17 +229,17 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-        #endregion
+        #endregion       
 
 
-        #region GET WON LEAD DETAILS (SINGLE - READ-ONLY)
+        #region GET WON LEAD DETAILS (SINGLE - Full Details like GetLeadFullDetails)
         public async Task<ApiResponse> GetWonLeadDetails(int leadId)
         {
             try
             {
                 var ds = await _database.ExecuteDataSetAsync(
                     "USP_CRM_OpportunityManagement",
-                    new SqlParameter("@Status", "GET_WON_LEAD_DETAILS"),
+                    new SqlParameter("@Status", "GET_WON_LEAD_FULL_DETAILS"),
                     new SqlParameter("@Ref_LeadId", leadId)
                 );
 
@@ -109,121 +254,131 @@ namespace CRMWebServices.Repository
 
                 var leadRow = ds.Tables[0].Rows[0];
 
-                // Build Lead Info
-                var leadInfo = new LeadInfo
+                // Parse LeadAttachmentsJson to List
+                List<object> leadAttachments = new List<object>();
+                if (leadRow["LeadAttachmentsJson"] != DBNull.Value)
                 {
-                    LeadId = Convert.ToInt32(leadRow["LeadId"]),
-                    LeadNo = leadRow["LeadNo"]?.ToString(),
-                    LeadTitle = leadRow["LeadTitle"]?.ToString(),
-                    ExpectedValue = leadRow["ExpectedValue"] == DBNull.Value ? null : Convert.ToDecimal(leadRow["ExpectedValue"]),
-                    LeadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
-                    CreatedOn = Convert.ToDateTime(leadRow["CreatedOn"]),
-                    AssignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
-                    AssignedToEmployee = leadRow["AssignedToEmployee"]?.ToString(),
-                    LeadStatus = leadRow["LeadStatus"]?.ToString(),
-                    LeadSource = leadRow["LeadSource"] == DBNull.Value ? null : leadRow["LeadSource"].ToString(),
-                    IsConverted = Convert.ToBoolean(leadRow["IsConverted"]),
-                    Organization = new LeadOrganizationInfo
+                    var json = leadRow["LeadAttachmentsJson"].ToString();
+                    if (!string.IsNullOrEmpty(json))
                     {
-                        LeadOrganizationId = Convert.ToInt32(leadRow["LeadOrganizationId"]),
-                        CompanyName = leadRow["CompanyName"]?.ToString(),
-                        Address = leadRow["Address"] == DBNull.Value ? null : leadRow["Address"].ToString(),
-                        CountryName = leadRow["CountryName"] == DBNull.Value ? null : leadRow["CountryName"].ToString(),
-                        StateName = leadRow["StateName"] == DBNull.Value ? null : leadRow["StateName"].ToString(),
-                        CityName = leadRow["CityName"] == DBNull.Value ? null : leadRow["CityName"].ToString(),
-                        PinCode = leadRow["PinCode"] == DBNull.Value ? null : leadRow["PinCode"].ToString(),
-                        GstNo = leadRow["GstNo"] == DBNull.Value ? null : leadRow["GstNo"].ToString(),
-                        PanNo = leadRow["PanNo"] == DBNull.Value ? null : leadRow["PanNo"].ToString()
+                        var attachments = JsonConvert.DeserializeObject<List<dynamic>>(json);
+                        leadAttachments = attachments.Select(a => new
+                        {
+                            attachmentId = Convert.ToInt32(a.AttachmentId),
+                            fileName = a.FileName?.ToString(),
+                            fileType = a.FileType?.ToString(),
+                            fileSize = a.FileSize != null ? Convert.ToInt64(a.FileSize) : (long?)null,
+                            fileUrl = BuildFileUrl(a.FilePath?.ToString()),
+                            uploadedOn = Convert.ToDateTime(a.CreatedOn?.ToString())
+                        }).Cast<object>().ToList();
+                    }
+                }
+
+                var lead = new
+                {
+                    leadId = Convert.ToInt32(leadRow["LeadId"]),
+                    leadNo = leadRow["LeadNo"]?.ToString(),
+                    leadStatus = new
+                    {
+                        statusId = leadRow["StatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["StatusId"]),
+                        statusName = leadRow["StatusName"]?.ToString()
+                    },
+                    expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
+                    leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
+                    attachments = leadAttachments.Any() ? leadAttachments : null,
+                    assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
+                    assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
+                    leadSource = leadRow["LeadSource"] == DBNull.Value ? null : leadRow["LeadSource"].ToString(),
+                    createdOn = Convert.ToDateTime(leadRow["CreatedOn"]),
+                    company = new
+                    {
+                        organizationId = Convert.ToInt32(leadRow["LeadOrganizationId"]),
+                        companyName = leadRow["CompanyName"]?.ToString(),
+                        address = leadRow["Address"] == DBNull.Value ? null : leadRow["Address"].ToString(),
+                        country = leadRow["CountryName"] == DBNull.Value ? null : leadRow["CountryName"].ToString(),
+                        state = leadRow["StateName"] == DBNull.Value ? null : leadRow["StateName"].ToString(),
+                        city = leadRow["CityName"] == DBNull.Value ? null : leadRow["CityName"].ToString(),
+                        pincode = leadRow["PinCode"] == DBNull.Value ? null : leadRow["PinCode"].ToString(),
+                        gstNo = leadRow["GstNo"] == DBNull.Value ? null : leadRow["GstNo"].ToString(),
+                        panNo = leadRow["PanNo"] == DBNull.Value ? null : leadRow["PanNo"].ToString()
                     }
                 };
 
                 // Contacts
-                var contacts = new List<LeadContactInfo>();
-                if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
+                var contacts = ds.Tables[1].Rows.Cast<System.Data.DataRow>().Select(r => new
                 {
-                    foreach (DataRow row in ds.Tables[1].Rows)
-                    {
-                        contacts.Add(new LeadContactInfo
-                        {
-                            LeadContactId = Convert.ToInt32(row["LeadContactId"]),
-                            ContactPerson = row["ContactPerson"]?.ToString(),
-                            DesignationName = row["DesignationName"] == DBNull.Value ? null : row["DesignationName"].ToString(),
-                            Mobile = row["Mobile"]?.ToString(),
-                            Email = row["Email"] == DBNull.Value ? null : row["Email"].ToString()
-                        });
-                    }
-                }
+                    contactId = Convert.ToInt32(r["LeadContactId"]),
+                    contactPerson = r["ContactPerson"]?.ToString(),
+                    designation = r["DesignationName"] == DBNull.Value ? null : r["DesignationName"].ToString(),
+                    mobileNo = r["MobileNo"]?.ToString(),
+                    email = r["Email"] == DBNull.Value ? null : r["Email"].ToString()
+                }).ToList();
 
                 // Requirements
-                var requirements = new List<LeadRequirementInfo>();
-                if (ds.Tables.Count > 2 && ds.Tables[2].Rows.Count > 0)
+                var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new
                 {
-                    foreach (DataRow row in ds.Tables[2].Rows)
-                    {
-                        requirements.Add(new LeadRequirementInfo
-                        {
-                            LeadRequirementId = Convert.ToInt32(row["LeadRequirementId"]),
-                            OfferingName = row["OfferingName"]?.ToString(),
-                            RequirementRemark = row["RequirementRemark"] == DBNull.Value ? null : row["RequirementRemark"].ToString(),
-                            Quantity = row["Quantity"] == DBNull.Value ? null : Convert.ToInt32(row["Quantity"]),
-                            Unit = row["Unit"] == DBNull.Value ? null : row["Unit"].ToString()
-                        });
-                    }
-                }
-
-                // Attachments
-                var attachments = new List<LeadAttachmentInfo>();
-                if (ds.Tables.Count > 3 && ds.Tables[3].Rows.Count > 0)
-                {
-                    foreach (DataRow row in ds.Tables[3].Rows)
-                    {
-                        attachments.Add(new LeadAttachmentInfo
-                        {
-                            AttachmentId = Convert.ToInt32(row["AttachmentId"]),
-                            FileName = row["FileName"]?.ToString(),
-                            FilePath = row["FilePath"]?.ToString(),
-                            FileType = row["FileType"] == DBNull.Value ? null : row["FileType"].ToString(),
-                            FileSize = row["FileSize"] == DBNull.Value ? null : Convert.ToInt64(row["FileSize"]),
-                            CreatedOn = Convert.ToDateTime(row["CreatedOn"])
-                        });
-                    }
-                }
+                    leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
+                    offeringId = Convert.ToInt32(r["OfferingId"]),
+                    offeringName = r["OfferingName"]?.ToString(),
+                    remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
+                    quantity = Convert.ToDecimal(r["Quantity"]),
+                    unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
+                }).ToList();
 
                 // Activities
-                var activities = new List<LeadActivityInfo>();
-                if (ds.Tables.Count > 4 && ds.Tables[4].Rows.Count > 0)
+                var activities = ds.Tables[3].Rows.Cast<System.Data.DataRow>().Select(r => new
                 {
-                    foreach (DataRow row in ds.Tables[4].Rows)
-                    {
-                        activities.Add(new LeadActivityInfo
-                        {
-                            ActivityId = Convert.ToInt32(row["ActivityId"]),
-                            ActivityType = row["ActivityType"]?.ToString(),
-                            ActivityDate = Convert.ToDateTime(row["ActivityDate"]),
-                            Subject = row["Subject"]?.ToString(),
-                            Description = row["Description"] == DBNull.Value ? null : row["Description"].ToString(),
-                            Outcome = row["Outcome"] == DBNull.Value ? null : row["Outcome"].ToString(),
-                            CreatedBy = row["CreatedBy"]?.ToString(),
-                            ActivityStatus = row["ActivityStatus"] == DBNull.Value ? null : row["ActivityStatus"].ToString(),
-                            ActivityStatusColor = row["ActivityStatusColor"] == DBNull.Value ? null : row["ActivityStatusColor"].ToString()
-                        });
-                    }
-                }
+                    activityId = Convert.ToInt32(r["ActivityId"]),
+                    activityType = r["ActivityType"] == DBNull.Value ? null : r["ActivityType"].ToString(),
+                    activityDate = Convert.ToDateTime(r["ActivityDate"]),
+                    subject = r["Subject"]?.ToString(),
+                    outcome = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                    createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString(),
+                    activityStatus = r["ActivityStatus"] == DBNull.Value ? null : r["ActivityStatus"].ToString(),
+                    activityStatusColor = r["ActivityStatusColor"] == DBNull.Value ? null : r["ActivityStatusColor"].ToString()
+                }).ToList();
 
-                var responseData = new WonLeadDetailResponse
+                // Files
+                var files = ds.Tables[4].Rows.Cast<System.Data.DataRow>().Select(r => new
                 {
-                    Lead = leadInfo,
-                    Contacts = contacts,
-                    Requirements = requirements,
-                    Attachments = attachments,
-                    Activities = activities
-                };
+                    attachmentId = Convert.ToInt32(r["AttachmentId"]),
+                    fileName = r["FileName"]?.ToString(),
+                    fileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
+                    fileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
+                    fileUrl = BuildFileUrl(r["FilePath"]?.ToString())
+                }).ToList();
+
+                // Follow-ups
+                var followUps = ds.Tables[5].Rows.Cast<System.Data.DataRow>().Select(r => new
+                {
+                    followUpId = Convert.ToInt32(r["FollowUpId"]),
+                    activityId = r["ActivityId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["ActivityId"]),
+                    assignedEmployeeId = r["AssignedEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["AssignedEmployeeId"]),
+                    assignedTo = r["AssignedTo"]?.ToString(),
+                    followUpDate = Convert.ToDateTime(r["FollowUpDate"]),
+                    priority = Convert.ToInt32(r["Priority"]),
+                    remarks = r["Remarks"]?.ToString(),
+                    isCompleted = Convert.ToBoolean(r["IsCompleted"]),
+                    completedOn = r["CompletedOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(r["CompletedOn"]),
+                    followUpStatus = r["FollowUpStatus"]?.ToString(),
+                    followUpStatusColor = r["FollowUpStatusColor"]?.ToString(),
+                    createdOn = Convert.ToDateTime(r["CreatedOn"]),
+                    createdByName = r["CreatedByName"]?.ToString()
+                }).ToList();
 
                 return new ApiResponse
                 {
                     Status = true,
                     Message = "Lead details fetched successfully.",
-                    Data = responseData
+                    Data = new
+                    {
+                        lead,
+                        contacts,
+                        requirements,
+                        activities,
+                        files,
+                        followUps
+                    }
                 };
             }
             catch (SqlException ex)
@@ -828,5 +983,26 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
+
+
+        public async Task<int?> GetAssignedEmployeeId(int opportunityId)
+        {
+            var parameters = new[]
+            {
+                new SqlParameter("@Status", "GET_ASSIGNED_EMPLOYEE"),
+                new SqlParameter("@Ref_OpportunityId", opportunityId)
+            };
+
+            DataTable dt = await _database.ExecuteDataTableAsync(
+                "USP_CRM_OpportunityManagement",
+                parameters);
+
+            if (dt.Rows.Count == 0)
+                return null;
+
+            return dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value
+                ? null
+                : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
+        }
     }
 }

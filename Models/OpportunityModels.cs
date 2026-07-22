@@ -39,6 +39,8 @@
             public int? FilterStageId { get; set; }
             public int? FilterOwnerId { get; set; }
             public int? FilterTypeId { get; set; }
+
+            public int? FilterAssignedToId { get; set; }   // NEW
         }
 
         // For UPDATE OPPORTUNITY

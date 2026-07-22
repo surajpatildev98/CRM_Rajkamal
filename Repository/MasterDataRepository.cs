@@ -190,5 +190,13 @@ namespace CRMWebServices.Repository
                 new SqlParameter("@Status", "GET_FOLLOWUP_STATUSES"));
             return MapToDropdown(dt);
         }
+
+        public async Task<List<DropdownItem>> GetStatusesForDashbord()
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_CRM_LeadManagement",
+                new SqlParameter("@Status", "GET_LEAD_STATUSES_FOR_DASHBOARD"));
+            return MapToDropdown(dt);
+        }
     }
 }

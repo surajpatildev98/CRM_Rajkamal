@@ -119,6 +119,8 @@
     public class FollowUpStatusUpdateRequest
     {
         public int FollowUpId { get; set; }
+
+        public int Ref_LeadId { get; set; }
         public int Ref_ActivityStatusId { get; set; }
         public DateTime? NewScheduledOn { get; set; }
         public string StatusRemark { get; set; }

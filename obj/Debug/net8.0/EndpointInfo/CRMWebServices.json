@@ -629,6 +629,18 @@
         }
       }
     },
+    "/api/master/dashboard-statuses": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Opportunity/wonleads": {
       "get": {
         "tags": [
@@ -751,6 +763,14 @@
           },
           {
             "name": "FilterTypeId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "FilterAssignedToId",
             "in": "query",
             "schema": {
               "type": "integer",
@@ -1030,6 +1050,10 @@
         "type": "object",
         "properties": {
           "followUpId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_LeadId": {
             "type": "integer",
             "format": "int32"
           },

@@ -1,4 +1,5 @@
 ﻿using CRMWebServices.Helpers;
+using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
 using CRMWebServices.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -15,17 +16,47 @@ namespace CRMWebServices.Controllers
     public class OpportunityController : ControllerBase
     {
         private readonly IOpportunityRepository _repository;
-
-        public OpportunityController(IOpportunityRepository repository)
+        private readonly ICRMAuthorizationService _authorization;
+        public OpportunityController(IOpportunityRepository repository, ICRMAuthorizationService authorization)
         {
             _repository = repository;
+            _authorization = authorization;
         }
 
-       
+
         // GET: api/opportunity/wonleads
         // - No leadId: Returns list of WON leads (conversion page)
         // - With leadId: Returns full READ-ONLY lead details
-       
+
+        //[HttpGet]
+        //[Route("wonleads")]
+        //public async Task<IActionResult> GetWonLeads([FromQuery] int? leadId, [FromQuery] string? searchText)
+        //{
+        //    try
+        //    {
+        //        if (leadId == null)
+        //        {
+        //            // No leadId -> return list of all WON leads
+        //            var response = await _repository.GetWonLeads(searchText);
+        //            return response.Status ? Ok(response) : BadRequest(response);
+        //        }
+        //        else
+        //        {
+        //            // leadId provided -> return full details (READ-ONLY)
+        //            var response = await _repository.GetWonLeadDetails(leadId.Value);
+        //            return response.Status ? Ok(response) : NotFound(response);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new ApiResponse
+        //        {
+        //            Status = false,
+        //            Message = $"Error: {ex.Message}"
+        //        });
+        //    }
+        //}
+
         [HttpGet]
         [Route("wonleads")]
         public async Task<IActionResult> GetWonLeads([FromQuery] int? leadId, [FromQuery] string? searchText)
@@ -34,31 +65,40 @@ namespace CRMWebServices.Controllers
             {
                 if (leadId == null)
                 {
-                    // No leadId -> return list of all WON leads
+                    // List of WON Leads
                     var response = await _repository.GetWonLeads(searchText);
                     return response.Status ? Ok(response) : BadRequest(response);
                 }
-                else
+
+                // Authorization for Details
+                if (!await _authorization.CanAccessLead(User, leadId.Value))
                 {
-                    // leadId provided -> return full details (READ-ONLY)
-                    var response = await _repository.GetWonLeadDetails(leadId.Value);
-                    return response.Status ? Ok(response) : NotFound(response);
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to view this lead."
+                        });
                 }
+
+                // Lead Details
+                var details = await _repository.GetWonLeadDetails(leadId.Value);
+
+                return details.Status ? Ok(details) : NotFound(details);
             }
             catch (Exception ex)
             {
                 return BadRequest(new ApiResponse
                 {
                     Status = false,
-                    Message = $"Error: {ex.Message}"
+                    Message = ex.Message
                 });
             }
         }
 
-       
         // POST: api/opportunity/convert
         // Converts WON lead to Opportunity
-       
+
         [HttpPost]
         [Route("convert")]
         public async Task<IActionResult> ConvertLead([FromBody] ConvertLeadRequest request)
@@ -66,8 +106,22 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Get EmployeeId from JWT token
-                var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+                //var response = await _repository.ConvertLeadToOpportunity(request);
+
+                if (!_authorization.CanCreateOpportunity(User, null))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to create this opportunity."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
 
                 var response = await _repository.ConvertLeadToOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
@@ -91,8 +145,20 @@ namespace CRMWebServices.Controllers
         {
             try
             {
-                var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+                if (!await _authorization.CanAccessOpportunity(User, request.Ref_OpportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to transfer this opportunity."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
 
                 var response = await _repository.TransferOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
@@ -112,7 +178,16 @@ namespace CRMWebServices.Controllers
         {
             try
             {
+                //var response = await _repository.GetOpportunityList(request);
+                //return response.Status ? Ok(response) : BadRequest(response);
+
+                if (!User.HasRole(RoleIds.Admin, RoleIds.Manager, RoleIds.Sales))
+                {
+                    request.FilterAssignedToId = User.EmployeeId();
+                }
+
                 var response = await _repository.GetOpportunityList(request);
+
                 return response.Status ? Ok(response) : BadRequest(response);
             }
             catch (Exception ex)
@@ -135,7 +210,20 @@ namespace CRMWebServices.Controllers
         {
             try
             {
+                //var response = await _repository.GetOpportunityDetails(opportunityId);
+                //return response.Status ? Ok(response) : NotFound(response);
+                if (!await _authorization.CanAccessOpportunity(User, opportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to view this opportunity."
+                        });
+                }
+
                 var response = await _repository.GetOpportunityDetails(opportunityId);
+
                 return response.Status ? Ok(response) : NotFound(response);
             }
             catch (Exception ex)
@@ -159,8 +247,20 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Get EmployeeId from JWT token
-                var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+                if (!await _authorization.CanAccessOpportunity(User, request.Ref_OpportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to update this opportunity."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
 
                 var response = await _repository.UpdateOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
@@ -185,9 +285,21 @@ namespace CRMWebServices.Controllers
         {
             try
             {
-                // Get EmployeeId from JWT token
-                var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+                //// Get EmployeeId from JWT token
+                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+                if (!await _authorization.CanAccessOpportunity(User, request.Ref_OpportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to delete this opportunity."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
 
                 var response = await _repository.DeleteOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);

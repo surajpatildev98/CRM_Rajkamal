@@ -8,6 +8,8 @@ namespace CRMWebServices.Repository
     {
         // Won Leads (List + Single)
         Task<ApiResponse> GetWonLeads(string searchText = null);
+
+        //Task<ApiResponse> GetWonLeads(string? searchText, int? assignedEmployeeId);
         Task<ApiResponse> GetWonLeadDetails(int leadId);
 
         // Convert Lead
@@ -25,5 +27,8 @@ namespace CRMWebServices.Repository
         Task<ApiResponse> GetOpportunityTypes();
         Task<ApiResponse> GetOpportunityStages();
         Task<ApiResponse> GetPriorities();
+
+        Task<int?> GetAssignedEmployeeId(int leadId);
+
     }
 }

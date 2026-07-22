@@ -17,6 +17,10 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> UpdateFollowUpStatus(FollowUpStatusUpdateRequest model);
 
         Task<ApiResponse> CloseLead(LeadCloseRequest model);
+            
+        Task<int?> GetAssignedEmployeeId(int leadId);
+
+     
 
     }
 }
