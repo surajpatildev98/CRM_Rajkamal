@@ -825,7 +825,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Status", "GET_LEAD_LIST_FULL"),
                     new SqlParameter("@SearchText", (object?)filter?.SearchText ?? DBNull.Value),
                     new SqlParameter("@FilterStatusId", (object?)filter?.FilterStatusId ?? DBNull.Value),
-                    new SqlParameter("@FilterAssignedToId", (object?)filter?.FilterAssignedToId ?? DBNull.Value)
+                    new SqlParameter("@FilterAssignedToId", (object?)filter?.FilterAssignedToId ?? DBNull.Value),
+                    new SqlParameter("@LoggedInEmployeeId",  (object?)filter?.LoggedInEmployeeId ?? DBNull.Value)
                 );
 
                 if (ds.Tables.Count == 0)
@@ -1044,6 +1045,25 @@ namespace CRMWebServices.Repository
             return dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value
                 ? null
                 : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
+        }
+
+        public async Task<LeadAccessInfo?> GetLeadAccessInfo(int leadId)
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_CRM_LeadManagement",
+                new SqlParameter("@Status", "GET_LEAD_ACCESS_INFO"),
+                new SqlParameter("@Ref_LeadId", leadId));
+
+            if (dt.Rows.Count == 0)
+                return null;
+
+            return new LeadAccessInfo
+            {
+                CreatedBy = Convert.ToInt32(dt.Rows[0]["CreatedBy"]),
+                AssignedEmployeeId = dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value
+                    ? null
+                    : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"])
+            };
         }
 
     }

@@ -1,0 +1,621 @@
+2026-07-23 11:13:10.797 +05:30 [INF] Starting CRM Web Services
+2026-07-23 11:13:11.169 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 11:13:11.426 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 11:13:11.429 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 11:13:11.638 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 11:13:11.641 +05:30 [INF] Hosting environment: Development
+2026-07-23 11:13:11.644 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 11:13:12.929 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 197.0681 ms
+2026-07-23 11:13:13.233 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 47.1934 ms
+2026-07-23 11:13:30.215 +05:30 [INF] HTTP GET /api/dashboard/kpi responded 401 in 2245.8732 ms
+2026-07-23 11:14:13.012 +05:30 [ERR] Unhandled exception on POST /api/auth/login
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - The wait operation timed out.)
+ ---> System.ComponentModel.Win32Exception (258): The wait operation timed out.
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlConnectionInternal connHandler, TimeoutTimer timeout, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, DbConnectionPoolGroupProviderInfo providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, IDbConnectionPool pool, Func`3 accessTokenCallback, SspiContextProvider sspiContextProvider)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionPoolGroupProviderInfo poolGroupProviderInfo, IDbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreatePooledConnection(DbConnection owningConnection, IDbConnectionPool pool, DbConnectionPoolKey poolKey, DbConnectionOptions options, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.ConnectionPool.WaitHandleDbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.SqlClient.ConnectionPool.WaitHandleDbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.SqlClient.ConnectionPool.WaitHandleDbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.SqlClient.ConnectionPool.WaitHandleDbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 taskCompletionSource, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open()
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   at CRMWebServices.Services.DatabaseService.<>c__DisplayClass2_1.<ExecuteDataTableAsync>b__0() in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CRMWebServices.Services.DatabaseService.ExecuteDataTableAsync(String storedProcedure, SqlParameter[] parameters) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at CRMWebServices.Repository.AuthRepository.GetEmployeeForLogin(String loginId) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Repository\AuthRepository.cs:line 19
+   at CRMWebServices.Controllers.AuthController.Login(LoginRequest request) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at CRMWebServices.Helpers.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Helpers\GlobalExceptionMiddleware.cs:line 22
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:258,State:0,Class:20
+2026-07-23 11:14:13.131 +05:30 [ERR] HTTP POST /api/auth/login responded 500 in 20563.1360 ms
+2026-07-23 11:14:31.635 +05:30 [INF] Starting CRM Web Services
+2026-07-23 11:14:31.886 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 11:14:32.055 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 11:14:32.058 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 11:14:32.211 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 11:14:32.213 +05:30 [INF] Hosting environment: Development
+2026-07-23 11:14:32.214 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 11:14:33.272 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 166.1141 ms
+2026-07-23 11:14:33.477 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 36.9281 ms
+2026-07-23 11:14:59.674 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1425.5726 ms
+2026-07-23 11:15:21.912 +05:30 [INF] HTTP GET /api/dashboard/kpi responded 200 in 207.6085 ms
+2026-07-23 11:15:39.427 +05:30 [INF] HTTP GET /api/dashboard/lead-funnel responded 200 in 39.1405 ms
+2026-07-23 11:15:56.828 +05:30 [INF] HTTP GET /api/dashboard/opportunity-pipeline responded 200 in 59.6525 ms
+2026-07-23 11:16:20.359 +05:30 [INF] HTTP GET /api/dashboard/pending-tasks responded 200 in 20.8031 ms
+2026-07-23 11:16:55.586 +05:30 [INF] HTTP GET /api/dashboard/pending-tasks responded 200 in 16.7956 ms
+2026-07-23 11:17:02.388 +05:30 [INF] HTTP GET /api/dashboard/pending-tasks responded 200 in 27.3451 ms
+2026-07-23 11:17:21.024 +05:30 [INF] HTTP GET /api/dashboard/recent-activity responded 200 in 18.6548 ms
+2026-07-23 11:17:32.626 +05:30 [INF] HTTP GET /api/dashboard/employee-performance responded 200 in 16.5150 ms
+2026-07-23 11:20:56.245 +05:30 [INF] HTTP GET /api/dashboard/employee-performance responded 200 in 21.1538 ms
+2026-07-23 11:29:29.525 +05:30 [INF] Starting CRM Web Services
+2026-07-23 11:29:29.772 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 11:29:29.925 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 11:29:29.927 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 11:29:30.089 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 11:29:30.091 +05:30 [INF] Hosting environment: Development
+2026-07-23 11:29:30.093 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 11:29:30.964 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 159.6629 ms
+2026-07-23 11:29:31.155 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 42.1144 ms
+2026-07-23 11:29:59.086 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1253.6633 ms
+2026-07-23 11:30:26.469 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 238.5595 ms
+2026-07-23 11:30:46.991 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 41.8150 ms
+2026-07-23 11:31:02.337 +05:30 [INF] HTTP GET /api/dashboard/employee-performance responded 200 in 29.0154 ms
+2026-07-23 11:34:52.741 +05:30 [INF] Starting CRM Web Services
+2026-07-23 11:34:52.975 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 11:34:53.130 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 11:34:53.131 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 11:34:53.283 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 11:34:53.285 +05:30 [INF] Hosting environment: Development
+2026-07-23 11:34:53.287 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 11:34:54.175 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 164.5230 ms
+2026-07-23 11:34:54.369 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 35.4292 ms
+2026-07-23 11:35:16.543 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1247.0830 ms
+2026-07-23 11:35:39.396 +05:30 [INF] HTTP GET /api/dashboard/Details responded 401 in 35.5561 ms
+2026-07-23 11:36:05.294 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 148.9409 ms
+2026-07-23 11:36:15.698 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 16.7310 ms
+2026-07-23 11:36:32.359 +05:30 [INF] HTTP GET /api/dashboard/employee-performance responded 403 in 10.0503 ms
+2026-07-23 11:36:41.064 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 9.6191 ms
+2026-07-23 11:37:20.514 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 18571.1999 ms
+2026-07-23 11:41:31.799 +05:30 [INF] Starting CRM Web Services
+2026-07-23 11:41:32.040 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 11:41:32.210 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 11:41:32.213 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 11:41:32.367 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 11:41:32.368 +05:30 [INF] Hosting environment: Development
+2026-07-23 11:41:32.370 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 11:41:33.376 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 166.3696 ms
+2026-07-23 11:41:33.578 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 35.1138 ms
+2026-07-23 11:41:57.575 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1172.0902 ms
+2026-07-23 11:43:05.782 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 43655.1997 ms
+2026-07-23 11:46:52.515 +05:30 [INF] Starting CRM Web Services
+2026-07-23 11:46:52.744 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 11:46:52.914 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 11:46:52.916 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 11:46:53.077 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 11:46:53.079 +05:30 [INF] Hosting environment: Development
+2026-07-23 11:46:53.081 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 11:46:54.061 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 150.4571 ms
+2026-07-23 11:46:54.256 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 36.3887 ms
+2026-07-23 11:47:20.977 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1217.3773 ms
+2026-07-23 11:48:10.167 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 4121.0067 ms
+2026-07-23 11:48:44.403 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 4076.1037 ms
+2026-07-23 11:49:21.679 +05:30 [INF] HTTP GET /api/dashboard/employee-performance responded 403 in 18.8474 ms
+2026-07-23 11:53:51.358 +05:30 [INF] Starting CRM Web Services
+2026-07-23 11:53:51.701 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 11:53:51.971 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 11:53:51.975 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 11:53:52.855 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 11:53:52.863 +05:30 [INF] Hosting environment: Development
+2026-07-23 11:53:52.867 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 11:53:53.802 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 201.5222 ms
+2026-07-23 11:53:54.060 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 42.2071 ms
+2026-07-23 11:54:57.094 +05:30 [INF] HTTP GET /api/dashboard/Details responded 401 in 2598.7292 ms
+2026-07-23 11:58:47.555 +05:30 [INF] HTTP GET /api/dashboard/employee-performance responded 401 in 7.1724 ms
+2026-07-23 12:33:51.267 +05:30 [INF] Starting CRM Web Services
+2026-07-23 12:33:51.555 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 12:33:51.748 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 12:33:51.750 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 12:33:51.976 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 12:33:51.979 +05:30 [INF] Hosting environment: Development
+2026-07-23 12:33:51.982 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 12:33:53.016 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 209.9184 ms
+2026-07-23 12:33:53.236 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 37.9594 ms
+2026-07-23 12:37:22.911 +05:30 [INF] Starting CRM Web Services
+2026-07-23 12:37:23.256 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 12:37:23.472 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 12:37:23.474 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 12:37:23.709 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 12:37:23.717 +05:30 [INF] Hosting environment: Development
+2026-07-23 12:37:23.719 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 12:37:24.751 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 200.4142 ms
+2026-07-23 12:37:24.990 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 53.0989 ms
+2026-07-23 12:39:36.744 +05:30 [INF] Starting CRM Web Services
+2026-07-23 12:39:37.033 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 12:39:37.228 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 12:39:37.230 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 12:39:37.455 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 12:39:37.465 +05:30 [INF] Hosting environment: Development
+2026-07-23 12:39:37.469 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 12:39:38.372 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 197.4104 ms
+2026-07-23 12:39:38.627 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 40.8881 ms
+2026-07-23 12:40:32.199 +05:30 [ERR] Unhandled exception on POST /api/auth/login
+System.InvalidOperationException: The ConnectionString property has not been initialized.
+   at Microsoft.Data.SqlClient.SqlConnection.PermissionDemand()
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.PermissionDemand(DbConnection outerConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open()
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   at CRMWebServices.Services.DatabaseService.<>c__DisplayClass2_1.<ExecuteDataTableAsync>b__0() in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CRMWebServices.Services.DatabaseService.ExecuteDataTableAsync(String storedProcedure, SqlParameter[] parameters) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at CRMWebServices.Repository.AuthRepository.GetEmployeeForLogin(String loginId) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Repository\AuthRepository.cs:line 19
+   at CRMWebServices.Controllers.AuthController.Login(LoginRequest request) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at CRMWebServices.Helpers.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Helpers\GlobalExceptionMiddleware.cs:line 22
+2026-07-23 12:40:32.317 +05:30 [ERR] HTTP POST /api/auth/login responded 500 in 30330.7787 ms
+2026-07-23 12:40:46.330 +05:30 [INF] Starting CRM Web Services
+2026-07-23 12:40:46.608 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 12:40:46.799 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 12:40:46.801 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 12:40:46.988 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 12:40:46.991 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-23 12:40:46.993 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 12:40:47.619 +05:30 [INF] HTTP GET /swagger/index.html responded 404 in 90.0825 ms
+2026-07-23 12:41:05.614 +05:30 [INF] HTTP GET /swagger/index.html responded 404 in 3.4227 ms
+2026-07-23 12:41:09.998 +05:30 [INF] HTTP GET /swagger/index.html responded 404 in 4.4819 ms
+2026-07-23 12:44:09.408 +05:30 [INF] Starting CRM Web Services
+2026-07-23 12:44:09.703 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 12:44:09.896 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 12:44:09.898 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 12:44:10.097 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 12:44:10.098 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-23 12:44:10.099 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 12:44:11.207 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 158.8052 ms
+2026-07-23 12:44:11.448 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 36.9165 ms
+2026-07-23 12:44:33.586 +05:30 [INF] HTTP POST /api/auth/login responded 400 in 1428.2591 ms
+2026-07-23 12:44:42.865 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 783.9298 ms
+2026-07-23 17:18:21.486 +05:30 [INF] Starting CRM Web Services
+2026-07-23 17:18:21.878 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 17:18:22.219 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 17:18:22.223 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 17:18:22.464 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 17:18:22.467 +05:30 [INF] Hosting environment: Development
+2026-07-23 17:18:22.469 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 17:18:23.539 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 242.8553 ms
+2026-07-23 17:18:23.778 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 30.4482 ms
+2026-07-23 17:18:57.706 +05:30 [ERR] Unhandled exception on POST /api/auth/login
+System.InvalidOperationException: The ConnectionString property has not been initialized.
+   at Microsoft.Data.SqlClient.SqlConnection.PermissionDemand()
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.PermissionDemand(DbConnection outerConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open()
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   at CRMWebServices.Services.DatabaseService.<>c__DisplayClass2_1.<ExecuteDataTableAsync>b__0() in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CRMWebServices.Services.DatabaseService.ExecuteDataTableAsync(String storedProcedure, SqlParameter[] parameters) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at CRMWebServices.Repository.AuthRepository.GetEmployeeForLogin(String loginId) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Repository\AuthRepository.cs:line 19
+   at CRMWebServices.Controllers.AuthController.Login(LoginRequest request) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at CRMWebServices.Helpers.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Helpers\GlobalExceptionMiddleware.cs:line 22
+2026-07-23 17:18:57.801 +05:30 [ERR] HTTP POST /api/auth/login responded 500 in 11652.9660 ms
+2026-07-23 17:19:42.051 +05:30 [INF] Starting CRM Web Services
+2026-07-23 17:19:42.340 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 17:19:42.508 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 17:19:42.511 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 17:19:42.692 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 17:19:42.696 +05:30 [INF] Hosting environment: Development
+2026-07-23 17:19:42.700 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 17:19:43.858 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 175.8597 ms
+2026-07-23 17:19:44.080 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 43.5881 ms
+2026-07-23 17:20:10.916 +05:30 [ERR] Unhandled exception on POST /api/auth/login
+System.InvalidOperationException: The ConnectionString property has not been initialized.
+   at Microsoft.Data.SqlClient.SqlConnection.PermissionDemand()
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.PermissionDemand(DbConnection outerConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open()
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   at CRMWebServices.Services.DatabaseService.<>c__DisplayClass2_1.<ExecuteDataTableAsync>b__0() in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CRMWebServices.Services.DatabaseService.ExecuteDataTableAsync(String storedProcedure, SqlParameter[] parameters) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at CRMWebServices.Repository.AuthRepository.GetEmployeeForLogin(String loginId) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Repository\AuthRepository.cs:line 19
+   at CRMWebServices.Controllers.AuthController.Login(LoginRequest request) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at CRMWebServices.Helpers.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Helpers\GlobalExceptionMiddleware.cs:line 22
+2026-07-23 17:20:10.978 +05:30 [ERR] HTTP POST /api/auth/login responded 500 in 11068.3577 ms
+2026-07-23 17:21:08.276 +05:30 [ERR] Unhandled exception on POST /api/auth/login
+System.InvalidOperationException: The ConnectionString property has not been initialized.
+   at Microsoft.Data.SqlClient.SqlConnection.PermissionDemand()
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.PermissionDemand(DbConnection outerConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open()
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   at CRMWebServices.Services.DatabaseService.<>c__DisplayClass2_1.<ExecuteDataTableAsync>b__0() in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CRMWebServices.Services.DatabaseService.ExecuteDataTableAsync(String storedProcedure, SqlParameter[] parameters) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at CRMWebServices.Repository.AuthRepository.GetEmployeeForLogin(String loginId) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Repository\AuthRepository.cs:line 19
+   at CRMWebServices.Controllers.AuthController.Login(LoginRequest request) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at CRMWebServices.Helpers.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Helpers\GlobalExceptionMiddleware.cs:line 22
+2026-07-23 17:21:08.297 +05:30 [ERR] HTTP POST /api/auth/login responded 500 in 6611.3635 ms
+2026-07-23 17:21:22.152 +05:30 [INF] Starting CRM Web Services
+2026-07-23 17:21:22.391 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 17:21:22.538 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 17:21:22.540 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 17:21:22.696 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 17:21:22.698 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-23 17:21:22.700 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 17:21:23.518 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 149.6864 ms
+2026-07-23 17:21:23.710 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 32.0999 ms
+2026-07-23 17:22:00.225 +05:30 [ERR] Unhandled exception on POST /api/auth/login
+Microsoft.Data.SqlClient.SqlException (0x80131904): A network-related or instance-specific error occurred while establishing a connection to SQL Server. The server was not found or was not accessible. Verify that the instance name is correct and that SQL Server is configured to allow remote connections. (provider: TCP Provider, error: 0 - The wait operation timed out.)
+ ---> System.ComponentModel.Win32Exception (258): The wait operation timed out.
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, SqlCommand command, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.Connect(ServerInfo serverInfo, SqlConnectionInternal connHandler, TimeoutTimer timeout, SqlConnectionString connectionOptions, Boolean withFailover)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.AttemptOneLogin(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, TimeoutTimer timeout, Boolean withFailover)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.LoginNoFailover(ServerInfo serverInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString connectionOptions, SqlCredential credential, TimeoutTimer timeout)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal.OpenLoginEnlist(TimeoutTimer timeout, SqlConnectionString connectionOptions, SqlCredential credential, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance)
+   at Microsoft.Data.SqlClient.Connection.SqlConnectionInternal..ctor(DbConnectionPoolIdentity identity, SqlConnectionString connectionOptions, SqlCredential credential, DbConnectionPoolGroupProviderInfo providerInfo, String newPassword, SecureString newSecurePassword, Boolean redirectedUserInstance, SqlConnectionString userConnectionOptions, SessionData reconnectSessionData, Boolean applyTransientFaultHandling, String accessToken, IDbConnectionPool pool, Func`3 accessTokenCallback, SspiContextProvider sspiContextProvider)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreateConnection(DbConnectionOptions options, DbConnectionPoolKey poolKey, DbConnectionPoolGroupProviderInfo poolGroupProviderInfo, IDbConnectionPool pool, DbConnection owningConnection, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.CreatePooledConnection(DbConnection owningConnection, IDbConnectionPool pool, DbConnectionPoolKey poolKey, DbConnectionOptions options, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.ConnectionPool.WaitHandleDbConnectionPool.CreateObject(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.SqlClient.ConnectionPool.WaitHandleDbConnectionPool.UserCreateRequest(DbConnection owningObject, DbConnectionOptions userOptions, DbConnectionInternal oldConnection)
+   at Microsoft.Data.SqlClient.ConnectionPool.WaitHandleDbConnectionPool.TryGetConnection(DbConnection owningObject, UInt32 waitForMultipleObjectsTimeout, Boolean allowCreate, Boolean onlyOneCheckConnection, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.SqlClient.ConnectionPool.WaitHandleDbConnectionPool.TryGetConnection(DbConnection owningObject, TaskCompletionSource`1 taskCompletionSource, DbConnectionOptions userOptions, DbConnectionInternal& connection)
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.TryGetConnection(DbConnection owningConnection, TaskCompletionSource`1 retry, DbConnectionOptions userOptions, DbConnectionInternal oldConnection, DbConnectionInternal& connection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open()
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   at CRMWebServices.Services.DatabaseService.<>c__DisplayClass2_1.<ExecuteDataTableAsync>b__0() in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CRMWebServices.Services.DatabaseService.ExecuteDataTableAsync(String storedProcedure, SqlParameter[] parameters) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at CRMWebServices.Repository.AuthRepository.GetEmployeeForLogin(String loginId) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Repository\AuthRepository.cs:line 19
+   at CRMWebServices.Controllers.AuthController.Login(LoginRequest request) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at CRMWebServices.Helpers.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Helpers\GlobalExceptionMiddleware.cs:line 22
+ClientConnectionId:00000000-0000-0000-0000-000000000000
+Error Number:258,State:0,Class:20
+2026-07-23 17:22:00.340 +05:30 [ERR] HTTP POST /api/auth/login responded 500 in 20749.7452 ms
+2026-07-23 17:22:54.012 +05:30 [INF] Starting CRM Web Services
+2026-07-23 17:22:54.190 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 17:22:54.281 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 17:22:54.284 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 17:22:54.422 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 17:22:54.424 +05:30 [INF] Hosting environment: Development
+2026-07-23 17:22:54.427 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 17:22:55.049 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 108.3560 ms
+2026-07-23 17:22:55.238 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 28.1068 ms
+2026-07-23 17:23:08.546 +05:30 [ERR] Unhandled exception on POST /api/auth/login
+System.InvalidOperationException: The ConnectionString property has not been initialized.
+   at Microsoft.Data.SqlClient.SqlConnection.PermissionDemand()
+   at Microsoft.Data.SqlClient.SqlConnectionFactory.PermissionDemand(DbConnection outerConnection)
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.ProviderBase.DbConnectionClosed.TryOpenConnection(DbConnection outerConnection, SqlConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpenInner(TaskCompletionSource`1 retry)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open()
+   at System.Data.Common.DbDataAdapter.FillInternal(DataSet dataset, DataTable[] datatables, Int32 startRecord, Int32 maxRecords, String srcTable, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable[] dataTables, Int32 startRecord, Int32 maxRecords, IDbCommand command, CommandBehavior behavior)
+   at System.Data.Common.DbDataAdapter.Fill(DataTable dataTable)
+   at CRMWebServices.Services.DatabaseService.<>c__DisplayClass2_1.<ExecuteDataTableAsync>b__0() in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at System.Threading.Tasks.Task`1.InnerInvoke()
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at CRMWebServices.Services.DatabaseService.ExecuteDataTableAsync(String storedProcedure, SqlParameter[] parameters) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Interfaces\IDatabaseService.cs:line 34
+   at CRMWebServices.Repository.AuthRepository.GetEmployeeForLogin(String loginId) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Repository\AuthRepository.cs:line 19
+   at CRMWebServices.Controllers.AuthController.Login(LoginRequest request) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Controllers\AuthController.cs:line 28
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ActionMethodExecutor.TaskOfIActionResultExecutor.Execute(ActionContext actionContext, IActionResultTypeMapper mapper, ObjectMethodExecutor executor, Object controller, Object[] arguments)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeActionMethodAsync>g__Awaited|12_0(ControllerActionInvoker invoker, ValueTask`1 actionResultValueTask)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeNextActionFilterAsync>g__Awaited|10_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Rethrow(ActionExecutedContextSealed context)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.Next(State& next, Scope& scope, Object& state, Boolean& isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ControllerActionInvoker.<InvokeInnerFilterAsync>g__Awaited|13_0(ControllerActionInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeFilterPipelineAsync>g__Awaited|20_0(ResourceInvoker invoker, Task lastTask, State next, Scope scope, Object state, Boolean isCompleted)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Mvc.Infrastructure.ResourceInvoker.<InvokeAsync>g__Awaited|17_0(ResourceInvoker invoker, Task task, IDisposable scope)
+   at Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+   at Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+   at Swashbuckle.AspNetCore.SwaggerUI.SwaggerUIMiddleware.Invoke(HttpContext httpContext)
+   at Swashbuckle.AspNetCore.Swagger.SwaggerMiddleware.Invoke(HttpContext httpContext, ISwaggerProvider swaggerProvider)
+   at CRMWebServices.Helpers.GlobalExceptionMiddleware.InvokeAsync(HttpContext context) in D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\Helpers\GlobalExceptionMiddleware.cs:line 22
+2026-07-23 17:23:08.613 +05:30 [ERR] HTTP POST /api/auth/login responded 500 in 283.8022 ms
+2026-07-23 17:23:43.124 +05:30 [INF] Starting CRM Web Services
+2026-07-23 17:23:43.387 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 17:23:43.583 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 17:23:43.585 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 17:23:43.749 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 17:23:43.751 +05:30 [INF] Hosting environment: Development
+2026-07-23 17:23:43.753 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 17:23:44.740 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 181.6739 ms
+2026-07-23 17:23:44.989 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 54.2253 ms
+2026-07-23 17:24:00.469 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1517.5128 ms
+2026-07-23 17:24:35.200 +05:30 [INF] HTTP GET /api/master/employees responded 200 in 5494.3757 ms
+2026-07-23 17:30:35.376 +05:30 [INF] Starting CRM Web Services
+2026-07-23 17:30:35.611 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 17:30:35.771 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 17:30:35.773 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 17:30:35.931 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 17:30:35.933 +05:30 [INF] Hosting environment: Development
+2026-07-23 17:30:35.934 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 17:30:37.263 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 199.9118 ms
+2026-07-23 17:30:37.520 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 53.9058 ms
+2026-07-23 17:30:55.322 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1286.5363 ms
+2026-07-23 17:31:17.378 +05:30 [INF] HTTP GET /api/master/employees responded 200 in 2773.2767 ms
+2026-07-23 17:31:59.423 +05:30 [INF] Starting CRM Web Services
+2026-07-23 17:31:59.680 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 17:31:59.861 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 17:31:59.864 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 17:32:00.038 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 17:32:00.040 +05:30 [INF] Hosting environment: Development
+2026-07-23 17:32:00.042 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 17:32:00.975 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 170.9235 ms
+2026-07-23 17:32:01.188 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 32.9056 ms
+2026-07-23 17:32:19.129 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1351.2994 ms
+2026-07-23 17:32:39.822 +05:30 [INF] HTTP GET /api/master/employees responded 200 in 114.2857 ms
+2026-07-23 17:33:07.187 +05:30 [INF] HTTP GET /api/master/employees responded 200 in 138.0689 ms
+2026-07-23 17:38:44.166 +05:30 [INF] Starting CRM Web Services
+2026-07-23 17:38:44.436 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 17:38:44.648 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 17:38:44.651 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 17:38:44.839 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 17:38:44.842 +05:30 [INF] Hosting environment: Development
+2026-07-23 17:38:44.845 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 17:38:45.757 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 164.1575 ms
+2026-07-23 17:38:45.966 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 32.3623 ms
+2026-07-23 17:39:04.583 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1291.9492 ms
+2026-07-23 17:39:23.594 +05:30 [INF] HTTP GET /api/master/employees responded 200 in 247.5754 ms
+2026-07-23 19:17:08.908 +05:30 [INF] Starting CRM Web Services
+2026-07-23 19:17:09.233 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 19:17:09.425 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 19:17:09.428 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 19:17:09.617 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 19:17:09.619 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-23 19:17:09.621 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 19:17:10.839 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 171.2851 ms
+2026-07-23 19:17:11.074 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 43.7656 ms
+2026-07-23 19:17:31.100 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1583.7922 ms
+2026-07-23 19:17:53.283 +05:30 [INF] HTTP GET /api/master/employees responded 200 in 184.6074 ms
+2026-07-23 19:28:59.072 +05:30 [INF] Starting CRM Web Services
+2026-07-23 19:28:59.385 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 19:28:59.561 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 19:28:59.563 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 19:28:59.774 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 19:28:59.778 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-23 19:28:59.781 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 19:29:00.864 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 192.4697 ms
+2026-07-23 19:29:01.097 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 39.6598 ms
+2026-07-23 19:29:26.251 +05:30 [INF] HTTP POST //CRMWebServices_Publish_Dev/api/auth/login responded 404 in 180.3334 ms
+2026-07-23 19:29:38.125 +05:30 [INF] HTTP POST /CRMWebServices_Publish_Dev/api/auth/login responded 404 in 3.6423 ms
+2026-07-23 19:29:53.420 +05:30 [INF] HTTP POST //api/auth/login responded 404 in 5.0885 ms
+2026-07-23 19:30:53.975 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1442.5320 ms
+2026-07-23 19:31:30.923 +05:30 [INF] HTTP POST /api/lead/register responded 400 in 18568.0788 ms
+2026-07-23 19:31:50.599 +05:30 [INF] HTTP POST /api/lead/register responded 400 in 4309.9162 ms
+2026-07-23 19:32:26.699 +05:30 [INF] HTTP POST /api/lead/register responded 400 in 84.3973 ms
+2026-07-23 19:32:36.231 +05:30 [INF] HTTP POST /api/lead/register responded 400 in 1982.3155 ms
+2026-07-23 19:32:55.728 +05:30 [INF] HTTP POST /api/lead/register responded 400 in 5208.1355 ms
+2026-07-23 19:33:18.288 +05:30 [INF] HTTP POST /api/lead/register responded 400 in 2136.7209 ms
+2026-07-23 19:34:04.626 +05:30 [INF] HTTP POST /api/lead/register responded 200 in 1757.8384 ms
+2026-07-23 19:36:10.408 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 491.0765 ms
+2026-07-23 19:36:46.086 +05:30 [INF] HTTP POST /api/lead/CreateActivity responded 403 in 50.9511 ms
+2026-07-23 19:37:01.322 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 81.2936 ms
+2026-07-23 19:38:11.157 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 22620.8979 ms
+2026-07-23 19:38:13.157 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 6.0885 ms
+2026-07-23 19:38:13.468 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 41.0043 ms
+2026-07-23 19:41:09.476 +05:30 [INF] Starting CRM Web Services
+2026-07-23 19:41:09.843 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 19:41:10.129 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 19:41:10.136 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 19:41:10.405 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 19:41:10.409 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-23 19:41:10.412 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 19:41:11.458 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 217.9978 ms
+2026-07-23 19:41:11.747 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 57.1792 ms
+2026-07-23 19:42:06.934 +05:30 [INF] Starting CRM Web Services
+2026-07-23 19:42:07.380 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 19:42:07.644 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 19:42:07.647 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 19:42:07.944 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 19:42:07.947 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-23 19:42:07.950 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 19:42:08.888 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 251.1189 ms
+2026-07-23 19:42:09.146 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 51.1438 ms
+2026-07-23 19:42:18.813 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1615.7550 ms
+2026-07-23 19:42:41.413 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 16186.0591 ms
+2026-07-23 19:42:57.682 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 2683.1294 ms
+2026-07-23 19:45:38.504 +05:30 [INF] Starting CRM Web Services
+2026-07-23 19:45:38.837 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 19:45:39.063 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 19:45:39.066 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 19:45:39.277 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 19:45:39.292 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-23 19:45:39.303 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 19:45:40.350 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 167.9324 ms
+2026-07-23 19:45:40.608 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 49.7142 ms
+2026-07-23 19:45:49.680 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1897.1838 ms
+2026-07-23 19:46:09.282 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 10486.3965 ms
+2026-07-23 19:46:35.154 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 16970.0141 ms
+2026-07-23 19:47:01.357 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 12975.6259 ms
+2026-07-23 19:47:34.745 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 25473.2355 ms
+2026-07-23 19:48:37.866 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 302.6286 ms
+2026-07-23 19:48:47.759 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 2051.0354 ms
+2026-07-23 19:48:58.001 +05:30 [INF] HTTP GET /api/lead/Details responded 403 in 3884.1943 ms
+2026-07-23 19:49:37.411 +05:30 [INF] HTTP GET /api/lead/Details responded 403 in 4579.9415 ms
+2026-07-23 19:49:48.632 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 4222.7599 ms
+2026-07-23 19:55:10.809 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 293.8027 ms
+2026-07-23 19:55:18.719 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 2090.9487 ms
+2026-07-23 19:56:40.085 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 292.2226 ms
+2026-07-23 19:56:48.389 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 1718.9346 ms
+2026-07-23 19:57:46.882 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 283.6905 ms
+2026-07-23 19:57:54.634 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 1786.1085 ms
+2026-07-23 19:58:06.985 +05:30 [INF] HTTP GET /api/lead/Details responded 403 in 6466.5631 ms
+2026-07-23 19:58:19.555 +05:30 [INF] HTTP GET /api/lead/Details responded 403 in 2457.5610 ms
+2026-07-23 20:08:02.718 +05:30 [INF] Starting CRM Web Services
+2026-07-23 20:08:03.099 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-23 20:08:03.348 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-23 20:08:03.352 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-23 20:08:03.657 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-23 20:08:03.662 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-23 20:08:03.665 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-23 20:08:04.617 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 183.6029 ms
+2026-07-23 20:08:04.875 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 42.3429 ms
+2026-07-23 20:08:34.518 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1771.4441 ms
+2026-07-23 20:09:14.327 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 30369.5649 ms
+2026-07-23 20:09:32.081 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 308.0544 ms
+2026-07-23 20:10:11.560 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 34551.3102 ms
+2026-07-23 20:13:29.273 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 5109.8129 ms
+2026-07-23 20:14:03.553 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 309.7482 ms
+2026-07-23 20:14:14.219 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 3710.8450 ms
+2026-07-23 20:14:26.817 +05:30 [INF] HTTP GET /api/lead/Details responded 403 in 1870.1952 ms
+2026-07-23 20:16:41.930 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 11182.8370 ms

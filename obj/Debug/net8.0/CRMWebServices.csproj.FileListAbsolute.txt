@@ -1,5 +1,7 @@
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\appsettings.Development.json
+D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\appsettings.InternalNetwork.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\appsettings.json
+D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\appsettings.OutsideNetwork.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\dotnet-tools.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\CRMWebServices.staticwebassets.endpoints.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Debug\net8.0\CRMWebServices.exe

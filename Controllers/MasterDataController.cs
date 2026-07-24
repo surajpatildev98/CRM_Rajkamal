@@ -73,9 +73,17 @@ namespace CRMWebServices.Controllers
         public async Task<IActionResult> LeadSources()
             => Ok(new ApiResponse { Status = true, Data = await _repo.GetLeadSources() });
 
+        //[HttpGet("employees")]
+        //public async Task<IActionResult> Employees()
+        //   => Ok(new ApiResponse { Status = true, Data = await _repo.GetEmployeesForAssignment() });
+
         [HttpGet("employees")]
         public async Task<IActionResult> Employees()
-           => Ok(new ApiResponse { Status = true, Data = await _repo.GetEmployeesForAssignment() });
+        {
+            var employeeId = User.EmployeeId();
+
+            return Ok(new ApiResponse { Status = true,Data = await _repo.GetEmployeesForAssignment(employeeId) });
+        }
 
         [HttpGet("offerings")]
         public async Task<IActionResult> Offerings()

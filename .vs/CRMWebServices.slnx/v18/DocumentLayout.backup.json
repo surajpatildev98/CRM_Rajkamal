@@ -7,14 +7,6 @@
       "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:controllers\\opportunitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\interfaces\\iopportunityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:interfaces\\iopportunityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\repository\\opportunityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:repository\\opportunityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\interfaces\\icrmauthorizationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:interfaces\\icrmauthorizationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -23,12 +15,20 @@
       "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:repository\\authorizationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\interfaces\\ileadrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:interfaces\\ileadrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\repository\\opportunityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:repository\\opportunityrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\helpers\\rolecodes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:helpers\\rolecodes.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\models\\opportunitymodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\opportunitymodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:properties\\launchsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,36 +38,8 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 7,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "ICRMAuthorizationService.cs",
-              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\ICRMAuthorizationService.cs",
-              "RelativeDocumentMoniker": "Interfaces\\ICRMAuthorizationService.cs",
-              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\ICRMAuthorizationService.cs",
-              "RelativeToolTip": "Interfaces\\ICRMAuthorizationService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-22T11:28:46.23Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AuthorizationService.cs",
-              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Repository\\AuthorizationService.cs",
-              "RelativeDocumentMoniker": "Repository\\AuthorizationService.cs",
-              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Repository\\AuthorizationService.cs",
-              "RelativeToolTip": "Repository\\AuthorizationService.cs",
-              "ViewState": "AgIAABgAAAAAAAAAAAAYwB8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-22T14:52:32.411Z",
-              "IsPinned": true,
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -86,67 +58,93 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "launchSettings.json",
+              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Properties\\launchSettings.json",
+              "RelativeDocumentMoniker": "Properties\\launchSettings.json",
+              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Properties\\launchSettings.json",
+              "RelativeToolTip": "Properties\\launchSettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-07-24T04:59:37.276Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAGMAAAAAAAAAAAAAAHcAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-24T04:58:52.986Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "OpportunityModels.cs",
+              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Models\\OpportunityModels.cs",
+              "RelativeDocumentMoniker": "Models\\OpportunityModels.cs",
+              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Models\\OpportunityModels.cs",
+              "RelativeToolTip": "Models\\OpportunityModels.cs",
+              "ViewState": "AgIAAKUAAAAAAAAAAAA8wLkAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-24T04:54:40.65Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "OpportunityController.cs",
               "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Controllers\\OpportunityController.cs",
               "RelativeDocumentMoniker": "Controllers\\OpportunityController.cs",
               "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Controllers\\OpportunityController.cs",
               "RelativeToolTip": "Controllers\\OpportunityController.cs",
-              "ViewState": "AgIAADcAAAAAAAAAAAAkwEcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAgwJIAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-22T14:47:45.669Z",
+              "WhenOpened": "2026-07-24T04:38:07.897Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "OpportunityRepository.cs",
               "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Repository\\OpportunityRepository.cs",
               "RelativeDocumentMoniker": "Repository\\OpportunityRepository.cs",
               "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Repository\\OpportunityRepository.cs",
               "RelativeToolTip": "Repository\\OpportunityRepository.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAYwDwAAAAqAAAAAAAAAA==",
+              "ViewState": "AgIAAIwBAAAAAAAAAAAgwJYBAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-22T15:10:46.249Z",
+              "WhenOpened": "2026-07-24T04:38:00.693Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AuthorizationService.cs",
+              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Repository\\AuthorizationService.cs",
+              "RelativeDocumentMoniker": "Repository\\AuthorizationService.cs",
+              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Repository\\AuthorizationService.cs",
+              "RelativeToolTip": "Repository\\AuthorizationService.cs",
+              "ViewState": "AgIAAEoAAAAAAAAAAAAQwGwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-07-23T12:19:31.31Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "IOpportunityRepository.cs",
-              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\IOpportunityRepository.cs",
-              "RelativeDocumentMoniker": "Interfaces\\IOpportunityRepository.cs",
-              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\IOpportunityRepository.cs",
-              "RelativeToolTip": "Interfaces\\IOpportunityRepository.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAowCEAAAABAAAAAAAAAA==",
+              "Title": "ICRMAuthorizationService.cs",
+              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\ICRMAuthorizationService.cs",
+              "RelativeDocumentMoniker": "Interfaces\\ICRMAuthorizationService.cs",
+              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\ICRMAuthorizationService.cs",
+              "RelativeToolTip": "Interfaces\\ICRMAuthorizationService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-22T15:05:59.523Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "RoleCodes.cs",
-              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Helpers\\RoleCodes.cs",
-              "RelativeDocumentMoniker": "Helpers\\RoleCodes.cs",
-              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Helpers\\RoleCodes.cs",
-              "RelativeToolTip": "Helpers\\RoleCodes.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-22T13:39:07.897Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "ILeadRepository.cs",
-              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\ILeadRepository.cs",
-              "RelativeDocumentMoniker": "Interfaces\\ILeadRepository.cs",
-              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\ILeadRepository.cs",
-              "RelativeToolTip": "Interfaces\\ILeadRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-07-22T11:36:39.11Z",
+              "WhenOpened": "2026-07-23T12:19:18.444Z",
               "EditorCaption": ""
             }
           ]

@@ -20,7 +20,9 @@ namespace CRMWebServices.Interfaces
             
         Task<int?> GetAssignedEmployeeId(int leadId);
 
-     
+        Task<LeadAccessInfo?> GetLeadAccessInfo(int leadId);
+
+
 
     }
 }

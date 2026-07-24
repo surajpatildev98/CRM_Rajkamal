@@ -22,7 +22,6 @@ namespace CRMWebServices.Controllers
      
         [HttpPost]
         [Route("Register")]
-
         public async Task<IActionResult> Register([FromBody] LeadRegisterRequest request)
         {
             try
@@ -64,7 +63,7 @@ namespace CRMWebServices.Controllers
 
                 //var response = await _repository.TransferLead(request);
 
-                if (!await _authorization.CanAccessLead(User, request.Ref_LeadId))
+                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -95,7 +94,7 @@ namespace CRMWebServices.Controllers
 
                 //var response = await _repository.UpdateLeadStatus(request);
 
-                if (!await _authorization.CanAccessLead(User, request.Ref_LeadId))
+                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -128,7 +127,7 @@ namespace CRMWebServices.Controllers
 
                 //var response = await _repository.CreateActivity(request);
 
-                if (!await _authorization.CanAccessLead(User, request.Ref_LeadId))
+                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -158,7 +157,7 @@ namespace CRMWebServices.Controllers
                 //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
 
                 //var response = await _repository.CreateFollowUp(request);
-                if (!await _authorization.CanAccessLead(User, request.Ref_LeadId))
+                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -188,7 +187,7 @@ namespace CRMWebServices.Controllers
                 //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
                 //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
 
-                if (!await _authorization.CanAccessLead(User, request.Ref_LeadId))
+                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -219,7 +218,7 @@ namespace CRMWebServices.Controllers
                 //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
 
                 //var response = await _repository.CloseLead(request);
-                if (!await _authorization.CanAccessLead(User, request.Ref_LeadId))
+                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -267,9 +266,10 @@ namespace CRMWebServices.Controllers
                 if (leadId == null)
                 {
                     // Non-admin users should only see their own leads
-                    if (!User.HasRole(RoleIds.Admin, RoleIds.Manager, RoleIds.Sales))
+                    if (!User.HasRole(RoleIds.Admin, RoleIds.Manager))
                     {
-                        filter.FilterAssignedToId = User.EmployeeId();
+                        //filter.FilterAssignedToId = User.EmployeeId();
+                        filter.LoggedInEmployeeId = User.EmployeeId();
                     }
 
                     var listResponse = await _repository.GetLeadList(filter);

@@ -20,7 +20,8 @@ namespace CRMWebServices.Interfaces
         Task<List<DropdownItem>> GetCitiesByState(int stateId);
         Task<List<DropdownItem>> GetLeadSources();
 
-        Task<List<DropdownItem>> GetEmployeesForAssignment();
+        //Task<List<DropdownItem>> GetEmployeesForAssignment();
+        Task<List<DropdownItem>> GetEmployeesForAssignment(int loggedInEmployeeId);
 
         Task<List<DropdownItem>> GetOfferings();
         Task<List<DropdownItem>> GetUnits();

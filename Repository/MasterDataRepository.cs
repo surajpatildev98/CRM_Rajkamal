@@ -143,11 +143,21 @@ namespace CRMWebServices.Repository
             return MapToDropdown(dt);
         }
 
-        public async Task<List<DropdownItem>> GetEmployeesForAssignment()
+        //public async Task<List<DropdownItem>> GetEmployeesForAssignment()
+        //{
+        //    var dt = await _database.ExecuteDataTableAsync(
+        //        "USP_ORG_EmployeeManagement",
+        //        new SqlParameter("@Status", "GET_EMPLOYEES_FOR_ASSIGNMENT"));
+        //    return MapToDropdown(dt);
+        //}
+
+        public async Task<List<DropdownItem>> GetEmployeesForAssignment(int loggedInEmployeeId)
         {
             var dt = await _database.ExecuteDataTableAsync(
                 "USP_ORG_EmployeeManagement",
-                new SqlParameter("@Status", "GET_EMPLOYEES_FOR_ASSIGNMENT"));
+                new SqlParameter("@Status", "GET_EMPLOYEES_FOR_ASSIGNMENT"),
+                new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId));
+
             return MapToDropdown(dt);
         }
 

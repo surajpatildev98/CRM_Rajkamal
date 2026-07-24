@@ -113,6 +113,8 @@
         public string? SearchText { get; set; }
         public int? FilterStatusId { get; set; }
         public int? FilterAssignedToId { get; set; }
+
+        public int? LoggedInEmployeeId { get; set; }
     }
 
 
@@ -135,7 +137,13 @@
         public string ClosureRemark { get; set; }
         public int? CreatedBy { get; set; }
     }
-   
+
+
+    public class LeadAccessInfo
+    {
+        public int CreatedBy { get; set; }
+        public int? AssignedEmployeeId { get; set; }
+    }
 
 
 }

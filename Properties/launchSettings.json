@@ -9,6 +9,29 @@
     }
   },
   "profiles": {
+
+    "Internal Network": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7022;http://localhost:5163",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "InternalNetwork"
+      }
+    },
+
+    "Outside Network": {
+      "commandName": "Project",
+      "dotnetRunMessages": true,
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7022;http://localhost:5163",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "OutsideNetwork"
+      }
+    },
+
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,

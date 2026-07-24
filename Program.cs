@@ -73,6 +73,7 @@ builder.Services.AddScoped<IMasterDataRepository, MasterDataRepository>();
 builder.Services.AddScoped<ILeadRepository, LeadRepository>();
 builder.Services.AddScoped<IOpportunityRepository, OpportunityRepository>();
 builder.Services.AddScoped<ICRMAuthorizationService, AuthorizationService>();
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
 builder.Services.AddScoped<EmployeeRepository>();
 
 builder.Services.AddSingleton<JwtHelper>();
@@ -114,12 +115,17 @@ app.UseSerilogRequestLogging();
 // Global exception handler — MUST be one of the first middlewares
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
+//{
+//    app.UseSwagger();
+//    app.UseSwaggerUI();
+//}
+
+if (app.Environment.IsDevelopment() || app.Environment.EnvironmentName == "OutsideNetwork" || app.Environment.EnvironmentName == "InternalNetwork")
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
 app.UseHttpsRedirection();
 
 app.UseStaticFiles(); // serves wwwroot as usual (if you use it elsewhere)

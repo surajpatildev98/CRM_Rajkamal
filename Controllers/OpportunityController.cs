@@ -111,13 +111,23 @@ namespace CRMWebServices.Controllers
 
                 //var response = await _repository.ConvertLeadToOpportunity(request);
 
-                if (!_authorization.CanCreateOpportunity(User, null))
+                //if (!_authorization.CanCreateOpportunity(User, null))
+                //{
+                //    return StatusCode(StatusCodes.Status403Forbidden,
+                //        new ApiResponse
+                //        {
+                //            Status = false,
+                //            Message = "You are not authorized to create this opportunity."
+                //        });
+                //}
+
+                if (!await _authorization.CanConvertOpportunity(User, request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
                         new ApiResponse
                         {
                             Status = false,
-                            Message = "You are not authorized to create this opportunity."
+                            Message = "Only the Lead owner, Manager or Administrator can convert this Lead."
                         });
                 }
 
@@ -181,12 +191,35 @@ namespace CRMWebServices.Controllers
                 //var response = await _repository.GetOpportunityList(request);
                 //return response.Status ? Ok(response) : BadRequest(response);
 
-                if (!User.HasRole(RoleIds.Admin, RoleIds.Manager, RoleIds.Sales))
+                //if (!User.HasRole(RoleIds.Admin, RoleIds.Manager, RoleIds.Sales))
+                //{
+                //    request.FilterAssignedToId = User.EmployeeId();
+                //}
+
+                //if (!User.HasRole(RoleIds.Admin, RoleIds.Manager))
+                //{
+                //    request.FilterOwnerId = User.EmployeeId();
+                //}
+
+                //var response = await _repository.GetOpportunityList(request);
+
+                //return response.Status ? Ok(response) : BadRequest(response);
+
+                if (!User.HasRole(RoleIds.Admin, RoleIds.Manager))
                 {
-                    request.FilterAssignedToId = User.EmployeeId();
+                    request.FilterOwnerId = User.EmployeeId();
                 }
 
                 var response = await _repository.GetOpportunityList(request);
+
+                // Change the message for normal users when no opportunities are found
+                if (response.Status &&
+                    !User.HasRole(RoleIds.Admin, RoleIds.Manager) &&
+                    response.Data is List<OpportunityListResponse> list &&
+                    list.Count == 0)
+                {
+                    response.Message = "No opportunities assigned to you.";
+                }
 
                 return response.Status ? Ok(response) : BadRequest(response);
             }
