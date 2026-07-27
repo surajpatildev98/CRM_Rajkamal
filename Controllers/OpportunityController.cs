@@ -1,4 +1,416 @@
-﻿using CRMWebServices.Helpers;
+﻿//using CRMWebServices.Helpers;
+//using CRMWebServices.Interfaces;
+//using CRMWebServices.Models;
+//using CRMWebServices.Repository;
+//using Microsoft.AspNetCore.Authorization;
+//using Microsoft.AspNetCore.Mvc;
+//using System;
+//using System.Threading.Tasks;
+//using static CRMWebServices.Models.OpportunityModels;
+
+//namespace CRMWebServices.Controllers
+//{
+//    [ApiController]
+//    [Route("api/[controller]")]
+//    [Authorize]
+//    public class OpportunityController : ControllerBase
+//    {
+//        private readonly IOpportunityRepository _repository;
+//        private readonly ICRMAuthorizationService _authorization;
+//        public OpportunityController(IOpportunityRepository repository, ICRMAuthorizationService authorization)
+//        {
+//            _repository = repository;
+//            _authorization = authorization;
+//        }
+
+
+//        // GET: api/opportunity/wonleads
+//        // - No leadId: Returns list of WON leads (conversion page)
+//        // - With leadId: Returns full READ-ONLY lead details
+
+//        //[HttpGet]
+//        //[Route("wonleads")]
+//        //public async Task<IActionResult> GetWonLeads([FromQuery] int? leadId, [FromQuery] string? searchText)
+//        //{
+//        //    try
+//        //    {
+//        //        if (leadId == null)
+//        //        {
+//        //            // No leadId -> return list of all WON leads
+//        //            var response = await _repository.GetWonLeads(searchText);
+//        //            return response.Status ? Ok(response) : BadRequest(response);
+//        //        }
+//        //        else
+//        //        {
+//        //            // leadId provided -> return full details (READ-ONLY)
+//        //            var response = await _repository.GetWonLeadDetails(leadId.Value);
+//        //            return response.Status ? Ok(response) : NotFound(response);
+//        //        }
+//        //    }
+//        //    catch (Exception ex)
+//        //    {
+//        //        return BadRequest(new ApiResponse
+//        //        {
+//        //            Status = false,
+//        //            Message = $"Error: {ex.Message}"
+//        //        });
+//        //    }
+//        //}
+
+//        [HttpGet]
+//        [Route("wonleads")]
+//        public async Task<IActionResult> GetWonLeads([FromQuery] int? leadId, [FromQuery] string? searchText)
+//        {
+//            try
+//            {
+//                if (leadId == null)
+//                {
+//                    // List of WON Leads
+//                    var response = await _repository.GetWonLeads(searchText);
+//                    return response.Status ? Ok(response) : BadRequest(response);
+//                }
+
+//                // Authorization for Details
+//                if (!await _authorization.CanAccessLead(User, leadId.Value))
+//                {
+//                    return StatusCode(StatusCodes.Status403Forbidden,
+//                        new ApiResponse
+//                        {
+//                            Status = false,
+//                            Message = "You are not authorized to view this lead."
+//                        });
+//                }
+
+//                // Lead Details
+//                var details = await _repository.GetWonLeadDetails(leadId.Value);
+
+//                return details.Status ? Ok(details) : NotFound(details);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse
+//                {
+//                    Status = false,
+//                    Message = ex.Message
+//                });
+//            }
+//        }
+
+//        // POST: api/opportunity/convert
+//        // Converts WON lead to Opportunity
+
+//        [HttpPost]
+//        [Route("convert")]
+//        public async Task<IActionResult> ConvertLead([FromBody] ConvertLeadRequest request)
+//        {
+//            try
+//            {
+//                // Get EmployeeId from JWT token
+//                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+//                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+//                //var response = await _repository.ConvertLeadToOpportunity(request);
+
+//                //if (!_authorization.CanCreateOpportunity(User, null))
+//                //{
+//                //    return StatusCode(StatusCodes.Status403Forbidden,
+//                //        new ApiResponse
+//                //        {
+//                //            Status = false,
+//                //            Message = "You are not authorized to create this opportunity."
+//                //        });
+//                //}
+
+//                if (!await _authorization.CanConvertOpportunity(User, request.Ref_LeadId))
+//                {
+//                    return StatusCode(StatusCodes.Status403Forbidden,
+//                        new ApiResponse
+//                        {
+//                            Status = false,
+//                            Message = "Only the Lead owner, Manager or Administrator can convert this Lead."
+//                        });
+//                }
+
+//                request.CreatedBy = User.EmployeeId();
+
+//                var response = await _repository.ConvertLeadToOpportunity(request);
+//                return response.Status ? Ok(response) : BadRequest(response);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse
+//                {
+//                    Status = false,
+//                    Message = $"Error: {ex.Message}"
+//                });
+//            }
+//        }
+
+//        // POST: api/opportunity/transfer
+//        // Transfers an opportunity to another employee
+
+//        [HttpPost]
+//        [Route("Transfer")]
+//        public async Task<IActionResult> Transfer([FromBody] OpportunityTransferRequest request)
+//        {
+//            try
+//            {
+//                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+//                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+//                if (!await _authorization.CanAccessOpportunity(User, request.Ref_OpportunityId))
+//                {
+//                    return StatusCode(StatusCodes.Status403Forbidden,
+//                        new ApiResponse
+//                        {
+//                            Status = false,
+//                            Message = "You are not authorized to transfer this opportunity."
+//                        });
+//                }
+
+//                request.CreatedBy = User.EmployeeId();
+
+//                var response = await _repository.TransferOpportunity(request);
+//                return response.Status ? Ok(response) : BadRequest(response);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
+//            }
+//        }
+
+//        // GET: api/opportunity/list
+//        // Returns list of all opportunities with filters
+
+//        [HttpGet]
+//        [Route("list")]
+//        public async Task<IActionResult> GetOpportunityList([FromQuery] OpportunityListRequest request)
+//        {
+//            try
+//            {
+//                //var response = await _repository.GetOpportunityList(request);
+//                //return response.Status ? Ok(response) : BadRequest(response);
+
+//                //if (!User.HasRole(RoleIds.Admin, RoleIds.Manager, RoleIds.Sales))
+//                //{
+//                //    request.FilterAssignedToId = User.EmployeeId();
+//                //}
+
+//                //if (!User.HasRole(RoleIds.Admin, RoleIds.Manager))
+//                //{
+//                //    request.FilterOwnerId = User.EmployeeId();
+//                //}
+
+//                //var response = await _repository.GetOpportunityList(request);
+
+//                //return response.Status ? Ok(response) : BadRequest(response);
+
+//                if (!User.HasRole(RoleIds.Admin, RoleIds.Manager))
+//                {
+//                    request.FilterOwnerId = User.EmployeeId();
+//                }
+
+//                var response = await _repository.GetOpportunityList(request);
+
+//                // Change the message for normal users when no opportunities are found
+//                if (response.Status &&
+//                    !User.HasRole(RoleIds.Admin, RoleIds.Manager) &&
+//                    response.Data is List<OpportunityListResponse> list &&
+//                    list.Count == 0)
+//                {
+//                    response.Message = "No opportunities assigned to you.";
+//                }
+
+//                return response.Status ? Ok(response) : BadRequest(response);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse
+//                {
+//                    Status = false,
+//                    Message = $"Error: {ex.Message}"
+//                });
+//            }
+//        }
+
+
+//        // GET: api/opportunity/details/{id}
+//        // Returns full details of a specific opportunity
+
+//        [HttpGet]
+//        [Route("details/{opportunityId}")]
+//        public async Task<IActionResult> GetOpportunityDetails(int opportunityId)
+//        {
+//            try
+//            {
+//                //var response = await _repository.GetOpportunityDetails(opportunityId);
+//                //return response.Status ? Ok(response) : NotFound(response);
+//                if (!await _authorization.CanAccessOpportunity(User, opportunityId))
+//                {
+//                    return StatusCode(StatusCodes.Status403Forbidden,
+//                        new ApiResponse
+//                        {
+//                            Status = false,
+//                            Message = "You are not authorized to view this opportunity."
+//                        });
+//                }
+
+//                var response = await _repository.GetOpportunityDetails(opportunityId);
+
+//                return response.Status ? Ok(response) : NotFound(response);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse
+//                {
+//                    Status = false,
+//                    Message = $"Error: {ex.Message}"
+//                });
+//            }
+//        }
+
+
+//        // PUT: api/opportunity/update
+//        // Updates an existing opportunity
+
+//        [HttpPut]
+//        [Route("update")]
+//        public async Task<IActionResult> UpdateOpportunity([FromBody] UpdateOpportunityRequest request)
+//        {
+//            try
+//            {
+//                // Get EmployeeId from JWT token
+//                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+//                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+//                if (!await _authorization.CanAccessOpportunity(User, request.Ref_OpportunityId))
+//                {
+//                    return StatusCode(StatusCodes.Status403Forbidden,
+//                        new ApiResponse
+//                        {
+//                            Status = false,
+//                            Message = "You are not authorized to update this opportunity."
+//                        });
+//                }
+
+//                request.CreatedBy = User.EmployeeId();
+
+//                var response = await _repository.UpdateOpportunity(request);
+//                return response.Status ? Ok(response) : BadRequest(response);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse
+//                {
+//                    Status = false,
+//                    Message = $"Error: {ex.Message}"
+//                });
+//            }
+//        }
+
+
+//        // DELETE: api/opportunity/delete
+//        // Soft deletes an opportunity
+
+//        [HttpDelete]
+//        [Route("delete")]
+//        public async Task<IActionResult> DeleteOpportunity([FromBody] DeleteOpportunityRequest request)
+//        {
+//            try
+//            {
+//                //// Get EmployeeId from JWT token
+//                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+//                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+//                if (!await _authorization.CanAccessOpportunity(User, request.Ref_OpportunityId))
+//                {
+//                    return StatusCode(StatusCodes.Status403Forbidden,
+//                        new ApiResponse
+//                        {
+//                            Status = false,
+//                            Message = "You are not authorized to delete this opportunity."
+//                        });
+//                }
+
+//                request.CreatedBy = User.EmployeeId();
+
+//                var response = await _repository.DeleteOpportunity(request);
+//                return response.Status ? Ok(response) : BadRequest(response);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse
+//                {
+//                    Status = false,
+//                    Message = $"Error: {ex.Message}"
+//                });
+//            }
+//        }
+
+
+//        // DROPDOWN ENDPOINTS
+
+
+//        [HttpGet]
+//        [Route("types")]
+//        public async Task<IActionResult> GetOpportunityTypes()
+//        {
+//            try
+//            {
+//                var response = await _repository.GetOpportunityTypes();
+//                return response.Status ? Ok(response) : BadRequest(response);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse
+//                {
+//                    Status = false,
+//                    Message = $"Error: {ex.Message}"
+//                });
+//            }
+//        }
+
+//        [HttpGet]
+//        [Route("stages")]
+//        public async Task<IActionResult> GetOpportunityStages()
+//        {
+//            try
+//            {
+//                var response = await _repository.GetOpportunityStages();
+//                return response.Status ? Ok(response) : BadRequest(response);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse
+//                {
+//                    Status = false,
+//                    Message = $"Error: {ex.Message}"
+//                });
+//            }
+//        }
+
+//        [HttpGet]
+//        [Route("priorities")]
+//        public async Task<IActionResult> GetPriorities()
+//        {
+//            try
+//            {
+//                var response = await _repository.GetPriorities();
+//                return response.Status ? Ok(response) : BadRequest(response);
+//            }
+//            catch (Exception ex)
+//            {
+//                return BadRequest(new ApiResponse
+//                {
+//                    Status = false,
+//                    Message = $"Error: {ex.Message}"
+//                });
+//            }
+//        }
+//    }
+//}
+
+using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
 using CRMWebServices.Repository;
@@ -17,45 +429,12 @@ namespace CRMWebServices.Controllers
     {
         private readonly IOpportunityRepository _repository;
         private readonly ICRMAuthorizationService _authorization;
+
         public OpportunityController(IOpportunityRepository repository, ICRMAuthorizationService authorization)
         {
             _repository = repository;
             _authorization = authorization;
         }
-
-
-        // GET: api/opportunity/wonleads
-        // - No leadId: Returns list of WON leads (conversion page)
-        // - With leadId: Returns full READ-ONLY lead details
-
-        //[HttpGet]
-        //[Route("wonleads")]
-        //public async Task<IActionResult> GetWonLeads([FromQuery] int? leadId, [FromQuery] string? searchText)
-        //{
-        //    try
-        //    {
-        //        if (leadId == null)
-        //        {
-        //            // No leadId -> return list of all WON leads
-        //            var response = await _repository.GetWonLeads(searchText);
-        //            return response.Status ? Ok(response) : BadRequest(response);
-        //        }
-        //        else
-        //        {
-        //            // leadId provided -> return full details (READ-ONLY)
-        //            var response = await _repository.GetWonLeadDetails(leadId.Value);
-        //            return response.Status ? Ok(response) : NotFound(response);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = $"Error: {ex.Message}"
-        //        });
-        //    }
-        //}
 
         [HttpGet]
         [Route("wonleads")]
@@ -63,15 +442,39 @@ namespace CRMWebServices.Controllers
         {
             try
             {
+                //if (leadId == null)
+                //{
+                //    var accessFilter = await _authorization.GetAccessFilter(User, "Lead");
+
+                //    if (!accessFilter.CanViewAll)
+                //    {
+                //        searchText = searchText + $"|EmployeeId:{User.EmployeeId()}";
+                //        if (accessFilter.ShowCreatedAndAssigned)
+                //        {
+                //            searchText = searchText + $"|ShowCreated:true";
+                //        }
+                //    }
+
+                //    var response = await _repository.GetWonLeads(searchText);
+                //    return response.Status ? Ok(response) : BadRequest(response);
+                //}
+
                 if (leadId == null)
                 {
-                    // List of WON Leads
-                    var response = await _repository.GetWonLeads(searchText);
+                    var accessFilter = await _authorization.GetAccessFilter(User, "Lead");
+
+                    int? assignedEmployeeId = accessFilter.CanViewAll ? null : User.EmployeeId();
+
+                    var response = await _repository.GetWonLeads(searchText, assignedEmployeeId);
                     return response.Status ? Ok(response) : BadRequest(response);
                 }
 
-                // Authorization for Details
-                if (!await _authorization.CanAccessLead(User, leadId.Value))
+                // ✅ Use "Lead" for Lead resource
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "View",
+                    leadId.Value))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
                         new ApiResponse
@@ -81,9 +484,7 @@ namespace CRMWebServices.Controllers
                         });
                 }
 
-                // Lead Details
                 var details = await _repository.GetWonLeadDetails(leadId.Value);
-
                 return details.Status ? Ok(details) : NotFound(details);
             }
             catch (Exception ex)
@@ -96,32 +497,18 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // POST: api/opportunity/convert
-        // Converts WON lead to Opportunity
-
         [HttpPost]
         [Route("convert")]
         public async Task<IActionResult> ConvertLead([FromBody] ConvertLeadRequest request)
         {
             try
             {
-                // Get EmployeeId from JWT token
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                //var response = await _repository.ConvertLeadToOpportunity(request);
-
-                //if (!_authorization.CanCreateOpportunity(User, null))
-                //{
-                //    return StatusCode(StatusCodes.Status403Forbidden,
-                //        new ApiResponse
-                //        {
-                //            Status = false,
-                //            Message = "You are not authorized to create this opportunity."
-                //        });
-                //}
-
-                if (!await _authorization.CanConvertOpportunity(User, request.Ref_LeadId))
+                // ✅ Use "Lead" for Lead resource
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Convert",
+                    request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
                         new ApiResponse
@@ -132,7 +519,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.ConvertLeadToOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -146,19 +532,18 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // POST: api/opportunity/transfer
-        // Transfers an opportunity to another employee
-
         [HttpPost]
         [Route("Transfer")]
         public async Task<IActionResult> Transfer([FromBody] OpportunityTransferRequest request)
         {
             try
             {
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                if (!await _authorization.CanAccessOpportunity(User, request.Ref_OpportunityId))
+                // ✅ Use "Opp" for Opportunity resource
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Opp",
+                    "Transfer",
+                    request.Ref_OpportunityId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
                         new ApiResponse
@@ -169,7 +554,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.TransferOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -179,42 +563,25 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // GET: api/opportunity/list
-        // Returns list of all opportunities with filters
-
         [HttpGet]
         [Route("list")]
         public async Task<IActionResult> GetOpportunityList([FromQuery] OpportunityListRequest request)
         {
             try
             {
-                //var response = await _repository.GetOpportunityList(request);
-                //return response.Status ? Ok(response) : BadRequest(response);
+                // ✅ Use "Opp" for Opportunity resource
+                var accessFilter = await _authorization.GetAccessFilter(User, "Opp");
 
-                //if (!User.HasRole(RoleIds.Admin, RoleIds.Manager, RoleIds.Sales))
-                //{
-                //    request.FilterAssignedToId = User.EmployeeId();
-                //}
-
-                //if (!User.HasRole(RoleIds.Admin, RoleIds.Manager))
-                //{
-                //    request.FilterOwnerId = User.EmployeeId();
-                //}
-
-                //var response = await _repository.GetOpportunityList(request);
-
-                //return response.Status ? Ok(response) : BadRequest(response);
-
-                if (!User.HasRole(RoleIds.Admin, RoleIds.Manager))
+                if (!accessFilter.CanViewAll)
                 {
-                    request.FilterOwnerId = User.EmployeeId();
+                    request.FilterOwnerId = accessFilter.EmployeeId;
+                    request.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
                 }
 
                 var response = await _repository.GetOpportunityList(request);
 
-                // Change the message for normal users when no opportunities are found
                 if (response.Status &&
-                    !User.HasRole(RoleIds.Admin, RoleIds.Manager) &&
+                    !accessFilter.CanViewAll &&
                     response.Data is List<OpportunityListResponse> list &&
                     list.Count == 0)
                 {
@@ -233,19 +600,18 @@ namespace CRMWebServices.Controllers
             }
         }
 
-       
-        // GET: api/opportunity/details/{id}
-        // Returns full details of a specific opportunity
-       
         [HttpGet]
         [Route("details/{opportunityId}")]
         public async Task<IActionResult> GetOpportunityDetails(int opportunityId)
         {
             try
             {
-                //var response = await _repository.GetOpportunityDetails(opportunityId);
-                //return response.Status ? Ok(response) : NotFound(response);
-                if (!await _authorization.CanAccessOpportunity(User, opportunityId))
+                // ✅ Use "Opp" for Opportunity resource
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Opp",
+                    "View",
+                    opportunityId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
                         new ApiResponse
@@ -256,7 +622,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 var response = await _repository.GetOpportunityDetails(opportunityId);
-
                 return response.Status ? Ok(response) : NotFound(response);
             }
             catch (Exception ex)
@@ -269,21 +634,18 @@ namespace CRMWebServices.Controllers
             }
         }
 
-       
-        // PUT: api/opportunity/update
-        // Updates an existing opportunity
-       
         [HttpPut]
         [Route("update")]
         public async Task<IActionResult> UpdateOpportunity([FromBody] UpdateOpportunityRequest request)
         {
             try
             {
-                // Get EmployeeId from JWT token
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                if (!await _authorization.CanAccessOpportunity(User, request.Ref_OpportunityId))
+                // ✅ Use "Opp" for Opportunity resource
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Opp",
+                    "Edit",
+                    request.Ref_OpportunityId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
                         new ApiResponse
@@ -294,7 +656,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.UpdateOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -308,21 +669,18 @@ namespace CRMWebServices.Controllers
             }
         }
 
-       
-        // DELETE: api/opportunity/delete
-        // Soft deletes an opportunity
-       
         [HttpDelete]
         [Route("delete")]
         public async Task<IActionResult> DeleteOpportunity([FromBody] DeleteOpportunityRequest request)
         {
             try
             {
-                //// Get EmployeeId from JWT token
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                if (!await _authorization.CanAccessOpportunity(User, request.Ref_OpportunityId))
+                // ✅ Use "Opp" for Opportunity resource
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Opp",
+                    "Delete",
+                    request.Ref_OpportunityId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
                         new ApiResponse
@@ -333,7 +691,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.DeleteOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -347,10 +704,9 @@ namespace CRMWebServices.Controllers
             }
         }
 
-       
-        // DROPDOWN ENDPOINTS
-       
-
+        // ============================================
+        // DROPDOWN ENDPOINTS - No permission needed
+        // ============================================
         [HttpGet]
         [Route("types")]
         public async Task<IActionResult> GetOpportunityTypes()

@@ -1,13 +1,14 @@
 ﻿using CRMWebServices.Helpers;
 using System.Threading.Tasks;
 using static CRMWebServices.Models.OpportunityModels;
+using static CRMWebServices.Models.PermissionModels;
 
 namespace CRMWebServices.Repository
 {
     public interface IOpportunityRepository
     {
         // Won Leads (List + Single)
-        Task<ApiResponse> GetWonLeads(string searchText = null);
+        Task<ApiResponse> GetWonLeads(string searchText = null, int? assignedEmployeeId = null);
 
         //Task<ApiResponse> GetWonLeads(string? searchText, int? assignedEmployeeId);
         Task<ApiResponse> GetWonLeadDetails(int leadId);
@@ -29,6 +30,8 @@ namespace CRMWebServices.Repository
         Task<ApiResponse> GetPriorities();
 
         Task<int?> GetAssignedEmployeeId(int leadId);
+      
+        Task<OpportunityAccessInfo?> GetOpportunityAccessInfo(int opportunityId);
 
     }
 }

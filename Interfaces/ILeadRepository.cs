@@ -22,6 +22,10 @@ namespace CRMWebServices.Interfaces
 
         Task<LeadAccessInfo?> GetLeadAccessInfo(int leadId);
 
+        Task<ApiResponse> AssignLead(LeadAssignRequest model);
+
+        //Task<LeadAccessInfo> GetLeadAccessInfo(int leadId);
+
 
 
     }

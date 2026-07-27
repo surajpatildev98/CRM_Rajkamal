@@ -22,7 +22,7 @@
 
        
         public int? AssignedToEmployeeId { get; set; }
-        public string AssignmentRemark { get; set; }
+        public string? AssignmentRemark { get; set; }
 
         public int? CreatedBy { get; set; }
       
@@ -112,9 +112,10 @@
     {
         public string? SearchText { get; set; }
         public int? FilterStatusId { get; set; }
-        public int? FilterAssignedToId { get; set; }
+        public int? FilterAssignedToId { get; set; }    
 
         public int? LoggedInEmployeeId { get; set; }
+        public bool ShowCreatedAndAssigned { get; set; }  // For PreSales
     }
 
 
@@ -141,9 +142,22 @@
 
     public class LeadAccessInfo
     {
+        public int LeadId { get; set; } 
         public int CreatedBy { get; set; }
         public int? AssignedEmployeeId { get; set; }
+        //public int Ref_LeadStatusId { get; set; }
+
+
     }
+
+    public class LeadAssignRequest
+    {
+        public int Ref_LeadId { get; set; }
+        public int AssignedToEmployeeId { get; set; }
+        public string AssignmentRemark { get; set; }
+        public int? CreatedBy { get; set; }
+    }
+
 
 
 }

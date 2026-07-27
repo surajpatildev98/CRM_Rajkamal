@@ -52,6 +52,27 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "CRMWebServices.Controllers.DashboardController",
+    "Method": "MyDashboard",
+    "RelativePath": "api/dashboard/my-dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fromDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "toDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "CRMWebServices.Controllers.EmployeeController",
     "Method": "Register",
     "RelativePath": "api/Employee/Register",
@@ -62,6 +83,22 @@
       {
         "Name": "request",
         "Type": "CRMWebServices.Models.EmployeeRegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "Assign",
+    "RelativePath": "api/Lead/Assign",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LeadAssignRequest",
         "IsRequired": true
       }
     ],
@@ -146,6 +183,11 @@
       {
         "Name": "LoggedInEmployeeId",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowCreatedAndAssigned",
+        "Type": "System.Boolean",
         "IsRequired": false
       }
     ],
@@ -540,6 +582,11 @@
       {
         "Name": "FilterAssignedToId",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowCreatedAndAssigned",
+        "Type": "System.Boolean",
         "IsRequired": false
       }
     ],

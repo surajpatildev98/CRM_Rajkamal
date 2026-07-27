@@ -18,12 +18,15 @@ namespace CRMWebServices.Repository
         {
             try
             {
+                // ✅ Check if user is Admin (passed from controller)
+                // We'll add a new parameter or use a flag
                 var ds = await _database.ExecuteDataSetAsync(
                     "USP_CRM_DashboardManagement",
                     new SqlParameter("@Status", "GET_DASHBOARD_FULL"),
                     new SqlParameter("@EmployeeId", (object?)employeeId ?? DBNull.Value),
                     new SqlParameter("@FromDate", (object?)fromDate ?? DBNull.Value),
-                    new SqlParameter("@ToDate", (object?)toDate ?? DBNull.Value)
+                    new SqlParameter("@ToDate", (object?)toDate ?? DBNull.Value),
+                    new SqlParameter("@IsAdmin", employeeId == null ? 1 : 0)  // ← If employeeId is null, it's Admin viewing all
                 );
 
                 if (ds.Tables.Count < 5)
@@ -70,7 +73,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Status", "GET_EMPLOYEE_PERFORMANCE"),
                     new SqlParameter("@EmployeeId", DBNull.Value),
                     new SqlParameter("@FromDate", DBNull.Value),
-                    new SqlParameter("@ToDate", DBNull.Value)
+                    new SqlParameter("@ToDate", DBNull.Value),
+                    new SqlParameter("@IsAdmin", 1)  // ← Employee performance is always Admin only
                 );
 
                 var data = dt.Rows.Cast<DataRow>().Select(RowToDict).ToList();

@@ -13,10 +13,12 @@ namespace CRMWebServices.Repository
     public class LeadRepository : ILeadRepository
     {
         private readonly IDatabaseService _database;
+        private readonly ILogger<PermissionService> _logger;
 
-        public LeadRepository(IDatabaseService database)
+        public LeadRepository(IDatabaseService database, ILogger<PermissionService> logger)
         {
             _database = database;
+            _logger = logger;
         }
 
         private static readonly string[] AllowedExtensions = { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png" };
@@ -90,84 +92,6 @@ namespace CRMWebServices.Repository
 
         }
 
-        #region Old CreateLead Method
-        //public async Task<ApiResponse> CreateLead(LeadRegisterRequest model)
-        //{
-
-        //    try
-        //    {
-
-
-        //        string contactsJson = model.Contacts != null && model.Contacts.Count > 0
-        //            ? JsonSerializer.Serialize(model.Contacts) : null;
-
-        //        string requirementsJson = model.Requirements != null && model.Requirements.Count > 0
-        //            ? JsonSerializer.Serialize(model.Requirements) : null;
-
-        //        // Decode and save attachment (if provided) before hitting the DB
-        //        string savedAttachmentPath;
-        //        try
-        //        {
-        //            //savedAttachmentPath = SaveBase64Attachment(model.AttachmentBase64, model.AttachmentFileName);
-        //            savedAttachmentPath = SaveBase64Attachment(
-        //                                model.AttachmentBase64,
-        //                                model.AttachmentFileName,
-        //                                "LeadAttachments");
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            return new ApiResponse { Status = false, Message = ex.Message };
-        //        }
-
-        //        var dt = await _database.ExecuteDataTableAsync(
-        //            "USP_CRM_LeadManagement",
-
-        //            new SqlParameter("@Status", "CREATE_LEAD"),
-
-        //            new SqlParameter("@CustomerName", model.CustomerName),
-        //            new SqlParameter("@Address", (object?)model.Address ?? DBNull.Value),
-        //            new SqlParameter("@Ref_CountryId", (object?)model.Ref_CountryId ?? DBNull.Value),
-        //            new SqlParameter("@Ref_StateId", (object?)model.Ref_StateId ?? DBNull.Value),
-        //            new SqlParameter("@Ref_CityId", (object?)model.Ref_CityId ?? DBNull.Value),
-        //            new SqlParameter("@PinCode", (object?)model.PinCode ?? DBNull.Value),
-        //            new SqlParameter("@Gst", (object?)model.Gst ?? DBNull.Value),
-        //            new SqlParameter("@Pan", (object?)model.Pan ?? DBNull.Value),
-
-        //            new SqlParameter("@Contacts", (object?)contactsJson ?? DBNull.Value),
-        //            new SqlParameter("@Requirements", (object?)requirementsJson ?? DBNull.Value),
-
-        //            new SqlParameter("@Requirement", model.Requirement),
-        //            new SqlParameter("@Ref_LeadSourceId", model.Ref_LeadSourceId),
-        //            new SqlParameter("@LeadRemark", (object?)model.LeadRemark ?? DBNull.Value),
-
-        //            new SqlParameter("@AssignedToEmployeeId", (object?)model.AssignedToEmployeeId ?? DBNull.Value),
-        //            new SqlParameter("@AssignmentRemark", (object?)model.AssignmentRemark ?? DBNull.Value),
-        //            new SqlParameter("@AttachmentPath", (object?)savedAttachmentPath ?? DBNull.Value),
-
-        //            new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
-        //        );
-
-        //        return MapResponse(dt, isCreate: true);
-
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        return new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = $"Database Error: {ex.Message}"
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = $"Error: {ex.Message}"
-        //        };
-        //    }
-        //}
-        #endregion
 
 
         public async Task<ApiResponse> CreateLead(LeadRegisterRequest model)
@@ -325,12 +249,14 @@ namespace CRMWebServices.Repository
                             LeadId = Convert.ToInt32(row["LeadId"]),
                             LeadNo = row["LeadNo"]?.ToString(),
                             LeadOrganizationId = Convert.ToInt32(row["LeadOrganizationId"]),
-                            AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                            //AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                            AssignedToEmployeeId = row["AssignedToEmployeeId"] == DBNull.Value? (int?)null: Convert.ToInt32(row["AssignedToEmployeeId"])
                         }
                         : new
                         {
                             LeadId = Convert.ToInt32(row["LeadId"]),
-                            AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                            //AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                            AssignedToEmployeeId = row["AssignedToEmployeeId"] == DBNull.Value? (int?)null : Convert.ToInt32(row["AssignedToEmployeeId"])
                         };
                 }
 
@@ -512,61 +438,7 @@ namespace CRMWebServices.Repository
             }
         }
 
-        //public async Task<ApiResponse> CreateFollowUp(LeadFollowUpRequest model)
-        //{
-        //    try
-        //    {
-
-
-        //        var dt = await _database.ExecuteDataTableAsync(
-        //                "USP_CRM_LeadManagement",
-
-        //                new SqlParameter("@Status", "CREATE_FOLLOWUP"),
-        //                new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
-        //                new SqlParameter("@Ref_ActivityId", (object?)model.Ref_ActivityId ?? DBNull.Value),
-        //                new SqlParameter("@NextFollowUpDate", model.NextFollowUpDate),
-        //                //new SqlParameter("@FollowUpPriority", (object?)model.FollowUpPriority ?? DBNull.Value),
-        //                new SqlParameter("@FollowUpRemarks", (object?)model.FollowUpRemarks ?? DBNull.Value),
-        //                new SqlParameter("@FollowUpAssignedEmployeeId", (object?)model.FollowUpAssignedEmployeeId ?? DBNull.Value),
-        //                new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
-        //            );
-
-        //        var response = new ApiResponse();
-
-        //        if (dt == null || dt.Rows.Count == 0)
-        //        {
-        //            response.Status = false;
-        //            response.Message = "No response returned from database.";
-        //            return response;
-        //        }
-
-        //        var row = dt.Rows[0];
-        //        bool status = Convert.ToInt32(row["Status"]) == 1;
-
-        //        response.Status = status;
-        //        response.Message = row["Message"]?.ToString();
-        //        response.Data = status ? new { FollowUpId = Convert.ToInt32(row["FollowUpId"]) } : null;
-
-        //        return response;
-
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        return new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = $"Database Error: {ex.Message}"
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = $"Error: {ex.Message}"
-        //        };
-        //    }
-        //}
+      
 
         public async Task<ApiResponse> CreateFollowUp(LeadFollowUpRequest model)
         {
@@ -652,7 +524,7 @@ namespace CRMWebServices.Repository
             return response;
         }
 
-      
+
 
         public async Task<ApiResponse> GetLeadFullDetails(int leadId)
         {
@@ -815,7 +687,7 @@ namespace CRMWebServices.Repository
             }
         }
 
-        
+
         public async Task<ApiResponse> GetLeadList(LeadListFilterRequest filter)
         {
             try
@@ -826,7 +698,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@SearchText", (object?)filter?.SearchText ?? DBNull.Value),
                     new SqlParameter("@FilterStatusId", (object?)filter?.FilterStatusId ?? DBNull.Value),
                     new SqlParameter("@FilterAssignedToId", (object?)filter?.FilterAssignedToId ?? DBNull.Value),
-                    new SqlParameter("@LoggedInEmployeeId",  (object?)filter?.LoggedInEmployeeId ?? DBNull.Value)
+                    new SqlParameter("@LoggedInEmployeeId", (object?)filter?.LoggedInEmployeeId ?? DBNull.Value)
                 );
 
                 if (ds.Tables.Count == 0)
@@ -1047,24 +919,70 @@ namespace CRMWebServices.Repository
                 : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
         }
 
+
         public async Task<LeadAccessInfo?> GetLeadAccessInfo(int leadId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_CRM_LeadManagement",
+                    new SqlParameter("@Status", "GET_LEAD_ACCESS_INFO"),
+                    new SqlParameter("@Ref_LeadId", leadId));
+
+                if (dt.Rows.Count == 0)
+                    return null;
+
+                var row = dt.Rows[0];
+                return new LeadAccessInfo
+                {
+                    LeadId = leadId,
+                    CreatedBy = row["CreatedBy"] == DBNull.Value ? 0 : Convert.ToInt32(row["CreatedBy"]),
+                    AssignedEmployeeId = row["Ref_CurrentAssignedEmployeeId"] == DBNull.Value
+                        ? 0
+                        : Convert.ToInt32(row["Ref_CurrentAssignedEmployeeId"])
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting lead access info for LeadId: {LeadId}", leadId);
+                return null;
+            }
+
+        }
+
+        public async Task<ApiResponse> AssignLead(LeadAssignRequest model)
         {
             var dt = await _database.ExecuteDataTableAsync(
                 "USP_CRM_LeadManagement",
-                new SqlParameter("@Status", "GET_LEAD_ACCESS_INFO"),
-                new SqlParameter("@Ref_LeadId", leadId));
+                new SqlParameter("@Status", "ASSIGN_LEAD"),
+                new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
+                new SqlParameter("@AssignedToEmployeeId", model.AssignedToEmployeeId),
+                new SqlParameter("@AssignmentRemark", (object?)model.AssignmentRemark ?? DBNull.Value),
+                new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
+            );
 
-            if (dt.Rows.Count == 0)
-                return null;
-
-            return new LeadAccessInfo
+            var response = new ApiResponse();
+            if (dt == null || dt.Rows.Count == 0)
             {
-                CreatedBy = Convert.ToInt32(dt.Rows[0]["CreatedBy"]),
-                AssignedEmployeeId = dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value
-                    ? null
-                    : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"])
-            };
-        }
+                response.Status = false;
+                response.Message = "No response returned from database.";
+                return response;
+            }
 
+            var row = dt.Rows[0];
+            bool status = Convert.ToInt32(row["Status"]) == 1;
+
+            response.Status = status;
+            response.Message = row["Message"]?.ToString();
+            response.Data = status
+                ? new
+                {
+                    LeadId = Convert.ToInt32(row["LeadId"]),
+                    AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                }
+                : null;
+
+            return response;
+        }
     }
 }

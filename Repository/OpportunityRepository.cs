@@ -11,16 +11,19 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using static CRMWebServices.Models.OpportunityModels;
+using static CRMWebServices.Models.PermissionModels;
 
 namespace CRMWebServices.Repository
 {
     public class OpportunityRepository : IOpportunityRepository
     {
         private readonly IDatabaseService _database;
+        private readonly ILogger<PermissionService> _logger;
 
-        public OpportunityRepository(IDatabaseService database)
+        public OpportunityRepository(IDatabaseService database, ILogger<PermissionService> logger)
         {
             _database = database;
+            _logger = logger;
         }
 
        
@@ -45,15 +48,15 @@ namespace CRMWebServices.Repository
         }
         #region GET WON LEADS (LIST - Full Data like GetLeadList)
         //public async Task<ApiResponse> GetWonLeads(string? searchText, int? assignedEmployeeId)
-        public async Task<ApiResponse> GetWonLeads(string searchText = null)
+        public async Task<ApiResponse> GetWonLeads(string searchText = null, int? assignedEmployeeId = null)
         {
             try
             {
                 var ds = await _database.ExecuteDataSetAsync(
                     "USP_CRM_OpportunityManagement",
                     new SqlParameter("@Status", "GET_WON_LEADS_LIST_FULL"),
-                    new SqlParameter("@SearchText", (object?)searchText ?? DBNull.Value)
-                    //new SqlParameter("@FilterAssignedToId", (object?)assignedEmployeeId ?? DBNull.Value)
+                    new SqlParameter("@SearchText", (object?)searchText ?? DBNull.Value),
+                    new SqlParameter("@FilterAssignedToId", (object?)assignedEmployeeId ?? DBNull.Value)
                 );
 
                 if (ds.Tables.Count == 0)
@@ -436,13 +439,19 @@ namespace CRMWebServices.Repository
 
                 if (status == 1)
                 {
+                    //var data = new ConvertLeadResponse
+                    //{
+                    //    OpportunityId = Convert.ToInt32(row["OpportunityId"]),
+                    //    CustomerId = Convert.ToInt32(row["CustomerId"]),
+                    //    OpportunityNo = row["OpportunityNo"]?.ToString()
+                    //};
+
                     var data = new ConvertLeadResponse
                     {
                         OpportunityId = Convert.ToInt32(row["OpportunityId"]),
-                        CustomerId = Convert.ToInt32(row["CustomerId"]),
+                        CustomerId = row["CustomerId"] == DBNull.Value ? null : Convert.ToInt32(row["CustomerId"]),
                         OpportunityNo = row["OpportunityNo"]?.ToString()
                     };
-
                     return new ApiResponse
                     {
                         Status = true,
@@ -1003,6 +1012,36 @@ namespace CRMWebServices.Repository
             return dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value
                 ? null
                 : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
+        }
+
+
+        public async Task<OpportunityAccessInfo?> GetOpportunityAccessInfo(int opportunityId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_CRM_OpportunityManagement",
+                    new SqlParameter("@Status", "GET_OPPORTUNITY_ACCESS_INFO"),
+                    new SqlParameter("@Ref_OpportunityId", opportunityId));
+
+                if (dt.Rows.Count == 0)
+                    return null;
+
+                var row = dt.Rows[0];
+                return new OpportunityAccessInfo
+                {
+                    OpportunityId = opportunityId,
+                    CreatedBy = row["CreatedBy"] == DBNull.Value ? null : (int?)Convert.ToInt32(row["CreatedBy"]),
+                    AssignedEmployeeId = row["Ref_OwnerEmployeeId"] == DBNull.Value
+                        ? null
+                        : (int?)Convert.ToInt32(row["Ref_OwnerEmployeeId"])
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting opportunity access info for OpportunityId: {OpportunityId}", opportunityId);
+                return null;
+            }
         }
     }
 }

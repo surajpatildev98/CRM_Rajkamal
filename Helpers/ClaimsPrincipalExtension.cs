@@ -21,6 +21,7 @@ namespace CRMWebServices.Helpers
                 .Select(int.Parse);
 
             return userRoles.Any(r => roles.Contains(r));
+
         }
     }
 }

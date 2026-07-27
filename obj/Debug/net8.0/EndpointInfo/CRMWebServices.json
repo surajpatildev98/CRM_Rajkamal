@@ -74,6 +74,36 @@
         }
       }
     },
+    "/api/dashboard/my-dashboard": {
+      "get": {
+        "tags": [
+          "Dashboard"
+        ],
+        "parameters": [
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/dashboard/employee-performance": {
       "get": {
         "tags": [
@@ -378,8 +408,46 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "ShowCreatedAndAssigned",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Lead/Assign": {
+      "post": {
+        "tags": [
+          "Lead"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadAssignRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadAssignRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeadAssignRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -834,6 +902,13 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "ShowCreatedAndAssigned",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
           }
         ],
         "responses": {
@@ -1207,6 +1282,29 @@
             "items": {
               "$ref": "#/components/schemas/LeadActivityAttachmentItem"
             },
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "LeadAssignRequest": {
+        "type": "object",
+        "properties": {
+          "ref_LeadId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "assignedToEmployeeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "assignmentRemark": {
+            "type": "string",
             "nullable": true
           },
           "createdBy": {

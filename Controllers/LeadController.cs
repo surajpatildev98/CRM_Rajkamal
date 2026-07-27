@@ -1,4 +1,5 @@
-﻿using CRMWebServices.Helpers;
+﻿
+using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -19,18 +20,22 @@ namespace CRMWebServices.Controllers
             _repository = repository;
             _authorization = authorization;
         }
-     
+
+        // ============================================
+        // CREATE LEAD - Register
+        // ============================================
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] LeadRegisterRequest request)
         {
             try
             {
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                //var response = await _repository.CreateLead(request);
-                if (!_authorization.CanCreateLead(User, request.AssignedToEmployeeId))
+                // Check if user can create lead with assignment
+                if (!await _authorization.CanPerformActionWithAssignment(
+                    User,
+                    "Lead",
+                    "Create",
+                    request.AssignedToEmployeeId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -39,10 +44,7 @@ namespace CRMWebServices.Controllers
                     });
                 }
 
-                // Logged-in Employee
                 request.CreatedBy = User.EmployeeId();
-
-                // Save Lead
                 var response = await _repository.CreateLead(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -52,18 +54,21 @@ namespace CRMWebServices.Controllers
             }
         }
 
+        // ============================================
+        // TRANSFER LEAD - Assign
+        // ============================================
         [HttpPost]
         [Route("Transfer")]
         public async Task<IActionResult> Transfer([FromBody] LeadTransferRequest request)
         {
             try
             {
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                //var response = await _repository.TransferLead(request);
-
-                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
+                // Check if user can assign this lead
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Transfer",
+                    request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -73,7 +78,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.TransferLead(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -83,18 +87,21 @@ namespace CRMWebServices.Controllers
             }
         }
 
+        // ============================================
+        // UPDATE LEAD STATUS - Edit
+        // ============================================
         [HttpPost]
         [Route("UpdateStatus")]
         public async Task<IActionResult> UpdateStatus([FromBody] LeadStatusUpdateRequest request)
         {
             try
             {
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                //var response = await _repository.UpdateLeadStatus(request);
-
-                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
+                // Check if user can edit this lead
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Edit",
+                    request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -104,7 +111,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.UpdateLeadStatus(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -114,30 +120,30 @@ namespace CRMWebServices.Controllers
             }
         }
 
-
-
+        // ============================================
+        // CREATE ACTIVITY - Activity
+        // ============================================
         [HttpPost]
         [Route("CreateActivity")]
         public async Task<IActionResult> CreateActivity([FromBody] LeadActivityRequest request)
         {
             try
             {
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                //var response = await _repository.CreateActivity(request);
-
-                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
+                // Check if user can manage activity on this lead
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Activity",
+                    request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
                         Status = false,
-                        Message = "You are not authorized to create activity."
+                        Message = "You are not authorized to create activity on this lead."
                     });
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.CreateActivity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -147,27 +153,30 @@ namespace CRMWebServices.Controllers
             }
         }
 
+        // ============================================
+        // CREATE FOLLOW-UP - FollowUp
+        // ============================================
         [HttpPost]
         [Route("CreateFollowUp")]
         public async Task<IActionResult> CreateFollowUp([FromBody] LeadFollowUpRequest request)
         {
             try
             {
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                //var response = await _repository.CreateFollowUp(request);
-                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
+                // Check if user can manage follow-up on this lead
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "FollowUp",
+                    request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
                         Status = false,
-                        Message = "You are not authorized to create follow-up."
+                        Message = "You are not authorized to create follow-up on this lead."
                     });
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.CreateFollowUp(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -177,17 +186,21 @@ namespace CRMWebServices.Controllers
             }
         }
 
-
+        // ============================================
+        // UPDATE FOLLOW-UP STATUS - FollowUp
+        // ============================================
         [HttpPost]
         [Route("UpdateFollowUpStatus")]
         public async Task<IActionResult> UpdateFollowUpStatus([FromBody] FollowUpStatusUpdateRequest request)
         {
             try
             {
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
+                // Check if user can manage follow-up on this lead
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "FollowUpStatus",
+                    request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -197,7 +210,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.UpdateFollowUpStatus(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -205,20 +217,23 @@ namespace CRMWebServices.Controllers
             {
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
-        }       
+        }
 
-
+        // ============================================
+        // CLOSE LEAD - Close
+        // ============================================
         [HttpPost]
         [Route("CloseLead")]
         public async Task<IActionResult> Close([FromBody] LeadCloseRequest request)
         {
             try
             {
-                //var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                //request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
-
-                //var response = await _repository.CloseLead(request);
-                if (!await _authorization.CanModifyLead(User, request.Ref_LeadId))
+                // Check if user can close this lead
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Close",
+                    request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -228,7 +243,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.CloseLead(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -238,47 +252,42 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        //[HttpGet]
-        //[Route("Details")]
-        //public async Task<IActionResult> Details([FromQuery] int? leadId, [FromQuery] LeadListFilterRequest filter)
-        //{
-        //    if (leadId == null)
-        //    {
-        //        // No leadId provided -> return the list of all leads (with optional filters)
-        //        var listResponse = await _repository.GetLeadList(filter);
-        //        return Ok(listResponse);
-        //    }
-        //    else
-        //    {   
-        //        // leadId provided -> return full details for that specific lead
-        //        var detailsResponse = await _repository.GetLeadFullDetails(leadId.Value);
-        //        return detailsResponse.Status ? Ok(detailsResponse) : NotFound(detailsResponse);
-        //    }
-        //}
-
+        // ============================================
+        // GET LEAD DETAILS / LIST - View
+        // ============================================
         [HttpGet]
         [Route("Details")]
         public async Task<IActionResult> Details([FromQuery] int? leadId, [FromQuery] LeadListFilterRequest filter)
         {
             try
             {
-                // Lead List
+                // Case 1: List of leads (no leadId provided)
                 if (leadId == null)
                 {
-                    // Non-admin users should only see their own leads
-                    if (!User.HasRole(RoleIds.Admin, RoleIds.Manager))
+                    // Get access filter based on user's permissions
+                    var accessFilter = await _authorization.GetAccessFilter(User, "Lead");
+
+                    // Apply filter based on user's access level
+                    if (!accessFilter.CanViewAll)
                     {
-                        //filter.FilterAssignedToId = User.EmployeeId();
-                        filter.LoggedInEmployeeId = User.EmployeeId();
+                        // For Sales: Show only assigned leads
+                        // For PreSales: Show created AND assigned leads
+                        filter.LoggedInEmployeeId = accessFilter.EmployeeId;
+                        filter.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
                     }
+                    // If CanViewAll = true (Admin/Manager), no filter applied
 
                     var listResponse = await _repository.GetLeadList(filter);
-
                     return Ok(listResponse);
                 }
 
-                // Single Lead Authorization
-                if (!await _authorization.CanAccessLead(User, leadId.Value))
+                // Case 2: Single lead details (leadId provided)
+                // Check if user can view this specific lead
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "View",
+                    leadId.Value))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -288,10 +297,7 @@ namespace CRMWebServices.Controllers
                 }
 
                 var detailsResponse = await _repository.GetLeadFullDetails(leadId.Value);
-
-                return detailsResponse.Status
-                    ? Ok(detailsResponse)
-                    : NotFound(detailsResponse);
+                return detailsResponse.Status ? Ok(detailsResponse) : NotFound(detailsResponse);
             }
             catch (Exception ex)
             {
@@ -303,6 +309,37 @@ namespace CRMWebServices.Controllers
             }
         }
 
+        // ============================================
+        // ASSIGN LEAD - Assign (first-time assignment only)
+        // ============================================
+        [HttpPost]
+        [Route("Assign")]
+        public async Task<IActionResult> Assign([FromBody] LeadAssignRequest request)
+        {
+            try
+            {
+                // Check if user can assign this lead (same permission as Transfer — Lead_Assign)
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Assign",
+                    request.Ref_LeadId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
+                    {
+                        Status = false,
+                        Message = "You are not authorized to assign this lead."
+                    });
+                }
 
+                request.CreatedBy = User.EmployeeId();
+                var response = await _repository.AssignLead(request);
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
+            }
+        }
     }
 }

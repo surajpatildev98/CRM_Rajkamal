@@ -41,6 +41,8 @@
             public int? FilterTypeId { get; set; }
 
             public int? FilterAssignedToId { get; set; }   // NEW
+
+            public bool ShowCreatedAndAssigned { get; set; }  // For PreSales
         }
 
         // For UPDATE OPPORTUNITY
@@ -171,7 +173,7 @@
         public class ConvertLeadResponse
         {
             public int OpportunityId { get; set; }
-            public int CustomerId { get; set; }
+            public int? CustomerId { get; set; }
             public string OpportunityNo { get; set; }
         }
 

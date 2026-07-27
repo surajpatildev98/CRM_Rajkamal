@@ -74,8 +74,17 @@ builder.Services.AddScoped<ILeadRepository, LeadRepository>();
 builder.Services.AddScoped<IOpportunityRepository, OpportunityRepository>();
 builder.Services.AddScoped<ICRMAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();  // ← NEW
+builder.Services.AddScoped<IPermissionService, PermissionService>();        // ← NEW
+builder.Services.AddScoped<ICRMAuthorizationService, AuthorizationService>(); // ← NEW
 builder.Services.AddScoped<EmployeeRepository>();
 
+builder.Services.AddMemoryCache();  // ← NEW
+
+
+// 6. LOGGING
+
+builder.Services.AddLogging();  // ← NEW
 builder.Services.AddSingleton<JwtHelper>();
 
 builder.Services.AddAuthentication(options =>
