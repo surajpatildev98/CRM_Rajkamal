@@ -126,7 +126,7 @@ namespace CRMWebServices.Repository
                             {
                                 FileName = att.FileName,
                                 FilePath = savedPath,
-                                FileType = Path.GetExtension(att.FileName).TrimStart('.'),
+                                FileType = Path.GetExtension(att.FileName).TrimStart('.').ToLowerInvariant(),
                                 FileSize = Convert.FromBase64String(
                                     att.Base64Content.Contains(",")
                                         ? att.Base64Content.Substring(att.Base64Content.IndexOf(",") + 1)
@@ -145,29 +145,31 @@ namespace CRMWebServices.Repository
                     }
                 }
 
-                string attachmentsJson = savedAttachments.Count > 0
-                    ? JsonConvert.SerializeObject(savedAttachments)
-                    : null;
+                string attachmentsJson = savedAttachments.Count > 0  ? JsonConvert.SerializeObject(savedAttachments): null;
 
                 var dt = await _database.ExecuteDataTableAsync(
                     "USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "CREATE_LEAD"),
-                    new SqlParameter("@CustomerName", model.CustomerName),
-                    new SqlParameter("@Address", (object?)model.Address ?? DBNull.Value),
+                    //new SqlParameter("@CustomerName", model.CustomerName),
+                    new SqlParameter("@CustomerName",(object?)model.CustomerName?.Trim() ?? DBNull.Value),
+                    new SqlParameter("@Address", (object?)model.Address?.Trim() ?? DBNull.Value),
                     new SqlParameter("@Ref_CountryId", (object?)model.Ref_CountryId ?? DBNull.Value),
                     new SqlParameter("@Ref_StateId", (object?)model.Ref_StateId ?? DBNull.Value),
                     new SqlParameter("@Ref_CityId", (object?)model.Ref_CityId ?? DBNull.Value),
-                    new SqlParameter("@PinCode", (object?)model.PinCode ?? DBNull.Value),
-                    new SqlParameter("@Gst", (object?)model.Gst ?? DBNull.Value),
-                    new SqlParameter("@Pan", (object?)model.Pan ?? DBNull.Value),
+                    new SqlParameter("@PinCode", (object?)model.PinCode?.Trim() ?? DBNull.Value),
+                    //new SqlParameter("@Gst", (object?)model.Gst?.Trim() ?? DBNull.Value),
+                    //new SqlParameter("@Pan", (object?)model.Pan?.Trim() ?? DBNull.Value),
+                    new SqlParameter("@Gst",string.IsNullOrWhiteSpace(model.Gst)? DBNull.Value: model.Gst.Trim()),
+                    new SqlParameter("@Pan",string.IsNullOrWhiteSpace(model.Pan) ? DBNull.Value : model.Pan.Trim()),
                     new SqlParameter("@Contacts", (object?)contactsJson ?? DBNull.Value),
                     new SqlParameter("@Requirements", (object?)requirementsJson ?? DBNull.Value),
-                    new SqlParameter("@Requirement", model.Requirement),
+                    new SqlParameter("@Requirement", (object?)model.Requirement?.Trim() ?? DBNull.Value),
                     new SqlParameter("@Ref_LeadSourceId", model.Ref_LeadSourceId),
                     new SqlParameter("@LeadRemark", (object?)model.LeadRemark ?? DBNull.Value),
                     new SqlParameter("@AssignedToEmployeeId", (object?)model.AssignedToEmployeeId ?? DBNull.Value),
                     new SqlParameter("@AssignmentRemark", (object?)model.AssignmentRemark ?? DBNull.Value),
                     new SqlParameter("@Attachments", (object?)attachmentsJson ?? DBNull.Value),
+                    new SqlParameter("@LeadOrganizationId",(object?)model.LeadOrganizationId ?? DBNull.Value), // ADDED fOR LEAD ORGANIZATION
                     new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
                 );
 
@@ -983,6 +985,146 @@ namespace CRMWebServices.Repository
                 : null;
 
             return response;
+        }
+
+        
+
+        public async Task<ApiResponse> CheckCustomerExists(string? gst, string? customerName, string? pan)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync(
+                    "USP_CRM_LeadManagement",
+                    new SqlParameter("@Status", "CHECK_CUSTOMER_EXISTS"),
+                    new SqlParameter("@Gst", string.IsNullOrWhiteSpace(gst) ? (object)DBNull.Value : gst),
+                    new SqlParameter("@CustomerName", string.IsNullOrWhiteSpace(customerName) ? (object)DBNull.Value : customerName),
+                    new SqlParameter("@Pan", string.IsNullOrWhiteSpace(pan) ? (object)DBNull.Value : pan)
+                );
+
+                if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                {
+                    return new ApiResponse { Status = false, Message = "Invalid response." };
+                }
+
+                bool customerExists = Convert.ToBoolean(ds.Tables[0].Rows[0]["IsCustomerExists"]);
+
+                if (!customerExists)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = ds.Tables[0].Rows[0]["Message"].ToString()
+                    };
+                }
+
+                var companyRow = ds.Tables[1].Rows[0];
+
+                var response = new ExistingCustomerResponse
+                {
+                    CompanyId = Convert.ToInt32(companyRow["CompanyId"]),
+                    CustomerName = companyRow["CustomerName"]?.ToString(),
+                    Pan = companyRow["Pan"]?.ToString()
+                };
+
+                // Result Set 3: branches
+                var branchMap = new Dictionary<int, CustomerBranchOption>();
+
+                foreach (DataRow row in ds.Tables[2].Rows)
+                {
+                    var branch = new CustomerBranchOption
+                    {
+                        LeadOrganizationId = Convert.ToInt32(row["LeadOrganizationId"]),
+                        CustomerName = row["CustomerName"]?.ToString(),
+                        Address = row["Address"]?.ToString(),
+                        Ref_CountryId = row["Ref_CountryId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_CountryId"]),
+                        Ref_StateId = row["Ref_StateId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_StateId"]),
+                        Ref_CityId = row["Ref_CityId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_CityId"]),
+                        PinCode = Convert.ToInt32(row["PinCode"]),
+                        Gst = row["Gst"]?.ToString(),
+                        Pan = row["Pan"]?.ToString(),
+                        IsExactGstMatch = Convert.ToBoolean(row["IsExactGstMatch"])
+                    };
+
+                    branchMap[branch.LeadOrganizationId] = branch;
+                    response.Branches.Add(branch);
+                }
+
+                // Result Set 4: contacts, grouped into their branch
+                if (ds.Tables.Count > 3)
+                {
+                    foreach (DataRow row in ds.Tables[3].Rows)
+                    {
+                        int branchId = Convert.ToInt32(row["Ref_LeadOrganizationId"]);
+
+                        if (branchMap.TryGetValue(branchId, out var branch))
+                        {
+                            branch.Contacts.Add(new ExistingCustomerContact
+                            {
+                                LeadContactId = Convert.ToInt32(row["LeadContactId"]),
+                                Ref_LeadOrganizationId = branchId,
+                                ContactPerson = row["ContactPerson"]?.ToString(),
+                                Mobile = row["Mobile"]?.ToString(),
+                                Email = row["Email"]?.ToString(),
+                                Ref_DesignationId = row["Ref_DesignationId"] == DBNull.Value
+                                    ? null
+                                    : Convert.ToInt32(row["Ref_DesignationId"])
+                            });
+                        }
+                    }
+                }
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = "Customer found.",
+                    Data = response
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse { Status = false, Message = ex.Message };
+            }
+        }
+
+       
+        public async Task<ApiResponse> SearchCustomer(string searchText)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_CRM_LeadManagement",
+                    new SqlParameter("@Status", "SEARCH_CUSTOMER"),
+                    new SqlParameter("@SearchText", searchText)
+                );
+
+                var customers = new List<CustomerSearchResponse>();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    customers.Add(new CustomerSearchResponse
+                    {
+                        LeadOrganizationId = Convert.ToInt32(row["LeadOrganizationId"]),
+                        Ref_LeadCompanyId = Convert.ToInt32(row["Ref_LeadCompanyId"]),
+                        CustomerName = row["CustomerName"]?.ToString(),
+                        CityName = row["CityName"]?.ToString(),
+                        DisplayName = row["DisplayName"]?.ToString(),
+                        Address = row["Address"]?.ToString(),
+                        Gst = row["Gst"]?.ToString(),
+                        Pan = row["Pan"]?.ToString()
+                    });
+                }
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = customers.Count > 0 ? "Customer(s) found." : "No customer found.",
+                    Data = customers
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse { Status = false, Message = ex.Message };
+            }
         }
     }
 }

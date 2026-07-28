@@ -33,5 +33,10 @@ namespace CRMWebServices.Repository
       
         Task<OpportunityAccessInfo?> GetOpportunityAccessInfo(int opportunityId);
 
+        Task<ApiResponse> AddOpportunityRequirement(AddOpportunityRequirementRequest model);
+        Task<ApiResponse> UpdateOpportunityRequirement(UpdateOpportunityRequirementRequest model);
+        Task<ApiResponse> CreateOpportunityActivity(CreateOpportunityActivityRequest model);
+        Task<ApiResponse> CreateOpportunityFollowUp(CreateOpportunityFollowUpRequest model);
+
     }
 }

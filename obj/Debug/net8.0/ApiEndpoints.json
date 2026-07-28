@@ -106,6 +106,32 @@
   },
   {
     "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "CheckCustomer",
+    "RelativePath": "api/Lead/check-customer-exists",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "gst",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "customerName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "pan",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
     "Method": "Close",
     "RelativePath": "api/Lead/CloseLead",
     "HttpMethod": "POST",
@@ -205,6 +231,22 @@
         "Name": "request",
         "Type": "CRMWebServices.Models.LeadRegisterRequest",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "SearchCustomer",
+    "RelativePath": "api/Lead/search-customer",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "searchText",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -505,6 +547,54 @@
   },
   {
     "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "CreateOpportunityActivity",
+    "RelativePath": "api/Opportunity/add_activity",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BCreateOpportunityActivityRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "CreateOpportunityFollowUp",
+    "RelativePath": "api/Opportunity/add_followup",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BCreateOpportunityFollowUpRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "AddOpportunityRequirement",
+    "RelativePath": "api/Opportunity/add_requirement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BAddOpportunityRequirementRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
     "Method": "ConvertLead",
     "RelativePath": "api/Opportunity/convert",
     "HttpMethod": "POST",
@@ -649,6 +739,22 @@
       {
         "Name": "request",
         "Type": "CRMWebServices.Models.OpportunityModels\u002BUpdateOpportunityRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "UpdateOpportunityRequirement",
+    "RelativePath": "api/Opportunity/update_requirement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BUpdateOpportunityRequirementRequest",
         "IsRequired": true
       }
     ],

@@ -341,5 +341,58 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+
+        [HttpGet]
+        [Route("check-customer-exists")]
+        public async Task<IActionResult> CheckCustomer(string? gst, string? customerName, string? pan)
+        {
+            try
+            {
+                var response = await _repository.CheckCustomerExists(gst, customerName, pan);
+
+                return response.Status
+                    ? Ok(response)
+                    : NotFound(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("search-customer")]
+        public async Task<IActionResult> SearchCustomer(string searchText)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(searchText))
+                {
+                    return BadRequest(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Search text is required."
+                    });
+                }
+
+                var response = await _repository.SearchCustomer(searchText);
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
     }
+
+
 }

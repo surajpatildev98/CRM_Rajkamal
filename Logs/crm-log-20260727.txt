@@ -127,3 +127,46 @@
 2026-07-27 16:19:22.044 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 48.5886 ms
 2026-07-27 16:20:53.523 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1645.8579 ms
 2026-07-27 16:21:56.628 +05:30 [INF] HTTP POST /api/opportunity/Transfer responded 200 in 15235.5579 ms
+2026-07-27 22:08:25.999 +05:30 [INF] Starting CRM Web Services
+2026-07-27 22:08:26.374 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-27 22:08:26.643 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-27 22:08:26.646 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-27 22:08:26.922 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-27 22:08:26.925 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-27 22:08:26.929 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-27 22:08:28.768 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 221.2051 ms
+2026-07-27 22:08:29.095 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 58.2260 ms
+2026-07-27 22:08:53.600 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 7192.5385 ms
+2026-07-27 22:09:45.632 +05:30 [INF] HTTP GET /api/Lead/check-customer responded 200 in 17315.0978 ms
+2026-07-27 22:21:11.858 +05:30 [INF] Starting CRM Web Services
+2026-07-27 22:21:12.238 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-27 22:21:12.486 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-27 22:21:12.489 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-27 22:21:12.794 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-27 22:21:12.805 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-27 22:21:12.832 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-27 22:21:14.162 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 250.6187 ms
+2026-07-27 22:21:14.480 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 67.9605 ms
+2026-07-27 22:22:14.032 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 7081.1086 ms
+2026-07-27 22:22:53.258 +05:30 [INF] HTTP GET /api/Lead/check-customer-exists responded 200 in 2783.2912 ms
+2026-07-27 22:23:09.664 +05:30 [INF] HTTP GET /api/Lead/check-customer-exists responded 200 in 2365.8859 ms
+2026-07-27 22:23:31.628 +05:30 [INF] HTTP GET /api/Lead/check-customer-exists responded 200 in 5442.6473 ms
+2026-07-27 22:24:10.209 +05:30 [INF] HTTP GET /api/Lead/check-customer-exists responded 404 in 1746.5145 ms
+2026-07-27 22:34:46.048 +05:30 [INF] Starting CRM Web Services
+2026-07-27 22:34:46.870 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-07-27 22:34:47.212 +05:30 [INF] Now listening on: https://localhost:7022
+2026-07-27 22:34:47.236 +05:30 [INF] Now listening on: http://localhost:5163
+2026-07-27 22:34:47.725 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-07-27 22:34:47.741 +05:30 [INF] Hosting environment: OutsideNetwork
+2026-07-27 22:34:47.762 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-07-27 22:34:48.865 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 199.5269 ms
+2026-07-27 22:34:49.139 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 51.8805 ms
+2026-07-27 22:35:17.356 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1540.3677 ms
+2026-07-27 22:35:45.089 +05:30 [INF] HTTP GET /api/Lead/search-customer responded 200 in 343.2932 ms
+2026-07-27 22:35:51.132 +05:30 [INF] HTTP GET /api/Lead/search-customer responded 200 in 26.6975 ms
+2026-07-27 22:40:17.192 +05:30 [INF] HTTP GET /api/Lead/search-customer responded 200 in 25.5782 ms
+2026-07-27 22:41:32.796 +05:30 [INF] HTTP GET /api/Lead/check-customer-exists responded 200 in 5573.6390 ms
+2026-07-27 22:41:50.256 +05:30 [INF] HTTP GET /api/Lead/check-customer-exists responded 200 in 44.0437 ms
+2026-07-27 22:42:58.502 +05:30 [INF] HTTP GET /api/Lead/check-customer-exists responded 200 in 16.6328 ms
+2026-07-27 22:43:11.940 +05:30 [INF] HTTP GET /api/Lead/check-customer-exists responded 200 in 15.9452 ms
+2026-07-27 22:43:38.845 +05:30 [INF] HTTP GET /api/Lead/check-customer-exists responded 200 in 20.0239 ms

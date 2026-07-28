@@ -201,10 +201,25 @@
         }
 
         // For OPPORTUNITY DETAILS
+        //public class OpportunityDetailResponse
+        //{
+        //    public OpportunityInfo Opportunity { get; set; }
+        //    public List<CustomerContactInfo> Contacts { get; set; }
+        //}
+
         public class OpportunityDetailResponse
         {
             public OpportunityInfo Opportunity { get; set; }
+
             public List<CustomerContactInfo> Contacts { get; set; }
+
+            public List<OpportunityRequirementInfo> Requirements { get; set; }
+
+            public List<OpportunityActivityInfo> Activities { get; set; }
+
+            public List<OpportunityAttachmentInfo> Files { get; set; }
+
+            public List<OpportunityFollowUpInfo> FollowUps { get; set; }
         }
 
         public class OpportunityInfo
@@ -312,6 +327,148 @@
             public string Name { get; set; }
             public int PriorityLevel { get; set; }
             //public string ColorCode { get; set; }
+        }
+
+
+        public class OpportunityRequirementInfo
+        {
+            public int OpportunityRequirementId { get; set; }
+
+            public int? LeadRequirementId { get; set; }
+
+            public int OfferingId { get; set; }
+
+            public string OfferingName { get; set; }
+
+            public decimal Quantity { get; set; }
+
+            public string Remark { get; set; }
+
+            public string Unit { get; set; }
+
+            public bool IsOpportunityRequirement { get; set; }
+        }
+
+        public class OpportunityActivityInfo
+        {
+            public int ActivityId { get; set; }
+
+            public string ActivityType { get; set; }
+
+            public DateTime ActivityDate { get; set; }
+
+            public string Subject { get; set; }
+
+            public string Description { get; set; }
+
+            public string Outcome { get; set; }
+
+            public string CreatedBy { get; set; }
+
+            public int? ActivityStatusId { get; set; }
+
+            public string ActivityStatus { get; set; }
+
+            public string ActivityStatusColor { get; set; }
+        }
+
+        public class OpportunityAttachmentInfo
+        {
+            public int AttachmentId { get; set; }
+
+            public string FileName { get; set; }
+
+            public string FileType { get; set; }
+
+            public long? FileSize { get; set; }
+
+            public string FileUrl { get; set; }
+
+            public DateTime UploadedOn { get; set; }
+        }
+
+        public class OpportunityFollowUpInfo
+        {
+            public int FollowUpId { get; set; }
+
+            public int? ActivityId { get; set; }
+
+            public int? AssignedEmployeeId { get; set; }
+
+            public string AssignedTo { get; set; }
+
+            public DateTime FollowUpDate { get; set; }
+
+            public int Priority { get; set; }
+
+            public string Remarks { get; set; }
+
+            public bool IsCompleted { get; set; }
+
+            public DateTime? CompletedOn { get; set; }
+
+            public string FollowUpStatus { get; set; }
+
+            public string FollowUpStatusColor { get; set; }
+
+            public DateTime CreatedOn { get; set; }
+
+            public string CreatedByName { get; set; }
+        }
+
+        public class AddOpportunityRequirementRequest
+        {
+            public int Ref_OpportunityId { get; set; }
+            public int Ref_ProductId { get; set; }
+            public decimal Quantity { get; set; }
+            public string? RequirementRemark { get; set; }
+            public int? Ref_UnitId { get; set; }
+            public int CreatedBy { get; set; }
+        }
+
+        public class UpdateOpportunityRequirementRequest
+        {
+            public int Ref_OpportunityId { get; set; }
+            public int? Ref_OpportunityRequirementId { get; set; }  // set if already has an Opportunity row
+            public int? Ref_LeadRequirementId { get; set; }         // set if overriding a Lead item for the first time
+            public decimal Quantity { get; set; }
+            public string? RequirementRemark { get; set; }
+            public int? Ref_UnitId { get; set; }
+            public int CreatedBy { get; set; }
+        }
+
+        public class CreateOpportunityActivityRequest
+        {
+            public int Ref_OpportunityId { get; set; }
+            public int Ref_ActivityTypeId { get; set; }
+            public string Subject { get; set; } = null!;
+            public string Description { get; set; } = null!;
+            public string? Outcome { get; set; }
+            public DateTime ActivityDateTime { get; set; }
+            public int? DurationInMinutes { get; set; }
+            public decimal? Latitude { get; set; }
+            public decimal? Longitude { get; set; }
+            public int? Ref_ActivityStatusId { get; set; }
+            public int? Ref_NewOpportunityStageId { get; set; }
+            public DateTime? NextFollowUpDate { get; set; }
+            public List<AttachmentInput>? Attachments { get; set; }
+            public int CreatedBy { get; set; }
+        }
+
+        public class AttachmentInput
+        {
+            public string FileName { get; set; } = null!;
+            public string Base64Content { get; set; } = null!;
+        }
+
+        public class CreateOpportunityFollowUpRequest
+        {
+            public int Ref_OpportunityId { get; set; }
+            public DateTime NextFollowUpDate { get; set; }
+            public int? FollowUpAssignedEmployeeId { get; set; }
+            public string? FollowUpRemarks { get; set; }
+            public byte? FollowUpPriority { get; set; }
+            public int CreatedBy { get; set; }
         }
     }
 }

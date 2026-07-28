@@ -30,6 +30,7 @@
 
      
         public List<LeadAttachmentItem> Attachments { get; set; }
+        public int? LeadOrganizationId { get; set; } // added for existing customer, if the lead is for an existing customer, this will be the id of that customer in the LeadOrganization table
     }
     public class LeadAttachmentItem
     {
@@ -159,5 +160,76 @@
     }
 
 
+    //public class ExistingCustomerResponse
+    //{
+    //    public int LeadOrganizationId { get; set; }
+
+    //    public string CustomerName { get; set; }
+
+    //    public string Address { get; set; }
+
+    //    public int? Ref_CountryId { get; set; }
+
+    //    public int? Ref_StateId { get; set; }
+
+    //    public int? Ref_CityId { get; set; }
+
+    //    public int PinCode { get; set; }
+
+    //    public string Gst { get; set; }
+
+    //    public string Pan { get; set; }
+
+    //    public List<ExistingCustomerContact> Contacts { get; set; } = new();
+    //}
+
+    public class ExistingCustomerResponse
+    {
+        public int CompanyId { get; set; }
+        public string? CustomerName { get; set; }
+        public string? Pan { get; set; }
+        public List<CustomerBranchOption> Branches { get; set; } = new();
+    }
+
+    public class CustomerBranchOption
+    {
+        public int LeadOrganizationId { get; set; }
+        public string? CustomerName { get; set; }
+        public string? Address { get; set; }
+        public int? Ref_CountryId { get; set; }
+        public int? Ref_StateId { get; set; }
+        public int? Ref_CityId { get; set; }
+        public int PinCode { get; set; }
+        public string? Gst { get; set; }
+        public string? Pan { get; set; }
+        public bool IsExactGstMatch { get; set; }
+        public List<ExistingCustomerContact> Contacts { get; set; } = new();
+    }
+    public class ExistingCustomerContact
+    {
+        public int LeadContactId { get; set; }
+
+        public int Ref_LeadOrganizationId { get; set; }
+
+        public string ContactPerson { get; set; }
+
+        public string Mobile { get; set; }
+
+        public string Email { get; set; }
+
+        public int? Ref_DesignationId { get; set; }
+    }
+
+    public class CustomerSearchResponse
+    {
+        public int LeadOrganizationId { get; set; }
+        public int Ref_LeadCompanyId { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CityName { get; set; }
+        public string? DisplayName { get; set; }   // "ABC Company - Pune"
+        public string? Address { get; set; }
+        public string? Gst { get; set; }
+        public string? Pan { get; set; }
+    }
 
 }

@@ -455,6 +455,62 @@
         }
       }
     },
+    "/api/Lead/check-customer-exists": {
+      "get": {
+        "tags": [
+          "Lead"
+        ],
+        "parameters": [
+          {
+            "name": "gst",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "customerName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pan",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Lead/search-customer": {
+      "get": {
+        "tags": [
+          "Lead"
+        ],
+        "parameters": [
+          {
+            "name": "searchText",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/master/companies": {
       "get": {
         "tags": [
@@ -1003,6 +1059,130 @@
         }
       }
     },
+    "/api/Opportunity/add_requirement": {
+      "post": {
+        "tags": [
+          "Opportunity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddOpportunityRequirementRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddOpportunityRequirementRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddOpportunityRequirementRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Opportunity/update_requirement": {
+      "post": {
+        "tags": [
+          "Opportunity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityRequirementRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityRequirementRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityRequirementRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Opportunity/add_activity": {
+      "post": {
+        "tags": [
+          "Opportunity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOpportunityActivityRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOpportunityActivityRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOpportunityActivityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Opportunity/add_followup": {
+      "post": {
+        "tags": [
+          "Opportunity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOpportunityFollowUpRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOpportunityFollowUpRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOpportunityFollowUpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Opportunity/types": {
       "get": {
         "tags": [
@@ -1042,6 +1222,51 @@
   },
   "components": {
     "schemas": {
+      "AddOpportunityRequirementRequest": {
+        "type": "object",
+        "properties": {
+          "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_ProductId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "requirementRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "ref_UnitId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttachmentInput": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "base64Content": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ConvertLeadRequest": {
         "type": "object",
         "properties": {
@@ -1079,6 +1304,109 @@
             "nullable": true
           },
           "ref_OpportunityTypeId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateOpportunityActivityRequest": {
+        "type": "object",
+        "properties": {
+          "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_ActivityTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "subject": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "outcome": {
+            "type": "string",
+            "nullable": true
+          },
+          "activityDateTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "durationInMinutes": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "ref_ActivityStatusId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ref_NewOpportunityStageId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "nextFollowUpDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "attachments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttachmentInput"
+            },
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreateOpportunityFollowUpRequest": {
+        "type": "object",
+        "properties": {
+          "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nextFollowUpDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "followUpAssignedEmployeeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "followUpRemarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "followUpPriority": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdBy": {
             "type": "integer",
             "format": "int32"
           }
@@ -1492,6 +1820,11 @@
               "$ref": "#/components/schemas/LeadAttachmentItem"
             },
             "nullable": true
+          },
+          "leadOrganizationId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1651,6 +1984,43 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateOpportunityRequirementRequest": {
+        "type": "object",
+        "properties": {
+          "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_OpportunityRequirementId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ref_LeadRequirementId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "quantity": {
+            "type": "number",
+            "format": "double"
+          },
+          "requirementRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "ref_UnitId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
