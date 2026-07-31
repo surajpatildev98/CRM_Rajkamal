@@ -16,11 +16,7 @@ namespace CRMWebServices.Services
             _permissionService = permissionService;
         }
 
-        public async Task<bool> CanPerformAction(
-            ClaimsPrincipal user,
-            string resourceType,
-            string action,
-            int? resourceId = null)
+        public async Task<bool> CanPerformAction(ClaimsPrincipal user,string resourceType,string action,int? resourceId = null)
         {
             if (user == null || !user.Identity.IsAuthenticated)
                 return false;
@@ -78,11 +74,7 @@ namespace CRMWebServices.Services
             return false;
         }
 
-        public async Task<bool> CanPerformActionWithAssignment(
-            ClaimsPrincipal user,
-            string resourceType,
-            string action,
-            int? assignedEmployeeId)
+        public async Task<bool> CanPerformActionWithAssignment(ClaimsPrincipal user,string resourceType,string action,int? assignedEmployeeId)
         {
             if (!await CanPerformAction(user, resourceType, action))
                 return false;

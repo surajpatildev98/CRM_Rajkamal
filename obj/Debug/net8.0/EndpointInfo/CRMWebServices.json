@@ -852,61 +852,22 @@
         }
       }
     },
-    "/api/Opportunity/convert": {
-      "post": {
+    "/api/Opportunity/details/{opportunityId}": {
+      "get": {
         "tags": [
           "Opportunity"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConvertLeadRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConvertLeadRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/ConvertLeadRequest"
-              }
+        "parameters": [
+          {
+            "name": "opportunityId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
             }
           }
-        },
-        "responses": {
-          "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/api/Opportunity/Transfer": {
-      "post": {
-        "tags": [
-          "Opportunity"
         ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OpportunityTransferRequest"
-              }
-            },
-            "text/json": {
-              "schema": {
-                "$ref": "#/components/schemas/OpportunityTransferRequest"
-              }
-            },
-            "application/*+json": {
-              "schema": {
-                "$ref": "#/components/schemas/OpportunityTransferRequest"
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
             "description": "OK"
@@ -974,21 +935,10 @@
         }
       }
     },
-    "/api/Opportunity/details/{opportunityId}": {
+    "/api/Opportunity/types": {
       "get": {
         "tags": [
           "Opportunity"
-        ],
-        "parameters": [
-          {
-            "name": "opportunityId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
         ],
         "responses": {
           "200": {
@@ -997,8 +947,44 @@
         }
       }
     },
-    "/api/Opportunity/update": {
-      "put": {
+    "/api/Opportunity/stages": {
+      "get": {
+        "tags": [
+          "Opportunity"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Opportunity/priorities": {
+      "get": {
+        "tags": [
+          "Opportunity"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Opportunity/closestages": {
+      "get": {
+        "tags": [
+          "Opportunity"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Opportunity/convert": {
+      "post": {
         "tags": [
           "Opportunity"
         ],
@@ -1006,17 +992,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateOpportunityRequest"
+                "$ref": "#/components/schemas/ConvertLeadRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateOpportunityRequest"
+                "$ref": "#/components/schemas/ConvertLeadRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/UpdateOpportunityRequest"
+                "$ref": "#/components/schemas/ConvertLeadRequest"
               }
             }
           }
@@ -1028,8 +1014,8 @@
         }
       }
     },
-    "/api/Opportunity/delete": {
-      "delete": {
+    "/api/Opportunity/Transfer": {
+      "post": {
         "tags": [
           "Opportunity"
         ],
@@ -1037,17 +1023,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DeleteOpportunityRequest"
+                "$ref": "#/components/schemas/OpportunityTransferRequest"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/DeleteOpportunityRequest"
+                "$ref": "#/components/schemas/OpportunityTransferRequest"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/DeleteOpportunityRequest"
+                "$ref": "#/components/schemas/OpportunityTransferRequest"
               }
             }
           }
@@ -1183,11 +1169,30 @@
         }
       }
     },
-    "/api/Opportunity/types": {
-      "get": {
+    "/api/Opportunity/close": {
+      "post": {
         "tags": [
           "Opportunity"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloseOpportunityRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloseOpportunityRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CloseOpportunityRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -1195,11 +1200,30 @@
         }
       }
     },
-    "/api/Opportunity/stages": {
-      "get": {
+    "/api/Opportunity/Update-FollowUp-Status": {
+      "post": {
         "tags": [
           "Opportunity"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityFollowUpStatusRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityFollowUpStatusRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityFollowUpStatusRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -1207,11 +1231,61 @@
         }
       }
     },
-    "/api/Opportunity/priorities": {
-      "get": {
+    "/api/Opportunity/update": {
+      "put": {
         "tags": [
           "Opportunity"
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOpportunityRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Opportunity/delete": {
+      "delete": {
+        "tags": [
+          "Opportunity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteOpportunityRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteOpportunityRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteOpportunityRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -1263,6 +1337,28 @@
           "base64Content": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CloseOpportunityRequest": {
+        "type": "object",
+        "properties": {
+          "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_OpportunityStageIdClose": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closureRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false
@@ -1931,6 +2027,37 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateOpportunityFollowUpStatusRequest": {
+        "type": "object",
+        "properties": {
+          "followUpId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_ActivityStatusId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "newScheduledOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "statusRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

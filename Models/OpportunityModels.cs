@@ -470,5 +470,32 @@
             public byte? FollowUpPriority { get; set; }
             public int CreatedBy { get; set; }
         }
+
+
+        public class CloseOpportunityRequest
+        {
+            public int Ref_OpportunityId { get; set; }
+            public int Ref_OpportunityStageIdClose { get; set; }  // 7 = Closed Won, 8 = Closed Lost
+            public string? ClosureRemark { get; set; }
+            public int CreatedBy { get; set; }
+        }
+
+        public class OpportunityCloseStageDropdown
+        {
+            public int Id { get; set; }
+            public string? Name { get; set; }
+            public bool IsWon { get; set; }
+            public bool IsLost { get; set; }
+        }
+
+        public class UpdateOpportunityFollowUpStatusRequest
+        {
+            public int FollowUpId { get; set; }
+            public int Ref_OpportunityId { get; set; }
+            public int Ref_ActivityStatusId { get; set; }
+            public DateTime? NewScheduledOn { get; set; }
+            public string? StatusRemark { get; set; }
+            public int CreatedBy { get; set; }
+        }
     }
 }

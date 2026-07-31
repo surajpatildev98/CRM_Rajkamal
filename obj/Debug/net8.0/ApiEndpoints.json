@@ -595,6 +595,32 @@
   },
   {
     "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "CloseOpportunity",
+    "RelativePath": "api/Opportunity/close",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BCloseOpportunityRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "GetOpportunityCloseStages",
+    "RelativePath": "api/Opportunity/closestages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
     "Method": "ConvertLead",
     "RelativePath": "api/Opportunity/convert",
     "HttpMethod": "POST",
@@ -755,6 +781,22 @@
       {
         "Name": "request",
         "Type": "CRMWebServices.Models.OpportunityModels\u002BUpdateOpportunityRequirementRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "UpdateOpportunityFollowUpStatus",
+    "RelativePath": "api/Opportunity/Update-FollowUp-Status",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BUpdateOpportunityFollowUpStatusRequest",
         "IsRequired": true
       }
     ],

@@ -30,22 +30,7 @@ namespace CRMWebServices.Controllers
         {
             try
             {
-                //if (leadId == null)
-                //{
-                //    var accessFilter = await _authorization.GetAccessFilter(User, "Lead");
-
-                //    if (!accessFilter.CanViewAll)
-                //    {
-                //        searchText = searchText + $"|EmployeeId:{User.EmployeeId()}";
-                //        if (accessFilter.ShowCreatedAndAssigned)
-                //        {
-                //            searchText = searchText + $"|ShowCreated:true";
-                //        }
-                //    }
-
-                //    var response = await _repository.GetWonLeads(searchText);
-                //    return response.Status ? Ok(response) : BadRequest(response);
-                //}
+                
 
                 if (leadId == null)
                 {
@@ -58,11 +43,7 @@ namespace CRMWebServices.Controllers
                 }
 
                 // ✅ Use "Lead" for Lead resource
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "View",
-                    leadId.Value))
+                if (!await _authorization.CanPerformAction(User,"Lead","View",leadId.Value))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden,
                         new ApiResponse
@@ -82,6 +63,152 @@ namespace CRMWebServices.Controllers
                     Status = false,
                     Message = ex.Message
                 });
+            }
+        }
+
+        [HttpGet]
+        [Route("details/{opportunityId}")]
+        public async Task<IActionResult> GetOpportunityDetails(int opportunityId)
+        {
+            try
+            {
+                // ✅ Use "Opp" for Opportunity resource
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Opp",
+                    "View",
+                    opportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to view this opportunity."
+                        });
+                }
+
+                var response = await _repository.GetOpportunityDetails(opportunityId);
+                return response.Status ? Ok(response) : NotFound(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("list")]
+        public async Task<IActionResult> GetOpportunityList([FromQuery] OpportunityListRequest request)
+        {
+            try
+            {
+                // ✅ Use "Opp" for Opportunity resource
+                var accessFilter = await _authorization.GetAccessFilter(User, "Opp");
+
+                if (!accessFilter.CanViewAll)
+                {
+                    request.FilterOwnerId = accessFilter.EmployeeId;
+                    request.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
+                }
+
+                var response = await _repository.GetOpportunityList(request);
+
+                if (response.Status &&
+                    !accessFilter.CanViewAll &&
+                    response.Data is List<OpportunityListResponse> list &&
+                    list.Count == 0)
+                {
+                    response.Message = "No opportunities assigned to you.";
+                }
+
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+       
+        // DROPDOWN ENDPOINTS - No permission needed
+      
+        [HttpGet]
+        [Route("types")]
+        public async Task<IActionResult> GetOpportunityTypes()
+        {
+            try
+            {
+                var response = await _repository.GetOpportunityTypes();
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("stages")]
+        public async Task<IActionResult> GetOpportunityStages()
+        {
+            try
+            {
+                var response = await _repository.GetOpportunityStages();
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("priorities")]
+        public async Task<IActionResult> GetPriorities()
+        {
+            try
+            {
+                var response = await _repository.GetPriorities();
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("closestages")]
+        public async Task<IActionResult> GetOpportunityCloseStages()
+        {
+            try
+            {
+                var response = await _repository.GetOpportunityCloseStages();
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
 
@@ -149,148 +276,7 @@ namespace CRMWebServices.Controllers
             {
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
-        }
-
-        [HttpGet]
-        [Route("list")]
-        public async Task<IActionResult> GetOpportunityList([FromQuery] OpportunityListRequest request)
-        {
-            try
-            {
-                // ✅ Use "Opp" for Opportunity resource
-                var accessFilter = await _authorization.GetAccessFilter(User, "Opp");
-
-                if (!accessFilter.CanViewAll)
-                {
-                    request.FilterOwnerId = accessFilter.EmployeeId;
-                    request.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
-                }
-
-                var response = await _repository.GetOpportunityList(request);
-
-                if (response.Status &&
-                    !accessFilter.CanViewAll &&
-                    response.Data is List<OpportunityListResponse> list &&
-                    list.Count == 0)
-                {
-                    response.Message = "No opportunities assigned to you.";
-                }
-
-                return response.Status ? Ok(response) : BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse
-                {
-                    Status = false,
-                    Message = $"Error: {ex.Message}"
-                });
-            }
-        }
-
-        [HttpGet]
-        [Route("details/{opportunityId}")]
-        public async Task<IActionResult> GetOpportunityDetails(int opportunityId)
-        {
-            try
-            {
-                // ✅ Use "Opp" for Opportunity resource
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Opp",
-                    "View",
-                    opportunityId))
-                {
-                    return StatusCode(StatusCodes.Status403Forbidden,
-                        new ApiResponse
-                        {
-                            Status = false,
-                            Message = "You are not authorized to view this opportunity."
-                        });
-                }
-
-                var response = await _repository.GetOpportunityDetails(opportunityId);
-                return response.Status ? Ok(response) : NotFound(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse
-                {
-                    Status = false,
-                    Message = $"Error: {ex.Message}"
-                });
-            }
-        }
-
-        [HttpPut]
-        [Route("update")]
-        public async Task<IActionResult> UpdateOpportunity([FromBody] UpdateOpportunityRequest request)
-        {
-            try
-            {
-                // ✅ Use "Opp" for Opportunity resource
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Opp",
-                    "Edit",
-                    request.Ref_OpportunityId))
-                {
-                    return StatusCode(StatusCodes.Status403Forbidden,
-                        new ApiResponse
-                        {
-                            Status = false,
-                            Message = "You are not authorized to update this opportunity."
-                        });
-                }
-
-                request.CreatedBy = User.EmployeeId();
-                var response = await _repository.UpdateOpportunity(request);
-                return response.Status ? Ok(response) : BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse
-                {
-                    Status = false,
-                    Message = $"Error: {ex.Message}"
-                });
-            }
-        }
-
-        [HttpDelete]
-        [Route("delete")]
-        public async Task<IActionResult> DeleteOpportunity([FromBody] DeleteOpportunityRequest request)
-        {
-            try
-            {
-                // ✅ Use "Opp" for Opportunity resource
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Opp",
-                    "Delete",
-                    request.Ref_OpportunityId))
-                {
-                    return StatusCode(StatusCodes.Status403Forbidden,
-                        new ApiResponse
-                        {
-                            Status = false,
-                            Message = "You are not authorized to delete this opportunity."
-                        });
-                }
-
-                request.CreatedBy = User.EmployeeId();
-                var response = await _repository.DeleteOpportunity(request);
-                return response.Status ? Ok(response) : BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse
-                {
-                    Status = false,
-                    Message = $"Error: {ex.Message}"
-                });
-            }
-        }
+        }              
 
 
         [HttpPost]
@@ -359,18 +345,13 @@ namespace CRMWebServices.Controllers
         {
             try
             {
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Opp",
-                    "Activity",
-                    request.Ref_OpportunityId))
+                if (!await _authorization.CanPerformAction(User,"Opp","Activity",request.Ref_OpportunityId))
                 {
-                    return StatusCode(StatusCodes.Status403Forbidden,
-                        new ApiResponse
-                        {
-                            Status = false,
-                            Message = "You are not authorized to log activity on this opportunity."
-                        });
+                    return StatusCode(StatusCodes.Status403Forbidden,new ApiResponse
+                    {
+                        Status = false,
+                        Message = "You are not authorized to log activity on this opportunity."
+                    });
                 }
 
                 request.CreatedBy = User.EmployeeId();
@@ -413,16 +394,88 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // ============================================
-        // DROPDOWN ENDPOINTS - No permission needed
-        // ============================================
-        [HttpGet]
-        [Route("types")]
-        public async Task<IActionResult> GetOpportunityTypes()
+       
+
+        [HttpPost]
+        [Route("close")]
+        public async Task<IActionResult> CloseOpportunity([FromBody] CloseOpportunityRequest request)
         {
             try
             {
-                var response = await _repository.GetOpportunityTypes();
+                if (!await _authorization.CanPerformAction(User,"Opp","Close",request.Ref_OpportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,new ApiResponse
+                    {
+                        Status = false,
+                        Message = "You are not authorized to close this opportunity."
+                    });
+                }
+
+                request.CreatedBy = User.EmployeeId();
+                var response = await _repository.CloseOpportunity(request);
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
+            }
+        }
+
+      
+
+        [HttpPost]
+        [Route("Update-FollowUp-Status")]
+        public async Task<IActionResult> UpdateOpportunityFollowUpStatus([FromBody] UpdateOpportunityFollowUpStatusRequest request)
+        {
+            try
+            {
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Opp",
+                    "FollowUp",
+                    request.Ref_OpportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to update follow-up status on this opportunity."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
+                var response = await _repository.UpdateOpportunityFollowUpStatus(request);
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
+            }
+        }
+
+        [HttpPut]
+        [Route("update")]
+        public async Task<IActionResult> UpdateOpportunity([FromBody] UpdateOpportunityRequest request)
+        {
+            try
+            {
+                // ✅ Use "Opp" for Opportunity resource
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Opp",
+                    "Edit",
+                    request.Ref_OpportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to update this opportunity."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
+                var response = await _repository.UpdateOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
             catch (Exception ex)
@@ -435,32 +488,29 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        [HttpGet]
-        [Route("stages")]
-        public async Task<IActionResult> GetOpportunityStages()
+        [HttpDelete]
+        [Route("delete")]
+        public async Task<IActionResult> DeleteOpportunity([FromBody] DeleteOpportunityRequest request)
         {
             try
             {
-                var response = await _repository.GetOpportunityStages();
-                return response.Status ? Ok(response) : BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse
+                // ✅ Use "Opp" for Opportunity resource
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Opp",
+                    "Delete",
+                    request.Ref_OpportunityId))
                 {
-                    Status = false,
-                    Message = $"Error: {ex.Message}"
-                });
-            }
-        }
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to delete this opportunity."
+                        });
+                }
 
-        [HttpGet]
-        [Route("priorities")]
-        public async Task<IActionResult> GetPriorities()
-        {
-            try
-            {
-                var response = await _repository.GetPriorities();
+                request.CreatedBy = User.EmployeeId();
+                var response = await _repository.DeleteOpportunity(request);
                 return response.Status ? Ok(response) : BadRequest(response);
             }
             catch (Exception ex)
