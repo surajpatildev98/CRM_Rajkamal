@@ -2132,6 +2132,11 @@
             "format": "int32",
             "nullable": true
           },
+          "ref_ProductId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "quantity": {
             "type": "number",
             "format": "double"

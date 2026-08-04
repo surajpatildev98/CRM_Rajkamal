@@ -189,4 +189,4 @@ D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Release\net8.0\Serilog
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\CRMWebServices.sourcelink.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Release\net8.0\Newtonsoft.Json.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Release\net8.0\appsettings.InternalNetwork.json
-D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Release\net8.0\appsettings.OutsideNetwork.json
+D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\bin\Release\net8.0\appsetting.OutsideNetwork.json

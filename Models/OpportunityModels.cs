@@ -370,6 +370,8 @@
             public string ActivityStatus { get; set; }
 
             public string ActivityStatusColor { get; set; }
+
+            public List<object>? Attachments { get; set; }   // NEW
         }
 
         public class OpportunityAttachmentInfo
@@ -431,6 +433,8 @@
             public int Ref_OpportunityId { get; set; }
             public int? Ref_OpportunityRequirementId { get; set; }  // set if already has an Opportunity row
             public int? Ref_LeadRequirementId { get; set; }         // set if overriding a Lead item for the first time
+
+            public int? Ref_ProductId { get; set; }
             public decimal Quantity { get; set; }
             public string? RequirementRemark { get; set; }
             public int? Ref_UnitId { get; set; }

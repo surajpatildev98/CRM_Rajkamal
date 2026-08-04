@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CRMWebServices")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3f17e6028bc63d46cb73d01f921e818c6e08dca8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ab07f5760218f067cf2ac0010d1efa44647b4882")]
 [assembly: System.Reflection.AssemblyProductAttribute("CRMWebServices")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CRMWebServices")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

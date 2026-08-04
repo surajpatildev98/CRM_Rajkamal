@@ -1,8 +1,8 @@
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\CRMWebServices.exe
+D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\appsetting.OutsideNetwork.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\appsettings.Development.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\appsettings.InternalNetwork.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\appsettings.json
-D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\appsettings.OutsideNetwork.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\dotnet-tools.json
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\CRMWebServices.dll
 D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\obj\Release\net8.0\PubTmp\Out\CRMWebServices.runtimeconfig.json

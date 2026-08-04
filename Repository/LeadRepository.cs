@@ -656,6 +656,22 @@ namespace CRMWebServices.Repository
                     createdByName = r["CreatedByName"]?.ToString()
                 }).ToList();
 
+                var timeline = ds.Tables[6].Rows.Cast<DataRow>()
+                    .Select(r => new
+                    {
+                        itemType = r["ItemType"]?.ToString(),
+                        itemId = Convert.ToInt32(r["ItemId"]),
+                        activityType = r["ActivityType"]?.ToString(),
+                        itemDate = Convert.ToDateTime(r["ActivityDate"]),
+                        subject = r["Subject"]?.ToString(),
+                        description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                        outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                        createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString(),
+                        status = r["Status"]?.ToString(),
+                        statusColor = r["StatusColor"]?.ToString(),
+                        createdOn = Convert.ToDateTime(r["CreatedOn"])
+                    }).ToList();
+
                 return new ApiResponse
                 {
                     Status = true,
@@ -667,7 +683,8 @@ namespace CRMWebServices.Repository
                         requirements,
                         activities,
                         files,      // Activity files (keep as is)
-                        followUps
+                        followUps,
+                        timeline
                     }
                 };
             }

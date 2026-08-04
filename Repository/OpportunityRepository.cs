@@ -679,13 +679,18 @@ namespace CRMWebServices.Repository
 
                 var row = ds.Tables[0].Rows[0];
 
-                var contactRows = ds.Tables.Count > 1? ds.Tables[1].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
-                var requirementRows = ds.Tables.Count > 2? ds.Tables[2].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
-                var activityRows = ds.Tables.Count > 3? ds.Tables[3].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
-                var fileRows = ds.Tables.Count > 4? ds.Tables[4].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
-                var followUpRows = ds.Tables.Count > 5? ds.Tables[5].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
+                //var contactRows = ds.Tables.Count > 1? ds.Tables[1].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
+                //var requirementRows = ds.Tables.Count > 2? ds.Tables[2].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
+                //var activityRows = ds.Tables.Count > 3? ds.Tables[3].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
+                //var fileRows = ds.Tables.Count > 4? ds.Tables[4].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
+                //var followUpRows = ds.Tables.Count > 5? ds.Tables[5].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
 
-              
+                var contactRows = ds.Tables.Count > 1 ? ds.Tables[1].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
+                var requirementRows = ds.Tables.Count > 2 ? ds.Tables[2].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
+                var activityRows = ds.Tables.Count > 3 ? ds.Tables[3].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
+                var followUpRows = ds.Tables.Count > 4 ? ds.Tables[4].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
+
+
                 var opportunityInfo = new OpportunityInfo
                 {
                     OpportunityId = Convert.ToInt32(row["OpportunityId"]),
@@ -764,37 +769,76 @@ namespace CRMWebServices.Repository
                          Unit = req["Unit"] == DBNull.Value? null: req["Unit"].ToString(),
                          IsOpportunityRequirement = Convert.ToBoolean(req["IsOpportunityRequirement"])
                      }).ToList();
-                
+
 
                 var activities = activityRows
-                         .Select(r => new OpportunityActivityInfo
-                         {
-                             ActivityId = Convert.ToInt32(r["ActivityId"]),
-                             ActivityType = r["ActivityType"]?.ToString(),
-                             ActivityDate = Convert.ToDateTime(r["ActivityDate"]),
-                             Subject = r["Subject"]?.ToString(),
-                             Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
-                             Outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
-                             CreatedBy = r["CreatedBy"]?.ToString(),
-                             ActivityStatusId = r["Ref_ActivityStatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_ActivityStatusId"]),
-                             ActivityStatus = r["ActivityStatus"]?.ToString(),
-                             ActivityStatusColor = r["ActivityStatusColor"]?.ToString()
-                         }).ToList();
+                    .Select(r =>
+                    {
+                        List<object>? attachments = null;
 
-               
+                        if (r["AttachmentsJson"] != DBNull.Value)
+                        {
+                            var json = r["AttachmentsJson"]?.ToString();
+                            if (!string.IsNullOrEmpty(json))
+                            {
+                                var parsed = JsonConvert.DeserializeObject<List<dynamic>>(json);
+                                attachments = parsed.Select(a => (object)new
+                                {
+                                    attachmentId = Convert.ToInt32(a.AttachmentId),
+                                    fileName = a.FileName?.ToString(),
+                                    fileType = a.FileType?.ToString(),
+                                    fileSize = a.FileSize != null ? Convert.ToInt64(a.FileSize) : (long?)null,
+                                    fileUrl = BuildFileUrl(a.FilePath?.ToString()),
+                                    uploadedOn = Convert.ToDateTime(a.CreatedOn?.ToString())
+                                }).ToList();
+                            }
+                        }
 
-                var files = fileRows
-                          .Select(r => new OpportunityAttachmentInfo
-                          {
-                              AttachmentId = Convert.ToInt32(r["AttachmentId"]),
-                              FileName = r["FileName"]?.ToString(),
-                              FileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
-                              FileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
-                              FileUrl = BuildFileUrl(r["FilePath"]?.ToString()),
-                              UploadedOn = Convert.ToDateTime(r["CreatedOn"])
-                          })
-                          .ToList();
-                
+                        return new OpportunityActivityInfo
+                        {
+                            ActivityId = Convert.ToInt32(r["ActivityId"]),
+                            ActivityType = r["ActivityType"]?.ToString(),
+                            ActivityDate = Convert.ToDateTime(r["ActivityDate"]),
+                            Subject = r["Subject"]?.ToString(),
+                            Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                            Outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                            CreatedBy = r["CreatedBy"]?.ToString(),
+                            ActivityStatusId = r["Ref_ActivityStatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_ActivityStatusId"]),
+                            ActivityStatus = r["ActivityStatus"]?.ToString(),
+                            ActivityStatusColor = r["ActivityStatusColor"]?.ToString(),
+                            Attachments = attachments
+                        };
+                    }).ToList();
+
+                //var activities = activityRows
+                //         .Select(r => new OpportunityActivityInfo
+                //         {
+                //             ActivityId = Convert.ToInt32(r["ActivityId"]),
+                //             ActivityType = r["ActivityType"]?.ToString(),
+                //             ActivityDate = Convert.ToDateTime(r["ActivityDate"]),
+                //             Subject = r["Subject"]?.ToString(),
+                //             Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                //             Outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                //             CreatedBy = r["CreatedBy"]?.ToString(),
+                //             ActivityStatusId = r["Ref_ActivityStatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_ActivityStatusId"]),
+                //             ActivityStatus = r["ActivityStatus"]?.ToString(),
+                //             ActivityStatusColor = r["ActivityStatusColor"]?.ToString()
+                //         }).ToList();
+
+
+
+                //var files = fileRows
+                //          .Select(r => new OpportunityAttachmentInfo
+                //          {
+                //              AttachmentId = Convert.ToInt32(r["AttachmentId"]),
+                //              FileName = r["FileName"]?.ToString(),
+                //              FileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
+                //              FileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
+                //              FileUrl = BuildFileUrl(r["FilePath"]?.ToString()),
+                //              UploadedOn = Convert.ToDateTime(r["CreatedOn"])
+                //          })
+                //          .ToList();
+
                 var followUps = followUpRows
                          .Select(r => new OpportunityFollowUpInfo
                          {
@@ -823,7 +867,7 @@ namespace CRMWebServices.Repository
                     Contacts = contacts,
                     Requirements = requirements,
                     Activities = activities,
-                    Files = files,
+                    //Files = files,
                     FollowUps = followUps
                 };
 
@@ -1188,6 +1232,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
                     new SqlParameter("@Ref_OpportunityRequirementId", (object?)model.Ref_OpportunityRequirementId ?? DBNull.Value),
                     new SqlParameter("@Ref_LeadRequirementId", (object?)model.Ref_LeadRequirementId ?? DBNull.Value),
+                    new SqlParameter("@Ref_ProductId", (object?)model.Ref_ProductId ?? DBNull.Value),
                     new SqlParameter("@Quantity", model.Quantity),
                     new SqlParameter("@RequirementRemark", (object?)model.RequirementRemark ?? DBNull.Value),
                     new SqlParameter("@Ref_UnitId", (object?)model.Ref_UnitId ?? DBNull.Value),
