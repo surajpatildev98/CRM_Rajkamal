@@ -49,9 +49,7 @@ namespace CRMWebServices.Repository
 
         private string SaveBase64Attachment(string base64Content, string fileName, string subFolder)
         {
-            var base64Data = base64Content.Contains(",")
-                ? base64Content.Substring(base64Content.IndexOf(",") + 1)
-                : base64Content;
+            var base64Data = base64Content.Contains(",")? base64Content.Substring(base64Content.IndexOf(",") + 1): base64Content;
 
             byte[] fileBytes = Convert.FromBase64String(base64Data);
 
@@ -1429,6 +1427,37 @@ namespace CRMWebServices.Repository
             catch (Exception ex)
             {
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
+            }
+        }
+
+        public async Task<ApiResponse> DeleteOpportunityRequirement(DeleteOpportunityRequirementRequest model)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
+                    new SqlParameter("@Status", "DELETE_OPPORTUNITY_REQUIREMENT"),
+                    new SqlParameter("@Ref_OpportunityRequirementId", model.Ref_OpportunityRequirementId),
+                    new SqlParameter("@DeleteRemark", (object?)model.DeleteRemark ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy", model.CreatedBy)
+                );
+
+                return MapResponse(dt, isCreate: false);
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
             }
         }
     }

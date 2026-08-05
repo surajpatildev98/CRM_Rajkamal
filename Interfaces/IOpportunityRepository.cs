@@ -32,6 +32,8 @@ namespace CRMWebServices.Repository
 
         Task<ApiResponse> UpdateOpportunityFollowUpStatus(UpdateOpportunityFollowUpStatusRequest model);
 
+        Task<ApiResponse> DeleteOpportunityRequirement(DeleteOpportunityRequirementRequest model);
+
         // Dropdowns
         Task<ApiResponse> GetOpportunityTypes();
         Task<ApiResponse> GetOpportunityStages();

@@ -77,6 +77,7 @@ namespace CRMWebServices.Controllers
                 EmployeeCode = employeeCode,
                 FirstName = row["FirstName"]?.ToString(),
                 LastName = row["LastName"]?.ToString(),
+                RoleId = roleIds,
                 RoleNames = row["RoleNames"] == DBNull.Value ? "" : row["RoleNames"].ToString(),
                 DepartmentName = row["DepartmentName"] == DBNull.Value ? "" : row["DepartmentName"].ToString(),
                 OfficeName = row["OfficeName"] == DBNull.Value ? "" : row["OfficeName"].ToString()

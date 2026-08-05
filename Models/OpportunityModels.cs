@@ -501,5 +501,13 @@
             public string? StatusRemark { get; set; }
             public int CreatedBy { get; set; }
         }
+
+        public class DeleteOpportunityRequirementRequest
+        {
+            public int Ref_OpportunityRequirementId { get; set; }
+
+            public string DeleteRemark { get; set; }
+            public int? CreatedBy { get; set; }
+        }
     }
 }

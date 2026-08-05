@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\controllers\\leadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:controllers\\leadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\controllers\\opportunityquotationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:controllers\\opportunityquotationcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\repository\\leadrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:repository\\leadrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\models\\opportunityquotationmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\opportunityquotationmodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\appsettings.outsidenetwork.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:appsettings.outsidenetwork.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\rajkamal\\suraj_projects\\crm_web_api\\crmwebservices\\interfaces\\iopportunityquotationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:interfaces\\iopportunityquotationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": 6,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -46,54 +42,41 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Program.cs",
-              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAIwAAAAAAAAAAAAMwJ0AAAAEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-03T15:28:37.978Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "appsettings.OutsideNetwork.json",
-              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\appsettings.OutsideNetwork.json",
-              "RelativeDocumentMoniker": "appsettings.OutsideNetwork.json",
-              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\appsettings.OutsideNetwork.json",
-              "RelativeToolTip": "appsettings.OutsideNetwork.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-08-03T15:08:35.677Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "LeadController.cs",
-              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Controllers\\LeadController.cs",
-              "RelativeDocumentMoniker": "Controllers\\LeadController.cs",
-              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Controllers\\LeadController.cs",
-              "RelativeToolTip": "Controllers\\LeadController.cs",
-              "ViewState": "AgIAABoBAAAAAAAAAAAMwDUBAAAIAAAAAAAAAA==",
+              "Title": "OpportunityQuotationController.cs",
+              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Controllers\\OpportunityQuotationController.cs",
+              "RelativeDocumentMoniker": "Controllers\\OpportunityQuotationController.cs",
+              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Controllers\\OpportunityQuotationController.cs",
+              "RelativeToolTip": "Controllers\\OpportunityQuotationController.cs",
+              "ViewState": "AgIAAHUAAAAAAAAAAAAowBkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-03T11:29:44.144Z",
+              "WhenOpened": "2026-08-05T08:42:30.635Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "IOpportunityQuotationRepository.cs",
+              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\IOpportunityQuotationRepository.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IOpportunityQuotationRepository.cs",
+              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Interfaces\\IOpportunityQuotationRepository.cs",
+              "RelativeToolTip": "Interfaces\\IOpportunityQuotationRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-05T05:41:35.289Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "LeadRepository.cs",
-              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Repository\\LeadRepository.cs",
-              "RelativeDocumentMoniker": "Repository\\LeadRepository.cs",
-              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Repository\\LeadRepository.cs",
-              "RelativeToolTip": "Repository\\LeadRepository.cs",
-              "ViewState": "AgIAALECAAAAAAAAAAAMwMICAAAIAAAAAAAAAA==",
+              "Title": "OpportunityQuotationModels.cs",
+              "DocumentMoniker": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Models\\OpportunityQuotationModels.cs",
+              "RelativeDocumentMoniker": "Models\\OpportunityQuotationModels.cs",
+              "ToolTip": "D:\\RajKamal\\Suraj_Projects\\CRM_Web_API\\CRMWebServices\\Models\\OpportunityQuotationModels.cs",
+              "RelativeToolTip": "Models\\OpportunityQuotationModels.cs",
+              "ViewState": "AgIAAIYAAAAAAAAAAAAQwJMAAAAjAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-03T11:15:05.839Z",
+              "WhenOpened": "2026-08-05T05:40:33.295Z",
               "EditorCaption": ""
             }
           ]

@@ -1,0 +1,106 @@
+2026-08-05 12:08:29.757 +05:30 [INF] Starting CRM Web Services
+2026-08-05 12:08:30.217 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-05 12:08:30.483 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-05 12:08:30.487 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-05 12:08:30.725 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-05 12:08:30.729 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-05 12:08:30.733 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-05 12:08:32.434 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 198.8545 ms
+2026-08-05 12:08:33.088 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 59.0230 ms
+2026-08-05 12:12:15.714 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 7123.0740 ms
+2026-08-05 12:14:00.926 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 871.8028 ms
+2026-08-05 12:14:26.014 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 25.6880 ms
+2026-08-05 12:18:05.100 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 189029.7838 ms
+2026-08-05 12:18:06.211 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 5.1582 ms
+2026-08-05 12:18:06.750 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 48.5060 ms
+2026-08-05 12:23:09.463 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 347.5297 ms
+2026-08-05 12:24:28.819 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 32262.9712 ms
+2026-08-05 12:24:56.856 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 6899.2896 ms
+2026-08-05 12:25:15.774 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 75.0429 ms
+2026-08-05 12:32:51.389 +05:30 [INF] Starting CRM Web Services
+2026-08-05 12:32:51.965 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-05 12:32:52.357 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-05 12:32:52.361 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-05 12:32:52.726 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-05 12:32:52.738 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-05 12:32:52.752 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-05 12:32:54.047 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 347.5039 ms
+2026-08-05 12:32:54.738 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 77.8307 ms
+2026-08-05 12:35:18.909 +05:30 [INF] HTTP POST /api/auth/login responded 400 in 978.3325 ms
+2026-08-05 12:35:43.651 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 660.8374 ms
+2026-08-05 12:43:10.056 +05:30 [INF] HTTP POST /api/Lead/Register responded 400 in 383068.6835 ms
+2026-08-05 12:55:34.650 +05:30 [INF] Starting CRM Web Services
+2026-08-05 12:55:35.201 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-05 12:55:35.508 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-05 12:55:35.512 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-05 12:55:35.812 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-05 12:55:35.823 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-05 12:55:35.835 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-05 12:55:37.622 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 239.3127 ms
+2026-08-05 12:55:38.046 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 90.4712 ms
+2026-08-05 12:55:57.045 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1667.5448 ms
+2026-08-05 12:56:37.503 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 313.0892 ms
+2026-08-05 12:56:59.778 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 297.3407 ms
+2026-08-05 14:05:23.691 +05:30 [INF] Starting CRM Web Services
+2026-08-05 14:05:23.938 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-05 14:05:24.107 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-05 14:05:24.109 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-05 14:05:24.284 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-05 14:05:24.286 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-05 14:05:24.288 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-05 14:05:25.336 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 153.8703 ms
+2026-08-05 14:05:25.472 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 31.4742 ms
+2026-08-05 14:05:46.522 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 4354.0834 ms
+2026-08-05 14:06:19.093 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 6.2120 ms
+2026-08-05 14:06:19.441 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 84.1308 ms
+2026-08-05 14:06:41.266 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 323.2032 ms
+2026-08-05 14:42:45.610 +05:30 [INF] Starting CRM Web Services
+2026-08-05 14:42:45.926 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-05 14:42:46.146 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-05 14:42:46.149 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-05 14:42:46.365 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-05 14:42:46.369 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-05 14:42:46.377 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-05 14:42:48.070 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 197.1521 ms
+2026-08-05 14:42:48.343 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 65.9229 ms
+2026-08-05 14:43:21.404 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 6591.7075 ms
+2026-08-05 14:45:20.441 +05:30 [INF] HTTP GET /api/OpportunityQuotation/raise-data/1003 responded 400 in 69465.3418 ms
+2026-08-05 14:45:38.159 +05:30 [INF] HTTP GET /api/OpportunityQuotation/raise-data/1003 responded 200 in 15047.2361 ms
+2026-08-05 14:49:06.554 +05:30 [INF] HTTP GET /api/OpportunityQuotation/raise-data/1004 responded 400 in 1742.6792 ms
+2026-08-05 14:58:30.298 +05:30 [INF] HTTP GET /api/OpportunityQuotation/raise-data/1004 responded 400 in 7432.5362 ms
+2026-08-05 14:58:37.639 +05:30 [INF] HTTP GET /api/OpportunityQuotation/raise-data/1004 responded 400 in 1942.5874 ms
+2026-08-05 15:02:01.848 +05:30 [INF] HTTP GET /api/OpportunityQuotation/raise-data/1004 responded 200 in 12603.7214 ms
+2026-08-05 15:03:35.479 +05:30 [INF] HTTP GET /api/OpportunityQuotation/raise-data/1004 responded 200 in 1964.2541 ms
+2026-08-05 16:25:40.153 +05:30 [INF] HTTP GET /api/OpportunityQuotation/raise-data/1004 responded 200 in 5455.0933 ms
+2026-08-05 16:42:52.972 +05:30 [INF] Starting CRM Web Services
+2026-08-05 16:42:53.439 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-05 16:42:53.747 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-05 16:42:53.750 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-05 16:42:54.134 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-05 16:42:54.156 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-05 16:42:54.182 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-05 16:42:55.392 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 267.6284 ms
+2026-08-05 16:42:55.709 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 71.4966 ms
+2026-08-05 16:44:09.543 +05:30 [INF] HTTP POST /api/auth/login responded 400 in 1752.0950 ms
+2026-08-05 16:44:50.371 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 401.7831 ms
+2026-08-05 16:45:56.776 +05:30 [INF] HTTP POST /api/Opportunity/delete-requirement responded 200 in 516.6248 ms
+2026-08-05 16:46:50.570 +05:30 [INF] HTTP POST /api/Opportunity/delete-requirement responded 400 in 174.3779 ms
+2026-08-05 16:47:00.118 +05:30 [INF] HTTP POST /api/Opportunity/delete-requirement responded 200 in 43.9164 ms
+2026-08-05 17:18:36.528 +05:30 [INF] Starting CRM Web Services
+2026-08-05 17:18:36.938 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-05 17:18:37.188 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-05 17:18:37.193 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-05 17:18:37.453 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-05 17:18:37.457 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-05 17:18:37.461 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-05 17:18:38.442 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 189.9402 ms
+2026-08-05 17:18:38.686 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 51.9636 ms
+2026-08-05 17:19:05.225 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1514.6882 ms
+2026-08-05 17:19:43.067 +05:30 [INF] HTTP GET /api/OpportunityQuotation/raise-data/1005 responded 200 in 264.6993 ms
+2026-08-05 17:34:20.390 +05:30 [INF] HTTP POST /api/OpportunityQuotation/raise responded 400 in 115.5709 ms
+2026-08-05 17:35:49.651 +05:30 [INF] HTTP POST /api/OpportunityQuotation/raise responded 403 in 7356.7892 ms
+2026-08-05 17:36:21.855 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 10.6568 ms
+2026-08-05 17:36:22.193 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 74.7116 ms
+2026-08-05 17:36:40.156 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 298.5692 ms
+2026-08-05 17:38:04.314 +05:30 [INF] HTTP POST /api/OpportunityQuotation/raise responded 400 in 23460.2785 ms
+2026-08-05 17:38:27.400 +05:30 [INF] HTTP POST /api/OpportunityQuotation/raise responded 200 in 2817.9748 ms

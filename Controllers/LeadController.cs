@@ -21,9 +21,9 @@ namespace CRMWebServices.Controllers
             _authorization = authorization;
         }
 
-        // ============================================
+       
         // CREATE LEAD - Register
-        // ============================================
+       
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] LeadRegisterRequest request)
@@ -54,9 +54,9 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // ============================================
+       
         // TRANSFER LEAD - Assign
-        // ============================================
+       
         [HttpPost]
         [Route("Transfer")]
         public async Task<IActionResult> Transfer([FromBody] LeadTransferRequest request)
@@ -87,9 +87,9 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // ============================================
+       
         // UPDATE LEAD STATUS - Edit
-        // ============================================
+       
         [HttpPost]
         [Route("UpdateStatus")]
         public async Task<IActionResult> UpdateStatus([FromBody] LeadStatusUpdateRequest request)
@@ -120,9 +120,9 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // ============================================
+       
         // CREATE ACTIVITY - Activity
-        // ============================================
+       
         [HttpPost]
         [Route("CreateActivity")]
         public async Task<IActionResult> CreateActivity([FromBody] LeadActivityRequest request)
@@ -153,9 +153,9 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // ============================================
+       
         // CREATE FOLLOW-UP - FollowUp
-        // ============================================
+       
         [HttpPost]
         [Route("CreateFollowUp")]
         public async Task<IActionResult> CreateFollowUp([FromBody] LeadFollowUpRequest request)
@@ -186,9 +186,9 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // ============================================
+       
         // UPDATE FOLLOW-UP STATUS - FollowUp
-        // ============================================
+       
         [HttpPost]
         [Route("UpdateFollowUpStatus")]
         public async Task<IActionResult> UpdateFollowUpStatus([FromBody] FollowUpStatusUpdateRequest request)
@@ -219,9 +219,9 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // ============================================
+       
         // CLOSE LEAD - Close
-        // ============================================
+       
         [HttpPost]
         [Route("CloseLead")]
         public async Task<IActionResult> Close([FromBody] LeadCloseRequest request)
@@ -252,9 +252,9 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // ============================================
+       
         // GET LEAD DETAILS / LIST - View
-        // ============================================
+       
         [HttpGet]
         [Route("Details")]
         public async Task<IActionResult> Details([FromQuery] int? leadId, [FromQuery] LeadListFilterRequest filter)
@@ -309,9 +309,9 @@ namespace CRMWebServices.Controllers
             }
         }
 
-        // ============================================
+       
         // ASSIGN LEAD - Assign (first-time assignment only)
-        // ============================================
+       
         [HttpPost]
         [Route("Assign")]
         public async Task<IActionResult> Assign([FromBody] LeadAssignRequest request)

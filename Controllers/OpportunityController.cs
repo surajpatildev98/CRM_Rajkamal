@@ -522,5 +522,37 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+
+        [HttpPost]
+        [Route("delete-requirement")]
+        public async Task<IActionResult> DeleteOpportunityRequirement([FromBody] DeleteOpportunityRequirementRequest request)
+        {
+            try
+            {
+                if (!await _authorization.CanPerformAction(User, "Opp", "Edit", request.Ref_OpportunityRequirementId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to delete this requirement."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
+
+                var response = await _repository.DeleteOpportunityRequirement(request);
+
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
     }
 }

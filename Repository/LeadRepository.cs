@@ -116,11 +116,7 @@ namespace CRMWebServices.Repository
 
                         try
                         {
-                            string savedPath = SaveBase64Attachment(
-                                att.Base64Content,
-                                att.FileName,
-                                "LeadAttachments"
-                            );
+                            string savedPath = SaveBase64Attachment(att.Base64Content,att.FileName,"LeadAttachments");
 
                             savedAttachments.Add(new
                             {
@@ -894,8 +890,7 @@ namespace CRMWebServices.Repository
 
         public async Task<ApiResponse> CloseLead(LeadCloseRequest model)
         {
-            var dt = await _database.ExecuteDataTableAsync(
-                "USP_CRM_LeadManagement",
+            var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                 new SqlParameter("@Status", "CLOSE_LEAD"),
                 new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
                 new SqlParameter("@Ref_LeadStatusIdClose", model.Ref_LeadStatusIdClose),

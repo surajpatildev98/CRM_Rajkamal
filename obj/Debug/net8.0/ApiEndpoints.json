@@ -653,6 +653,22 @@
   },
   {
     "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "DeleteOpportunityRequirement",
+    "RelativePath": "api/Opportunity/delete-requirement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BDeleteOpportunityRequirementRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
     "Method": "GetOpportunityDetails",
     "RelativePath": "api/Opportunity/details/{opportunityId}",
     "HttpMethod": "GET",
@@ -819,6 +835,102 @@
         "Name": "searchText",
         "Type": "System.String",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "LogCustomerResponse",
+    "RelativePath": "api/OpportunityQuotation/customer-response",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BLogCustomerResponseRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "GetQuotationDetails",
+    "RelativePath": "api/OpportunityQuotation/details/{opportunityQuotationId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "opportunityQuotationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "LogNegotiationRound",
+    "RelativePath": "api/OpportunityQuotation/negotiation-round",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BLogNegotiationRoundRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "RaiseQuotation",
+    "RelativePath": "api/OpportunityQuotation/raise",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BRaiseQuotationRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "GetRaiseQuotationData",
+    "RelativePath": "api/OpportunityQuotation/raise-data/{opportunityId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "opportunityId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "DecideManagementReview",
+    "RelativePath": "api/OpportunityQuotation/review-decision",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BDecideManagementReviewRequest",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

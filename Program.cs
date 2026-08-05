@@ -74,9 +74,10 @@ builder.Services.AddScoped<ILeadRepository, LeadRepository>();
 builder.Services.AddScoped<IOpportunityRepository, OpportunityRepository>();
 builder.Services.AddScoped<ICRMAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
-builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();  // ← NEW
-builder.Services.AddScoped<IPermissionService, PermissionService>();        // ← NEW
-builder.Services.AddScoped<ICRMAuthorizationService, AuthorizationService>(); // ← NEW
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();  
+builder.Services.AddScoped<IPermissionService, PermissionService>();        
+builder.Services.AddScoped<ICRMAuthorizationService, AuthorizationService>();
+builder.Services.AddScoped<IOpportunityQuotationRepository, OpportunityQuotationRepository>();
 builder.Services.AddScoped<EmployeeRepository>();
 
 builder.Services.AddMemoryCache();  // ← NEW
@@ -141,8 +142,7 @@ app.UseStaticFiles(); // serves wwwroot as usual (if you use it elsewhere)
 
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
     RequestPath = "/files"
 });
 app.UseCors("AllowFlutterWeb");
