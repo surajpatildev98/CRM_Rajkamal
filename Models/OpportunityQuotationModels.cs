@@ -5,31 +5,32 @@ using static CRMWebServices.Models.OpportunityModels;
 namespace CRMWebServices.Models
 {
     public class OpportunityQuotationModels
-    {
-        // ==========================================================
-        // REQUESTS
-        // ==========================================================
-
+    {        
         public class RaiseQuotationRequest
         {
             public int Ref_OpportunityId { get; set; }
             public DateTime? QuotationDate { get; set; }
             public DateTime? ValidUntil { get; set; }
-            public decimal? FreightCharge { get; set; }
+
+            // Send EITHER the amount OR the percent for each — whichever the user typed in
+            public decimal? FreightAmount { get; set; }
+            public decimal? FreightPercent { get; set; }
+            public decimal? TaxAmount { get; set; }
             public decimal? TaxPercent { get; set; }
+
             public string? TermsRemark { get; set; }
             public List<QuotationItemInput> Items { get; set; } = new();
-            public List<AttachmentInput>? Attachments { get; set; }
+
+            public string? QuotationPdfFileName { get; set; }
+            public string? QuotationPdfBase64 { get; set; }
             public int CreatedBy { get; set; }
         }
-
         public class QuotationItemInput
         {
             public int Ref_OpportunityRequirementId { get; set; }
             public decimal Quantity { get; set; }
             public decimal Rate { get; set; }
         }
-
         public class LogCustomerResponseRequest
         {
             public int Ref_OpportunityId { get; set; }
@@ -38,7 +39,6 @@ namespace CRMWebServices.Models
             public string? CustomerResponseRemark { get; set; }
             public int CreatedBy { get; set; }
         }
-
         public class LogNegotiationRoundRequest
         {
             public int Ref_OpportunityId { get; set; }
@@ -49,7 +49,6 @@ namespace CRMWebServices.Models
             public DateTime? NextFollowUpDate { get; set; }
             public int CreatedBy { get; set; }
         }
-
         public class DecideManagementReviewRequest
         {
             public int Ref_ManagementReviewId { get; set; }
@@ -59,11 +58,6 @@ namespace CRMWebServices.Models
             public int? ReviewedByEmployeeId { get; set; }
             public int CreatedBy { get; set; }
         }
-
-        // ==========================================================
-        // RESPONSES
-        // ==========================================================
-
         public class QuotationDetailResponse
         {
             public QuotationInfo Quotation { get; set; } = null!;
@@ -72,7 +66,6 @@ namespace CRMWebServices.Models
             public List<NegotiationRoundInfo> NegotiationRounds { get; set; } = new();
             public List<ManagementReviewInfo> Reviews { get; set; } = new();
         }
-
         public class QuotationInfo
         {
             public int OpportunityQuotationId { get; set; }
@@ -83,6 +76,8 @@ namespace CRMWebServices.Models
             public DateTime QuotationDate { get; set; }
             public DateTime? ValidUntil { get; set; }
             public decimal FreightCharge { get; set; }
+            public decimal FreightPercent { get; set; }
+            public decimal TaxAmount { get; set; }
             public decimal TaxPercent { get; set; }
             public decimal SubTotal { get; set; }
             public decimal TotalAmount { get; set; }
@@ -94,7 +89,6 @@ namespace CRMWebServices.Models
             public DateTime? CustomerResponseOn { get; set; }
             public string? CustomerResponseRemark { get; set; }
         }
-
         public class QuotationItemInfo
         {
             public int OpportunityQuotationItemId { get; set; }
@@ -105,7 +99,6 @@ namespace CRMWebServices.Models
             public decimal Rate { get; set; }
             public decimal Amount { get; set; }
         }
-
         public class QuotationAttachmentInfo
         {
             public int AttachmentId { get; set; }
@@ -115,7 +108,6 @@ namespace CRMWebServices.Models
             public string? FileUrl { get; set; }
             public DateTime CreatedOn { get; set; }
         }
-
         public class NegotiationRoundInfo
         {
             public int OpportunityNegotiationId { get; set; }
@@ -127,7 +119,6 @@ namespace CRMWebServices.Models
             public DateTime? NextFollowUpDate { get; set; }
             public string StatusCode { get; set; } = null!;
         }
-
         public class ManagementReviewInfo
         {
             public int ManagementReviewId { get; set; }
@@ -140,17 +131,61 @@ namespace CRMWebServices.Models
             public DateTime? ReviewedOn { get; set; }
             public DateTime CreatedOn { get; set; }
         }
-
-
         public class RaiseQuotationItemResponse
-        {
+        {           
+
             public int OpportunityRequirementId { get; set; }
+            public int? Ref_LeadRequirementId { get; set; }
             public int ProductId { get; set; }
-            public string ProductName { get; set; }
+            public string ProductName { get; set; } = string.Empty;
             public decimal Quantity { get; set; }
             public int? UnitId { get; set; }
-            public string UnitName { get; set; }
-            public decimal Rate { get; set; }
+            public string? UnitName { get; set; }
+            public string? RequirementRemark { get; set; }
+        }
+        public class RaiseQuotationPageResponse
+        {
+            public RaiseQuotationHeader Header { get; set; } = new();
+            public List<RaiseQuotationItemResponse> Items { get; set; } = new();
+        }
+        public class RaiseQuotationHeader
+        {
+            public int OpportunityId { get; set; }
+            public string OpportunityNo { get; set; } = string.Empty;
+            public string CompanyName { get; set; } = string.Empty;
+            public int OwnerId { get; set; }
+            public string OwnerName { get; set; } = string.Empty;
+        }
+        public class QuotationListRequest
+        {
+            public string? SearchText { get; set; }
+            public int? FilterOwnerId { get; set; }
+            public int? Ref_OpportunityId { get; set; }   // optional drill-down filter
+            public bool ShowCreatedAndAssigned { get; set; }   // for PreSales, same as OpportunityListRequest
+        }
+        public class QuotationListResponse
+        {
+            public int OpportunityQuotationId { get; set; }
+            public int Ref_OpportunityId { get; set; }
+            public string OpportunityNo { get; set; } = null!;
+            public string? OpportunityName { get; set; }
+            public string? CompanyName { get; set; }
+            public string QuotationNo { get; set; } = null!;
+            public int VersionNumber { get; set; }
+            public DateTime QuotationDate { get; set; }
+            public DateTime? ValidUntil { get; set; }
+            public decimal SubTotal { get; set; }
+            public decimal FreightCharge { get; set; }
+
+            public decimal FreightPercent { get; set; }
+            public decimal TaxAmount { get; set; }
+            public decimal TaxPercent { get; set; }
+            public decimal TotalAmount { get; set; }
+            public string CustomerResponseCode { get; set; } = null!;
+            public bool IsCurrent { get; set; }
+            public DateTime CreatedOn { get; set; }
+            public string? RaisedBy { get; set; }
+            public int? OwnerEmployeeId { get; set; }
         }
     }
 }

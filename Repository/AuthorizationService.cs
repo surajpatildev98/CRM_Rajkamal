@@ -16,6 +16,7 @@ namespace CRMWebServices.Services
             _permissionService = permissionService;
         }
 
+        #region // Can Perform Action
         public async Task<bool> CanPerformAction(ClaimsPrincipal user,string resourceType,string action,int? resourceId = null)
         {
             if (user == null || !user.Identity.IsAuthenticated)
@@ -34,17 +35,7 @@ namespace CRMWebServices.Services
 
             // 3. Create action - no ownership check
             if (action == "Create")
-                return true;
-
-            //// 4. Check ownership
-            //if (resourceId.HasValue)
-            //{
-            //    var owner = await _permissionService.GetResourceOwner(resourceType, resourceId.Value);
-            //    if (owner == null)
-            //        return false;
-
-            //    return owner.CreatedBy == employeeId || owner.AssignedEmployeeId == employeeId;
-            //}
+                return true;           
 
             // 4. Check ownership
             if (resourceId.HasValue)
@@ -73,7 +64,9 @@ namespace CRMWebServices.Services
 
             return false;
         }
+        #endregion
 
+        #region // Get Resource Owner
         public async Task<bool> CanPerformActionWithAssignment(ClaimsPrincipal user,string resourceType,string action,int? assignedEmployeeId)
         {
             if (!await CanPerformAction(user, resourceType, action))
@@ -88,25 +81,34 @@ namespace CRMWebServices.Services
 
             return true;
         }
+        #endregion
 
+        #region // Get Access Filter
         public async Task<PermissionFilter> GetAccessFilter(ClaimsPrincipal user, string resourceType)
         {
             return await _permissionService.GetAccessFilter(user, resourceType);
         }
+        #endregion
 
+        #region // Get Resource Owner
         public async Task<bool> CanViewAll(ClaimsPrincipal user, string resourceType)
         {
             return await _permissionService.HasPermission(user, $"{resourceType}_ViewAll");
         }
+        #endregion
 
+        #region // Get User Permissions
         public async Task<Dictionary<string, bool>> GetUserPermissions(ClaimsPrincipal user)
         {
             return await _permissionService.GetUserPermissionDictionary(user);
         }
+        #endregion
 
+        #region // Get User Permission Codes
         public async Task<bool> HasPermission(ClaimsPrincipal user, string permissionCode)
         {
             return await _permissionService.HasPermission(user, permissionCode);
         }
+        #endregion
     }
 }

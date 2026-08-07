@@ -15,16 +15,14 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
+        #region  // Employee Registration 
         public async Task<ApiResponse> Register(EmployeeRegisterRequest model)
         {
             try
             {
-
-
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_EmployeeManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_EmployeeManagement",
                     new SqlParameter("@Status", "REGISTER"),
                     new SqlParameter("@FirstName", model.FirstName),
                     new SqlParameter("@MiddleName", (object?)model.MiddleName ?? DBNull.Value),
@@ -83,5 +81,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
     }
 }

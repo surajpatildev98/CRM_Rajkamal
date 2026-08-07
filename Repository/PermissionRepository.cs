@@ -23,6 +23,7 @@ namespace CRMWebServices.Repository
             _logger = logger;
         }
 
+        #region GetUserPermissions for EmployeeId
         public async Task<List<UserPermission>> GetUserPermissions(int employeeId)
         {
             try
@@ -61,7 +62,9 @@ namespace CRMWebServices.Repository
                 return new List<UserPermission>();
             }
         }
+        #endregion
 
+        #region Check if user has a specific permission
         public async Task<bool> UserHasPermission(int employeeId, string permissionCode)
         {
             try
@@ -86,7 +89,9 @@ namespace CRMWebServices.Repository
                 return false;
             }
         }
+        #endregion
 
+        #region Check if user has multiple permissions
         public async Task<Dictionary<string, bool>> UserHasMultiplePermissions(int employeeId, string[] permissionCodes)
         {
             var result = new Dictionary<string, bool>();
@@ -128,7 +133,9 @@ namespace CRMWebServices.Repository
                 return result;
             }
         }
+        #endregion
 
+        #region Get the owner of a specific resource
         public async Task<ResourceOwner> GetResourceOwner(string resourceType, int resourceId)
         {
             try
@@ -164,7 +171,9 @@ namespace CRMWebServices.Repository
                 return null;
             }
         }
+        #endregion
 
+        #region Get user role permissions
         public async Task<List<UserRolePermission>> GetUserRolePermissions(int employeeId)
         {
             try
@@ -208,7 +217,9 @@ namespace CRMWebServices.Repository
                 return new List<UserRolePermission>();
             }
         }
+        #endregion
 
+        #region Get user modules with total permissions
         public async Task<List<ModulePermission>> GetUserModules(int employeeId)
         {
             try
@@ -244,7 +255,9 @@ namespace CRMWebServices.Repository
                 return new List<ModulePermission>();
             }
         }
+        #endregion
 
+        #region Get all permissions in the system
         public async Task<List<PermissionDto>> GetAllPermissions()
         {
             try
@@ -285,7 +298,9 @@ namespace CRMWebServices.Repository
                 return new List<PermissionDto>();
             }
         }
+        #endregion
 
+        #region Batch check permissions for an employee
         public async Task<Dictionary<string, bool>> BatchCheckPermissions(int employeeId)
         {
             try
@@ -321,5 +336,6 @@ namespace CRMWebServices.Repository
                 return new Dictionary<string, bool>();
             }
         }
+        #endregion
     }
 }

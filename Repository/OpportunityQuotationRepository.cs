@@ -26,10 +26,7 @@ namespace CRMWebServices.Repository
             _logger = logger;
         }
 
-        
-        // Shared helpers — same pattern as OpportunityRepository
-        
-
+        #region  Helper Methods
         private string? BuildFileUrl(string? filePath)
         {
             if (string.IsNullOrEmpty(filePath))
@@ -95,41 +92,108 @@ namespace CRMWebServices.Repository
             };
         }
 
-        
-        // RAISE_QUOTATION
-        
-        public async Task<ApiResponse> RaiseQuotation(RaiseQuotationRequest model)
+        #endregion
+
+        #region// Get Data for Raise Quotation Page   
+        public async Task<ApiResponse> GetRaiseQuotationData(int opportunityId)
         {
             try
             {
-                // Save attachments first (same pattern as CreateOpportunityActivity)
+                var ds = await _database.ExecuteDataSetAsync(SP_NAME,
+                    new SqlParameter("@Status", "GET_RAISE_QUOTATION_DATA"),
+                    new SqlParameter("@Ref_OpportunityId", opportunityId)
+                );
+
+                if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Opportunity not found."
+                    };
+                }
+
+                var row = ds.Tables[0].Rows[0];
+
+                var header = new RaiseQuotationHeader
+                {
+                    OpportunityId = Convert.ToInt32(row["OpportunityId"]),
+                    OpportunityNo = row["OpportunityNo"].ToString(),
+                    CompanyName = row["CompanyName"].ToString(),
+                    OwnerId = Convert.ToInt32(row["OwnerId"]),
+                    OwnerName = row["OwnerName"].ToString()
+                };
+
+                var items = ds.Tables[1].Rows.Cast<DataRow>()
+                    .Select(r => new RaiseQuotationItemResponse
+                    {
+                        OpportunityRequirementId = Convert.ToInt32(r["OpportunityRequirementId"]),
+                        //Ref_LeadRequirementId = Convert.ToInt32(r["Ref_LeadRequirementId"]),
+                        Ref_LeadRequirementId = r["Ref_LeadRequirementId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_LeadRequirementId"]),
+                        ProductId = Convert.ToInt32(r["Ref_ProductId"]),
+                        ProductName = r["ProductName"].ToString(),
+                        Quantity = Convert.ToDecimal(r["Quantity"]),
+                        UnitId = r["Ref_UnitId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_UnitId"]),
+                        UnitName = r["UnitName"] == DBNull.Value ? null : r["UnitName"].ToString(),
+                        RequirementRemark = r["RequirementRemark"] == DBNull.Value ? null : r["RequirementRemark"].ToString()
+                    }).ToList();
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = "Quotation data fetched successfully.",
+                    Data = new RaiseQuotationPageResponse
+                    {
+                        Header = header,
+                        Items = items
+                    }
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        #region // RAISE_QUOTATION      
+        public async Task<ApiResponse> RaiseQuotation(RaiseQuotationRequest model)
+        {
+            try
+            {               
                 List<object> savedAttachments = new List<object>();
 
-                if (model.Attachments != null && model.Attachments.Count > 0)
+                if (!string.IsNullOrWhiteSpace(model.QuotationPdfBase64) && !string.IsNullOrWhiteSpace(model.QuotationPdfFileName))
                 {
-                    foreach (var att in model.Attachments)
+                    try
                     {
-                        if (string.IsNullOrWhiteSpace(att.Base64Content) || string.IsNullOrWhiteSpace(att.FileName))
-                            continue;
+                        string savedPath = SaveBase64Attachment(model.QuotationPdfBase64, model.QuotationPdfFileName, "OpportunityQuotationAttachments");
 
-                        try
+                        savedAttachments.Add(new
                         {
-                            string savedPath = SaveBase64Attachment(att.Base64Content, att.FileName, "OpportunityQuotationAttachments");
-
-                            savedAttachments.Add(new
-                            {
-                                FileName = att.FileName,
-                                FilePath = savedPath,
-                                FileType = Path.GetExtension(att.FileName).TrimStart('.').ToLowerInvariant(),
-                                FileSize = Convert.FromBase64String(att.Base64Content.Contains(",")
-                                        ? att.Base64Content.Substring(att.Base64Content.IndexOf(",") + 1)
-                                        : att.Base64Content).Length
-                            });
-                        }
-                        catch (Exception ex)
-                        {
-                            return new ApiResponse { Status = false, Message = $"Error processing attachment '{att.FileName}': {ex.Message}" };
-                        }
+                            FileName = model.QuotationPdfFileName,
+                            FilePath = savedPath,
+                            FileType = Path.GetExtension(model.QuotationPdfFileName).TrimStart('.').ToLowerInvariant(),
+                            FileSize = Convert.FromBase64String(model.QuotationPdfBase64.Contains(",")
+                                    ? model.QuotationPdfBase64.Substring(model.QuotationPdfBase64.IndexOf(",") + 1)
+                                    : model.QuotationPdfBase64).Length
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        return new ApiResponse { Status = false, Message = $"Error processing quotation PDF: {ex.Message}" };
                     }
                 }
 
@@ -141,7 +205,9 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
                     new SqlParameter("@QuotationDate", (object?)model.QuotationDate ?? DBNull.Value),
                     new SqlParameter("@ValidUntil", (object?)model.ValidUntil ?? DBNull.Value),
-                    new SqlParameter("@FreightCharge", (object?)model.FreightCharge ?? DBNull.Value),
+                    new SqlParameter("@FreightAmount", (object?)model.FreightAmount ?? DBNull.Value),
+                    new SqlParameter("@FreightPercent", (object?)model.FreightPercent ?? DBNull.Value),
+                    new SqlParameter("@TaxAmount", (object?)model.TaxAmount ?? DBNull.Value),
                     new SqlParameter("@TaxPercent", (object?)model.TaxPercent ?? DBNull.Value),
                     new SqlParameter("@TermsRemark", (object?)model.TermsRemark ?? DBNull.Value),
                     new SqlParameter("@ItemsJson", itemsJson),
@@ -160,10 +226,65 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
-        
-        // GET_QUOTATION_DETAILS
-        
+        #region // GET_QUOTATION_LIST
+        public async Task<ApiResponse> GetQuotationList(QuotationListRequest request)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "GET_QUOTATION_LIST"),
+                    new SqlParameter("@SearchText", (object?)request.SearchText ?? DBNull.Value),
+                    new SqlParameter("@FilterOwnerId", (object?)request.FilterOwnerId ?? DBNull.Value),
+                    new SqlParameter("@Ref_OpportunityId", (object?)request.Ref_OpportunityId ?? DBNull.Value)
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    return new ApiResponse { Status = true, Message = "No quotations found.", Data = new List<QuotationListResponse>() };
+                }
+
+                var result = new List<QuotationListResponse>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    result.Add(new QuotationListResponse
+                    {
+                        OpportunityQuotationId = Convert.ToInt32(row["OpportunityQuotationId"]),
+                        Ref_OpportunityId = Convert.ToInt32(row["Ref_OpportunityId"]),
+                        OpportunityNo = row["OpportunityNo"]?.ToString(),
+                        OpportunityName = row["OpportunityName"]?.ToString(),
+                        CompanyName = row["CompanyName"]?.ToString(),
+                        QuotationNo = row["QuotationNo"]?.ToString(),
+                        VersionNumber = Convert.ToInt32(row["VersionNumber"]),
+                        QuotationDate = Convert.ToDateTime(row["QuotationDate"]),
+                        ValidUntil = row["ValidUntil"] == DBNull.Value ? null : Convert.ToDateTime(row["ValidUntil"]),
+                        SubTotal = Convert.ToDecimal(row["SubTotal"]),
+                        FreightCharge = Convert.ToDecimal(row["FreightCharge"]),
+                        TaxPercent = Convert.ToDecimal(row["TaxPercent"]),
+                        TotalAmount = Convert.ToDecimal(row["TotalAmount"]),
+                        CustomerResponseCode = row["CustomerResponseCode"]?.ToString(),
+                        IsCurrent = Convert.ToBoolean(row["IsCurrent"]),
+                        CreatedOn = Convert.ToDateTime(row["CreatedOn"]),
+                        RaisedBy = row["RaisedBy"]?.ToString(),
+                        OwnerEmployeeId = row["OwnerEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(row["OwnerEmployeeId"])
+                    });
+                }
+
+                return new ApiResponse { Status = true, Message = "Quotations fetched successfully.", Data = result };
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
+            }
+        }
+        #endregion
+
+        #region // GET_QUOTATION_DETAILS    
         public async Task<ApiResponse> GetQuotationDetails(int opportunityQuotationId)
         {
             try
@@ -279,10 +400,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
-        
-        // LOG_CUSTOMER_RESPONSE
-        
+        #region // LOG_CUSTOMER_RESPONSE        
         public async Task<ApiResponse> LogCustomerResponse(LogCustomerResponseRequest model)
         {
             try
@@ -307,10 +427,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
-        
-        // LOG_NEGOTIATION_ROUND
-        
+        #region // LOG_NEGOTIATION_ROUND    
         public async Task<ApiResponse> LogNegotiationRound(LogNegotiationRoundRequest model)
         {
             try
@@ -337,10 +456,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
-        
-        // DECIDE_MANAGEMENT_REVIEW
-        
+        #region // DECIDE_MANAGEMENT_REVIEW        
         public async Task<ApiResponse> DecideManagementReview(DecideManagementReviewRequest model)
         {
             try
@@ -366,71 +484,7 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
-        public async Task<ApiResponse> GetRaiseQuotationData(int opportunityId)
-        {
-            try
-            {
-                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status", "GET_RAISE_QUOTATION_DATA"),
-                    new SqlParameter("@Ref_OpportunityId", opportunityId)
-                );
-
-                if (dt == null || dt.Rows.Count == 0)
-                {
-                    return new ApiResponse
-                    {
-                        Status = false,
-                        Message = "No requirements found for this opportunity."
-                    };
-                }
-
-                //var items = dt.AsEnumerable().Select(r => new
-                //{
-                //    OpportunityRequirementId = Convert.ToInt32(r["OpportunityRequirementId"]),
-                //    ProductId = Convert.ToInt32(r["Ref_ProductId"]),
-                //    ProductName = r["ProductName"]?.ToString(),
-                //    Quantity = Convert.ToDecimal(r["Quantity"]),
-                //    UnitId = r["Ref_UnitId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_UnitId"]),
-                //    UnitName = r["UnitName"]?.ToString(),
-                //    Rate = 0m
-                //}).ToList();
-
-                var items = dt.AsEnumerable()
-                  .Select(r => new RaiseQuotationItemResponse
-                  {
-                      OpportunityRequirementId = Convert.ToInt32(r["OpportunityRequirementId"]),
-                      ProductId = Convert.ToInt32(r["Ref_ProductId"]),
-                      ProductName = r["ProductName"]?.ToString(),
-                      Quantity = Convert.ToDecimal(r["Quantity"]),
-                      UnitId = r["Ref_UnitId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_UnitId"]),
-                      UnitName = r["UnitName"]?.ToString(),
-                      Rate = 0
-                  }).ToList();
-
-                return new ApiResponse
-                {
-                    Status = true,
-                    Message = "Quotation data fetched successfully.",
-                    Data = items
-                };
-            }
-            catch (SqlException ex)
-            {
-                return new ApiResponse
-                {
-                    Status = false,
-                    Message = $"Database Error: {ex.Message}"
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ApiResponse
-                {
-                    Status = false,
-                    Message = $"Error: {ex.Message}"
-                };
-            }
-        }
     }
 }

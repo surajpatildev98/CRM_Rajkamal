@@ -1347,7 +1347,51 @@
         }
       }
     },
-    "/api/OpportunityQuotation/details/{opportunityQuotationId}": {
+    "/api/OpportunityQuotation/list": {
+      "get": {
+        "tags": [
+          "OpportunityQuotation"
+        ],
+        "parameters": [
+          {
+            "name": "SearchText",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "FilterOwnerId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "Ref_OpportunityId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "ShowCreatedAndAssigned",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/OpportunityQuotation/details": {
       "get": {
         "tags": [
           "OpportunityQuotation"
@@ -1355,8 +1399,7 @@
         "parameters": [
           {
             "name": "opportunityQuotationId",
-            "in": "path",
-            "required": true,
+            "in": "query",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1760,9 +1803,17 @@
       "DeleteOpportunityRequirementRequest": {
         "type": "object",
         "properties": {
+          "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
           "ref_OpportunityRequirementId": {
             "type": "integer",
             "format": "int32"
+          },
+          "deleteRemark": {
+            "type": "string",
+            "nullable": true
           },
           "createdBy": {
             "type": "integer",
@@ -1947,6 +1998,10 @@
           "longitude": {
             "type": "number",
             "format": "double",
+            "nullable": true
+          },
+          "locationAddress": {
+            "type": "string",
             "nullable": true
           },
           "attachments": {
@@ -2377,7 +2432,17 @@
             "format": "date-time",
             "nullable": true
           },
-          "freightCharge": {
+          "freightAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "freightPercent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "taxAmount": {
             "type": "number",
             "format": "double",
             "nullable": true
@@ -2398,11 +2463,12 @@
             },
             "nullable": true
           },
-          "attachments": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/AttachmentInput"
-            },
+          "quotationPdfFileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "quotationPdfBase64": {
+            "type": "string",
             "nullable": true
           },
           "createdBy": {

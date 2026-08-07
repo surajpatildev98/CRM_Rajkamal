@@ -858,7 +858,7 @@
   {
     "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
     "Method": "GetQuotationDetails",
-    "RelativePath": "api/OpportunityQuotation/details/{opportunityQuotationId}",
+    "RelativePath": "api/OpportunityQuotation/details",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -866,7 +866,38 @@
       {
         "Name": "opportunityQuotationId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "GetQuotationList",
+    "RelativePath": "api/OpportunityQuotation/list",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "SearchText",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FilterOwnerId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Ref_OpportunityId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowCreatedAndAssigned",
+        "Type": "System.Boolean",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

@@ -10,24 +10,14 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> UpdateLeadStatus(LeadStatusUpdateRequest model);        
         Task<ApiResponse> CreateActivity(LeadActivityRequest model);
         Task<ApiResponse> CreateFollowUp(LeadFollowUpRequest model);
-
         Task<ApiResponse> GetLeadFullDetails(int leadId);
         Task<ApiResponse> GetLeadList(LeadListFilterRequest filter);
-
         Task<ApiResponse> UpdateFollowUpStatus(FollowUpStatusUpdateRequest model);
-
-        Task<ApiResponse> CloseLead(LeadCloseRequest model);
-            
+        Task<ApiResponse> CloseLead(LeadCloseRequest model);            
         Task<int?> GetAssignedEmployeeId(int leadId);
-
         Task<LeadAccessInfo?> GetLeadAccessInfo(int leadId);
-
-        Task<ApiResponse> AssignLead(LeadAssignRequest model);
-
-        //Task<ApiResponse> CheckCustomerByGst(string gst);
-
+        Task<ApiResponse> AssignLead(LeadAssignRequest model); 
         Task<ApiResponse> CheckCustomerExists(string? gst, string? customerName,string? pan);
-
         Task<ApiResponse> SearchCustomer(string searchText);
     }
 }

@@ -20,6 +20,7 @@ namespace CRMWebServices.Controllers
             _jwt = jwt;
         }
 
+        #region // POST: api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -85,5 +86,6 @@ namespace CRMWebServices.Controllers
 
             return Ok(response);
         }
+        #endregion
     }
 }

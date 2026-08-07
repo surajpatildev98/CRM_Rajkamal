@@ -23,22 +23,21 @@ namespace CRMWebServices.Controllers
             _authorization = authorization;
         }
 
-
+        #region GET api/OpportunityQuotation/raise-data/{opportunityId}
         [HttpGet]
         [Route("raise-data/{opportunityId}")]
         public async Task<IActionResult> GetRaiseQuotationData(int opportunityId)
         {
             try
             {
-                //if (!await _authorization.CanPerformAction(User, "Opp", "RaiseQuotation", opportunityId))
-                //{
-                //    return StatusCode(StatusCodes.Status403Forbidden,
-                //        new ApiResponse
-                //        {
-                //            Status = false,
-                //            Message = "You are not authorized to raise quotation for this opportunity."
-                //        });
-                //}
+                if (!await _authorization.CanPerformAction(User, "Opp", "View", opportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
+                    {
+                        Status = false,
+                        Message = "You are not authorized to view quotation data for this opportunity."
+                    });
+                }
 
                 var response = await _repository.GetRaiseQuotationData(opportunityId);
 
@@ -53,9 +52,43 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-        // GET api/OpportunityQuotation/details/{opportunityQuotationId}
+        #region GET api/OpportunityQuotation/list
+        [HttpGet]
+        [Route("list")]
+        public async Task<IActionResult> GetQuotationList([FromQuery] QuotationListRequest request)
+        {
+            try
+            {
+                var accessFilter = await _authorization.GetAccessFilter(User, "Opp");
 
+                if (!accessFilter.CanViewAll)
+                {
+                    request.FilterOwnerId = accessFilter.EmployeeId;
+                    request.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
+                }
+
+                var response = await _repository.GetQuotationList(request);
+
+                if (response.Status &&
+                    !accessFilter.CanViewAll &&
+                    response.Data is List<QuotationListResponse> list &&
+                    list.Count == 0)
+                {
+                    response.Message = "No quotations found for opportunities assigned to you.";
+                }
+
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
+            }
+        }
+        #endregion
+
+        #region GET api/OpportunityQuotation/details/{opportunityQuotationId}       
         [HttpGet]
         [Route("details/{opportunityQuotationId}")]
         public async Task<IActionResult> GetQuotationDetails(int opportunityQuotationId)
@@ -73,22 +106,23 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
-        // POST api/OpportunityQuotation/raise
+        #endregion
 
+        #region POST api/OpportunityQuotation/raise
         [HttpPost]
         [Route("raise")]
         public async Task<IActionResult> RaiseQuotation([FromBody] RaiseQuotationRequest request)
         {
             try
             {
-                //if (!await _authorization.CanPerformAction(User, "Opp", "RaiseQuotation", request.Ref_OpportunityId))
-                //{
-                //    return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
-                //    {
-                //        Status = false,
-                //        Message = "You are not authorized to raise a quotation for this opportunity."
-                //    });
-                //}
+                if (!await _authorization.CanPerformAction(User, "Opp", "RaiseQuotation", request.Ref_OpportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
+                    {
+                        Status = false,
+                        Message = "You are not authorized to raise a quotation for this opportunity."
+                    });
+                }
 
                 request.CreatedBy = User.EmployeeId();
                 var response = await _repository.RaiseQuotation(request);
@@ -99,10 +133,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
-
-        // POST api/OpportunityQuotation/customer-response
-
+        #region POST api/OpportunityQuotation/customer-response
         [HttpPost]
         [Route("customer-response")]
         public async Task<IActionResult> LogCustomerResponse([FromBody] LogCustomerResponseRequest request)
@@ -127,10 +160,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
-
-        // POST api/OpportunityQuotation/negotiation-round
-
+        #region POST api/OpportunityQuotation/negotiation-round
         [HttpPost]
         [Route("negotiation-round")]
         public async Task<IActionResult> LogNegotiationRound([FromBody] LogNegotiationRoundRequest request)
@@ -155,8 +187,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
-
+        #region POST api/OpportunityQuotation/review-decision
         // POST api/OpportunityQuotation/review-decision
         // NOTE: this action is NOT scoped to a single Opportunity (it's an
         // internal manager action against a ManagementReview record), so it
@@ -181,5 +214,6 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
     }
 }

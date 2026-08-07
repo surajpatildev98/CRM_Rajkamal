@@ -15,7 +15,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 
-// Serilog Configuration
+#region Serilog Configuration used for logging and exception handling
 builder.Host.UseSerilog((context, services, configuration) =>
 {
     configuration
@@ -31,6 +31,8 @@ builder.Host.UseSerilog((context, services, configuration) =>
             outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level:u3}] {Message:lj}{NewLine}{Exception}"
         );
 });
+
+#endregion
 
 // Add services to the container.
 builder.Services.AddControllers();

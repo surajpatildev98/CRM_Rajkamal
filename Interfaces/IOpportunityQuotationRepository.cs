@@ -12,5 +12,6 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> LogCustomerResponse(LogCustomerResponseRequest model);
         Task<ApiResponse> LogNegotiationRound(LogNegotiationRoundRequest model);
         Task<ApiResponse> DecideManagementReview(DecideManagementReviewRequest model);
+        Task<ApiResponse> GetQuotationList(QuotationListRequest request);
     }
 }

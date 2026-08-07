@@ -15,6 +15,7 @@ namespace CRMWebServices.Helpers
             _logger = logger;
         }
 
+        #region InvokeAsync Used for handling exceptions globally in the application. It catches any unhandled exceptions that occur during the request processing pipeline and returns a standardized error response to the client.
         public async Task InvokeAsync(HttpContext context)
         {
             try
@@ -42,5 +43,6 @@ namespace CRMWebServices.Helpers
                 await context.Response.WriteAsync(json);
             }
         }
+        #endregion
     }
 }

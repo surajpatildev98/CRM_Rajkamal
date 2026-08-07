@@ -13,15 +13,16 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
+        #region // IAuthRepository Implementation used for authentication and authorization
         public async Task<DataRow> GetEmployeeForLogin(string loginId)
         {
 
-            var dt = await _database.ExecuteDataTableAsync(
-                "USP_ORG_Authentication",
+            var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
                 new SqlParameter("@Status", "LOGIN"),
                 new SqlParameter("@LoginId", loginId));
 
             return dt.Rows.Count > 0 ? dt.Rows[0] : null;
         }
+        #endregion
     }
 }

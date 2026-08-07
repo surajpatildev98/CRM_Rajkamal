@@ -27,6 +27,7 @@ namespace CRMWebServices.Repository
         }
 
 
+        #region // COMMON HELPER METHODS
         private string BuildFileUrl(string filePath)
         {
             try
@@ -110,8 +111,10 @@ namespace CRMWebServices.Repository
                 Data = extraData.Count > 0 ? extraData : null
             };
         }
+
+        #endregion
+
         #region GET WON LEADS (LIST - Full Data like GetLeadList)
-        //public async Task<ApiResponse> GetWonLeads(string? searchText, int? assignedEmployeeId)
         public async Task<ApiResponse> GetWonLeads(string searchText = null, int? assignedEmployeeId = null)
         {
             try
@@ -297,7 +300,6 @@ namespace CRMWebServices.Repository
         }
         #endregion       
 
-
         #region GET WON LEAD DETAILS (SINGLE - Full Details like GetLeadFullDetails)
         public async Task<ApiResponse> GetWonLeadDetails(int leadId)
         {
@@ -465,7 +467,6 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
         #region  // CONVERT LEAD TO OPPORTUNITY
         public async Task<ApiResponse> ConvertLeadToOpportunity(ConvertLeadRequest request)
         {
@@ -541,7 +542,6 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
         #region  // OPPORTUNITY TRANSFER
         public async Task<ApiResponse> TransferOpportunity(OpportunityTransferRequest model)
         {
@@ -577,7 +577,6 @@ namespace CRMWebServices.Repository
             return response;
         }
         #endregion
-
 
         #region // GET OPPORTUNITY LIST (MULTIPLE - READ-ONLY)
         public async Task<ApiResponse> GetOpportunityList(OpportunityListRequest request)
@@ -654,9 +653,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
-        #region  // GET OPPORTUNITY DETAILS (SINGLE - READ-ONLY)
-       
+        #region  // GET OPPORTUNITY DETAILS (SINGLE - READ-ONLY)       
         public async Task<ApiResponse> GetOpportunityDetails(int opportunityId)
         {
             try
@@ -677,17 +674,10 @@ namespace CRMWebServices.Repository
 
                 var row = ds.Tables[0].Rows[0];
 
-                //var contactRows = ds.Tables.Count > 1? ds.Tables[1].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
-                //var requirementRows = ds.Tables.Count > 2? ds.Tables[2].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
-                //var activityRows = ds.Tables.Count > 3? ds.Tables[3].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
-                //var fileRows = ds.Tables.Count > 4? ds.Tables[4].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
-                //var followUpRows = ds.Tables.Count > 5? ds.Tables[5].Rows.Cast<DataRow>().ToList(): new List<DataRow>();
-
                 var contactRows = ds.Tables.Count > 1 ? ds.Tables[1].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
                 var requirementRows = ds.Tables.Count > 2 ? ds.Tables[2].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
                 var activityRows = ds.Tables.Count > 3 ? ds.Tables[3].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
                 var followUpRows = ds.Tables.Count > 4 ? ds.Tables[4].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
-
 
                 var opportunityInfo = new OpportunityInfo
                 {
@@ -806,36 +796,7 @@ namespace CRMWebServices.Repository
                             ActivityStatusColor = r["ActivityStatusColor"]?.ToString(),
                             Attachments = attachments
                         };
-                    }).ToList();
-
-                //var activities = activityRows
-                //         .Select(r => new OpportunityActivityInfo
-                //         {
-                //             ActivityId = Convert.ToInt32(r["ActivityId"]),
-                //             ActivityType = r["ActivityType"]?.ToString(),
-                //             ActivityDate = Convert.ToDateTime(r["ActivityDate"]),
-                //             Subject = r["Subject"]?.ToString(),
-                //             Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
-                //             Outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
-                //             CreatedBy = r["CreatedBy"]?.ToString(),
-                //             ActivityStatusId = r["Ref_ActivityStatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_ActivityStatusId"]),
-                //             ActivityStatus = r["ActivityStatus"]?.ToString(),
-                //             ActivityStatusColor = r["ActivityStatusColor"]?.ToString()
-                //         }).ToList();
-
-
-
-                //var files = fileRows
-                //          .Select(r => new OpportunityAttachmentInfo
-                //          {
-                //              AttachmentId = Convert.ToInt32(r["AttachmentId"]),
-                //              FileName = r["FileName"]?.ToString(),
-                //              FileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
-                //              FileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
-                //              FileUrl = BuildFileUrl(r["FilePath"]?.ToString()),
-                //              UploadedOn = Convert.ToDateTime(r["CreatedOn"])
-                //          })
-                //          .ToList();
+                    }).ToList();                
 
                 var followUps = followUpRows
                          .Select(r => new OpportunityFollowUpInfo
@@ -854,9 +815,7 @@ namespace CRMWebServices.Repository
                              CreatedOn = Convert.ToDateTime(r["CreatedOn"]),
                              CreatedByName = r["CreatedByName"]?.ToString()
                          })
-                         .ToList();
-
-                
+                         .ToList();               
 
 
                 var responseData = new OpportunityDetailResponse
@@ -894,7 +853,6 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
-
 
         #region  // UPDATE OPPORTUNITY Currently Not in Use
         public async Task<ApiResponse> UpdateOpportunity(UpdateOpportunityRequest request)
@@ -954,7 +912,6 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
         #region // DELETE OPPORTUNITY Currently Not in Use
         public async Task<ApiResponse> DeleteOpportunity(DeleteOpportunityRequest request)
         {
@@ -1004,8 +961,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
-        #region  DROPDOWNS
+        #region  // DROPDOWNS
         public async Task<ApiResponse> GetOpportunityTypes()
         {
             try
@@ -1051,8 +1007,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-
-
         public async Task<ApiResponse> GetOpportunityStages()
         {
             try
@@ -1101,8 +1055,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-
-
         public async Task<ApiResponse> GetPriorities()
         {
             try
@@ -1152,7 +1104,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
+        #region // GET ASSIGNED EMPLOYEE ID FOR OPPORTUNITY
         public async Task<int?> GetAssignedEmployeeId(int opportunityId)
         {
             var parameters = new[]
@@ -1168,8 +1120,9 @@ namespace CRMWebServices.Repository
 
             return dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value? null: Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
         }
+        #endregion
 
-
+        #region // GET OPPORTUNITY ACCESS INFO
         public async Task<OpportunityAccessInfo?> GetOpportunityAccessInfo(int opportunityId)
         {
             try
@@ -1197,8 +1150,9 @@ namespace CRMWebServices.Repository
                 return null;
             }
         }
+        #endregion
 
-
+        #region // ADD OPPORTUNITY REQUIREMENT
         public async Task<ApiResponse> AddOpportunityRequirement(AddOpportunityRequirementRequest model)
         {
             try
@@ -1220,7 +1174,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
+        #region // UPDATE OPPORTUNITY REQUIREMENT
         public async Task<ApiResponse> UpdateOpportunityRequirement(UpdateOpportunityRequirementRequest model)
         {
             try
@@ -1244,7 +1200,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
+        #region // CREATE OPPORTUNITY ACTIVITY
         public async Task<ApiResponse> CreateOpportunityActivity(CreateOpportunityActivityRequest model)
         {
             try
@@ -1318,7 +1276,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
+        #region // CREATE OPPORTUNITY FOLLOW-UP
         public async Task<ApiResponse> CreateOpportunityFollowUp(CreateOpportunityFollowUpRequest model)
         {
             try
@@ -1340,6 +1300,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
+
+        #region // CLOSE OPPORTUNITY
         public async Task<ApiResponse> CloseOpportunity(CloseOpportunityRequest model)
         {
             try
@@ -1363,7 +1326,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
+        #region // GET OPPORTUNITY CLOSE STAGES
         public async Task<ApiResponse> GetOpportunityCloseStages()
         {
             try
@@ -1404,6 +1369,9 @@ namespace CRMWebServices.Repository
             }
         }
 
+        #endregion
+
+        #region // UPDATE OPPORTUNITY FOLLOW-UP STATUS
         public async Task<ApiResponse> UpdateOpportunityFollowUpStatus(UpdateOpportunityFollowUpStatusRequest model)
         {
             try
@@ -1429,7 +1397,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
+        #region // DELETE OPPORTUNITY REQUIREMENT
         public async Task<ApiResponse> DeleteOpportunityRequirement(DeleteOpportunityRequirementRequest model)
         {
             try
@@ -1460,6 +1430,7 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
     }
 
 }

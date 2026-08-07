@@ -14,14 +14,12 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
+        #region // GetDashboardFull used for both Admin and Employee dashboards
         public async Task<ApiResponse> GetDashboardFull(int? employeeId, DateTime? fromDate, DateTime? toDate)
         {
             try
             {
-                // ✅ Check if user is Admin (passed from controller)
-                // We'll add a new parameter or use a flag
-                var ds = await _database.ExecuteDataSetAsync(
-                    "USP_CRM_DashboardManagement",
+                var ds = await _database.ExecuteDataSetAsync("USP_CRM_DashboardManagement",
                     new SqlParameter("@Status", "GET_DASHBOARD_FULL"),
                     new SqlParameter("@EmployeeId", (object?)employeeId ?? DBNull.Value),
                     new SqlParameter("@FromDate", (object?)fromDate ?? DBNull.Value),
@@ -63,13 +61,14 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
+        #region // GetEmployeePerformance used for Admin dashboard only
         public async Task<ApiResponse> GetEmployeePerformance()
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_DashboardManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_DashboardManagement",
                     new SqlParameter("@Status", "GET_EMPLOYEE_PERFORMANCE"),
                     new SqlParameter("@EmployeeId", DBNull.Value),
                     new SqlParameter("@FromDate", DBNull.Value),
@@ -90,7 +89,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+        #endregion
 
+        #region // GetDashboardFull helper method to convert DataRow to Dictionary
         private Dictionary<string, object> RowToDict(DataRow row)
         {
             var dict = new Dictionary<string, object>();
@@ -98,5 +99,6 @@ namespace CRMWebServices.Repository
                 dict[col.ColumnName] = row[col] == DBNull.Value ? null : row[col];
             return dict;
         }
+        #endregion
     }
 }

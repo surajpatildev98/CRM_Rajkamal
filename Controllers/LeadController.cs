@@ -21,9 +21,8 @@ namespace CRMWebServices.Controllers
             _authorization = authorization;
         }
 
-       
-        // CREATE LEAD - Register
-       
+        #region // API : api/Lead/Register
+
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] LeadRegisterRequest request)
@@ -53,10 +52,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
-       
-        // TRANSFER LEAD - Assign
-       
+        #region // API : api/Lead/Transfer
         [HttpPost]
         [Route("Transfer")]
         public async Task<IActionResult> Transfer([FromBody] LeadTransferRequest request)
@@ -86,10 +84,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
-       
-        // UPDATE LEAD STATUS - Edit
-       
+        #region // API : api/Lead/UpdateStatus
         [HttpPost]
         [Route("UpdateStatus")]
         public async Task<IActionResult> UpdateStatus([FromBody] LeadStatusUpdateRequest request)
@@ -119,10 +116,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
-       
-        // CREATE ACTIVITY - Activity
-       
+        #region // API : api/Lead/CreateActivity
         [HttpPost]
         [Route("CreateActivity")]
         public async Task<IActionResult> CreateActivity([FromBody] LeadActivityRequest request)
@@ -152,10 +148,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
-       
-        // CREATE FOLLOW-UP - FollowUp
-       
+        #region // API : api/Lead/CreateFollowUp
         [HttpPost]
         [Route("CreateFollowUp")]
         public async Task<IActionResult> CreateFollowUp([FromBody] LeadFollowUpRequest request)
@@ -185,10 +180,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
-       
-        // UPDATE FOLLOW-UP STATUS - FollowUp
-       
+        #region // API : api/Lead/UpdateFollowUpStatus
         [HttpPost]
         [Route("UpdateFollowUpStatus")]
         public async Task<IActionResult> UpdateFollowUpStatus([FromBody] FollowUpStatusUpdateRequest request)
@@ -218,10 +212,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
-       
-        // CLOSE LEAD - Close
-       
+        #region // API : api/Lead/Close
         [HttpPost]
         [Route("CloseLead")]
         public async Task<IActionResult> Close([FromBody] LeadCloseRequest request)
@@ -251,10 +244,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
-       
-        // GET LEAD DETAILS / LIST - View
-       
+        #region // API : api/Lead/Details
         [HttpGet]
         [Route("Details")]
         public async Task<IActionResult> Details([FromQuery] int? leadId, [FromQuery] LeadListFilterRequest filter)
@@ -308,10 +300,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-       
-        // ASSIGN LEAD - Assign (first-time assignment only)
-       
+        #region // API : api/Lead/Assign
         [HttpPost]
         [Route("Assign")]
         public async Task<IActionResult> Assign([FromBody] LeadAssignRequest request)
@@ -341,7 +332,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
+        #region // API : api/Lead/CheckCustomerExists
         [HttpGet]
         [Route("check-customer-exists")]
         public async Task<IActionResult> CheckCustomer(string? gst, string? customerName, string? pan)
@@ -363,7 +356,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region // API : api/Lead/SearchCustomer
         [HttpGet]
         [Route("search-customer")]
         public async Task<IActionResult> SearchCustomer(string searchText)
@@ -392,7 +387,6 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
     }
-
-
 }
