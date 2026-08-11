@@ -9,6 +9,8 @@ namespace CRMWebServices.Models
         public class RaiseQuotationRequest
         {
             public int Ref_OpportunityId { get; set; }
+
+            //public int Ref_OpportunityQuotationId { get; set; }
             public DateTime? QuotationDate { get; set; }
             public DateTime? ValidUntil { get; set; }
 
@@ -35,7 +37,7 @@ namespace CRMWebServices.Models
         {
             public int Ref_OpportunityId { get; set; }
             public int Ref_OpportunityQuotationId { get; set; }
-            public string CustomerResponseCode { get; set; } = null!; // ACCEPTED | NEEDS_CHANGES | REJECTED
+            public string CustomerResponseCode { get; set; } = null!; // ACCEPTED  | REJECTED
             public string? CustomerResponseRemark { get; set; }
             public int CreatedBy { get; set; }
         }
@@ -51,21 +53,23 @@ namespace CRMWebServices.Models
         }
         public class DecideManagementReviewRequest
         {
-            public int Ref_ManagementReviewId { get; set; }
-            public decimal? Margin { get; set; }
+            public int QuotationId { get; set; }
+            //public int Ref_ManagementReviewId { get; set; }
+            //public decimal? Margin { get; set; }
             public string DecisionCode { get; set; } = null!; // APPROVED | REJECTED
             public string? Remarks { get; set; }
             public int? ReviewedByEmployeeId { get; set; }
             public int CreatedBy { get; set; }
         }
-        public class QuotationDetailResponse
-        {
-            public QuotationInfo Quotation { get; set; } = null!;
-            public List<QuotationItemInfo> Items { get; set; } = new();
-            public List<QuotationAttachmentInfo> Attachments { get; set; } = new();
-            public List<NegotiationRoundInfo> NegotiationRounds { get; set; } = new();
-            public List<ManagementReviewInfo> Reviews { get; set; } = new();
-        }
+        //public class QuotationDetailResponse
+        //{
+        //    public QuotationInfo Quotation { get; set; } = null!;
+        //    public List<QuotationItemInfo> Items { get; set; } = new();
+        //    public List<QuotationAttachmentInfo> Attachments { get; set; } = new();
+        //    public List<NegotiationRoundInfo> NegotiationRounds { get; set; } = new();
+        //    public List<ManagementReviewInfo> Reviews { get; set; } = new();
+        //}
+
         public class QuotationInfo
         {
             public int OpportunityQuotationId { get; set; }
@@ -88,6 +92,11 @@ namespace CRMWebServices.Models
             public int? CustomerResponseByEmployeeId { get; set; }
             public DateTime? CustomerResponseOn { get; set; }
             public string? CustomerResponseRemark { get; set; }
+
+            public string? SentByEmployeeName { get; set; }
+            public int? Ref_PreviousQuotationId { get; set; }
+            public int RevisionNumber { get; set; }
+            public string? RootQuotationNo { get; set; }
         }
         public class QuotationItemInfo
         {
@@ -102,6 +111,7 @@ namespace CRMWebServices.Models
         public class QuotationAttachmentInfo
         {
             public int AttachmentId { get; set; }
+            public int Ref_OpportunityQuotationId { get; set; }
             public string FileName { get; set; } = null!;
             public string? FileType { get; set; }
             public long? FileSize { get; set; }
@@ -186,6 +196,120 @@ namespace CRMWebServices.Models
             public DateTime CreatedOn { get; set; }
             public string? RaisedBy { get; set; }
             public int? OwnerEmployeeId { get; set; }
+
+            // NEW
+            public int? SentByEmployeeId { get; set; }
+            public string? SentByEmployeeName { get; set; }
+
+            public int RevisionNumber { get; set; }
+            public string? RootQuotationNo { get; set; }
+            public int? Ref_PreviousQuotationId { get; set; }
+
+            public int? OpportunityStageId { get; set; }
+            public string? OpportunityStageCode { get; set; }
+            public string? OpportunityStageName { get; set; }
+        }
+        public class ReviseQuotationRequest
+        {
+            public int Ref_OpportunityId { get; set; }
+
+            public int Ref_OpportunityQuotationId { get; set; }
+
+            public DateTime? QuotationDate { get; set; }
+            public DateTime? ValidUntil { get; set; }
+
+            public decimal? FreightAmount { get; set; }
+            public decimal? FreightPercent { get; set; }
+
+            public decimal? TaxAmount { get; set; }
+            public decimal? TaxPercent { get; set; }
+
+            public string? TermsRemark { get; set; }
+
+            public List<QuotationItemInput> Items { get; set; } = new();
+
+            public string? QuotationPdfFileName { get; set; }
+            public string? QuotationPdfBase64 { get; set; }
+
+            public int CreatedBy { get; set; }
+        }
+
+        public class QuotationHistoryInfo
+        {
+            public int OpportunityQuotationId { get; set; }
+
+            public int Ref_OpportunityId { get; set; }
+
+            public int? Ref_PreviousQuotationId { get; set; }
+
+            public string QuotationNo { get; set; } = null!;
+
+            public string? RootQuotationNo { get; set; }
+
+            public int VersionNumber { get; set; }
+
+            public int RevisionNumber { get; set; }
+
+            public bool IsCurrent { get; set; }
+
+            public DateTime QuotationDate { get; set; }
+
+            public DateTime? ValidUntil { get; set; }
+
+            public decimal SubTotal { get; set; }
+
+            public decimal FreightCharge { get; set; }
+
+            public decimal FreightPercent { get; set; }
+
+            public decimal TaxAmount { get; set; }
+
+            public decimal TaxPercent { get; set; }
+
+            public decimal TotalAmount { get; set; }
+
+            public string? TermsRemark { get; set; }
+
+            public int? SentByEmployeeId { get; set; }
+
+            public DateTime? SentOn { get; set; }
+
+            public string? SentByEmployeeName { get; set; }
+
+            public string CustomerResponseCode { get; set; } = null!;
+
+            public int? OpportunityStageId { get; set; }
+
+            public string? OpportunityStageCode { get; set; }
+
+            public string? OpportunityStageName { get; set; }
+
+            public int? CustomerResponseByEmployeeId { get; set; }
+
+            public DateTime? CustomerResponseOn { get; set; }
+
+            public string? CustomerResponseRemark { get; set; }
+
+            public DateTime CreatedOn { get; set; }
+
+            public string? CreatedByName { get; set; }
+
+            // NEW
+            public List<QuotationAttachmentInfo> Attachments { get; set; } = new();
+
+        }
+
+        public class QuotationDetailResponse
+        {
+            public QuotationInfo Quotation { get; set; } = null!;
+
+            public List<QuotationItemInfo> Items { get; set; } = new();
+
+            public List<QuotationAttachmentInfo> Attachments { get; set; } = new();
+
+            public List<QuotationHistoryInfo> History { get; set; } = new();
+
+            public List<ManagementReviewInfo> Reviews { get; set; } = new();
         }
     }
 }

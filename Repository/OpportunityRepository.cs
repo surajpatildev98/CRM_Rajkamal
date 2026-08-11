@@ -678,6 +678,7 @@ namespace CRMWebServices.Repository
                 var requirementRows = ds.Tables.Count > 2 ? ds.Tables[2].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
                 var activityRows = ds.Tables.Count > 3 ? ds.Tables[3].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
                 var followUpRows = ds.Tables.Count > 4 ? ds.Tables[4].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
+                var leadAttachmentRows = ds.Tables.Count > 5 ? ds.Tables[5].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
 
                 var opportunityInfo = new OpportunityInfo
                 {
@@ -729,9 +730,18 @@ namespace CRMWebServices.Repository
 
                     Owner = new OwnerInfo
                     {
-                        OwnerEmployeeId = row["OwnerEmployeeId"] == DBNull.Value? null: Convert.ToInt32(row["OwnerEmployeeId"]),
-                        OwnerEmployeeName = row["OwnerEmployeeName"]?.ToString()
+                        OwnerEmployeeId = row["OwnerEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(row["OwnerEmployeeId"]),
+                        OwnerEmployeeName = row["OwnerEmployeeName"]?.ToString(),
+                        OwnerEmail = row["OwnerEmail"] == DBNull.Value ? null : row["OwnerEmail"].ToString(),
+                        OwnerMobileNo = row["OwnerMobileNo"] == DBNull.Value ? null : row["OwnerMobileNo"].ToString(),
+                        OwnerRoleId = row["OwnerRoleId"] == DBNull.Value ? null : Convert.ToInt32(row["OwnerRoleId"]),
+                        OwnerRoleName = row["OwnerRoleName"]?.ToString()
                     }
+                    //Owner = new OwnerInfo
+                    //{
+                    //    OwnerEmployeeId = row["OwnerEmployeeId"] == DBNull.Value? null: Convert.ToInt32(row["OwnerEmployeeId"]),
+                    //    OwnerEmployeeName = row["OwnerEmployeeName"]?.ToString()
+                    //}
                 };
 
                 var contacts = contactRows
@@ -815,8 +825,17 @@ namespace CRMWebServices.Repository
                              CreatedOn = Convert.ToDateTime(r["CreatedOn"]),
                              CreatedByName = r["CreatedByName"]?.ToString()
                          })
-                         .ToList();               
-
+                         .ToList();
+                var files = leadAttachmentRows
+                        .Select(r => new OpportunityAttachmentInfo
+                        {
+                            AttachmentId = Convert.ToInt32(r["AttachmentId"]),
+                            FileName = r["FileName"]?.ToString(),
+                            FileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
+                            FileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
+                            FileUrl = BuildFileUrl(r["FilePath"]?.ToString()),
+                            UploadedOn = Convert.ToDateTime(r["CreatedOn"])
+                        }).ToList();
 
                 var responseData = new OpportunityDetailResponse
                 {
@@ -824,7 +843,7 @@ namespace CRMWebServices.Repository
                     Contacts = contacts,
                     Requirements = requirements,
                     Activities = activities,
-                    //Files = files,
+                    Files = files,
                     FollowUps = followUps
                 };
 

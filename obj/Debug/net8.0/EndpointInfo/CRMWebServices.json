@@ -1391,7 +1391,7 @@
         }
       }
     },
-    "/api/OpportunityQuotation/details": {
+    "/api/OpportunityQuotation/details/{opportunityQuotationId}": {
       "get": {
         "tags": [
           "OpportunityQuotation"
@@ -1399,7 +1399,8 @@
         "parameters": [
           {
             "name": "opportunityQuotationId",
-            "in": "query",
+            "in": "path",
+            "required": true,
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -1526,6 +1527,37 @@
             "application/*+json": {
               "schema": {
                 "$ref": "#/components/schemas/DecideManagementReviewRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/OpportunityQuotation/revise": {
+      "post": {
+        "tags": [
+          "OpportunityQuotation"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviseQuotationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviseQuotationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviseQuotationRequest"
               }
             }
           }
@@ -1756,14 +1788,9 @@
       "DecideManagementReviewRequest": {
         "type": "object",
         "properties": {
-          "ref_ManagementReviewId": {
+          "quotationId": {
             "type": "integer",
             "format": "int32"
-          },
-          "margin": {
-            "type": "number",
-            "format": "double",
-            "nullable": true
           },
           "decisionCode": {
             "type": "string",
@@ -2419,6 +2446,73 @@
         "type": "object",
         "properties": {
           "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "quotationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "validUntil": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "freightAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "freightPercent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "taxAmount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "taxPercent": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "termsRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/QuotationItemInput"
+            },
+            "nullable": true
+          },
+          "quotationPdfFileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "quotationPdfBase64": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReviseQuotationRequest": {
+        "type": "object",
+        "properties": {
+          "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_OpportunityQuotationId": {
             "type": "integer",
             "format": "int32"
           },

@@ -247,6 +247,10 @@
         {
             public int? OwnerEmployeeId { get; set; }
             public string OwnerEmployeeName { get; set; }
+            public string OwnerEmail { get; set; }
+            public string OwnerMobileNo { get; set; }
+            public int? OwnerRoleId { get; set; }
+            public string OwnerRoleName { get; set; }
         }
         public class CustomerContactInfo
         {

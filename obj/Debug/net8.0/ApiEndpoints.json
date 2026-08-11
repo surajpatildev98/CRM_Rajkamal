@@ -858,7 +858,7 @@
   {
     "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
     "Method": "GetQuotationDetails",
-    "RelativePath": "api/OpportunityQuotation/details",
+    "RelativePath": "api/OpportunityQuotation/details/{opportunityQuotationId}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -866,7 +866,7 @@
       {
         "Name": "opportunityQuotationId",
         "Type": "System.Int32",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -961,6 +961,22 @@
       {
         "Name": "request",
         "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BDecideManagementReviewRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "ReviseQuotation",
+    "RelativePath": "api/OpportunityQuotation/revise",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BReviseQuotationRequest",
         "IsRequired": true
       }
     ],

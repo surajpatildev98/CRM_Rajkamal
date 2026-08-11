@@ -671,6 +671,7 @@ namespace CRMWebServices.Repository
                         subject = r["Subject"]?.ToString(),
                         description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
                         outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                        locationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
                         createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString(),
                         status = r["Status"]?.ToString(),
                         statusColor = r["StatusColor"]?.ToString(),

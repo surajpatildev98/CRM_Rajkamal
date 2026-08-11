@@ -215,5 +215,52 @@ namespace CRMWebServices.Controllers
             }
         }
         #endregion
+
+        #region POST api/OpportunityQuotation/revise
+
+        [HttpPost]
+        [Route("revise")]
+        public async Task<IActionResult> ReviseQuotation(
+            [FromBody] ReviseQuotationRequest request)
+        {
+            try
+            {
+                if (!await _authorization.CanPerformAction(
+                        User,
+                        "Opp",
+                        "LogNegotiation",
+                        request.Ref_OpportunityId))
+                {
+                    return StatusCode(
+                        StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message =
+                                "You are not authorized to revise this quotation."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
+
+                var response =
+                    await _repository.ReviseQuotation(request);
+
+                return response.Status
+                    ? Ok(response)
+                    : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new ApiResponse
+                    {
+                        Status = false,
+                        Message = $"Error: {ex.Message}"
+                    });
+            }
+        }
+
+        #endregion
     }
 }
