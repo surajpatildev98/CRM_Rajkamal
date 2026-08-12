@@ -21,6 +21,7 @@
             public int Ref_PriorityId { get; set; }
             public string? OpportunityRemark { get; set; }
             public int? CreatedBy { get; set; }
+            public int? AssignedToEmployeeId { get; set; }
 
             // Hidden/Auto fields (sent by Android but not in form)
             public int Ref_OpportunityTypeId { get; set; } = 1; // Default: NEW
@@ -313,6 +314,8 @@
 
             public string Outcome { get; set; }
 
+            public string? LocationAddress { get; set; }
+
             public string CreatedBy { get; set; }
 
             public int? ActivityStatusId { get; set; }
@@ -397,6 +400,8 @@
             public int? DurationInMinutes { get; set; }
             public decimal? Latitude { get; set; }
             public decimal? Longitude { get; set; }
+
+            public string? LocationAddress { get; set; }
             public int? Ref_ActivityStatusId { get; set; }
             public int? Ref_NewOpportunityStageId { get; set; }
             public DateTime? NextFollowUpDate { get; set; }

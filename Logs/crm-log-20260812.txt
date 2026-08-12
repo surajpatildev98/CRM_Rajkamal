@@ -1,0 +1,46 @@
+2026-08-12 11:17:58.129 +05:30 [INF] Starting CRM Web Services
+2026-08-12 11:17:58.703 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-12 11:17:58.978 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-12 11:17:58.981 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-12 11:17:59.225 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-12 11:17:59.229 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-12 11:17:59.232 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-12 11:18:00.720 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 228.9435 ms
+2026-08-12 11:18:01.057 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 72.1214 ms
+2026-08-12 11:19:58.331 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1600.5185 ms
+2026-08-12 11:21:22.152 +05:30 [INF] HTTP GET /api/PermissionManager/modules responded 403 in 198.5461 ms
+2026-08-12 11:25:43.063 +05:30 [INF] HTTP GET /api/PermissionManager/modules responded 403 in 105366.9829 ms
+2026-08-12 11:26:00.676 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 5.0662 ms
+2026-08-12 11:26:01.076 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 78.3108 ms
+2026-08-12 11:26:20.827 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 378.1533 ms
+2026-08-12 11:27:18.893 +05:30 [INF] HTTP GET /api/PermissionManager/modules responded 200 in 35776.9956 ms
+2026-08-12 11:27:42.957 +05:30 [INF] HTTP GET /api/PermissionManager/module/1/permissions responded 200 in 1599.5282 ms
+2026-08-12 11:27:54.308 +05:30 [INF] HTTP GET /api/PermissionManager/module/2/permissions responded 200 in 1676.1812 ms
+2026-08-12 11:28:32.262 +05:30 [INF] HTTP GET /api/PermissionManager/role/2/permissions responded 200 in 6094.4025 ms
+2026-08-12 11:28:46.499 +05:30 [INF] HTTP GET /api/PermissionManager/role/5/permissions responded 200 in 66.5368 ms
+2026-08-12 11:29:08.585 +05:30 [INF] HTTP GET /api/PermissionManager/role/3/module-access responded 200 in 54.5425 ms
+2026-08-12 12:13:48.445 +05:30 [INF] Starting CRM Web Services
+2026-08-12 12:13:49.052 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-12 12:13:49.381 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-12 12:13:49.387 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-12 12:13:49.695 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-12 12:13:49.700 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-12 12:13:49.704 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-12 12:13:51.127 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 221.8473 ms
+2026-08-12 12:13:51.424 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 83.8688 ms
+2026-08-12 12:14:11.600 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2832.6531 ms
+2026-08-12 12:14:50.460 +05:30 [INF] HTTP POST /api/Opportunity/add_activity responded 403 in 356.2340 ms
+2026-08-12 12:16:07.996 +05:30 [INF] HTTP GET /api/Opportunity/details/1011 responded 200 in 779.0146 ms
+2026-08-12 12:35:26.274 +05:30 [INF] Starting CRM Web Services
+2026-08-12 12:35:26.722 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-12 12:35:27.012 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-12 12:35:27.015 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-12 12:35:27.337 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-12 12:35:27.341 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-12 12:35:27.344 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-12 12:35:28.462 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 246.3841 ms
+2026-08-12 12:35:28.858 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 90.2178 ms
+2026-08-12 12:35:51.566 +05:30 [INF] HTTP POST //api/auth/login responded 404 in 259.4483 ms
+2026-08-12 12:36:08.919 +05:30 [INF] HTTP POST //api/auth/login responded 404 in 3.7557 ms
+2026-08-12 12:36:19.072 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1584.5503 ms
+2026-08-12 12:36:40.052 +05:30 [INF] HTTP POST /api/Opportunity/convert responded 200 in 9855.7970 ms

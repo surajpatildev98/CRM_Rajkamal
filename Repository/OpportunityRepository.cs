@@ -483,6 +483,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Probability", request.Probability),
                     new SqlParameter("@Ref_PriorityId", request.Ref_PriorityId),
                     new SqlParameter("@OpportunityRemark", (object?)request.OpportunityRemark ?? DBNull.Value),
+                    new SqlParameter("@AssignedToEmployeeId",(object?)request.AssignedToEmployeeId ?? DBNull.Value),
                     new SqlParameter("@CreatedBy", (object?)request.CreatedBy ?? DBNull.Value)
                 );
 
@@ -799,6 +800,7 @@ namespace CRMWebServices.Repository
                             ActivityDate = Convert.ToDateTime(r["ActivityDate"]),
                             Subject = r["Subject"]?.ToString(),
                             Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                            LocationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
                             Outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
                             CreatedBy = r["CreatedBy"]?.ToString(),
                             ActivityStatusId = r["Ref_ActivityStatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_ActivityStatusId"]),
@@ -1277,6 +1279,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@DurationInMinutes", (object?)model.DurationInMinutes ?? DBNull.Value),
                     new SqlParameter("@Latitude", (object?)model.Latitude ?? DBNull.Value),
                     new SqlParameter("@Longitude", (object?)model.Longitude ?? DBNull.Value),
+                    new SqlParameter("@LocationAddress", (object?)model.LocationAddress ?? DBNull.Value),
                     new SqlParameter("@Ref_ActivityStatusId", (object?)model.Ref_ActivityStatusId ?? DBNull.Value),
                     new SqlParameter("@Ref_NewOpportunityStageId", (object?)model.Ref_NewOpportunityStageId ?? DBNull.Value),
                     new SqlParameter("@NextFollowUpDate", (object?)model.NextFollowUpDate ?? DBNull.Value),

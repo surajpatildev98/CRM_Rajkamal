@@ -237,7 +237,9 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Status", "GET_QUOTATION_LIST"),
                     new SqlParameter("@SearchText", (object?)request.SearchText ?? DBNull.Value),
                     new SqlParameter("@FilterOwnerId", (object?)request.FilterOwnerId ?? DBNull.Value),
-                    new SqlParameter("@Ref_OpportunityId", (object?)request.Ref_OpportunityId ?? DBNull.Value)
+                    new SqlParameter("@Ref_OpportunityId", (object?)request.Ref_OpportunityId ?? DBNull.Value),
+                    new SqlParameter("@Ref_RaisedByEmployeeId", (object?)request.Ref_RaisedByEmployeeId ?? DBNull.Value),
+                    new SqlParameter("@OnlyPendingReview", request.OnlyPendingReview)
                 );
 
                 if (dt == null || dt.Rows.Count == 0)

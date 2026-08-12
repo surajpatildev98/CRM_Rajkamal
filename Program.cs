@@ -80,6 +80,7 @@ builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 builder.Services.AddScoped<IPermissionService, PermissionService>();        
 builder.Services.AddScoped<ICRMAuthorizationService, AuthorizationService>();
 builder.Services.AddScoped<IOpportunityQuotationRepository, OpportunityQuotationRepository>();
+builder.Services.AddScoped<IPermissionManagerRepository, PermissionManagerRepository>();
 builder.Services.AddScoped<EmployeeRepository>();
 
 builder.Services.AddMemoryCache();  // ← NEW

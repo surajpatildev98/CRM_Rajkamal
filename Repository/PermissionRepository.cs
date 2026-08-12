@@ -72,6 +72,7 @@ namespace CRMWebServices.Repository
                 var parameters = new[]
                 {
                     new SqlParameter("@Status", "CHECK_PERMISSION"),
+                    //new SqlParameter("@Status", "CHECK_PERMISSION_NEW120826"),   // was "CHECK_PERMISSION"
                     new SqlParameter("@EmployeeId", employeeId),
                     new SqlParameter("@PermissionCode", permissionCode),
                     new SqlParameter("@ResourceType", DBNull.Value),

@@ -172,6 +172,9 @@ namespace CRMWebServices.Models
             public int? FilterOwnerId { get; set; }
             public int? Ref_OpportunityId { get; set; }   // optional drill-down filter
             public bool ShowCreatedAndAssigned { get; set; }   // for PreSales, same as OpportunityListRequest
+
+            public int? Ref_RaisedByEmployeeId { get; set; }   // NEW
+            public bool OnlyPendingReview { get; set; }
         }
         public class QuotationListResponse
         {

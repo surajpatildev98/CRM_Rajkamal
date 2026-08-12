@@ -55,30 +55,64 @@ namespace CRMWebServices.Controllers
         #endregion
 
         #region GET api/OpportunityQuotation/list
+        //[HttpGet]
+        //[Route("list")]
+        //public async Task<IActionResult> GetQuotationList([FromQuery] QuotationListRequest request)
+        //{
+        //    try
+        //    {
+        //        var accessFilter = await _authorization.GetAccessFilter(User, "Opp");
+
+        //        if (!accessFilter.CanViewAll)
+        //        {
+        //            request.FilterOwnerId = accessFilter.EmployeeId;
+        //            request.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
+        //        }
+
+        //        var response = await _repository.GetQuotationList(request);
+
+        //        if (response.Status &&
+        //            !accessFilter.CanViewAll &&
+        //            response.Data is List<QuotationListResponse> list &&
+        //            list.Count == 0)
+        //        {
+        //            response.Message = "No quotations found for opportunities assigned to you.";
+        //        }
+
+        //        return response.Status ? Ok(response) : BadRequest(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
+        //    }
+        //}
+
         [HttpGet]
         [Route("list")]
         public async Task<IActionResult> GetQuotationList([FromQuery] QuotationListRequest request)
         {
             try
             {
-                var accessFilter = await _authorization.GetAccessFilter(User, "Opp");
+                var employeeId = User.EmployeeId();
 
-                if (!accessFilter.CanViewAll)
+                // Opp_DecideReview is granted only to Sales Manager per your ORG_RolePermission setup
+                var canDecideReview = await _authorization.CanPerformAction(User, "Opp", "DecideReview", null);
+
+                if (canDecideReview)
                 {
-                    request.FilterOwnerId = accessFilter.EmployeeId;
-                    request.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
+                    // Manager/approver view: everyone's quotations awaiting a decision
+                    request.OnlyPendingReview = true;
+                    request.Ref_RaisedByEmployeeId = null;
+                    request.FilterOwnerId = null;
+                }
+                else
+                {
+                    // Raiser/revisor view: only what this user raised, latest revision only
+                    request.Ref_RaisedByEmployeeId = employeeId;
+                    request.OnlyPendingReview = false;
                 }
 
                 var response = await _repository.GetQuotationList(request);
-
-                if (response.Status &&
-                    !accessFilter.CanViewAll &&
-                    response.Data is List<QuotationListResponse> list &&
-                    list.Count == 0)
-                {
-                    response.Message = "No quotations found for opportunities assigned to you.";
-                }
-
                 return response.Status ? Ok(response) : BadRequest(response);
             }
             catch (Exception ex)
