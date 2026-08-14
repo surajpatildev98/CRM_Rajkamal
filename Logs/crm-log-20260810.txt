@@ -1,0 +1,58 @@
+2026-08-10 10:52:53.963 +05:30 [INF] Starting CRM Web Services
+2026-08-10 10:52:54.946 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-10 10:52:55.608 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-10 10:52:55.614 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-10 10:52:56.403 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-10 10:52:56.416 +05:30 [INF] Hosting environment: Development
+2026-08-10 10:52:56.427 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-10 10:52:59.544 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 475.1762 ms
+2026-08-10 10:53:01.571 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 253.8788 ms
+2026-08-10 10:53:31.308 +05:30 [INF] HTTP POST /api/shift/UpdateShift responded 401 in 254.1478 ms
+2026-08-10 10:53:59.347 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2259.3193 ms
+2026-08-10 10:54:28.259 +05:30 [INF] HTTP GET /api/shift/GetShifts responded 200 in 5653.3609 ms
+2026-08-10 10:56:46.556 +05:30 [INF] HTTP POST /api/shift/UpdateShift responded 400 in 216.7195 ms
+2026-08-10 10:57:01.462 +05:30 [INF] HTTP POST /api/shift/UpdateShift responded 200 in 46.1964 ms
+2026-08-10 11:02:57.001 +05:30 [INF] Starting CRM Web Services
+2026-08-10 11:02:57.875 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-10 11:02:58.460 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-10 11:02:58.474 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-10 11:02:59.956 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-10 11:02:59.967 +05:30 [INF] Hosting environment: Development
+2026-08-10 11:02:59.981 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-10 11:03:01.128 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 482.5813 ms
+2026-08-10 11:03:03.258 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 343.7611 ms
+2026-08-10 11:04:01.179 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1549.5485 ms
+2026-08-10 11:04:47.423 +05:30 [INF] HTTP GET /api/shift/GetShifts responded 200 in 253.1976 ms
+2026-08-10 11:05:23.122 +05:30 [INF] HTTP POST /api/shift/UpdateShift responded 200 in 60.1119 ms
+2026-08-10 11:46:28.275 +05:30 [INF] Starting CRM Web Services
+2026-08-10 11:46:28.452 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-10 11:46:28.572 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-10 11:46:28.575 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-10 11:46:28.645 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-10 11:46:28.646 +05:30 [INF] Hosting environment: Development
+2026-08-10 11:46:28.647 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-10 11:46:29.731 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 170.1452 ms
+2026-08-10 11:46:30.267 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 64.1463 ms
+2026-08-10 11:50:26.320 +05:30 [INF] Starting CRM Web Services
+2026-08-10 11:50:26.588 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-10 11:50:26.687 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-10 11:50:26.688 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-10 11:50:26.828 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-10 11:50:26.830 +05:30 [INF] Hosting environment: Development
+2026-08-10 11:50:26.832 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-10 11:50:27.301 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 64.8156 ms
+2026-08-10 11:50:27.836 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 22.0896 ms
+2026-08-10 11:50:52.453 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1497.9165 ms
+2026-08-10 11:51:22.451 +05:30 [INF] HTTP DELETE /api/shift/delete/4 responded 200 in 193.0485 ms
+2026-08-10 11:51:27.092 +05:30 [INF] HTTP DELETE /api/shift/delete/444 responded 200 in 15.5452 ms
+2026-08-10 11:51:47.144 +05:30 [INF] HTTP DELETE /api/shift/delete/0 responded 400 in 20.0477 ms
+2026-08-10 11:51:52.057 +05:30 [INF] HTTP DELETE /api/shift/delete/9 responded 200 in 15.8771 ms
+2026-08-10 12:05:17.561 +05:30 [INF] Starting CRM Web Services
+2026-08-10 12:05:17.784 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-10 12:05:17.949 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-10 12:05:17.952 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-10 12:05:18.187 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-10 12:05:18.190 +05:30 [INF] Hosting environment: Development
+2026-08-10 12:05:18.191 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-10 12:05:18.730 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 69.1248 ms
+2026-08-10 12:05:19.156 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 19.3107 ms

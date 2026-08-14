@@ -36,5 +36,25 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+
+        [HttpPost]
+        [Route("NewRegister")]
+        public async Task<IActionResult> NewRegister([FromBody] EmployeeRegisterRequest request)
+        {
+            try
+            {
+                // Trust the token, not the request body, for who created this record
+                var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+                request.CreatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
+
+                var response = await _repository.NewRegister(request);
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
+            }
+        }
+
     }
 }

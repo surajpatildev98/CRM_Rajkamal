@@ -147,6 +147,37 @@
         }
       }
     },
+    "/api/Employee/NewRegister": {
+      "post": {
+        "tags": [
+          "Employee"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeRegisterRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeRegisterRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeRegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Lead/Register": {
       "post": {
         "tags": [
@@ -823,6 +854,66 @@
         }
       }
     },
+    "/api/master/qualification": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/banks": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/accountType": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/familyRelationships": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/documentTypes": {
+      "get": {
+        "tags": [
+          "MasterData"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/Opportunity/wonleads": {
       "get": {
         "tags": [
@@ -1292,6 +1383,18 @@
           }
         }
       }
+    },
+    "/api/shift/GetShifts": {
+      "get": {
+        "tags": [
+          "Shift"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1524,6 +1627,111 @@
         },
         "additionalProperties": false
       },
+      "EmployeeBankRequest": {
+        "type": "object",
+        "properties": {
+          "bankId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accountTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "accountHolderName": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ifscCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "branchName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmployeeDocumentRequest": {
+        "type": "object",
+        "properties": {
+          "documentTypeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "documentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentPath": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmployeeEducationRequest": {
+        "type": "object",
+        "properties": {
+          "qualificationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "instituteName": {
+            "type": "string",
+            "nullable": true
+          },
+          "universityName": {
+            "type": "string",
+            "nullable": true
+          },
+          "passingYear": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "percentage": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "grade": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "EmployeeFamilyRequest": {
+        "type": "object",
+        "properties": {
+          "relationshipId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "familyMemberName": {
+            "type": "string",
+            "nullable": true
+          },
+          "occupation": {
+            "type": "string",
+            "nullable": true
+          },
+          "contactNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDependent": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
       "EmployeeRegisterRequest": {
         "type": "object",
         "properties": {
@@ -1598,6 +1806,34 @@
           "createdBy": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          },
+          "educationDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployeeEducationRequest"
+            },
+            "nullable": true
+          },
+          "bankDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployeeBankRequest"
+            },
+            "nullable": true
+          },
+          "familyDetails": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployeeFamilyRequest"
+            },
+            "nullable": true
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployeeDocumentRequest"
+            },
             "nullable": true
           }
         },

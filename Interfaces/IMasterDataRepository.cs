@@ -7,7 +7,7 @@ namespace CRMWebServices.Interfaces
         Task<List<DropdownItem>> GetCompanies();
         Task<List<DropdownItem>> GetRegionsByCompany(int companyId);
         Task<List<DropdownItem>> GetStatesByRegion(int regionId);
-        Task<List<DropdownItem>> GetOfficesByState(int stateId);
+        Task<List<DropdownItem>> GetOfficesByState(int? stateId);
         Task<List<DropdownItem>> GetDepartmentsByOffice(int officeId);
         Task<List<DropdownItem>> GetDesignations();
         Task<List<DropdownItem>> GetRoles();
@@ -34,5 +34,12 @@ namespace CRMWebServices.Interfaces
         Task<List<DropdownItem>> GetFollowUpStatuses();
 
         Task<List<DropdownItem>> GetStatusesForDashbord();
+
+        Task<List<DropdownItem>> GetQualifications();
+        Task<List<DropdownItem>> GetBanks();
+        Task<List<DropdownItem>> GetAccountTypes();
+        Task<List<DropdownItem>> GetFamilyRelationShips();
+        Task<List<DropdownItem>> GetDocumentTypes();
+
     }
 }

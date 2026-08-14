@@ -1,0 +1,48 @@
+2026-08-12 10:38:28.418 +05:30 [INF] Starting CRM Web Services
+2026-08-12 10:38:31.637 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-12 10:38:33.863 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-12 10:38:33.991 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-12 10:38:37.994 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-12 10:38:38.210 +05:30 [INF] Hosting environment: Development
+2026-08-12 10:38:38.380 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-12 10:38:40.141 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 1319.5424 ms
+2026-08-12 10:38:49.049 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 589.7766 ms
+2026-08-12 10:41:23.606 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 5212.7647 ms
+2026-08-12 10:42:12.710 +05:30 [INF] HTTP GET /api/holiday/GetHolidays/8 responded 200 in 1217.0179 ms
+2026-08-12 10:42:27.923 +05:30 [INF] HTTP GET /api/holiday/GetHolidays/6 responded 200 in 191.7712 ms
+2026-08-12 10:48:43.816 +05:30 [INF] HTTP POST /api/holiday/SaveCalendar responded 200 in 650.2503 ms
+2026-08-12 10:49:24.645 +05:30 [INF] HTTP GET /api/holiday/GetHolidays/9 responded 200 in 23.5321 ms
+2026-08-12 10:50:00.576 +05:30 [INF] HTTP POST /api/holiday/SaveCalendar responded 200 in 40.2166 ms
+2026-08-12 10:50:12.047 +05:30 [INF] HTTP GET /api/holiday/GetHolidays/5 responded 200 in 13.8426 ms
+2026-08-12 10:50:22.357 +05:30 [INF] HTTP POST /api/holiday/SaveCalendar responded 200 in 16.7945 ms
+2026-08-12 10:50:30.785 +05:30 [INF] HTTP GET /api/holiday/GetHolidays/9 responded 200 in 10.9022 ms
+2026-08-12 10:51:21.931 +05:30 [INF] HTTP POST /api/holiday/SaveCalendar responded 200 in 42.1849 ms
+2026-08-12 10:51:44.661 +05:30 [INF] HTTP GET /api/holiday/GetHolidays/10 responded 200 in 23.3770 ms
+2026-08-12 10:52:14.848 +05:30 [INF] HTTP POST /api/holiday/SaveCalendar responded 200 in 26.9026 ms
+2026-08-12 10:52:23.670 +05:30 [INF] HTTP GET /api/holiday/GetHolidays/10 responded 200 in 13.5728 ms
+2026-08-12 12:01:02.538 +05:30 [INF] Starting CRM Web Services
+2026-08-12 12:01:04.042 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-12 12:01:05.146 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-12 12:01:05.166 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-12 12:01:07.803 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-12 12:01:07.863 +05:30 [INF] Hosting environment: Development
+2026-08-12 12:01:07.894 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-12 12:01:09.787 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 767.7286 ms
+2026-08-12 12:01:11.166 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 715.2267 ms
+2026-08-12 12:02:08.998 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 6875.9128 ms
+2026-08-12 12:02:44.521 +05:30 [INF] HTTP GET /api/master/offices responded 200 in 2777.9556 ms
+2026-08-12 12:02:53.646 +05:30 [INF] HTTP GET /api/master/offices responded 200 in 434.5029 ms
+2026-08-12 12:03:09.230 +05:30 [INF] HTTP GET /api/master/offices responded 200 in 847.0075 ms
+2026-08-12 12:03:19.560 +05:30 [INF] HTTP GET /api/master/offices responded 200 in 120.2477 ms
+2026-08-12 12:03:25.485 +05:30 [INF] HTTP GET /api/master/offices responded 200 in 63.4720 ms
+2026-08-12 12:08:09.909 +05:30 [INF] HTTP GET /api/master/offices responded 200 in 77.6572 ms
+2026-08-12 12:08:14.614 +05:30 [INF] HTTP GET /api/master/offices responded 200 in 227.5322 ms
+2026-08-12 17:51:25.294 +05:30 [INF] Starting CRM Web Services
+2026-08-12 17:51:26.203 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-12 17:51:26.711 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-12 17:51:26.717 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-12 17:51:27.215 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-12 17:51:27.222 +05:30 [INF] Hosting environment: Development
+2026-08-12 17:51:27.228 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-12 17:51:29.404 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 345.8987 ms
+2026-08-12 17:51:30.399 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 318.4126 ms

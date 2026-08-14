@@ -30,7 +30,7 @@ namespace CRMWebServices.Controllers
             => Ok(new ApiResponse { Status = true, Data = await _repo.GetStatesByRegion(regionId) });
 
         [HttpGet("offices")]
-        public async Task<IActionResult> Offices([FromQuery] int stateId)
+        public async Task<IActionResult> Offices([FromQuery] int? stateId)
             => Ok(new ApiResponse { Status = true, Data = await _repo.GetOfficesByState(stateId) });
 
         [HttpGet("departments")]
@@ -109,5 +109,25 @@ namespace CRMWebServices.Controllers
         [HttpGet("dashboard-statuses")]
         public async Task<IActionResult> DashboardStatuses()
             => Ok(new ApiResponse { Status = true, Data = await _repo.GetStatusesForDashbord() });
+
+        [HttpGet("qualification")]
+        public async Task<IActionResult> Qualification()
+          => Ok(new ApiResponse { Status = true, Data = await _repo.GetQualifications() });
+
+        [HttpGet("banks")]
+        public async Task<IActionResult> Banks()
+          => Ok(new ApiResponse { Status = true, Data = await _repo.GetBanks() });
+
+        [HttpGet("accountType")]
+        public async Task<IActionResult> AccountTypes()
+          => Ok(new ApiResponse { Status = true, Data = await _repo.GetAccountTypes() });
+
+        [HttpGet("familyRelationships")]
+        public async Task<IActionResult> FamilyRelationShips()
+          => Ok(new ApiResponse { Status = true, Data = await _repo.GetFamilyRelationShips() });
+
+        [HttpGet("documentTypes")]
+        public async Task<IActionResult> DocumentTypes()
+          => Ok(new ApiResponse { Status = true, Data = await _repo.GetDocumentTypes() });
     }
 }

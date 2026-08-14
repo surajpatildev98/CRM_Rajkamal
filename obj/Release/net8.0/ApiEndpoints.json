@@ -1,0 +1,1040 @@
+[
+  {
+    "ContainingType": "CRMWebServices.Controllers.AttendanceController",
+    "Method": "GetAttendance",
+    "RelativePath": "api/attendance/GetAttendance",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.Attendance.AttendanceRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.AttendanceController",
+    "Method": "GetPunches",
+    "RelativePath": "api/attendance/GetPunches",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.Attendance.AttendancePunchRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.AttendanceController",
+    "Method": "ManualPunch",
+    "RelativePath": "api/attendance/ManualPunch",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.Attendance.ManualPunchRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.AuthController",
+    "Method": "Login",
+    "RelativePath": "api/auth/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LoginRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.DashboardController",
+    "Method": "Details",
+    "RelativePath": "api/dashboard/Details",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "employeeId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "fromDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "toDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.DashboardController",
+    "Method": "Performance",
+    "RelativePath": "api/dashboard/employee-performance",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.DashboardController",
+    "Method": "MyDashboard",
+    "RelativePath": "api/dashboard/my-dashboard",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "fromDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "toDate",
+        "Type": "System.Nullable\u00601[[System.DateTime, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.EmployeeController",
+    "Method": "NewRegister",
+    "RelativePath": "api/Employee/NewRegister",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.EmployeeRegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.EmployeeController",
+    "Method": "Register",
+    "RelativePath": "api/Employee/Register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.EmployeeRegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.HolidayController",
+    "Method": "GetCalendars",
+    "RelativePath": "api/holiday/GetCalendars",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.HolidayController",
+    "Method": "GetHolidays",
+    "RelativePath": "api/holiday/GetHolidays/{holidayCalendarId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "holidayCalendarId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.HolidayController",
+    "Method": "SaveCalendar",
+    "RelativePath": "api/holiday/SaveCalendar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.holiday.HolidayCalendarSaveRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "Assign",
+    "RelativePath": "api/Lead/Assign",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LeadAssignRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "CheckCustomer",
+    "RelativePath": "api/Lead/check-customer-exists",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "gst",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "customerName",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "pan",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "Close",
+    "RelativePath": "api/Lead/CloseLead",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LeadCloseRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "CreateActivity",
+    "RelativePath": "api/Lead/CreateActivity",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LeadActivityRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "CreateFollowUp",
+    "RelativePath": "api/Lead/CreateFollowUp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LeadFollowUpRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "Details",
+    "RelativePath": "api/Lead/Details",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "leadId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "SearchText",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FilterStatusId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "FilterAssignedToId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "LoggedInEmployeeId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowCreatedAndAssigned",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "Register",
+    "RelativePath": "api/Lead/Register",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LeadRegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "SearchCustomer",
+    "RelativePath": "api/Lead/search-customer",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "searchText",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "Transfer",
+    "RelativePath": "api/Lead/Transfer",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LeadTransferRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "UpdateFollowUpStatus",
+    "RelativePath": "api/Lead/UpdateFollowUpStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.FollowUpStatusUpdateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.LeadController",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/Lead/UpdateStatus",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.LeadStatusUpdateRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "AccountTypes",
+    "RelativePath": "api/master/accountType",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "ActivityTypes",
+    "RelativePath": "api/master/activity-types",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Banks",
+    "RelativePath": "api/master/banks",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "CitiesByState",
+    "RelativePath": "api/master/cities-by-state",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "stateId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Companies",
+    "RelativePath": "api/master/companies",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Countries",
+    "RelativePath": "api/master/countries",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "DashboardStatuses",
+    "RelativePath": "api/master/dashboard-statuses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Departments",
+    "RelativePath": "api/master/departments",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "officeId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Designations",
+    "RelativePath": "api/master/designations",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "DocumentTypes",
+    "RelativePath": "api/master/documentTypes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Employees",
+    "RelativePath": "api/master/employees",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "FamilyRelationShips",
+    "RelativePath": "api/master/familyRelationships",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "FollowUpStatuses",
+    "RelativePath": "api/master/followup-statuses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "LeadCloseStatuses",
+    "RelativePath": "api/master/lead-close-statuses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "LeadSources",
+    "RelativePath": "api/master/lead-sources",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "LeadStatuses",
+    "RelativePath": "api/master/lead-statuses",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Offerings",
+    "RelativePath": "api/master/offerings",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Offices",
+    "RelativePath": "api/master/offices",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "stateId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Permissions",
+    "RelativePath": "api/master/permissions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Qualification",
+    "RelativePath": "api/master/qualification",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Regions",
+    "RelativePath": "api/master/regions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "companyId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Roles",
+    "RelativePath": "api/master/roles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "States",
+    "RelativePath": "api/master/states",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "regionId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "StatesByCountry",
+    "RelativePath": "api/master/states-by-country",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "countryId",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Teams",
+    "RelativePath": "api/master/teams",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Units",
+    "RelativePath": "api/master/units",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "CreateOpportunityActivity",
+    "RelativePath": "api/Opportunity/add_activity",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BCreateOpportunityActivityRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "CreateOpportunityFollowUp",
+    "RelativePath": "api/Opportunity/add_followup",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BCreateOpportunityFollowUpRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "AddOpportunityRequirement",
+    "RelativePath": "api/Opportunity/add_requirement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BAddOpportunityRequirementRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "CloseOpportunity",
+    "RelativePath": "api/Opportunity/close",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BCloseOpportunityRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "GetOpportunityCloseStages",
+    "RelativePath": "api/Opportunity/closestages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "ConvertLead",
+    "RelativePath": "api/Opportunity/convert",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BConvertLeadRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "DeleteOpportunity",
+    "RelativePath": "api/Opportunity/delete",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BDeleteOpportunityRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "GetOpportunityDetails",
+    "RelativePath": "api/Opportunity/details/{opportunityId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "opportunityId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "GetOpportunityList",
+    "RelativePath": "api/Opportunity/list",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "SearchText",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FilterStageId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "FilterOwnerId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "FilterTypeId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "FilterAssignedToId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowCreatedAndAssigned",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "GetPriorities",
+    "RelativePath": "api/Opportunity/priorities",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "GetOpportunityStages",
+    "RelativePath": "api/Opportunity/stages",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "Transfer",
+    "RelativePath": "api/Opportunity/Transfer",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BOpportunityTransferRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "GetOpportunityTypes",
+    "RelativePath": "api/Opportunity/types",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "UpdateOpportunity",
+    "RelativePath": "api/Opportunity/update",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BUpdateOpportunityRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "UpdateOpportunityRequirement",
+    "RelativePath": "api/Opportunity/update_requirement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BUpdateOpportunityRequirementRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "UpdateOpportunityFollowUpStatus",
+    "RelativePath": "api/Opportunity/Update-FollowUp-Status",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BUpdateOpportunityFollowUpStatusRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "GetWonLeads",
+    "RelativePath": "api/Opportunity/wonleads",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "leadId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "searchText",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.ShiftController",
+    "Method": "AddShift",
+    "RelativePath": "api/shift/AddShift",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "CRMWebServices.Models.ShiftModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.ShiftController",
+    "Method": "DeleteShift",
+    "RelativePath": "api/shift/delete/{shiftId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "shiftId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.ShiftController",
+    "Method": "GetShifts",
+    "RelativePath": "api/shift/GetShifts",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.ShiftController",
+    "Method": "UpdateShift",
+    "RelativePath": "api/shift/UpdateShift",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "shift",
+        "Type": "CRMWebServices.Models.ShiftModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

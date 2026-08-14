@@ -78,6 +78,9 @@ builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();  // �
 builder.Services.AddScoped<IPermissionService, PermissionService>();        // ← NEW
 builder.Services.AddScoped<ICRMAuthorizationService, AuthorizationService>(); // ← NEW
 builder.Services.AddScoped<EmployeeRepository>();
+builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
+builder.Services.AddScoped<IHolidayRepository, HolidayRepository>();
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 
 builder.Services.AddMemoryCache();  // ← NEW
 
@@ -139,11 +142,21 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles(); // serves wwwroot as usual (if you use it elsewhere)
 
-app.UseStaticFiles(new StaticFileOptions
+/*app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
         Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
     RequestPath = "/files"
+});*/
+var uploadsPath = Path.Combine(builder.Environment.ContentRootPath, "Uploads");
+
+// Create the folder if it doesn't exist
+Directory.CreateDirectory(uploadsPath);
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploadsPath),
+    RequestPath = "/Uploads"
 });
 app.UseCors("AllowFlutterWeb");
 

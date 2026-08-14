@@ -1,0 +1,525 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\Dikshita\\Project\\HRMS\\backend\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\attendance\\manualpunchresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\attendance\\manualpunchresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\repository\\attendancerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:repository\\attendancerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\attendance\\manualpunchrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\attendance\\manualpunchrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\attendance\\attendancemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\attendance\\attendancemodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\controllers\\attendancecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:controllers\\attendancecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\interfaces\\iattendancerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:interfaces\\iattendancerepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\opportunitymodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\opportunitymodels.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\attendance\\attendancepunchmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\attendance\\attendancepunchmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\attendance\\attendancepunchrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\attendance\\attendancepunchrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\attendance\\attendancepunchresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\attendance\\attendancepunchresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\attendance\\attendancerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\attendance\\attendancerequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\attendance\\attendanceresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\attendance\\attendanceresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\controllers\\opportunitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:controllers\\opportunitycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\controllers\\masterdatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:controllers\\masterdatacontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\repository\\shiftrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:repository\\shiftrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\repository\\masterdatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:repository\\masterdatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\repository\\holidayrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:repository\\holidayrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\interfaces\\imasterdatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:interfaces\\imasterdatarepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\controllers\\leadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:controllers\\leadcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\holiday\\holidaysaverequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\holiday\\holidaysaverequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\holiday\\holidaycalendarsaverequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\holiday\\holidaycalendarsaverequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\holiday\\holidaymodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\holiday\\holidaymodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\controllers\\holidaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:controllers\\holidaycontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\interfaces\\iholidayrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:interfaces\\iholidayrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\interfaces\\ishiftrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:interfaces\\ishiftrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\holiday\\holidaycalendarmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\holiday\\holidaycalendarmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\models\\holiday\\holidaycalendarresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:models\\holiday\\holidaycalendarresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\controllers\\shiftcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:controllers\\shiftcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|d:\\dikshita\\project\\hrms\\backend\\interfaces\\idatabaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{94CB61F3-76F6-DB91-CF38-70E9907BE6D4}|CRMWebServices.csproj|solutionrelative:interfaces\\idatabaseservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ManualPunchResponse.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\ManualPunchResponse.cs",
+              "RelativeDocumentMoniker": "Models\\Attendance\\ManualPunchResponse.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\ManualPunchResponse.cs",
+              "RelativeToolTip": "Models\\Attendance\\ManualPunchResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-13T10:34:21.551Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "ManualPunchRequest.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\ManualPunchRequest.cs",
+              "RelativeDocumentMoniker": "Models\\Attendance\\ManualPunchRequest.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\ManualPunchRequest.cs",
+              "RelativeToolTip": "Models\\Attendance\\ManualPunchRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-13T09:59:30.412Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AttendanceRepository.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Repository\\AttendanceRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\AttendanceRepository.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Repository\\AttendanceRepository.cs",
+              "RelativeToolTip": "Repository\\AttendanceRepository.cs",
+              "ViewState": "AgIAAOYAAAAAAAAAAAAwwEIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T12:07:43.237Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "IAttendanceRepository.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IAttendanceRepository.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IAttendanceRepository.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IAttendanceRepository.cs",
+              "RelativeToolTip": "Interfaces\\IAttendanceRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T12:07:13.169Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "AttendanceController.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\AttendanceController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AttendanceController.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\AttendanceController.cs",
+              "RelativeToolTip": "Controllers\\AttendanceController.cs",
+              "ViewState": "AgIAADYAAAAAAAAAAAAwwD8AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T12:18:41.756Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AttendanceModel.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendanceModel.cs",
+              "RelativeDocumentMoniker": "Models\\Attendance\\AttendanceModel.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendanceModel.cs",
+              "RelativeToolTip": "Models\\Attendance\\AttendanceModel.cs",
+              "ViewState": "AgIAABEAAAAAAAAAAAAiwCMAAAAtAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T12:04:01.404Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "OpportunityModels.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\OpportunityModels.cs",
+              "RelativeDocumentMoniker": "Models\\OpportunityModels.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\OpportunityModels.cs",
+              "RelativeToolTip": "Models\\OpportunityModels.cs",
+              "ViewState": "AgIAAO8AAAAAAAAAAAAUwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-13T10:34:38.913Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AttendancePunchModel.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendancePunchModel.cs",
+              "RelativeDocumentMoniker": "Models\\Attendance\\AttendancePunchModel.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendancePunchModel.cs",
+              "RelativeToolTip": "Models\\Attendance\\AttendancePunchModel.cs",
+              "ViewState": "AgIAABMAAAAAAAAAAADwvxoAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-13T06:17:03.982Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "AttendancePunchResponse.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendancePunchResponse.cs",
+              "RelativeDocumentMoniker": "Models\\Attendance\\AttendancePunchResponse.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendancePunchResponse.cs",
+              "RelativeToolTip": "Models\\Attendance\\AttendancePunchResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-13T07:31:36.526Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "AttendancePunchRequest.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendancePunchRequest.cs",
+              "RelativeDocumentMoniker": "Models\\Attendance\\AttendancePunchRequest.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendancePunchRequest.cs",
+              "RelativeToolTip": "Models\\Attendance\\AttendancePunchRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-13T07:31:59.613Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AttendanceResponse.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendanceResponse.cs",
+              "RelativeDocumentMoniker": "Models\\Attendance\\AttendanceResponse.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendanceResponse.cs",
+              "RelativeToolTip": "Models\\Attendance\\AttendanceResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T12:06:17.534Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AttendanceRequest.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendanceRequest.cs",
+              "RelativeDocumentMoniker": "Models\\Attendance\\AttendanceRequest.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\Attendance\\AttendanceRequest.cs",
+              "RelativeToolTip": "Models\\Attendance\\AttendanceRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T12:04:36.054Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Program.cs",
+              "RelativeDocumentMoniker": "Program.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Program.cs",
+              "RelativeToolTip": "Program.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAFIAAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T12:18:06.775Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "OpportunityController.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\OpportunityController.cs",
+              "RelativeDocumentMoniker": "Controllers\\OpportunityController.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\OpportunityController.cs",
+              "RelativeToolTip": "Controllers\\OpportunityController.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAYwDwAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T12:20:12.267Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "MasterDataController.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\MasterDataController.cs",
+              "RelativeDocumentMoniker": "Controllers\\MasterDataController.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\MasterDataController.cs",
+              "RelativeToolTip": "Controllers\\MasterDataController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T06:04:48.984Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "MasterDataRepository.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Repository\\MasterDataRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\MasterDataRepository.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Repository\\MasterDataRepository.cs",
+              "RelativeToolTip": "Repository\\MasterDataRepository.cs",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAswC4AAAAWAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T06:05:06.438Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "LeadController.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\LeadController.cs",
+              "RelativeDocumentMoniker": "Controllers\\LeadController.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\LeadController.cs",
+              "RelativeToolTip": "Controllers\\LeadController.cs",
+              "ViewState": "AgIAAH0BAAAAAAAAAAAiwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T06:04:31.821Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "IHolidayRepository.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IHolidayRepository.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IHolidayRepository.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IHolidayRepository.cs",
+              "RelativeToolTip": "Interfaces\\IHolidayRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T06:57:50.836Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ShiftRepository.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Repository\\ShiftRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\ShiftRepository.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Repository\\ShiftRepository.cs",
+              "RelativeToolTip": "Repository\\ShiftRepository.cs",
+              "ViewState": "AgIAAOUAAAAAAAAAAAAwwAgBAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T09:06:06.678Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "HolidayRepository.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Repository\\HolidayRepository.cs",
+              "RelativeDocumentMoniker": "Repository\\HolidayRepository.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Repository\\HolidayRepository.cs",
+              "RelativeToolTip": "Repository\\HolidayRepository.cs",
+              "ViewState": "AgIAACEAAAAAAAAAAAAYwCoAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T06:11:14.182Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "IMasterDataRepository.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IMasterDataRepository.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IMasterDataRepository.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IMasterDataRepository.cs",
+              "RelativeToolTip": "Interfaces\\IMasterDataRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-12T06:28:24.498Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
+              "Title": "HolidayController.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\HolidayController.cs",
+              "RelativeDocumentMoniker": "Controllers\\HolidayController.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\HolidayController.cs",
+              "RelativeToolTip": "Controllers\\HolidayController.cs",
+              "ViewState": "AgIAAEEAAAAAAAAAAAA5wE8AAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T06:35:16.089Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "HolidaySaveRequest.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidaySaveRequest.cs",
+              "RelativeDocumentMoniker": "Models\\holiday\\HolidaySaveRequest.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidaySaveRequest.cs",
+              "RelativeToolTip": "Models\\holiday\\HolidaySaveRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T08:45:03.159Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "HolidayCalendarSaveRequest.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidayCalendarSaveRequest.cs",
+              "RelativeDocumentMoniker": "Models\\holiday\\HolidayCalendarSaveRequest.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidayCalendarSaveRequest.cs",
+              "RelativeToolTip": "Models\\holiday\\HolidayCalendarSaveRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T08:45:04.817Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "HolidayModel.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidayModel.cs",
+              "RelativeDocumentMoniker": "Models\\holiday\\HolidayModel.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidayModel.cs",
+              "RelativeToolTip": "Models\\holiday\\HolidayModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T11:06:27.021Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
+              "Title": "HolidayCalendarModel.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidayCalendarModel.cs",
+              "RelativeDocumentMoniker": "Models\\holiday\\HolidayCalendarModel.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidayCalendarModel.cs",
+              "RelativeToolTip": "Models\\holiday\\HolidayCalendarModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T11:03:13.417Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "IShiftRepository.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IShiftRepository.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IShiftRepository.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IShiftRepository.cs",
+              "RelativeToolTip": "Interfaces\\IShiftRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T11:08:43.804Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 27,
+              "Title": "HolidayCalendarResponse.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidayCalendarResponse.cs",
+              "RelativeDocumentMoniker": "Models\\holiday\\HolidayCalendarResponse.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Models\\holiday\\HolidayCalendarResponse.cs",
+              "RelativeToolTip": "Models\\holiday\\HolidayCalendarResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T08:44:47.172Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 28,
+              "Title": "ShiftController.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\ShiftController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ShiftController.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Controllers\\ShiftController.cs",
+              "RelativeToolTip": "Controllers\\ShiftController.cs",
+              "ViewState": "AgIAAD4AAAAAAAAAAAAgwEYAAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T08:54:41.922Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 29,
+              "Title": "IDatabaseService.cs",
+              "DocumentMoniker": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IDatabaseService.cs",
+              "RelativeDocumentMoniker": "Interfaces\\IDatabaseService.cs",
+              "ToolTip": "D:\\Dikshita\\Project\\HRMS\\backend\\Interfaces\\IDatabaseService.cs",
+              "RelativeToolTip": "Interfaces\\IDatabaseService.cs",
+              "ViewState": "AgIAAFsAAAAAAAAAAAAgwIAAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-11T06:32:43.019Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

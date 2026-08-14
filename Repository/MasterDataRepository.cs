@@ -51,12 +51,20 @@ namespace CRMWebServices.Repository
             return MapToDropdown(dt);
         }
 
-        public async Task<List<DropdownItem>> GetOfficesByState(int stateId)
+     /*   public async Task<List<DropdownItem>> GetOfficesByState(int stateId)
         {
             var dt = await _database.ExecuteDataTableAsync(
                 "USP_ORG_EmployeeManagement",
                 new SqlParameter("@Status", "GET_OFFICES_BY_STATE"),
                 new SqlParameter("@StateId", stateId));
+            return MapToDropdown(dt);
+        }*/
+        public async Task<List<DropdownItem>> GetOfficesByState(int? stateId)
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_OFFICES_BY_STATE"),
+                new SqlParameter("@StateId", stateId ?? (object)DBNull.Value));
             return MapToDropdown(dt);
         }
 
@@ -206,6 +214,46 @@ namespace CRMWebServices.Repository
             var dt = await _database.ExecuteDataTableAsync(
                 "USP_CRM_LeadManagement",
                 new SqlParameter("@Status", "GET_LEAD_STATUSES_FOR_DASHBOARD"));
+            return MapToDropdown(dt);
+        }
+
+        public async Task<List<DropdownItem>> GetQualifications()
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_QUALIFICATIONS"));
+            return MapToDropdown(dt);
+        }
+
+        public async Task<List<DropdownItem>> GetBanks()
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_BANKS"));
+            return MapToDropdown(dt);
+        }
+
+        public async Task<List<DropdownItem>> GetAccountTypes()
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_ACCOUNT_TYPES"));
+            return MapToDropdown(dt);
+        }
+
+        public async Task<List<DropdownItem>> GetFamilyRelationShips()
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_RELATIONSHIPS"));
+            return MapToDropdown(dt);
+        }
+
+        public async Task<List<DropdownItem>> GetDocumentTypes()
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_DOCUMENT_TYPES"));
             return MapToDropdown(dt);
         }
     }

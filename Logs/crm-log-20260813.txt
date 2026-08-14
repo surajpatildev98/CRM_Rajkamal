@@ -1,0 +1,32 @@
+2026-08-13 14:14:13.539 +05:30 [INF] Starting CRM Web Services
+2026-08-13 14:14:15.407 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-13 14:14:16.423 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-13 14:14:16.436 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-13 14:14:18.377 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-13 14:14:18.417 +05:30 [INF] Hosting environment: Development
+2026-08-13 14:14:18.432 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-13 14:14:20.035 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 491.8262 ms
+2026-08-13 14:14:21.410 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 687.0481 ms
+2026-08-13 14:15:26.210 +05:30 [INF] HTTP POST /api/attendance/GetPunches responded 401 in 732.2680 ms
+2026-08-13 14:21:20.287 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 5420.8110 ms
+2026-08-13 14:22:16.456 +05:30 [INF] HTTP POST /api/attendance/GetPunches responded 200 in 723.8257 ms
+2026-08-13 16:46:40.246 +05:30 [INF] Starting CRM Web Services
+2026-08-13 16:46:41.627 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\backend\wwwroot. Static files may be unavailable.
+2026-08-13 16:46:42.592 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-13 16:46:42.601 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-13 16:46:45.135 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-13 16:46:45.383 +05:30 [INF] Hosting environment: Development
+2026-08-13 16:46:45.492 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\backend
+2026-08-13 16:46:47.902 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 823.6319 ms
+2026-08-13 16:46:49.116 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 593.3975 ms
+2026-08-13 16:47:51.836 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 5170.5619 ms
+2026-08-13 16:49:46.900 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 1677.8502 ms
+2026-08-13 16:50:10.088 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 108.9271 ms
+2026-08-13 16:50:18.499 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 93.3052 ms
+2026-08-13 16:50:50.965 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 448.8504 ms
+2026-08-13 16:55:44.581 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 793.5436 ms
+2026-08-13 17:01:44.896 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 263.8733 ms
+2026-08-13 17:02:10.699 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 57.3210 ms
+2026-08-13 17:02:16.905 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 49.2200 ms
+2026-08-13 17:02:39.647 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 40.8967 ms
+2026-08-13 17:03:06.165 +05:30 [INF] HTTP POST /api/attendance/ManualPunch responded 200 in 53.3409 ms

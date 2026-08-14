@@ -74,6 +74,22 @@
   },
   {
     "ContainingType": "CRMWebServices.Controllers.EmployeeController",
+    "Method": "NewRegister",
+    "RelativePath": "api/Employee/NewRegister",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.EmployeeRegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.EmployeeController",
     "Method": "Register",
     "RelativePath": "api/Employee/Register",
     "HttpMethod": "POST",
@@ -301,8 +317,28 @@
   },
   {
     "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "AccountTypes",
+    "RelativePath": "api/master/accountType",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
     "Method": "ActivityTypes",
     "RelativePath": "api/master/activity-types",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Banks",
+    "RelativePath": "api/master/banks",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -383,8 +419,28 @@
   },
   {
     "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "DocumentTypes",
+    "RelativePath": "api/master/documentTypes",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
     "Method": "Employees",
     "RelativePath": "api/master/employees",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "FamilyRelationShips",
+    "RelativePath": "api/master/familyRelationships",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -461,6 +517,16 @@
     "ContainingType": "CRMWebServices.Controllers.MasterDataController",
     "Method": "Permissions",
     "RelativePath": "api/master/permissions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.MasterDataController",
+    "Method": "Qualification",
+    "RelativePath": "api/master/qualification",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -821,6 +887,16 @@
         "IsRequired": false
       }
     ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.ShiftController",
+    "Method": "GetShifts",
+    "RelativePath": "api/shift/GetShifts",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
     "ReturnTypes": []
   }
 ]
