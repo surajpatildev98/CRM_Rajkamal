@@ -1,0 +1,32 @@
+2026-08-14 10:29:59.578 +05:30 [INF] Starting CRM Web Services
+2026-08-14 10:29:59.905 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-14 10:30:00.174 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-14 10:30:00.176 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-14 10:30:00.346 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-14 10:30:00.349 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-14 10:30:00.352 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-14 10:30:01.428 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 180.9532 ms
+2026-08-14 10:30:01.683 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 63.8848 ms
+2026-08-14 10:30:18.262 +05:30 [INF] HTTP GET /api/Opportunity/closestages responded 401 in 2373.8789 ms
+2026-08-14 10:30:37.774 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 3208.8373 ms
+2026-08-14 10:31:26.662 +05:30 [INF] HTTP GET /api/Opportunity/closestages responded 200 in 382.7637 ms
+2026-08-14 10:33:14.001 +05:30 [INF] HTTP POST /api/Opportunity/close responded 400 in 101.8215 ms
+2026-08-14 10:35:06.233 +05:30 [INF] HTTP POST /api/Opportunity/close responded 200 in 37.5950 ms
+2026-08-14 10:43:44.951 +05:30 [INF] HTTP POST /api/Opportunity/close responded 400 in 64.6536 ms
+2026-08-14 10:45:06.242 +05:30 [INF] HTTP POST /api/Opportunity/close responded 400 in 43.1343 ms
+2026-08-14 10:45:28.152 +05:30 [INF] HTTP POST /api/Opportunity/close responded 400 in 35.5626 ms
+2026-08-14 14:20:10.762 +05:30 [INF] Starting CRM Web Services
+2026-08-14 14:20:11.116 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-14 14:20:11.316 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-14 14:20:11.318 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-14 14:20:11.513 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-14 14:20:11.516 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-14 14:20:11.519 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-14 14:20:12.721 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 209.5220 ms
+2026-08-14 14:20:13.010 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 108.6556 ms
+2026-08-14 14:21:07.972 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 1779.4925 ms
+2026-08-14 14:21:37.412 +05:30 [INF] HTTP GET /api/Opportunity/list responded 200 in 214.8360 ms
+2026-08-14 14:21:52.517 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 280.1203 ms
+2026-08-14 14:22:13.415 +05:30 [INF] HTTP GET /api/Opportunity/list responded 200 in 38.9095 ms
+2026-08-14 14:22:25.417 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 287.0719 ms
+2026-08-14 14:22:43.904 +05:30 [INF] HTTP GET /api/Opportunity/list responded 200 in 66.2572 ms

@@ -37,6 +37,7 @@
 
             public int? FilterAssignedToId { get; set; }   // NEW
 
+            public int? LoggedInEmployeeId { get; set; }
             public bool ShowCreatedAndAssigned { get; set; }  // For PreSales
         }       
         public class UpdateOpportunityRequest
@@ -425,7 +426,7 @@
         public class CloseOpportunityRequest
         {
             public int Ref_OpportunityId { get; set; }
-            public int Ref_OpportunityStageIdClose { get; set; }  // 7 = Closed Won, 8 = Closed Lost
+            public int Ref_OpportunityStageIdClose { get; set; }  // Pass the OpportunityStageId where IsClosed=1 (e.g. CWON=6, CLOST=7)
             public string? ClosureRemark { get; set; }
             public int CreatedBy { get; set; }
         }

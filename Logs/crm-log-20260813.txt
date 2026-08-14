@@ -1,0 +1,20 @@
+2026-08-13 09:58:50.255 +05:30 [INF] Starting CRM Web Services
+2026-08-13 09:58:50.635 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-13 09:58:50.840 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-13 09:58:50.843 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-13 09:58:51.028 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-13 09:58:51.032 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-13 09:58:51.035 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-13 09:58:52.857 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 215.2364 ms
+2026-08-13 09:58:53.357 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 58.7397 ms
+2026-08-13 09:59:15.585 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 5767.3335 ms
+2026-08-13 10:13:21.037 +05:30 [INF] Starting CRM Web Services
+2026-08-13 10:13:21.326 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-13 10:13:21.543 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-13 10:13:21.546 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-13 10:13:21.798 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-13 10:13:21.802 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-13 10:13:21.808 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-13 10:13:22.481 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 185.2947 ms
+2026-08-13 10:13:22.928 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 76.6631 ms
+2026-08-13 10:13:39.907 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2242.1665 ms

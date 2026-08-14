@@ -589,9 +589,9 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@SearchText", (object?)request.SearchText ?? DBNull.Value),
                     new SqlParameter("@FilterStageId", (object?)request.FilterStageId ?? DBNull.Value),
                     new SqlParameter("@FilterOwnerId", (object?)request.FilterOwnerId ?? DBNull.Value),
-                    new SqlParameter("@FilterTypeId", (object?)request.FilterTypeId ?? DBNull.Value)
-                );
-
+                    new SqlParameter("@FilterTypeId", (object?)request.FilterTypeId ?? DBNull.Value),            
+                    new SqlParameter("@LoggedInEmployeeId",(object?)request.LoggedInEmployeeId ?? DBNull.Value));// IMPORTANT
+    
                 if (dt == null || dt.Rows.Count == 0)
                 {
                     return new ApiResponse
@@ -1325,6 +1325,30 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region // CLOSE OPPORTUNITY
+        //public async Task<ApiResponse> CloseOpportunity(CloseOpportunityRequest model)
+        //{
+        //    try
+        //    {
+        //        var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
+        //            new SqlParameter("@Status", "CLOSE_OPPORTUNITY"),
+        //            new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
+        //            new SqlParameter("@Ref_OpportunityStageIdClose", model.Ref_OpportunityStageIdClose),
+        //            new SqlParameter("@ClosureRemark", (object?)model.ClosureRemark ?? DBNull.Value),
+        //            new SqlParameter("@CreatedBy", model.CreatedBy)
+        //        );
+
+        //        return MapResponse(dt, isCreate: false);
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
+        //    }
+        //}
+
         public async Task<ApiResponse> CloseOpportunity(CloseOpportunityRequest model)
         {
             try
@@ -1337,7 +1361,31 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@CreatedBy", model.CreatedBy)
                 );
 
-                return MapResponse(dt, isCreate: false);
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    return new ApiResponse { Status = false, Message = "No response from server." };
+                }
+
+                var row = dt.Rows[0];
+                bool success = Convert.ToBoolean(row["Status"]);
+
+                if (!success)
+                {
+                    return new ApiResponse { Status = false, Message = row["Message"]?.ToString() };
+                }
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = row["Message"]?.ToString(),
+                    Data = new
+                    {
+                        OpportunityId = Convert.ToInt32(row["OpportunityId"]),
+                        OpportunityStageId = Convert.ToInt32(row["OpportunityStageId"]),
+                        StageName = row["StageName"]?.ToString(),
+                        CustomerId = row["CustomerId"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["CustomerId"])
+                    }
+                };
             }
             catch (SqlException ex)
             {

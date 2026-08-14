@@ -921,6 +921,14 @@
             }
           },
           {
+            "name": "LoggedInEmployeeId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
             "name": "ShowCreatedAndAssigned",
             "in": "query",
             "schema": {

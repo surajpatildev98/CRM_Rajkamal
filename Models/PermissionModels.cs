@@ -192,5 +192,23 @@
             public List<SaveRoleModuleAccessItem> Modules { get; set; } = new();
             public int? CreatedBy { get; set; }
         }
+
+        public class ModuleAccessInfo
+        {
+            public int ModuleId { get; set; }
+            public string ModuleCode { get; set; }
+            public string ModuleName { get; set; }
+            public string? IconName { get; set; }
+            public bool IsAllowed { get; set; }
+            public List<PermissionAccessInfo> Permissions { get; set; } = new();
+        }
+
+        public class PermissionAccessInfo
+        {
+            public int PermissionId { get; set; }
+            public string PermissionCode { get; set; }
+            public string PermissionName { get; set; }
+            public bool IsAllowed { get; set; }
+        }
     }
 }
