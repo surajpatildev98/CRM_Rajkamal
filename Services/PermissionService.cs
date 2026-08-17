@@ -29,6 +29,7 @@ namespace CRMWebServices.Services
             _logger = logger;
         }
 
+        #region HasPermission used for checking single permission
         public async Task<bool> HasPermission(ClaimsPrincipal user, string permissionCode)
         {
             if (user == null || !user.Identity.IsAuthenticated)
@@ -53,7 +54,9 @@ namespace CRMWebServices.Services
                 return false;
             }
         }
+        #endregion
 
+        #region HasAnyPermission and HasAllPermissions used for checking multiple permissions
         public async Task<bool> HasAnyPermission(ClaimsPrincipal user, params string[] permissionCodes)
         {
             if (permissionCodes == null || permissionCodes.Length == 0)
@@ -66,7 +69,9 @@ namespace CRMWebServices.Services
             }
             return false;
         }
+        #endregion
 
+        #region HasAllPermissions used for checking multiple permissions
         public async Task<bool> HasAllPermissions(ClaimsPrincipal user, params string[] permissionCodes)
         {
             if (permissionCodes == null || permissionCodes.Length == 0)
@@ -79,7 +84,9 @@ namespace CRMWebServices.Services
             }
             return true;
         }
+        #endregion
 
+        #region CheckMultiplePermissions used for checking multiple permissions and returning a dictionary of results
         public async Task<Dictionary<string, bool>> CheckMultiplePermissions(ClaimsPrincipal user, string[] permissionCodes)
         {
             var employeeId = user.EmployeeId(); // Returns int
@@ -120,7 +127,9 @@ namespace CRMWebServices.Services
 
             return result;
         }
+        #endregion
 
+        #region GetUserPermissions and GetUserPermissionDictionary used for retrieving all permissions for a user
         public async Task<List<UserPermission>> GetUserPermissions(ClaimsPrincipal user)
         {
             var employeeId = user.EmployeeId(); // Returns int
@@ -141,7 +150,9 @@ namespace CRMWebServices.Services
                 return new List<UserPermission>();
             }
         }
+        #endregion
 
+        #region GetUserPermissionDictionary used for retrieving all permissions for a user as a dictionary
         public async Task<Dictionary<string, bool>> GetUserPermissionDictionary(ClaimsPrincipal user)
         {
             var employeeId = user.EmployeeId(); // Returns int
@@ -163,12 +174,16 @@ namespace CRMWebServices.Services
                 return new Dictionary<string, bool>();
             }
         }
+        #endregion
 
+        #region GetResourceOwner used for retrieving the owner of a resource
         public async Task<ResourceOwner> GetResourceOwner(string resourceType, int resourceId)
         {
             return await _permissionRepository.GetResourceOwner(resourceType, resourceId);
         }
+        #endregion
 
+        #region GetAccessFilter used for determining the access filter for a user on a specific resource type
         public async Task<PermissionFilter> GetAccessFilter(ClaimsPrincipal user, string resourceType)
         {
             var filter = new PermissionFilter();
@@ -206,18 +221,24 @@ namespace CRMWebServices.Services
 
             return filter;
         }
+        #endregion
 
+        #region GetUserModules used for retrieving the modules a user has access to specifically for the modules they have permissions for
         public async Task<List<ModulePermission>> GetUserModules(ClaimsPrincipal user)
         {
             var employeeId = user.EmployeeId(); // Returns int
             return await _permissionRepository.GetUserModules(employeeId);
         }
+        #endregion
 
+        #region InvalidateCache used for clearing cached permissions for a user
         public void InvalidateCache(int employeeId)
         {
             _cache.Remove($"UserPermissions_{employeeId}");
             _cache.Remove($"UserPermissionsDict_{employeeId}");
             _logger.LogInformation("Cache invalidated for user {EmployeeId}", employeeId);
         }
+        #endregion
+
     }
 }

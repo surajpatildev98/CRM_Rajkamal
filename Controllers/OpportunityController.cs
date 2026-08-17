@@ -24,6 +24,7 @@ namespace CRMWebServices.Controllers
             _authorization = authorization;
         }
 
+        #region API : api/opportunity/wonleads?leadId={leadId}&searchText={searchText}
         [HttpGet]
         [Route("wonleads")]
         public async Task<IActionResult> GetWonLeads([FromQuery] int? leadId, [FromQuery] string? searchText)
@@ -65,7 +66,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/details/{opportunityId}
         [HttpGet]
         [Route("details/{opportunityId}")]
         public async Task<IActionResult> GetOpportunityDetails(int opportunityId)
@@ -99,7 +102,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/list?searchText=
         [HttpGet]
         [Route("list")]
         public async Task<IActionResult> GetOpportunityList([FromQuery] OpportunityListRequest request)
@@ -136,10 +141,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-       
-        // DROPDOWN ENDPOINTS - No permission needed
-      
+        #region API : api/opportunity/create
         [HttpGet]
         [Route("types")]
         public async Task<IActionResult> GetOpportunityTypes()
@@ -158,7 +162,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/stages
         [HttpGet]
         [Route("stages")]
         public async Task<IActionResult> GetOpportunityStages()
@@ -177,7 +183,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/priorities
         [HttpGet]
         [Route("priorities")]
         public async Task<IActionResult> GetPriorities()
@@ -196,7 +204,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/close-stages
         [HttpGet]
         [Route("closestages")]
         public async Task<IActionResult> GetOpportunityCloseStages()
@@ -211,7 +221,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/convert
         [HttpPost]
         [Route("convert")]
         public async Task<IActionResult> ConvertLead([FromBody] ConvertLeadRequest request)
@@ -246,7 +258,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/transfer
         [HttpPost]
         [Route("Transfer")]
         public async Task<IActionResult> Transfer([FromBody] OpportunityTransferRequest request)
@@ -276,9 +290,10 @@ namespace CRMWebServices.Controllers
             {
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
-        }              
+        }
+        #endregion
 
-
+        #region API : api/opportunity/requirement/{opportunityId}
         [HttpPost]
         [Route("add_requirement")]
         public async Task<IActionResult> AddOpportunityRequirement([FromBody] AddOpportunityRequirementRequest request)
@@ -308,7 +323,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/update_requirement
         [HttpPost]
         [Route("update_requirement")]
         public async Task<IActionResult> UpdateOpportunityRequirement([FromBody] UpdateOpportunityRequirementRequest request)
@@ -338,7 +355,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/add_activity
         [HttpPost]
         [Route("add_activity")]
         public async Task<IActionResult> CreateOpportunityActivity([FromBody] CreateOpportunityActivityRequest request)
@@ -363,7 +382,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/add_followup
         [HttpPost]
         [Route("add_followup")]
         public async Task<IActionResult> CreateOpportunityFollowUp([FromBody] CreateOpportunityFollowUpRequest request)
@@ -393,9 +414,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
-       
-
+        #region API : api/opportunity/close 
         [HttpPost]
         [Route("close")]
         public async Task<IActionResult> CloseOpportunity([FromBody] CloseOpportunityRequest request)
@@ -420,9 +441,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
-      
-
+        #region API : api/opportunity/Update-FollowUp-Status
         [HttpPost]
         [Route("Update-FollowUp-Status")]
         public async Task<IActionResult> UpdateOpportunityFollowUpStatus([FromBody] UpdateOpportunityFollowUpStatusRequest request)
@@ -452,7 +473,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/update
         [HttpPut]
         [Route("update")]
         public async Task<IActionResult> UpdateOpportunity([FromBody] UpdateOpportunityRequest request)
@@ -487,7 +510,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/opportunity/delete
         [HttpDelete]
         [Route("delete")]
         public async Task<IActionResult> DeleteOpportunity([FromBody] DeleteOpportunityRequest request)
@@ -522,5 +547,40 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
+
+        #region API : api/opportunity/delete-requirement
+        [HttpPost]
+        [Route("delete-requirement")]
+        public async Task<IActionResult> DeleteOpportunityRequirement([FromBody] DeleteOpportunityRequirementRequest request)
+        {
+            try
+            {
+                if (!await _authorization.CanPerformAction(User, "Opp", "Edit", request.Ref_OpportunityId))
+                {
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message = "You are not authorized to delete this requirement."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
+
+                var response = await _repository.DeleteOpportunityRequirement(request);
+
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+        #endregion
     }
 }

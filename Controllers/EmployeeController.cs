@@ -18,6 +18,7 @@ namespace CRMWebServices.Controllers
             _repository = repository;
         }
 
+        #region // API : api/Employee/Register
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] EmployeeRegisterRequest request)
@@ -56,5 +57,6 @@ namespace CRMWebServices.Controllers
             }
         }
 
+        #endregion
     }
 }

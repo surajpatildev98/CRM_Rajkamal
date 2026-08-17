@@ -21,17 +21,10 @@ namespace CRMWebServices.Controllers
             _authorization = authorization;
         }
 
-        // ============================================
-        // GET DASHBOARD DETAILS
-        // - Admin/Manager: Can view all (employeeId = null means all data)
-        // - Sales/Others: Can only view their own dashboard
-        // ============================================
+        #region // API : api/dashboard/details
         [HttpGet]
         [Route("Details")]
-        public async Task<IActionResult> Details(
-            [FromQuery] int? employeeId,
-            [FromQuery] DateTime? fromDate,
-            [FromQuery] DateTime? toDate)
+        public async Task<IActionResult> Details([FromQuery] int? employeeId,[FromQuery] DateTime? fromDate,[FromQuery] DateTime? toDate)
         {
             try
             {
@@ -75,16 +68,12 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-        // ============================================
-        // GET MY DASHBOARD (Shortcut for current user)
-        // - Always returns data for logged-in user only
-        // ============================================
+        #region // API : api/dashboard/my-dashboard
         [HttpGet]
         [Route("my-dashboard")]
-        public async Task<IActionResult> MyDashboard(
-            [FromQuery] DateTime? fromDate,
-            [FromQuery] DateTime? toDate)
+        public async Task<IActionResult> MyDashboard([FromQuery] DateTime? fromDate,[FromQuery] DateTime? toDate)
         {
             try
             {
@@ -103,12 +92,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-        // ============================================
-        // GET EMPLOYEE PERFORMANCE
-        // - Admin/Manager: Can view all employee performance
-        // - Others: Not authorized (403)
-        // ============================================
+        #region // API : api/dashboard/employee-performance
         [HttpGet]
         [Route("employee-performance")]
         public async Task<IActionResult> Performance()
@@ -141,5 +127,6 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
     }
 }

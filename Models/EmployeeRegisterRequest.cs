@@ -14,7 +14,7 @@
 
         public string Mobile { get; set; }
 
-        public string?  AlternateMobile { get; set; }
+        public string? AlternateMobile { get; set; }
 
         public string? Gender { get; set; }
 
@@ -22,9 +22,6 @@
 
         public DateTime? DOJ { get; set; }
 
-        //  public string LoginId { get; set; }
-        // New field
-        //public string? UserName { get; set; }
 
         public string Password { get; set; }
 

@@ -21,6 +21,8 @@ namespace CRMWebServices.Repository
             _logger = logger;
         }
 
+        #region // Attachment Handling and File Saving & Map Response
+
         private static readonly string[] AllowedExtensions = { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png" };
         private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
 
@@ -92,8 +94,69 @@ namespace CRMWebServices.Repository
 
         }
 
+        private ApiResponse MapResponse(System.Data.DataTable dt, bool isCreate)
+        {
+            try
+            {
 
 
+                var response = new ApiResponse();
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    response.Status = false;
+                    response.Message = "No response returned from database.";
+                    return response;
+                }
+
+                var row = dt.Rows[0];
+                bool status = Convert.ToInt32(row["Status"]) == 1;
+
+                response.Status = status;
+                response.Message = row["Message"]?.ToString();
+
+                if (status)
+                {
+                    response.Data = isCreate
+                        ? new
+                        {
+                            LeadId = Convert.ToInt32(row["LeadId"]),
+                            LeadNo = row["LeadNo"]?.ToString(),
+                            LeadOrganizationId = Convert.ToInt32(row["LeadOrganizationId"]),
+                            //AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                            AssignedToEmployeeId = row["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["AssignedToEmployeeId"])
+                        }
+                        : new
+                        {
+                            LeadId = Convert.ToInt32(row["LeadId"]),
+                            //AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                            AssignedToEmployeeId = row["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["AssignedToEmployeeId"])
+                        };
+                }
+
+                return response;
+
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        #region // Create Lead 
         public async Task<ApiResponse> CreateLead(LeadRegisterRequest model)
         {
             try
@@ -116,11 +179,7 @@ namespace CRMWebServices.Repository
 
                         try
                         {
-                            string savedPath = SaveBase64Attachment(
-                                att.Base64Content,
-                                att.FileName,
-                                "LeadAttachments"
-                            );
+                            string savedPath = SaveBase64Attachment(att.Base64Content,att.FileName,"LeadAttachments");
 
                             savedAttachments.Add(new
                             {
@@ -192,7 +251,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region // Transfer Lead
         public async Task<ApiResponse> TransferLead(LeadTransferRequest model)
         {
             try
@@ -221,68 +282,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
-        private ApiResponse MapResponse(System.Data.DataTable dt, bool isCreate)
-        {
-            try
-            {
-
-
-                var response = new ApiResponse();
-
-                if (dt == null || dt.Rows.Count == 0)
-                {
-                    response.Status = false;
-                    response.Message = "No response returned from database.";
-                    return response;
-                }
-
-                var row = dt.Rows[0];
-                bool status = Convert.ToInt32(row["Status"]) == 1;
-
-                response.Status = status;
-                response.Message = row["Message"]?.ToString();
-
-                if (status)
-                {
-                    response.Data = isCreate
-                        ? new
-                        {
-                            LeadId = Convert.ToInt32(row["LeadId"]),
-                            LeadNo = row["LeadNo"]?.ToString(),
-                            LeadOrganizationId = Convert.ToInt32(row["LeadOrganizationId"]),
-                            //AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
-                            AssignedToEmployeeId = row["AssignedToEmployeeId"] == DBNull.Value? (int?)null: Convert.ToInt32(row["AssignedToEmployeeId"])
-                        }
-                        : new
-                        {
-                            LeadId = Convert.ToInt32(row["LeadId"]),
-                            //AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
-                            AssignedToEmployeeId = row["AssignedToEmployeeId"] == DBNull.Value? (int?)null : Convert.ToInt32(row["AssignedToEmployeeId"])
-                        };
-                }
-
-                return response;
-
-            }
-            catch (SqlException ex)
-            {
-                return new ApiResponse
-                {
-                    Status = false,
-                    Message = $"Database Error: {ex.Message}"
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ApiResponse
-                {
-                    Status = false,
-                    Message = $"Error: {ex.Message}"
-                };
-            }
-        }
-
+        #region // Update Lead Status
         public async Task<ApiResponse> UpdateLeadStatus(LeadStatusUpdateRequest model)
         {
             try
@@ -340,8 +342,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
-
+        #region // Create Activity
         public async Task<ApiResponse> CreateActivity(LeadActivityRequest model)
         {
             try
@@ -397,7 +400,7 @@ namespace CRMWebServices.Repository
 
                     new SqlParameter("@Latitude", (object?)model.Latitude ?? DBNull.Value),
                     new SqlParameter("@Longitude", (object?)model.Longitude ?? DBNull.Value),
-
+                     new SqlParameter("@LocationAddress", (object?)model.LocationAddress ?? DBNull.Value),
                     new SqlParameter("@AttachmentsMeta", (object?)attachmentsMetaJson ?? DBNull.Value),
 
                     new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
@@ -439,9 +442,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
-      
-
+        #region // Create Follow-Up
         public async Task<ApiResponse> CreateFollowUp(LeadFollowUpRequest model)
         {
             try
@@ -499,7 +502,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region // Update Follow-Up Status
         public async Task<ApiResponse> UpdateFollowUpStatus(FollowUpStatusUpdateRequest model)
         {
             var dt = await _database.ExecuteDataTableAsync(
@@ -525,9 +530,9 @@ namespace CRMWebServices.Repository
             response.Message = row["Message"]?.ToString();
             return response;
         }
+        #endregion
 
-
-
+        #region // Get Lead Full Details
         public async Task<ApiResponse> GetLeadFullDetails(int leadId)
         {
             try
@@ -656,6 +661,23 @@ namespace CRMWebServices.Repository
                     createdByName = r["CreatedByName"]?.ToString()
                 }).ToList();
 
+                var timeline = ds.Tables[6].Rows.Cast<DataRow>()
+                    .Select(r => new
+                    {
+                        itemType = r["ItemType"]?.ToString(),
+                        itemId = Convert.ToInt32(r["ItemId"]),
+                        activityType = r["ActivityType"]?.ToString(),
+                        itemDate = Convert.ToDateTime(r["ActivityDate"]),
+                        subject = r["Subject"]?.ToString(),
+                        description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                        outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                        locationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
+                        createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString(),
+                        status = r["Status"]?.ToString(),
+                        statusColor = r["StatusColor"]?.ToString(),
+                        createdOn = Convert.ToDateTime(r["CreatedOn"])
+                    }).ToList();
+
                 return new ApiResponse
                 {
                     Status = true,
@@ -667,7 +689,8 @@ namespace CRMWebServices.Repository
                         requirements,
                         activities,
                         files,      // Activity files (keep as is)
-                        followUps
+                        followUps,
+                        timeline
                     }
                 };
             }
@@ -688,8 +711,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
-
+        #region // Get Lead List
         public async Task<ApiResponse> GetLeadList(LeadListFilterRequest filter)
         {
             try
@@ -874,11 +898,12 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region // Close Lead
         public async Task<ApiResponse> CloseLead(LeadCloseRequest model)
         {
-            var dt = await _database.ExecuteDataTableAsync(
-                "USP_CRM_LeadManagement",
+            var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                 new SqlParameter("@Status", "CLOSE_LEAD"),
                 new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
                 new SqlParameter("@Ref_LeadStatusIdClose", model.Ref_LeadStatusIdClose),
@@ -900,7 +925,9 @@ namespace CRMWebServices.Repository
             response.Message = row["Message"]?.ToString();
             return response;
         }
+        #endregion
 
+        #region // Get Assigned Employee Id
         public async Task<int?> GetAssignedEmployeeId(int leadId)
         {
             var parameters = new[]
@@ -920,8 +947,9 @@ namespace CRMWebServices.Repository
                 ? null
                 : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
         }
+        #endregion
 
-
+        #region // Get Lead Access Info
         public async Task<LeadAccessInfo?> GetLeadAccessInfo(int leadId)
         {
             try
@@ -951,7 +979,9 @@ namespace CRMWebServices.Repository
             }
 
         }
+        #endregion
 
+        #region // Assign Lead
         public async Task<ApiResponse> AssignLead(LeadAssignRequest model)
         {
             var dt = await _database.ExecuteDataTableAsync(
@@ -986,9 +1016,9 @@ namespace CRMWebServices.Repository
 
             return response;
         }
+        #endregion
 
-        
-
+        #region // Check Customer Exists
         public async Task<ApiResponse> CheckCustomerExists(string? gst, string? customerName, string? pan)
         {
             try
@@ -1085,8 +1115,9 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = ex.Message };
             }
         }
+        #endregion
 
-       
+        #region // Search Customer
         public async Task<ApiResponse> SearchCustomer(string searchText)
         {
             try
@@ -1126,5 +1157,6 @@ namespace CRMWebServices.Repository
                 return new ApiResponse { Status = false, Message = ex.Message };
             }
         }
+        #endregion
     }
 }

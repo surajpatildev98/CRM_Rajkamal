@@ -14,9 +14,8 @@ namespace CRMWebServices.Services
             _dbConnection = dbConnection;
         }
 
-        public async Task<DataTable> ExecuteDataTableAsync(
-            string storedProcedure,
-            params SqlParameter[] parameters)
+        #region // ExecuteDataTableAsync used for executing stored procedures that return a DataTable
+        public async Task<DataTable> ExecuteDataTableAsync(string storedProcedure, params SqlParameter[] parameters)
         {
             DataTable dt = new DataTable();
 
@@ -38,28 +37,10 @@ namespace CRMWebServices.Services
 
             return dt;
         }
+        #endregion
 
-        //public async Task<int> ExecuteNonQueryAsync(
-        //    string storedProcedure,
-        //    params SqlParameter[] parameters)
-        //{
-        //    using (SqlConnection con = _dbConnection.GetConnection())
-        //    {
-        //        await con.OpenAsync();
-
-        //        using (SqlCommand cmd = new SqlCommand(storedProcedure, con))
-        //        {
-        //            cmd.CommandType = CommandType.StoredProcedure;
-
-        //            if (parameters != null && parameters.Length > 0)
-        //                cmd.Parameters.AddRange(parameters);
-
-        //            return await cmd.ExecuteNonQueryAsync();
-        //        }
-        //    }
-        //}
-
-        public async Task<int> ExecuteNonQueryAsync(string storedProcedure,params SqlParameter[] parameters)
+        #region // ExecuteNonQueryAsync used for executing stored procedures that perform INSERT, UPDATE, DELETE operations and return the number of rows affected
+        public async Task<int> ExecuteNonQueryAsync(string storedProcedure, params SqlParameter[] parameters)
         {
             using (SqlConnection con = _dbConnection.GetConnection())
             {
@@ -80,10 +61,10 @@ namespace CRMWebServices.Services
                 }
             }
         }
+        #endregion
 
-        public async Task<object?> ExecuteScalarAsync(
-            string storedProcedure,
-            params SqlParameter[] parameters)
+        #region // ExecuteScalarAsync used for executing stored procedures that return a single value
+        public async Task<object?> ExecuteScalarAsync(string storedProcedure, params SqlParameter[] parameters)
         {
             using (SqlConnection con = _dbConnection.GetConnection())
             {
@@ -100,10 +81,10 @@ namespace CRMWebServices.Services
                 }
             }
         }
+        #endregion
 
-        public async Task<DataSet> ExecuteDataSetAsync(
-    string storedProcedure,
-    params SqlParameter[] parameters)
+        #region // ExecuteDataSetAsync used for executing stored procedures that return a DataSet (multiple DataTables)
+        public async Task<DataSet> ExecuteDataSetAsync(string storedProcedure, params SqlParameter[] parameters)
         {
             DataSet ds = new DataSet();
 
@@ -125,5 +106,6 @@ namespace CRMWebServices.Services
 
             return ds;
         }
+        #endregion
     }
 }

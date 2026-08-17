@@ -14,7 +14,6 @@ namespace CRMWebServices.Interfaces
         Task<List<DropdownItem>> GetPermissions();
         Task<List<DropdownItem>> GetTeams();
         Task<List<DropdownItem>> GetLeadStatuses();
-
         Task<List<DropdownItem>> GetCountries();
         Task<List<DropdownItem>> GetStatesByCountry(int countryId);
         Task<List<DropdownItem>> GetCitiesByState(int stateId);
@@ -22,17 +21,13 @@ namespace CRMWebServices.Interfaces
 
         //Task<List<DropdownItem>> GetEmployeesForAssignment();
         Task<List<DropdownItem>> GetEmployeesForAssignment(int loggedInEmployeeId);
-
         Task<List<DropdownItem>> GetOfferings();
         Task<List<DropdownItem>> GetUnits();
-
         Task<List<DropdownItem>> GetActivityTypes();
-
 
         /// Gets the close status dropdown for leads
         Task<List<DropdownItem>> GetLeadCloseStatuses();
         Task<List<DropdownItem>> GetFollowUpStatuses();
-
         Task<List<DropdownItem>> GetStatusesForDashbord();
 
         Task<List<DropdownItem>> GetQualifications();

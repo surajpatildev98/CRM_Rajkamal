@@ -4,6 +4,7 @@ using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Reflection;
 
 namespace CRMWebServices.Controllers
 {
@@ -20,12 +21,15 @@ namespace CRMWebServices.Controllers
             _jwt = jwt;
         }
 
+        #region // POST: api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var response = new ApiResponse();
 
-            var row = await _authRepo.GetEmployeeForLogin(request.LoginId);
+            //var row = await _authRepo.GetEmployeeForLogin(request.LoginId);
+            // NEW
+            var (row, modules) = await _authRepo.GetEmployeeForLogin(request.LoginId);
 
             if (row == null)
             {
@@ -77,12 +81,15 @@ namespace CRMWebServices.Controllers
                 EmployeeCode = employeeCode,
                 FirstName = row["FirstName"]?.ToString(),
                 LastName = row["LastName"]?.ToString(),
+                RoleId = roleIds,
                 RoleNames = row["RoleNames"] == DBNull.Value ? "" : row["RoleNames"].ToString(),
                 DepartmentName = row["DepartmentName"] == DBNull.Value ? "" : row["DepartmentName"].ToString(),
-                OfficeName = row["OfficeName"] == DBNull.Value ? "" : row["OfficeName"].ToString()
+                OfficeName = row["OfficeName"] == DBNull.Value ? "" : row["OfficeName"].ToString(),
+                Modules = modules   // NEW
             };
 
             return Ok(response);
         }
+        #endregion
     }
 }

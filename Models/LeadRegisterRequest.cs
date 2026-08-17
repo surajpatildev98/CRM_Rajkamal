@@ -37,7 +37,6 @@
         public string FileName { get; set; }
         public string Base64Content { get; set; }
     }
-
     public class LeadContactRequest
     {
         public string ContactPerson { get; set; }
@@ -45,7 +44,6 @@
         public string Email { get; set; }
         public int? Ref_DesignationId { get; set; }
     }
-
     public class LeadTransferRequest
     {
         public int Ref_LeadId { get; set; }
@@ -53,7 +51,6 @@
         public string AssignmentRemark { get; set; }
         public int? CreatedBy { get; set; }
     }
-
     public class LeadStatusUpdateRequest
     {
         public int Ref_LeadId { get; set; }
@@ -61,7 +58,6 @@
         public string StatusRemark { get; set; }
         public int? CreatedBy { get; set; }
     }
-
     public class LeadRequirementItem
     {
         public int Ref_ProductId { get; set; }
@@ -69,8 +65,6 @@
         public int? Ref_UnitId { get; set; }
         public string RequirementRemark { get; set; }
     }
-
-
     public class LeadActivityRequest
     {
         public int Ref_LeadId { get; set; }
@@ -87,11 +81,12 @@
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
 
+        public string? LocationAddress { get; set; }
+
         public List<LeadActivityAttachmentItem> Attachments { get; set; }
 
         public int? CreatedBy { get; set; }
     }
-
     public class LeadFollowUpRequest
     {
         public int Ref_LeadId { get; set; }
@@ -102,13 +97,11 @@
         public int? FollowUpAssignedEmployeeId { get; set; }
         public int? CreatedBy { get; set; }
     }
-
     public class LeadActivityAttachmentItem
     {
         public string FileName { get; set; }
         public string Base64 { get; set; }
     }
-
     public class LeadListFilterRequest
     {
         public string? SearchText { get; set; }
@@ -118,8 +111,6 @@
         public int? LoggedInEmployeeId { get; set; }
         public bool ShowCreatedAndAssigned { get; set; }  // For PreSales
     }
-
-
     public class FollowUpStatusUpdateRequest
     {
         public int FollowUpId { get; set; }
@@ -130,7 +121,6 @@
         public string StatusRemark { get; set; }
         public int? CreatedBy { get; set; }
     }
-
     public class LeadCloseRequest
     {
         public int Ref_LeadId { get; set; }
@@ -139,8 +129,6 @@
         public string ClosureRemark { get; set; }
         public int? CreatedBy { get; set; }
     }
-
-
     public class LeadAccessInfo
     {
         public int LeadId { get; set; } 
@@ -150,7 +138,6 @@
 
 
     }
-
     public class LeadAssignRequest
     {
         public int Ref_LeadId { get; set; }
@@ -158,31 +145,6 @@
         public string AssignmentRemark { get; set; }
         public int? CreatedBy { get; set; }
     }
-
-
-    //public class ExistingCustomerResponse
-    //{
-    //    public int LeadOrganizationId { get; set; }
-
-    //    public string CustomerName { get; set; }
-
-    //    public string Address { get; set; }
-
-    //    public int? Ref_CountryId { get; set; }
-
-    //    public int? Ref_StateId { get; set; }
-
-    //    public int? Ref_CityId { get; set; }
-
-    //    public int PinCode { get; set; }
-
-    //    public string Gst { get; set; }
-
-    //    public string Pan { get; set; }
-
-    //    public List<ExistingCustomerContact> Contacts { get; set; } = new();
-    //}
-
     public class ExistingCustomerResponse
     {
         public int CompanyId { get; set; }
@@ -190,7 +152,6 @@
         public string? Pan { get; set; }
         public List<CustomerBranchOption> Branches { get; set; } = new();
     }
-
     public class CustomerBranchOption
     {
         public int LeadOrganizationId { get; set; }
@@ -219,7 +180,6 @@
 
         public int? Ref_DesignationId { get; set; }
     }
-
     public class CustomerSearchResponse
     {
         public int LeadOrganizationId { get; set; }

@@ -14,6 +14,7 @@ namespace CRMWebServices.Helpers
             _config = config;
         }
 
+        #region Generate JWT Token is used to generate JWT token for authentication and authorization
         public string GenerateToken(int employeeId, string loginId, string employeeCode, string roleIds)
         {
             var claims = new List<Claim>
@@ -37,5 +38,6 @@ namespace CRMWebServices.Helpers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+        #endregion
     }
 }
