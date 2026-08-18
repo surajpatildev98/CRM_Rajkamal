@@ -97,6 +97,7 @@ namespace CRMWebServices.Models
             public int? Ref_PreviousQuotationId { get; set; }
             public int RevisionNumber { get; set; }
             public string? RootQuotationNo { get; set; }
+            public OwnerInfo? Owner { get; set; }
         }
         public class QuotationItemInfo
         {

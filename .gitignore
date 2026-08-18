@@ -110,6 +110,7 @@ Desktop.ini
 *.bak
 *.swp
 *.swo
+*.pubxml.user
 
 
 # =========================
