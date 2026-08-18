@@ -1,0 +1,49 @@
+2026-08-18 10:18:41.271 +05:30 [INF] Starting CRM Web Services
+2026-08-18 10:18:41.840 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-18 10:18:42.213 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 10:18:42.218 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 10:18:42.549 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 10:18:42.554 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-18 10:18:42.561 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-18 10:18:44.121 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 200.1781 ms
+2026-08-18 10:18:44.487 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 69.2010 ms
+2026-08-18 10:19:15.802 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 8505.3471 ms
+2026-08-18 10:19:36.963 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 262.4926 ms
+2026-08-18 10:20:13.564 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 339.8925 ms
+2026-08-18 10:20:24.952 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 64.9623 ms
+2026-08-18 10:20:36.793 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 74.6349 ms
+2026-08-18 10:21:04.606 +05:30 [INF] Starting CRM Web Services
+2026-08-18 10:21:04.917 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-18 10:21:05.128 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 10:21:05.130 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 10:21:05.340 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 10:21:05.342 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-18 10:21:05.344 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-18 10:21:06.285 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 187.7421 ms
+2026-08-18 10:21:06.718 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 63.5565 ms
+2026-08-18 10:21:15.957 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2261.8960 ms
+2026-08-18 10:21:24.570 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 195.0380 ms
+2026-08-18 10:21:35.204 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 314.1315 ms
+2026-08-18 10:21:40.553 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 43.3738 ms
+2026-08-18 10:22:14.998 +05:30 [INF] Starting CRM Web Services
+2026-08-18 10:22:15.302 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-18 10:22:15.496 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 10:22:15.498 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 10:22:15.710 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 10:22:15.713 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-18 10:22:15.716 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-18 10:22:16.627 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 205.3533 ms
+2026-08-18 10:22:17.079 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 75.9444 ms
+2026-08-18 10:22:25.262 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2279.9929 ms
+2026-08-18 10:22:31.483 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 302.9560 ms
+2026-08-18 10:24:35.840 +05:30 [INF] Starting CRM Web Services
+2026-08-18 10:24:36.224 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-18 10:24:36.465 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 10:24:36.468 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 10:24:36.738 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 10:24:36.742 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-18 10:24:36.745 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-18 10:24:37.685 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 198.0428 ms
+2026-08-18 10:24:37.967 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 70.0946 ms
+2026-08-18 10:24:46.038 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2247.5379 ms
+2026-08-18 10:24:53.112 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 268.7855 ms

@@ -3085,6 +3085,13 @@
             "type": "integer",
             "format": "int32"
           },
+          "modules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SaveRoleModuleAccessItem"
+            },
+            "nullable": true
+          },
           "permissions": {
             "type": "array",
             "items": {

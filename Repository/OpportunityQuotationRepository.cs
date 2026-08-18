@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using CRMWebServices.Helpers;
+﻿using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
 using CRMWebServices.Services;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading.Tasks;
+using static CRMWebServices.Models.OpportunityModels;
 using static CRMWebServices.Models.OpportunityQuotationModels;
 using static CRMWebServices.Models.PermissionModels;
 
@@ -172,7 +173,7 @@ namespace CRMWebServices.Repository
         public async Task<ApiResponse> RaiseQuotation(RaiseQuotationRequest model)
         {
             try
-            {               
+            {
                 List<object> savedAttachments = new List<object>();
 
                 if (!string.IsNullOrWhiteSpace(model.QuotationPdfBase64) && !string.IsNullOrWhiteSpace(model.QuotationPdfFileName))
@@ -259,9 +260,9 @@ namespace CRMWebServices.Repository
                         CompanyName = row["CompanyName"]?.ToString(),
                         QuotationNo = row["QuotationNo"]?.ToString(),
                         VersionNumber = Convert.ToInt32(row["VersionNumber"]),
-                        RevisionNumber =Convert.ToInt32(row["RevisionNumber"]),
-                        RootQuotationNo =row["RootQuotationNo"] == DBNull.Value? null: row["RootQuotationNo"].ToString(),
-                        Ref_PreviousQuotationId =row["Ref_PreviousQuotationId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_PreviousQuotationId"]),
+                        RevisionNumber = Convert.ToInt32(row["RevisionNumber"]),
+                        RootQuotationNo = row["RootQuotationNo"] == DBNull.Value ? null : row["RootQuotationNo"].ToString(),
+                        Ref_PreviousQuotationId = row["Ref_PreviousQuotationId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_PreviousQuotationId"]),
                         QuotationDate = Convert.ToDateTime(row["QuotationDate"]),
                         ValidUntil = row["ValidUntil"] == DBNull.Value ? null : Convert.ToDateTime(row["ValidUntil"]),
                         SubTotal = Convert.ToDecimal(row["SubTotal"]),
@@ -273,11 +274,11 @@ namespace CRMWebServices.Repository
                         CreatedOn = Convert.ToDateTime(row["CreatedOn"]),
                         RaisedBy = row["RaisedBy"]?.ToString(),
                         OwnerEmployeeId = row["OwnerEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(row["OwnerEmployeeId"]),
-                        SentByEmployeeId = row["SentByEmployeeId"] == DBNull.Value? null: Convert.ToInt32(row["SentByEmployeeId"]),
-                        SentByEmployeeName = row["SentByEmployeeName"] == DBNull.Value? null: row["SentByEmployeeName"]?.ToString(),
-                        OpportunityStageId =row["OpportunityStageId"] == DBNull.Value? null: Convert.ToInt32(row["OpportunityStageId"]),
-                        OpportunityStageCode =row["OpportunityStageCode"] == DBNull.Value? null: row["OpportunityStageCode"].ToString(),
-                        OpportunityStageName =row["OpportunityStageName"] == DBNull.Value? null: row["OpportunityStageName"].ToString(),
+                        SentByEmployeeId = row["SentByEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(row["SentByEmployeeId"]),
+                        SentByEmployeeName = row["SentByEmployeeName"] == DBNull.Value ? null : row["SentByEmployeeName"]?.ToString(),
+                        OpportunityStageId = row["OpportunityStageId"] == DBNull.Value ? null : Convert.ToInt32(row["OpportunityStageId"]),
+                        OpportunityStageCode = row["OpportunityStageCode"] == DBNull.Value ? null : row["OpportunityStageCode"].ToString(),
+                        OpportunityStageName = row["OpportunityStageName"] == DBNull.Value ? null : row["OpportunityStageName"].ToString(),
                     });
                 }
 
@@ -315,24 +316,34 @@ namespace CRMWebServices.Repository
                 {
                     OpportunityQuotationId = Convert.ToInt32(qRow["OpportunityQuotationId"]),
                     Ref_OpportunityId = Convert.ToInt32(qRow["Ref_OpportunityId"]),
-                    Ref_PreviousQuotationId =qRow["Ref_PreviousQuotationId"] == DBNull.Value? null: Convert.ToInt32(qRow["Ref_PreviousQuotationId"]),
-                    RootQuotationNo =qRow["RootQuotationNo"] == DBNull.Value? null: qRow["RootQuotationNo"].ToString(),
-                    RevisionNumber =Convert.ToInt32(qRow["RevisionNumber"]),
+                    Ref_PreviousQuotationId = qRow["Ref_PreviousQuotationId"] == DBNull.Value ? null : Convert.ToInt32(qRow["Ref_PreviousQuotationId"]),
+                    RootQuotationNo = qRow["RootQuotationNo"] == DBNull.Value ? null : qRow["RootQuotationNo"].ToString(),
+                    RevisionNumber = Convert.ToInt32(qRow["RevisionNumber"]),
                     QuotationNo = qRow["QuotationNo"]?.ToString(),
                     VersionNumber = Convert.ToInt32(qRow["VersionNumber"]),
                     IsCurrent = Convert.ToBoolean(qRow["IsCurrent"]),
                     QuotationDate = Convert.ToDateTime(qRow["QuotationDate"]),
                     ValidUntil = qRow["ValidUntil"] == DBNull.Value ? null : Convert.ToDateTime(qRow["ValidUntil"]),
                     FreightCharge = qRow["FreightCharge"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["FreightCharge"]),
-                    FreightPercent =qRow["FreightPercent"] == DBNull.Value? 0: Convert.ToDecimal(qRow["FreightPercent"]),                   
+                    FreightPercent = qRow["FreightPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["FreightPercent"]),
                     TaxPercent = qRow["TaxPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxPercent"]),
                     TaxAmount = qRow["TaxAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxAmount"]),
                     SubTotal = Convert.ToDecimal(qRow["SubTotal"]),
                     TotalAmount = Convert.ToDecimal(qRow["TotalAmount"]),
                     TermsRemark = qRow["TermsRemark"] == DBNull.Value ? null : qRow["TermsRemark"].ToString(),
                     SentByEmployeeId = qRow["SentByEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(qRow["SentByEmployeeId"]),
-                    SentByEmployeeName = qRow["SentByEmployeeName"] == DBNull.Value? null: qRow["SentByEmployeeName"]?.ToString(),
+                    SentByEmployeeName = qRow["SentByEmployeeName"] == DBNull.Value ? null : qRow["SentByEmployeeName"]?.ToString(),
                     SentOn = qRow["SentOn"] == DBNull.Value ? null : Convert.ToDateTime(qRow["SentOn"]),
+                    // OWNER
+                    Owner = new OwnerInfo
+                    {
+                        OwnerEmployeeId = qRow["OwnerEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(qRow["OwnerEmployeeId"]),
+                        OwnerEmployeeName = qRow["OwnerEmployeeName"] == DBNull.Value ? null : qRow["OwnerEmployeeName"]?.ToString(),
+                        OwnerEmail = qRow["OwnerEmail"] == DBNull.Value ? null : qRow["OwnerEmail"]?.ToString(),
+                        OwnerMobileNo = qRow["OwnerMobileNo"] == DBNull.Value ? null : qRow["OwnerMobileNo"]?.ToString(),
+                        OwnerRoleId = qRow["OwnerRoleId"] == DBNull.Value ? null : Convert.ToInt32(qRow["OwnerRoleId"]),
+                        OwnerRoleName = qRow["OwnerRoleName"] == DBNull.Value ? null : qRow["OwnerRoleName"]?.ToString()
+                    },
                     CustomerResponseCode = qRow["CustomerResponseCode"]?.ToString(),
                     CustomerResponseByEmployeeId = qRow["CustomerResponseByEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(qRow["CustomerResponseByEmployeeId"]),
                     CustomerResponseOn = qRow["CustomerResponseOn"] == DBNull.Value ? null : Convert.ToDateTime(qRow["CustomerResponseOn"]),
@@ -477,17 +488,17 @@ namespace CRMWebServices.Repository
                                   ? null
                                   : r["CreatedByName"].ToString(),
 
-                                    OpportunityStageId =
+                          OpportunityStageId =
                             r["OpportunityStageId"] == DBNull.Value
                                 ? null
                                 : Convert.ToInt32(r["OpportunityStageId"]),
 
-                                      OpportunityStageCode =
+                          OpportunityStageCode =
                             r["OpportunityStageCode"] == DBNull.Value
                                 ? null
                                 : r["OpportunityStageCode"].ToString(),
 
-                                      OpportunityStageName =
+                          OpportunityStageName =
                             r["OpportunityStageName"] == DBNull.Value
                                 ? null
                                 : r["OpportunityStageName"].ToString()
@@ -535,13 +546,13 @@ namespace CRMWebServices.Repository
                             .ToList()
                         : new();
 
-                            foreach (var item in history)
-                            {
-                                item.Attachments = historyAttachments
-                                    .Where(x => x.QuotationId == item.OpportunityQuotationId)
-                                    .Select(x => x.Attachment)
-                                    .ToList();
-                            }
+                foreach (var item in history)
+                {
+                    item.Attachments = historyAttachments
+                        .Where(x => x.QuotationId == item.OpportunityQuotationId)
+                        .Select(x => x.Attachment)
+                        .ToList();
+                }
 
                 //var reviews = ds.Tables.Count > 4
                 //    ? ds.Tables[4].Rows.Cast<DataRow>().Select(r => new ManagementReviewInfo
@@ -726,8 +737,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Status", "DECIDE_MANAGEMENT_REVIEW"),
                     new SqlParameter("@QuotationId", model.QuotationId),
                     new SqlParameter("@DecisionCode", model.DecisionCode),
-                    new SqlParameter("@Remarks",(object?)model.Remarks ?? DBNull.Value),
-                    new SqlParameter("@ReviewedByEmployeeId",(object?)model.ReviewedByEmployeeId ?? DBNull.Value),
+                    new SqlParameter("@Remarks", (object?)model.Remarks ?? DBNull.Value),
+                    new SqlParameter("@ReviewedByEmployeeId", (object?)model.ReviewedByEmployeeId ?? DBNull.Value),
                     new SqlParameter("@CreatedBy", model.CreatedBy)
                 );
 

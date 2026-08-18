@@ -272,16 +272,49 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@ModuleId", (object?)moduleId ?? DBNull.Value)
                 );
 
+                //var result = dt.Rows.Cast<DataRow>().Select(r => new RolePermissionItem
+                //{
+                //    ModuleId = Convert.ToInt32(r["ModuleId"]),
+                //    ModuleName = r["ModuleName"]?.ToString(),
+                //    PermissionId = Convert.ToInt32(r["PermissionId"]),
+                //    PermissionCode = r["PermissionCode"]?.ToString(),
+                //    PermissionName = r["PermissionName"]?.ToString(),
+                //    Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                //    IsAllowed = Convert.ToBoolean(r["IsAllowed"])
+                //}).ToList();
                 var result = dt.Rows.Cast<DataRow>().Select(r => new RolePermissionItem
                 {
                     ModuleId = Convert.ToInt32(r["ModuleId"]),
-                    ModuleName = r["ModuleName"]?.ToString(),
-                    PermissionId = Convert.ToInt32(r["PermissionId"]),
-                    PermissionCode = r["PermissionCode"]?.ToString(),
-                    PermissionName = r["PermissionName"]?.ToString(),
-                    Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
-                    IsAllowed = Convert.ToBoolean(r["IsAllowed"])
-                }).ToList();
+
+                    ModuleName = r["ModuleName"] == DBNull.Value? null
+                            : r["ModuleName"]?.ToString(),
+
+                                        // Module-level access
+                                        ModuleIsAllowed = r["ModuleIsAllowed"] != DBNull.Value
+                            && Convert.ToBoolean(r["ModuleIsAllowed"]),
+
+                                        // Permission can be NULL for module-only modules
+                                        PermissionId = r["PermissionId"] == DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(r["PermissionId"]),
+
+                                        PermissionCode = r["PermissionCode"] == DBNull.Value
+                            ? null
+                            : r["PermissionCode"]?.ToString(),
+
+                                        PermissionName = r["PermissionName"] == DBNull.Value
+                            ? null
+                            : r["PermissionName"]?.ToString(),
+
+                                        Description = r["Description"] == DBNull.Value
+                            ? null
+                            : r["Description"]?.ToString(),
+
+                                        // Permission-level access
+                                        IsAllowed = r["IsAllowed"] != DBNull.Value
+                            && Convert.ToBoolean(r["IsAllowed"])
+
+                                    }).ToList();
 
                 return new ApiResponse { Status = true, Message = "Role permissions fetched successfully.", Data = result };
             }
@@ -294,21 +327,99 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region SAVE_ROLE_PERMISSIONS
-        public async Task<ApiResponse> SaveRolePermissions(SaveRolePermissionsRequest request)
+        //public async Task<ApiResponse> SaveRolePermissions(SaveRolePermissionsRequest request)
+        //{
+        //    try
+        //    {
+        //        if (request.Permissions == null || request.Permissions.Count == 0)
+        //            return new ApiResponse { Status = false, Message = "No permission changes provided." };
+
+        //        var json = JsonConvert.SerializeObject(request.Permissions);
+
+        //        var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+        //            new SqlParameter("@Status", "SAVE_ROLE_PERMISSIONS"),
+        //            new SqlParameter("@Ref_RoleId", request.Ref_RoleId),
+        //            new SqlParameter("@RolePermissionsJson", json),
+        //            new SqlParameter("@CreatedBy", (object?)request.CreatedBy ?? DBNull.Value)
+        //        );
+
+        //        var row = dt.Rows[0];
+        //        return new ApiResponse
+        //        {
+        //            Status = Convert.ToBoolean(row["Success"]),
+        //            Message = row["Message"]?.ToString()
+        //        };
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        _logger.LogError(ex, "Error saving role permissions for role {RoleId}", request.Ref_RoleId);
+        //        return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+        //    }
+        //}
+
+        public async Task<ApiResponse> SaveRolePermissions(
+    SaveRolePermissionsRequest request)
         {
             try
             {
-                if (request.Permissions == null || request.Permissions.Count == 0)
-                    return new ApiResponse { Status = false, Message = "No permission changes provided." };
+                // At least one type of change must be provided
+                if ((request.Modules == null || request.Modules.Count == 0) &&
+                    (request.Permissions == null || request.Permissions.Count == 0))
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "No module or permission changes provided."
+                    };
+                }
 
-                var json = JsonConvert.SerializeObject(request.Permissions);
-
-                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status", "SAVE_ROLE_PERMISSIONS"),
-                    new SqlParameter("@Ref_RoleId", request.Ref_RoleId),
-                    new SqlParameter("@RolePermissionsJson", json),
-                    new SqlParameter("@CreatedBy", (object?)request.CreatedBy ?? DBNull.Value)
+                var permissionsJson = JsonConvert.SerializeObject(
+                    request.Permissions ?? new List<SaveRolePermissionItem>()
                 );
+
+                var modulesJson = JsonConvert.SerializeObject(
+                    request.Modules ?? new List<SaveRoleModuleAccessItem>()
+                );
+
+                var dt = await _database.ExecuteDataTableAsync(
+                    SP_NAME,
+
+                    // IMPORTANT:
+                    // One transaction handles BOTH module + permission access
+                    new SqlParameter(
+                        "@Status",
+                        "SAVE_ROLE_ACCESS"
+                    ),
+
+                    new SqlParameter(
+                        "@Ref_RoleId",
+                        request.Ref_RoleId
+                    ),
+
+                    new SqlParameter(
+                        "@RolePermissionsJson",
+                        permissionsJson
+                    ),
+
+                    new SqlParameter(
+                        "@RoleModuleAccessJson",
+                        modulesJson
+                    ),
+
+                    new SqlParameter(
+                        "@CreatedBy",
+                        (object?)request.CreatedBy ?? DBNull.Value
+                    )
+                );
+
+                if (dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "No response received from database."
+                    };
+                }
 
                 var row = dt.Rows[0];
                 return new ApiResponse
@@ -319,8 +430,17 @@ namespace CRMWebServices.Repository
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Error saving role permissions for role {RoleId}", request.Ref_RoleId);
-                return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+                _logger.LogError(
+                    ex,
+                    "Error saving role access for role {RoleId}",
+                    request.Ref_RoleId
+                );
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
             }
         }
         #endregion
