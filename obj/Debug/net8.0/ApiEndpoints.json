@@ -1,5 +1,53 @@
 [
   {
+    "ContainingType": "CRMWebServices.Controllers.AttendanceController",
+    "Method": "GetAttendance",
+    "RelativePath": "api/attendance/GetAttendance",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.Attendance.AttendanceRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.AttendanceController",
+    "Method": "GetPunches",
+    "RelativePath": "api/attendance/GetPunches",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.Attendance.AttendancePunchRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.AttendanceController",
+    "Method": "ManualPunch",
+    "RelativePath": "api/attendance/ManualPunch",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.Attendance.ManualPunchRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "CRMWebServices.Controllers.AuthController",
     "Method": "Login",
     "RelativePath": "api/auth/login",
@@ -99,6 +147,48 @@
       {
         "Name": "request",
         "Type": "CRMWebServices.Models.EmployeeRegisterRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.HolidayController",
+    "Method": "GetCalendars",
+    "RelativePath": "api/holiday/GetCalendars",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.HolidayController",
+    "Method": "GetHolidays",
+    "RelativePath": "api/holiday/GetHolidays/{holidayCalendarId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "holidayCalendarId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.HolidayController",
+    "Method": "SaveCalendar",
+    "RelativePath": "api/holiday/SaveCalendar",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.holiday.HolidayCalendarSaveRequest",
         "IsRequired": true
       }
     ],
@@ -507,7 +597,7 @@
     "Parameters": [
       {
         "Name": "stateId",
-        "Type": "System.Int32",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       }
     ],
@@ -911,11 +1001,6 @@
     "ReturnTypes": []
   },
   {
-<<<<<<< HEAD
-    "ContainingType": "CRMWebServices.Controllers.ShiftController",
-    "Method": "GetShifts",
-    "RelativePath": "api/shift/GetShifts",
-=======
     "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
     "Method": "LogCustomerResponse",
     "RelativePath": "api/OpportunityQuotation/customer-response",
@@ -1136,14 +1221,11 @@
     "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
     "Method": "GetModules",
     "RelativePath": "api/PermissionManager/modules",
->>>>>>> feature/sync
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
     "ReturnTypes": []
-<<<<<<< HEAD
-=======
   },
   {
     "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
@@ -1261,6 +1343,63 @@
       }
     ],
     "ReturnTypes": []
->>>>>>> feature/sync
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.ShiftController",
+    "Method": "AddShift",
+    "RelativePath": "api/shift/AddShift",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "CRMWebServices.Models.ShiftModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.ShiftController",
+    "Method": "DeleteShift",
+    "RelativePath": "api/shift/delete/{shiftId}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "shiftId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.ShiftController",
+    "Method": "GetShifts",
+    "RelativePath": "api/shift/GetShifts",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.ShiftController",
+    "Method": "UpdateShift",
+    "RelativePath": "api/shift/UpdateShift",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "shift",
+        "Type": "CRMWebServices.Models.ShiftModel",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   }
 ]

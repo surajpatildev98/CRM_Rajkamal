@@ -1,0 +1,134 @@
+# =========================
+# .NET Build Output
+# =========================
+
+bin/
+obj/
+
+# Build configurations
+Debug/
+Release/
+x64/
+x86/
+
+# Compiled binaries
+*.dll
+*.exe
+*.pdb
+*.cache
+*.ilk
+*.tmp
+
+
+# =========================
+# Visual Studio
+# =========================
+
+.vs/
+.vscode/
+
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Visual Studio Code
+.history/
+
+
+# =========================
+# Logs
+# =========================
+
+*.log
+logs/
+Logs/
+
+# Application logs
+app.log
+application.log
+
+
+# =========================
+# NuGet
+# =========================
+
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+
+
+# =========================
+# ASP.NET Core
+# =========================
+
+wwwroot/uploads/
+wwwroot/logs/
+
+# Generated files
+Properties/PublishProfiles/
+
+
+# =========================
+# Test Results
+# =========================
+
+TestResults/
+*.trx
+
+
+# =========================
+# Coverage
+# =========================
+
+coverage/
+.coverage
+.coveragexml
+
+
+# =========================
+# OS Files
+# =========================
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# macOS
+.DS_Store
+
+
+# =========================
+# Temporary Files
+# =========================
+
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+
+
+# =========================
+# Environment / Secrets
+# =========================
+
+.env
+.env.*
+!.env.example
+
+# ASP.NET local settings
+appsettings.Development.json
+appsettings.Local.json
+
+
+# =========================
+# Publish Output
+# =========================
+
+publish/
+Publish/
+artifacts/

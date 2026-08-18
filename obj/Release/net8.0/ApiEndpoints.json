@@ -809,6 +809,22 @@
   },
   {
     "ContainingType": "CRMWebServices.Controllers.OpportunityController",
+    "Method": "DeleteOpportunityRequirement",
+    "RelativePath": "api/Opportunity/delete-requirement",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityModels\u002BDeleteOpportunityRequirementRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityController",
     "Method": "GetOpportunityDetails",
     "RelativePath": "api/Opportunity/details/{opportunityId}",
     "HttpMethod": "GET",
@@ -853,6 +869,11 @@
       },
       {
         "Name": "FilterAssignedToId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "LoggedInEmployeeId",
         "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
         "IsRequired": false
       },
@@ -975,6 +996,350 @@
         "Name": "searchText",
         "Type": "System.String",
         "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "LogCustomerResponse",
+    "RelativePath": "api/OpportunityQuotation/customer-response",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BLogCustomerResponseRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "GetQuotationDetails",
+    "RelativePath": "api/OpportunityQuotation/details/{opportunityQuotationId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "opportunityQuotationId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "GetQuotationList",
+    "RelativePath": "api/OpportunityQuotation/list",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "SearchText",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "FilterOwnerId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "Ref_OpportunityId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "ShowCreatedAndAssigned",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      },
+      {
+        "Name": "Ref_RaisedByEmployeeId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      },
+      {
+        "Name": "OnlyPendingReview",
+        "Type": "System.Boolean",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "LogNegotiationRound",
+    "RelativePath": "api/OpportunityQuotation/negotiation-round",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BLogNegotiationRoundRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "RaiseQuotation",
+    "RelativePath": "api/OpportunityQuotation/raise",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BRaiseQuotationRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "GetRaiseQuotationData",
+    "RelativePath": "api/OpportunityQuotation/raise-data/{opportunityId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "opportunityId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "DecideManagementReview",
+    "RelativePath": "api/OpportunityQuotation/review-decision",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BDecideManagementReviewRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.OpportunityQuotationController",
+    "Method": "ReviseQuotation",
+    "RelativePath": "api/OpportunityQuotation/revise",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.OpportunityQuotationModels\u002BReviseQuotationRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "GetModulePermissions",
+    "RelativePath": "api/PermissionManager/module/{moduleId}/permissions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "moduleId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "CreateModule",
+    "RelativePath": "api/PermissionManager/module/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.PermissionModels\u002BCreateModuleRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "DeactivateModule",
+    "RelativePath": "api/PermissionManager/module/deactivate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.PermissionModels\u002BDeactivateModuleRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "UpdateModule",
+    "RelativePath": "api/PermissionManager/module/update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.PermissionModels\u002BUpdateModuleRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "GetModules",
+    "RelativePath": "api/PermissionManager/modules",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "CreatePermission",
+    "RelativePath": "api/PermissionManager/permission/create",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.PermissionModels\u002BCreatePermissionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "DeactivatePermission",
+    "RelativePath": "api/PermissionManager/permission/deactivate",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.PermissionModels\u002BDeactivatePermissionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "UpdatePermission",
+    "RelativePath": "api/PermissionManager/permission/update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.PermissionModels\u002BUpdatePermissionRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "GetRoleModuleAccess",
+    "RelativePath": "api/PermissionManager/role/{roleId}/module-access",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roleId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "GetRolePermissions",
+    "RelativePath": "api/PermissionManager/role/{roleId}/permissions",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "roleId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "moduleId",
+        "Type": "System.Nullable\u00601[[System.Int32, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "SaveRoleModuleAccess",
+    "RelativePath": "api/PermissionManager/role/module-access/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.PermissionModels\u002BSaveRoleModuleAccessRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "CRMWebServices.Controllers.PermissionManagerController",
+    "Method": "SaveRolePermissions",
+    "RelativePath": "api/PermissionManager/role/permissions/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "CRMWebServices.Models.PermissionModels\u002BSaveRolePermissionsRequest",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

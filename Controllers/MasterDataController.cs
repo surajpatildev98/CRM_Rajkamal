@@ -149,7 +149,7 @@ namespace CRMWebServices.Controllers
             => Ok(new ApiResponse { Status = true, Data = await _repo.GetFollowUpStatuses() });
         #endregion
 
-        #region // GET: api/master/dashboard-statuses
+         // GET: api/master/dashboard-statuses
         [HttpGet("dashboard-statuses")]
         public async Task<IActionResult> DashboardStatuses()
             => Ok(new ApiResponse { Status = true, Data = await _repo.GetStatusesForDashbord() });

@@ -16,7 +16,7 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
-        #region  // Employee Registration 
+         // Employee Registration 
         public async Task<ApiResponse> Register(EmployeeRegisterRequest model)
         {
             try

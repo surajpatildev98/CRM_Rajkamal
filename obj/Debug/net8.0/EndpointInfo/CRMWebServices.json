@@ -5,6 +5,99 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/attendance/GetAttendance": {
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttendanceRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttendanceRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttendanceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/attendance/GetPunches": {
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttendancePunchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttendancePunchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttendancePunchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/attendance/ManualPunch": {
+      "post": {
+        "tags": [
+          "Attendance"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualPunchRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualPunchRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ManualPunchRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/auth/login": {
       "post": {
         "tags": [
@@ -171,6 +264,72 @@
             }
           }
         },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/holiday/SaveCalendar": {
+      "post": {
+        "tags": [
+          "Holiday"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HolidayCalendarSaveRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HolidayCalendarSaveRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/HolidayCalendarSaveRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/holiday/GetCalendars": {
+      "get": {
+        "tags": [
+          "Holiday"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/holiday/GetHolidays/{holidayCalendarId}": {
+      "get": {
+        "tags": [
+          "Holiday"
+        ],
+        "parameters": [
+          {
+            "name": "holidayCalendarId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -1392,12 +1551,6 @@
         }
       }
     },
-<<<<<<< HEAD
-    "/api/shift/GetShifts": {
-      "get": {
-        "tags": [
-          "Shift"
-=======
     "/api/Opportunity/delete-requirement": {
       "post": {
         "tags": [
@@ -1444,7 +1597,6 @@
               "format": "int32"
             }
           }
->>>>>>> feature/sync
         ],
         "responses": {
           "200": {
@@ -1452,8 +1604,6 @@
           }
         }
       }
-<<<<<<< HEAD
-=======
     },
     "/api/OpportunityQuotation/list": {
       "get": {
@@ -2028,7 +2178,103 @@
           }
         }
       }
->>>>>>> feature/sync
+    },
+    "/api/shift/GetShifts": {
+      "get": {
+        "tags": [
+          "Shift"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/shift/AddShift": {
+      "post": {
+        "tags": [
+          "Shift"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/shift/UpdateShift": {
+      "post": {
+        "tags": [
+          "Shift"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShiftModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/shift/delete/{shiftId}": {
+      "post": {
+        "tags": [
+          "Shift"
+        ],
+        "parameters": [
+          {
+            "name": "shiftId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -2072,6 +2318,41 @@
             "nullable": true
           },
           "base64Content": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttendancePunchRequest": {
+        "type": "object",
+        "properties": {
+          "attendanceId": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttendanceRequest": {
+        "type": "object",
+        "properties": {
+          "attendanceDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "officeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "departmentId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "search": {
             "type": "string",
             "nullable": true
           }
@@ -2386,7 +2667,29 @@
         },
         "additionalProperties": false
       },
-<<<<<<< HEAD
+      "DeleteOpportunityRequirementRequest": {
+        "type": "object",
+        "properties": {
+          "ref_OpportunityId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ref_OpportunityRequirementId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deleteRemark": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "EmployeeBankRequest": {
         "type": "object",
         "properties": {
@@ -2488,27 +2791,6 @@
           },
           "isDependent": {
             "type": "boolean"
-=======
-      "DeleteOpportunityRequirementRequest": {
-        "type": "object",
-        "properties": {
-          "ref_OpportunityId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ref_OpportunityRequirementId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "deleteRemark": {
-            "type": "string",
-            "nullable": true
-          },
-          "createdBy": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
->>>>>>> feature/sync
           }
         },
         "additionalProperties": false
@@ -2647,6 +2929,74 @@
           "createdBy": {
             "type": "integer",
             "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HolidayCalendarSaveRequest": {
+        "type": "object",
+        "properties": {
+          "holidayCalendarId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "calendarName": {
+            "type": "string",
+            "nullable": true
+          },
+          "calendarYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "companyId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "officeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean"
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "holidays": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HolidaySaveRequest"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "HolidaySaveRequest": {
+        "type": "object",
+        "properties": {
+          "holidayId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "holidayName": {
+            "type": "string",
+            "nullable": true
+          },
+          "holidayDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "isOptional": {
+            "type": "boolean"
+          },
+          "remarks": {
+            "type": "string",
             "nullable": true
           }
         },
@@ -3092,6 +3442,40 @@
         },
         "additionalProperties": false
       },
+      "ManualPunchRequest": {
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "punchType": {
+            "type": "string",
+            "nullable": true
+          },
+          "workMode": {
+            "type": "string",
+            "nullable": true
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "OpportunityTransferRequest": {
         "type": "object",
         "properties": {
@@ -3324,6 +3708,63 @@
               "$ref": "#/components/schemas/SaveRolePermissionItem"
             },
             "nullable": true
+          },
+          "createdBy": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ShiftModel": {
+        "type": "object",
+        "properties": {
+          "shiftId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "shiftCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "shiftName": {
+            "type": "string",
+            "nullable": true
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "endTime": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "breakStartTime": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "breakEndTime": {
+            "type": "string",
+            "format": "date-span"
+          },
+          "graceInMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "graceOutMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "minimumWorkingHours": {
+            "type": "number",
+            "format": "double"
+          },
+          "isNightShift": {
+            "type": "boolean"
+          },
+          "isActive": {
+            "type": "boolean"
           },
           "createdBy": {
             "type": "integer",
