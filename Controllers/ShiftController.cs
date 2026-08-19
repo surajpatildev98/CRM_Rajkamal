@@ -1,6 +1,6 @@
 ﻿using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
-using CRMWebServices.Models;
+using CRMWebServices.Models.Shift;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

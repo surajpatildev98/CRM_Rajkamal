@@ -47,3 +47,34 @@
 2026-08-18 10:24:37.967 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 70.0946 ms
 2026-08-18 10:24:46.038 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2247.5379 ms
 2026-08-18 10:24:53.112 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 268.7855 ms
+2026-08-18 12:20:59.633 +05:30 [INF] Starting CRM Web Services
+2026-08-18 12:21:00.043 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-18 12:21:00.305 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 12:21:00.308 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 12:21:00.566 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 12:21:00.569 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-18 12:21:00.572 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-18 12:21:02.304 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 193.4393 ms
+2026-08-18 12:21:02.609 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 74.0812 ms
+2026-08-18 12:33:26.621 +05:30 [INF] Starting CRM Web Services
+2026-08-18 12:33:26.873 +05:30 [WRN] The WebRootPath was not found: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices\wwwroot. Static files may be unavailable.
+2026-08-18 12:33:27.042 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 12:33:27.044 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 12:33:27.206 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 12:33:27.208 +05:30 [INF] Hosting environment: InternalNetwork
+2026-08-18 12:33:27.210 +05:30 [INF] Content root path: D:\RajKamal\Suraj_Projects\CRM_Web_API\CRMWebServices
+2026-08-18 12:33:28.273 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 162.2384 ms
+2026-08-18 12:33:28.577 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 80.3687 ms
+2026-08-18 12:33:42.238 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 6771.2246 ms
+2026-08-18 12:33:50.490 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 294.2250 ms
+2026-08-18 12:34:13.788 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 240.8301 ms
+2026-08-18 12:38:35.497 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 291.4538 ms
+2026-08-18 12:38:39.360 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 22.4017 ms
+2026-08-18 12:38:47.547 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 19.3954 ms
+2026-08-18 12:40:19.203 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 282.5757 ms
+2026-08-18 12:40:32.530 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 15.8643 ms
+2026-08-18 12:44:35.508 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 11.7902 ms
+2026-08-18 12:45:11.305 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 12.2146 ms
+2026-08-18 12:54:06.081 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 41.8077 ms
+2026-08-18 12:54:22.834 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 311.8389 ms
+2026-08-18 12:54:38.020 +05:30 [INF] HTTP GET /api/dashboard/Details responded 200 in 19.0856 ms
