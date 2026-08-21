@@ -1,4 +1,5 @@
-﻿using CRMWebServices.Interfaces;
+﻿using CRMWebServices.Helpers;
+using CRMWebServices.Interfaces;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Data;
@@ -14,16 +15,7 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
-        #region // IAuthRepository Implementation used for authentication and authorization
-        //public async Task<DataRow> GetEmployeeForLogin(string loginId)
-        //{
-
-        //    var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
-        //        new SqlParameter("@Status", "LOGIN"),
-        //        new SqlParameter("@LoginId", loginId));
-
-        //    return dt.Rows.Count > 0 ? dt.Rows[0] : null;
-        //}
+        #region // IAuthRepository Implementation used for authentication and authorization     
 
         // Repository — was likely ExecuteDataTableAsync returning one row; now needs the second table too
         public async Task<(DataRow? EmployeeRow, List<ModuleAccessInfo> Modules)> GetEmployeeForLogin(string loginId)
@@ -76,5 +68,52 @@ namespace CRMWebServices.Repository
             return (employeeRow, modules);
         }
         #endregion
+
+        public async Task<ApiResponse> RegisterEmployeeDevice(int employeeId,RegisterEmployeeDeviceRequest request)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
+
+                    new SqlParameter("@Status","REGISTER_EMPLOYEE_DEVICE"),
+                    new SqlParameter("@EmployeeId",employeeId),
+                    new SqlParameter("@DeviceId",request.DeviceId),
+                    new SqlParameter("@DeviceToken",request.DeviceToken),
+                    new SqlParameter("@DeviceType",(object?)request.DeviceType ?? DBNull.Value),
+                    new SqlParameter("@AppVersion",(object?)request.AppVersion ?? DBNull.Value)
+                );
+
+                if (dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Device registration failed."
+                    };
+                }
+
+                return new ApiResponse
+                {
+                    Status = Convert.ToBoolean(dt.Rows[0]["Status"]),
+                    Message = dt.Rows[0]["Message"]?.ToString()
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                };
+            }
+        }
     }
 }

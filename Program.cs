@@ -85,6 +85,13 @@ builder.Services.AddScoped<EmployeeRepository>();
 builder.Services.AddScoped<IShiftRepository, ShiftRepository>();
 builder.Services.AddScoped<IHolidayRepository, HolidayRepository>();
 builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddScoped<ISchedulerRepository, SchedulerRepository>();
+
+builder.Services.AddScoped<IEmailService,EmailService>();
+builder.Services.AddScoped<IEmailConfigurationRepository, EmailConfigurationRepository>();
+builder.Services.AddSingleton<IFirebaseNotificationService, FirebaseNotificationService>(); // Firebase DI 
+builder.Services.AddScoped<ISchedulerExecutionService,SchedulerExecutionService>();
+builder.Services.AddHostedService<SchedulerWorker>();
 
 builder.Services.AddMemoryCache();  // ← NEW
 

@@ -243,5 +243,13 @@
             public string PermissionName { get; set; }
             public bool IsAllowed { get; set; }
         }
+
+        public class RegisterEmployeeDeviceRequest
+        {
+            public string DeviceId { get; set; } = string.Empty;
+            public string DeviceToken { get; set; } = string.Empty;
+            public string DeviceType { get; set; } = string.Empty;
+            public string? AppVersion { get; set; }
+        }
     }
 }
