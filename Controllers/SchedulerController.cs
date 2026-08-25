@@ -20,9 +20,9 @@ namespace CRMWebServices.Controllers
         }
 
 
-        // =========================================================
+ 
         // ADMIN CHECK
-        // =========================================================
+ 
 
         private bool IsAdmin()
         {
@@ -41,10 +41,10 @@ namespace CRMWebServices.Controllers
         }
 
 
-        // =========================================================
+ 
         // GET ENTITY TYPES
         // GET api/Scheduler/entity-types
-        // =========================================================
+ 
 
         #region GET Entity Types
 
@@ -73,10 +73,10 @@ namespace CRMWebServices.Controllers
         #endregion
 
 
-        // =========================================================
+ 
         // GET SCOPES
         // GET api/Scheduler/scopes?entityType=LEAD
-        // =========================================================
+ 
 
         #region GET Scheduler Scopes
 
@@ -117,10 +117,10 @@ namespace CRMWebServices.Controllers
         #endregion
 
 
-        // =========================================================
+ 
         // GET JOB LIST
         // GET api/Scheduler/jobs
-        // =========================================================
+ 
 
         #region GET Jobs
 
@@ -149,10 +149,10 @@ namespace CRMWebServices.Controllers
         #endregion
 
 
-        // =========================================================
+ 
         // GET JOB DETAILS
         // GET api/Scheduler/jobs/{schedulerJobId}
-        // =========================================================
+ 
 
         #region GET Job Details
 
@@ -183,10 +183,10 @@ namespace CRMWebServices.Controllers
         #endregion
 
 
-        // =========================================================
+ 
         // CREATE JOB
         // POST api/Scheduler/jobs
-        // =========================================================
+ 
 
         #region CREATE Job
 
@@ -233,10 +233,10 @@ namespace CRMWebServices.Controllers
         #endregion
 
 
-        // =========================================================
+ 
         // UPDATE JOB
         // PUT api/Scheduler/jobs/{schedulerJobId}
-        // =========================================================
+ 
 
      
 
@@ -285,10 +285,10 @@ namespace CRMWebServices.Controllers
 
 
 
-        // =========================================================
+ 
         // ENABLE JOB
         // POST api/Scheduler/jobs/{id}/enable
-        // =========================================================
+ 
 
         #region ENABLE Job
 
@@ -335,10 +335,10 @@ namespace CRMWebServices.Controllers
         #endregion
 
 
-        // =========================================================
+ 
         // DISABLE JOB
         // POST api/Scheduler/jobs/{id}/disable
-        // =========================================================
+ 
 
         #region DISABLE Job
 

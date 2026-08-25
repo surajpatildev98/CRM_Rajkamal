@@ -196,9 +196,9 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@HolidayCalendarId",holidayCalendarId)
                 );
 
-                // ============================================
+                //=========================================
                 // Result Set 1 - Status and Message
-                // ============================================
+                //=========================================
 
                 if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                 {
@@ -209,9 +209,9 @@ namespace CRMWebServices.Repository
                     response.Message = row["Message"]?.ToString() ?? "";
                 }
 
-                // ============================================
+                //=========================================
                 // Result Set 2 - Holiday Data
-                // ============================================
+                //=========================================
 
                 if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
                 {

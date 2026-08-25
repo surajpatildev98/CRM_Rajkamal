@@ -38,11 +38,7 @@ namespace CRMWebServices.Services
             _logger.LogInformation("Firebase Admin SDK initialized successfully.");
         }
 
-        public async Task<FirebaseSendResult> SendNotificationAsync(
-            string deviceToken,
-            string title,
-            string message,
-            Dictionary<string, string>? data = null)
+        public async Task<FirebaseSendResult> SendNotificationAsync(string deviceToken,string title,string message,Dictionary<string, string>? data = null)
         {
             try
             {
