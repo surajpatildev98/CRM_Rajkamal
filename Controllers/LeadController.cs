@@ -389,5 +389,82 @@ namespace CRMWebServices.Controllers
             }
         }
         #endregion
+
+        #region // API : api/Lead/AddActivityExpenses
+
+        [HttpPost]
+        [Route("AddActivityExpenses")]
+        public async Task<IActionResult> AddActivityExpenses(
+            [FromBody] LeadActivityExpenseRequest request)
+        {
+            try
+            {
+                if (request == null)
+                {
+                    return BadRequest(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Request is required."
+                    });
+                }
+
+                // Check whether user can manage activity on this lead
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Activity",
+                    request.Ref_LeadId))
+                {
+                    return StatusCode(
+                        StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message =
+                                "You are not authorized to add expense on this lead."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
+
+                var response =
+                    await _repository.AddActivityExpenses(request);
+
+                return response.Status
+                    ? Ok(response)
+                    : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+        #endregion
+
+        #region  // API : api/Lead/ActivityExpenseMasters
+        [HttpGet]
+        [Route("ActivityExpenseMasters")]
+        public async Task<IActionResult> GetActivityExpenseMasters()
+        {
+            try
+            {
+                var response =await _repository.GetActivityExpenseMasters();
+
+                return response.Status? Ok(response): BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+        #endregion
     }
 }

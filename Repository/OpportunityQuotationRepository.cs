@@ -772,9 +772,9 @@ namespace CRMWebServices.Repository
             {
                 List<object> savedAttachments = new List<object>();
 
-                // ---------------------------------------------------------
+        
                 // Save quotation PDF if provided
-                // ---------------------------------------------------------
+        
                 if (!string.IsNullOrWhiteSpace(model.QuotationPdfBase64) &&
                     !string.IsNullOrWhiteSpace(model.QuotationPdfFileName))
                 {
@@ -814,9 +814,9 @@ namespace CRMWebServices.Repository
                     }
                 }
 
-                // ---------------------------------------------------------
+          
                 // Serialize request data
-                // ---------------------------------------------------------
+         
                 string? attachmentsJson =
                     savedAttachments.Count > 0
                         ? JsonConvert.SerializeObject(savedAttachments)
@@ -826,9 +826,9 @@ namespace CRMWebServices.Repository
                     JsonConvert.SerializeObject(model.Items);
 
 
-                // ---------------------------------------------------------
+  
                 // Call SP
-                // ---------------------------------------------------------
+          
                 var dt = await _database.ExecuteDataTableAsync(
                     SP_NAME,
 

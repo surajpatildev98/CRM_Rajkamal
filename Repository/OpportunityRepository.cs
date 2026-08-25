@@ -770,45 +770,158 @@ namespace CRMWebServices.Repository
                      }).ToList();
 
 
-                var activities = activityRows
-                    .Select(r =>
-                    {
-                        List<object>? attachments = null;
+                //var activities = activityRows
+                //    .Select(r =>
+                //    {
+                //        List<object>? attachments = null;
+
+                //        if (r["AttachmentsJson"] != DBNull.Value)
+                //        {
+                //            var json = r["AttachmentsJson"]?.ToString();
+                //            if (!string.IsNullOrEmpty(json))
+                //            {
+                //                var parsed = JsonConvert.DeserializeObject<List<dynamic>>(json);
+                //                attachments = parsed.Select(a => (object)new
+                //                {
+                //                    attachmentId = Convert.ToInt32(a.AttachmentId),
+                //                    fileName = a.FileName?.ToString(),
+                //                    fileType = a.FileType?.ToString(),
+                //                    fileSize = a.FileSize != null ? Convert.ToInt64(a.FileSize) : (long?)null,
+                //                    fileUrl = BuildFileUrl(a.FilePath?.ToString()),
+                //                    uploadedOn = Convert.ToDateTime(a.CreatedOn?.ToString())
+                //                }).ToList();
+                //            }
+                //        }
+
+                //        return new OpportunityActivityInfo
+                //        {
+                //            ActivityId = Convert.ToInt32(r["ActivityId"]),
+                //            ActivityType = r["ActivityType"]?.ToString(),
+                //            ActivityDate = Convert.ToDateTime(r["ActivityDate"]),
+                //            Subject = r["Subject"]?.ToString(),
+                //            Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                //            LocationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
+                //            Outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                //            CreatedBy = r["CreatedBy"]?.ToString(),
+                //            ActivityStatusId = r["Ref_ActivityStatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_ActivityStatusId"]),
+                //            ActivityStatus = r["ActivityStatus"]?.ToString(),
+                //            ActivityStatusColor = r["ActivityStatusColor"]?.ToString(),
+                //            Attachments = attachments
+                //        };
+                //    }).ToList();                
+
+                var activities = activityRows.Select(r =>
+                    {                        
+                        List<object> attachments = new List<object>();
 
                         if (r["AttachmentsJson"] != DBNull.Value)
                         {
-                            var json = r["AttachmentsJson"]?.ToString();
-                            if (!string.IsNullOrEmpty(json))
+                            var attachmentJson = r["AttachmentsJson"]?.ToString();
+
+                            if (!string.IsNullOrWhiteSpace(attachmentJson))
                             {
-                                var parsed = JsonConvert.DeserializeObject<List<dynamic>>(json);
-                                attachments = parsed.Select(a => (object)new
+                                var attachmentList =JsonConvert.DeserializeObject<List<dynamic>>(attachmentJson);
+
+                                if (attachmentList != null)
                                 {
-                                    attachmentId = Convert.ToInt32(a.AttachmentId),
-                                    fileName = a.FileName?.ToString(),
-                                    fileType = a.FileType?.ToString(),
-                                    fileSize = a.FileSize != null ? Convert.ToInt64(a.FileSize) : (long?)null,
-                                    fileUrl = BuildFileUrl(a.FilePath?.ToString()),
-                                    uploadedOn = Convert.ToDateTime(a.CreatedOn?.ToString())
-                                }).ToList();
+                                    foreach (var a in attachmentList)
+                                    {
+                                        attachments.Add(new
+                                        {
+                                            attachmentId = Convert.ToInt32(a.AttachmentId),
+                                            fileName = a.FileName?.ToString(),
+                                            fileType = a.FileType?.ToString(),
+                                            fileSize = a.FileSize != null? Convert.ToInt64(a.FileSize): (long?)null,
+                                            fileUrl = BuildFileUrl(a.FilePath?.ToString()),
+                                            uploadedOn = a.CreatedOn != null? Convert.ToDateTime(a.CreatedOn.ToString()): (DateTime?)null
+                                        });
+                                    }
+                                }
+                            }
+                        }
+       
+                        List<object> expenses = new List<object>();
+
+                        if (r["ExpensesJson"] != DBNull.Value)
+                        {
+                            var expenseJson = r["ExpensesJson"]?.ToString();
+
+                            if (!string.IsNullOrWhiteSpace(expenseJson))
+                            {
+                                var expenseList =JsonConvert.DeserializeObject<List<dynamic>>(expenseJson);
+
+                                if (expenseList != null)
+                                {
+                                    foreach (var e in expenseList)
+                                    {                        
+                                        List<object> expenseAttachments =new List<object>();
+
+                                        if (e.AttachmentsJson != null)
+                                        {
+                                            var expenseAttachmentJson =e.AttachmentsJson.ToString();
+
+                                            if (!string.IsNullOrWhiteSpace(expenseAttachmentJson))
+                                            {
+                                                var expenseAttachmentList =JsonConvert.DeserializeObject<List<dynamic>>(expenseAttachmentJson);
+
+                                                if (expenseAttachmentList != null)
+                                                {
+                                                    foreach (var ea in expenseAttachmentList)
+                                                    {
+                                                        expenseAttachments.Add(new
+                                                        {
+                                                            attachmentId =Convert.ToInt32(ea.AttachmentId),
+                                                            fileName =ea.FileName?.ToString(),
+                                                            fileType =ea.FileType?.ToString(),
+                                                            fileSize =ea.FileSize != null? Convert.ToInt64(ea.FileSize): (long?)null,
+                                                            fileUrl =BuildFileUrl(ea.FilePath?.ToString()),
+                                                            uploadedOn =ea.CreatedOn != null? Convert.ToDateTime(ea.CreatedOn.ToString()): (DateTime?)null
+                                                        });
+                                                    }
+                                                }
+                                            }
+                                        }
+                        
+                                        expenses.Add(new
+                                        {
+                                            activityExpenseId =Convert.ToInt32(e.ActivityExpenseId),
+                                            expenseCategoryId =Convert.ToInt32(e.Ref_ExpenseCategoryId),
+                                            categoryCode =e.CategoryCode?.ToString(),
+                                            categoryName =e.CategoryName?.ToString(),
+                                            transportModeId =e.Ref_TransportModeId != null? Convert.ToInt32(e.Ref_TransportModeId): (int?)null,
+                                            modeCode =e.ModeCode?.ToString(),
+                                            modeName =e.ModeName?.ToString(),
+                                            expenseDate =e.ExpenseDate != null? Convert.ToDateTime(e.ExpenseDate.ToString()): (DateTime?)null,
+                                            amount =e.Amount != null? Convert.ToDecimal(e.Amount): 0,
+                                            description =e.Description?.ToString(),
+                                            fromLocation =e.FromLocation?.ToString(),
+                                            toLocation =e.ToLocation?.ToString(),
+                                            createdOn =e.CreatedOn != null? Convert.ToDateTime(e.CreatedOn.ToString()): (DateTime?)null,
+                                            attachments =expenseAttachments
+                                        });
+                                    }
+                                }
                             }
                         }
 
+       
                         return new OpportunityActivityInfo
                         {
-                            ActivityId = Convert.ToInt32(r["ActivityId"]),
-                            ActivityType = r["ActivityType"]?.ToString(),
-                            ActivityDate = Convert.ToDateTime(r["ActivityDate"]),
-                            Subject = r["Subject"]?.ToString(),
-                            Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
-                            LocationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
-                            Outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
-                            CreatedBy = r["CreatedBy"]?.ToString(),
-                            ActivityStatusId = r["Ref_ActivityStatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_ActivityStatusId"]),
-                            ActivityStatus = r["ActivityStatus"]?.ToString(),
-                            ActivityStatusColor = r["ActivityStatusColor"]?.ToString(),
-                            Attachments = attachments
+                            ActivityId =Convert.ToInt32(r["ActivityId"]),
+                            ActivityType =r["ActivityType"]?.ToString(),
+                            ActivityDate =Convert.ToDateTime(r["ActivityDate"]),
+                            Subject =r["Subject"]?.ToString(),
+                            Description =r["Description"] == DBNull.Value? null: r["Description"].ToString(),
+                            LocationAddress =r["LocationAddress"] == DBNull.Value? null: r["LocationAddress"].ToString(),
+                            Outcome =r["Outcome"] == DBNull.Value? null: r["Outcome"].ToString(),
+                            CreatedBy =r["CreatedBy"]?.ToString(),
+                            ActivityStatusId =r["Ref_ActivityStatusId"] == DBNull.Value? (int?)null: Convert.ToInt32(r["Ref_ActivityStatusId"]),
+                            ActivityStatus =r["ActivityStatus"]?.ToString(),
+                            ActivityStatusColor =r["ActivityStatusColor"]?.ToString(),
+                            Attachments =attachments,
+                            Expenses =expenses
                         };
-                    }).ToList();                
+                }).ToList();
 
                 var followUps = followUpRows
                          .Select(r => new OpportunityFollowUpInfo
@@ -1501,6 +1614,230 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
-    }
 
+        #region // ADD EXPENSEE
+        public async Task<ApiResponse> AddOpportunityActivityExpenses(AddOpportunityActivityExpenseRequest model)
+        {
+            try
+            {
+                if (model == null)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Request is required."
+                    };
+                }
+
+                if (model.Ref_OpportunityId <= 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Opportunity Id is required."
+                    };
+                }
+
+                if (model.Ref_ActivityId <= 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Activity Id is required."
+                    };
+                }
+
+                if (model.Expenses == null || model.Expenses.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "At least one expense is required."
+                    };
+                }
+
+                /*
+                 * -------------------------------------------------------
+                 * Prepare Expense JSON
+                 * -------------------------------------------------------
+                 *
+                 * Base64 files are first saved physically.
+                 * SQL receives only:
+                 *
+                 * FileName
+                 * FilePath
+                 * FileType
+                 * FileSize
+                 *
+                 */
+
+                var expenseItems = new List<object>();
+
+                foreach (var expense in model.Expenses)
+                {
+                    var attachments = new List<object>();
+
+                    if (expense.Attachments != null &&
+                        expense.Attachments.Count > 0)
+                    {
+                        foreach (var attachment in expense.Attachments)
+                        {
+                            if (string.IsNullOrWhiteSpace(attachment.FileName))
+                            {
+                                return new ApiResponse
+                                {
+                                    Status = false,
+                                    Message = "Attachment file name is required."
+                                };
+                            }
+
+                            if (string.IsNullOrWhiteSpace(attachment.Base64))
+                            {
+                                return new ApiResponse
+                                {
+                                    Status = false,
+                                    Message =
+                                        $"Attachment content is required for '{attachment.FileName}'."
+                                };
+                            }
+
+                            byte[] fileBytes;
+
+                            try
+                            {
+                                var base64Data =
+                                    attachment.Base64.Contains(",")
+                                        ? attachment.Base64.Substring(
+                                            attachment.Base64.IndexOf(",") + 1)
+                                        : attachment.Base64;
+
+                                fileBytes =
+                                    Convert.FromBase64String(base64Data);
+                            }
+                            catch
+                            {
+                                return new ApiResponse
+                                {
+                                    Status = false,
+                                    Message =
+                                        $"Invalid Base64 content for '{attachment.FileName}'."
+                                };
+                            }
+
+                            /*
+                             * Save physical file using existing helper
+                             */
+                            string filePath = SaveBase64Attachment(
+                                attachment.Base64,
+                                attachment.FileName,
+                                "OpportunityActivityExpenseAttachments"
+                            );
+
+                            string fileType =
+                                Path.GetExtension(attachment.FileName)
+                                    .TrimStart('.')
+                                    .ToLowerInvariant();
+
+                            attachments.Add(new
+                            {
+                                FileName = attachment.FileName,
+                                FilePath = filePath,
+                                FileType = fileType,
+                                FileSize = fileBytes.LongLength
+                            });
+                        }
+                    }
+
+                    expenseItems.Add(new
+                    {
+                        Ref_ExpenseCategoryId =
+                            expense.Ref_ExpenseCategoryId,
+
+                        Ref_TransportModeId =
+                            expense.Ref_TransportModeId,
+
+                        Amount =
+                            expense.Amount,
+
+                        Description =
+                            expense.Description,
+
+                        FromLocation =
+                            expense.FromLocation,
+
+                        ToLocation =
+                            expense.ToLocation,
+
+                        Attachments = attachments
+                    });
+                }
+
+                string expensesJson =
+                    JsonConvert.SerializeObject(expenseItems);
+       
+
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_CRM_OpportunityManagement",
+
+                    new SqlParameter(
+                        "@Status",
+                        "ADD_ACTIVITY_EXPENSE"
+                    ),
+
+                    new SqlParameter(
+                        "@Ref_OpportunityId",
+                        model.Ref_OpportunityId
+                    ),
+
+                    new SqlParameter(
+                        "@Ref_ActivityId",
+                        model.Ref_ActivityId
+                    ),
+
+                    new SqlParameter(
+                        "@ExpenseItems",
+                        expensesJson
+                    ),
+
+                    new SqlParameter(
+                        "@CreatedBy",
+                        (object?)model.CreatedBy ?? DBNull.Value
+                    )
+                );
+
+                /*
+                 * -------------------------------------------------------
+                 * Map SP response
+                 * -------------------------------------------------------
+                 */
+
+                return MapResponse(dt, true);
+            }
+            catch (FormatException)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = "One or more attachment files contain invalid Base64 content."
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+    }
 }

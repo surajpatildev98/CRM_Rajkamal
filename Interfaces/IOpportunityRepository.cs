@@ -30,6 +30,7 @@ namespace CRMWebServices.Repository
         Task<ApiResponse> CloseOpportunity(CloseOpportunityRequest model);
         Task<ApiResponse> UpdateOpportunityFollowUpStatus(UpdateOpportunityFollowUpStatusRequest model);
         Task<ApiResponse> DeleteOpportunityRequirement(DeleteOpportunityRequirementRequest model);
+        Task<ApiResponse> AddOpportunityActivityExpenses(AddOpportunityActivityExpenseRequest model);
         #endregion
 
         #region // Opportunity Permissions

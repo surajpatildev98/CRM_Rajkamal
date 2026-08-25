@@ -582,5 +582,60 @@ namespace CRMWebServices.Controllers
             }
         }
         #endregion
+
+        #region API : api/opportunity/ActivityExpenseMasters
+
+        [HttpPost]
+        [Route("ActivityExpenseMasters")]
+        public async Task<IActionResult> AddOpportunityActivityExpense(
+            [FromBody] AddOpportunityActivityExpenseRequest request)
+        {
+            try
+            {
+                if (request == null)
+                {
+                    return BadRequest(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Request is required."
+                    });
+                }
+
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Opp",
+                    "Activity",
+                    request.Ref_OpportunityId))
+                {
+                    return StatusCode(
+                        StatusCodes.Status403Forbidden,
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message =
+                                "You are not authorized to add expense to this opportunity activity."
+                        });
+                }
+
+                request.CreatedBy = User.EmployeeId();
+
+                var response =
+                    await _repository.AddOpportunityActivityExpenses(request);
+
+                return response.Status
+                    ? Ok(response)
+                    : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        #endregion
     }
 }

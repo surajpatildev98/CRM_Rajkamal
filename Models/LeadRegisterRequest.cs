@@ -192,4 +192,39 @@
         public string? Pan { get; set; }
     }
 
+    public class LeadActivityExpenseRequest
+    {
+        public int Ref_LeadId { get; set; }
+
+        public int Ref_ActivityId { get; set; }
+
+        public List<LeadActivityExpenseItem> Expenses { get; set; } = new();
+
+        public int? CreatedBy { get; set; }
+    }
+
+    public class LeadActivityExpenseItem
+    {
+        public int Ref_ExpenseCategoryId { get; set; }
+
+        public int? Ref_TransportModeId { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public string? Description { get; set; }
+
+        public string? FromLocation { get; set; }
+
+        public string? ToLocation { get; set; }
+
+        public List<LeadActivityExpenseAttachmentItem> Attachments { get; set; } = new();
+    }
+
+    public class LeadActivityExpenseAttachmentItem
+    {
+        public string FileName { get; set; }
+        public string Base64 { get; set; }
+    }
+
+
 }
