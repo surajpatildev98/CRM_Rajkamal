@@ -4,16 +4,16 @@ using System.Data;
 
 namespace CRMWebServices.Services
 {
-    public class SchedulerExecutionService: ISchedulerExecutionService
+    public class SchedulerExecutionService : ISchedulerExecutionService
     {
-        private const string SP_NAME ="USP_CRM_SchedulerManagement";
+        private const string SP_NAME = "USP_CRM_SchedulerManagement";
 
         private readonly IDatabaseService _database;
         private readonly IFirebaseNotificationService _firebase;
         private readonly IEmailService _email;
         private readonly ILogger<SchedulerExecutionService> _logger;
 
-        public SchedulerExecutionService(IDatabaseService database,IFirebaseNotificationService firebase,IEmailService email,ILogger<SchedulerExecutionService> logger)
+        public SchedulerExecutionService(IDatabaseService database, IFirebaseNotificationService firebase, IEmailService email, ILogger<SchedulerExecutionService> logger)
         {
             _database = database;
             _firebase = firebase;
@@ -23,19 +23,19 @@ namespace CRMWebServices.Services
 
         public async Task ProcessDueItemsAsync(CancellationToken cancellationToken)
         {
-            var dueItems =await GetDueItemsAsync();
+            var dueItems = await GetDueItemsAsync();
 
             if (dueItems.Rows.Count == 0)
                 return;
 
-            _logger.LogInformation("Scheduler found {Count} due items.",dueItems.Rows.Count);
+            _logger.LogInformation("Scheduler found {Count} due items.", dueItems.Rows.Count);
 
             foreach (DataRow row in dueItems.Rows)
             {
                 if (cancellationToken.IsCancellationRequested)
                     break;
 
-                long schedulerJobItemId =Convert.ToInt64(row["SchedulerJobItemId"]);
+                long schedulerJobItemId = Convert.ToInt64(row["SchedulerJobItemId"]);
                 await ProcessItemAsync(schedulerJobItemId);
             }
         }
@@ -44,7 +44,7 @@ namespace CRMWebServices.Services
         {
             return await _database.ExecuteDataTableAsync(SP_NAME,
 
-                new SqlParameter("@Status","GET_DUE_ITEMS")
+                new SqlParameter("@Status", "GET_DUE_ITEMS")
             );
         }
 
@@ -52,14 +52,14 @@ namespace CRMWebServices.Services
         {
             try
             {
-                var claimResult =await ClaimJobItemAsync(schedulerJobItemId);
+                var claimResult = await ClaimJobItemAsync(schedulerJobItemId);
 
-                if (claimResult == null ||claimResult.Rows.Count == 0)
+                if (claimResult == null || claimResult.Rows.Count == 0)
                 {
                     return;
                 }
 
-                bool isClaimed =Convert.ToBoolean(claimResult.Rows[0]["IsClaimed"]);
+                bool isClaimed = Convert.ToBoolean(claimResult.Rows[0]["IsClaimed"]);
 
                 if (!isClaimed)
                 {
@@ -75,7 +75,7 @@ namespace CRMWebServices.Services
                 {
                     case "LEAD":
 
-                        await ProcessLeadAsync(schedulerJobItemId,entityId);
+                        await ProcessLeadAsync(schedulerJobItemId, entityId);
                         break;
 
                     default:
@@ -85,126 +85,102 @@ namespace CRMWebServices.Services
                             entityType,
                             schedulerJobItemId);
 
-                        await ExpireJobItemAsync(
-                            schedulerJobItemId);
+                        await ExpireJobItemAsync(schedulerJobItemId);
 
                         break;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,"Scheduler item {JobItemId} failed.",schedulerJobItemId);
+                _logger.LogError(ex, "Scheduler item {JobItemId} failed.", schedulerJobItemId);
                 await RescheduleJobItemAsync(schedulerJobItemId);
             }
         }
 
-        private async Task ProcessLeadAsync(long schedulerJobItemId,int leadId)
+        private async Task ProcessLeadAsync(long schedulerJobItemId, int leadId)
         {
-            // -------------------------------------------------
-            // 1. Check current Lead status
-            // -------------------------------------------------
-
-            var statusTable =await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status","CHECK_LEAD_STATUS"),
-                    new SqlParameter("@EntityId",leadId)
+            // 1. Check current Lead status 
+            var statusTable = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "CHECK_LEAD_STATUS"),
+                    new SqlParameter("@EntityId", leadId)
                 );
 
             if (statusTable.Rows.Count == 0)
             {
-                await ExpireJobItemAsync(
-                    schedulerJobItemId);
-
+                await ExpireJobItemAsync(schedulerJobItemId);
                 return;
             }
 
-            bool isUnassigned =Convert.ToBoolean(statusTable.Rows[0]["IsUnassigned"]);
+            bool isUnassigned = Convert.ToBoolean(statusTable.Rows[0]["IsUnassigned"]);
 
-            // -------------------------------------------------
-            // 2. Lead has now been assigned
-            // -------------------------------------------------
-
+            // 2. Lead has now been assigned    
             if (!isUnassigned)
             {
-                _logger.LogInformation("Lead {LeadId} is already assigned. Completing scheduler item {JobItemId}.",leadId,schedulerJobItemId);
+                _logger.LogInformation("Lead {LeadId} is already assigned. Completing scheduler item {JobItemId}.", leadId, schedulerJobItemId);
 
                 await CompleteJobItemAsync(schedulerJobItemId);
-
                 return;
             }
 
-            // -------------------------------------------------
-            // 3. Get Creator + Reporting Manager
-            // -------------------------------------------------
-
-            var recipients =await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status","GET_LEAD_RECIPIENTS"),
-                    new SqlParameter("@EntityId",leadId)
+            // 3. Get Creator + Reporting Manager       
+            var recipients = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "GET_LEAD_RECIPIENTS"),
+                    new SqlParameter("@EntityId", leadId)
                 );
 
             if (recipients.Rows.Count == 0)
             {
-                _logger.LogWarning("No recipients found for Lead {LeadId}.",leadId);
+                _logger.LogWarning("No recipients found for Lead {LeadId}.", leadId);
                 await RescheduleJobItemAsync(schedulerJobItemId);
-
                 return;
             }
 
             bool hasFailure = false;
 
-            // -------------------------------------------------
-            // 4. Send to every recipient
-            // -------------------------------------------------
-
+            // 4. Send to every recipient   
             foreach (DataRow recipient in recipients.Rows)
             {
-                int employeeId =Convert.ToInt32(recipient["EmployeeId"]);
-                string recipientType =recipient["RecipientType"]?.ToString()?? "RECIPIENT";
+                int employeeId = Convert.ToInt32(recipient["EmployeeId"]);
+                string recipientType = recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
 
                 try
                 {
                     // Firebase
-                    await SendFirebaseNotificationsAsync(schedulerJobItemId,leadId,employeeId,recipientType);
+                    await SendFirebaseNotificationsAsync(schedulerJobItemId, leadId, employeeId, recipientType);
                 }
                 catch (Exception ex)
                 {
                     hasFailure = true;
-
-                    _logger.LogError(ex,"Firebase processing failed for Employee {EmployeeId}, Lead {LeadId}.",employeeId,leadId);
+                    _logger.LogError(ex, "Firebase processing failed for Employee {EmployeeId}, Lead {LeadId}.", employeeId, leadId);
                 }
 
                 try
                 {
                     // Email
-                    await SendEmailNotificationAsync(schedulerJobItemId,leadId,employeeId,recipientType);
+                    await SendEmailNotificationAsync(schedulerJobItemId, leadId, employeeId, recipientType);
                 }
                 catch (Exception ex)
                 {
                     hasFailure = true;
-
-                    _logger.LogError(ex,"Email processing failed for Employee {EmployeeId}, Lead {LeadId}.",employeeId,leadId);
+                    _logger.LogError(ex, "Email processing failed for Employee {EmployeeId}, Lead {LeadId}.", employeeId, leadId);
                 }
             }
 
-            // -------------------------------------------------
             // 5. Scheduler item lifecycle
-            // -------------------------------------------------
-
             if (hasFailure)
             {
-                await RescheduleJobItemAsync(
-                    schedulerJobItemId);
+                await RescheduleJobItemAsync(schedulerJobItemId);
             }
             else
             {
-                await CompleteJobItemAsync(
-                    schedulerJobItemId);
+                await CompleteJobItemAsync(schedulerJobItemId);
             }
         }
         private async Task SendFirebaseNotificationsAsync(long schedulerJobItemId, int leadId, int employeeId, string recipientType)
         {
             var devices = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status","GET_EMPLOYEE_DEVICES"),
-                    new SqlParameter("@EmployeeId",employeeId)
+                    new SqlParameter("@Status", "GET_EMPLOYEE_DEVICES"),
+                    new SqlParameter("@EmployeeId", employeeId)
                 );
 
             if (devices == null || devices.Rows.Count == 0)
@@ -372,9 +348,9 @@ namespace CRMWebServices.Services
                 </body>
                 </html>";
 
-            // --------------------------------------------------------
+
             // Create notification history record
-            // --------------------------------------------------------
+
 
             var notificationTable = await CreateNotificationAsync(
                     schedulerJobItemId,
@@ -394,30 +370,24 @@ namespace CRMWebServices.Services
 
             try
             {
-                // ----------------------------------------------------
                 // Send Email
-                // ----------------------------------------------------
-
                 var result =
                     await _email.SendEmailAsync(email, subject, body);
 
                 if (result.Success)
                 {
                     await MarkNotificationSentAsync(notificationId, null);
-
                     _logger.LogInformation("Email notification sent successfully to EmployeeId {EmployeeId}.", employeeId);
                 }
                 else
                 {
                     await MarkNotificationFailedAsync(notificationId, result.ErrorMessage);
-
                     _logger.LogWarning("Email notification failed for EmployeeId {EmployeeId}. Error: {Error}", employeeId, result.ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
                 await MarkNotificationFailedAsync(notificationId, ex.Message);
-
                 throw;
             }
         }
@@ -436,9 +406,7 @@ namespace CRMWebServices.Services
                     new SqlParameter("@CreatedBy", DBNull.Value)
                 );
 
-            return dt != null && dt.Rows.Count > 0
-                ? dt
-                : null;
+            return dt != null && dt.Rows.Count > 0 ? dt : null;
         }
     }
 }

@@ -87,9 +87,9 @@ namespace CRMWebServices.Services
             }
         }
 
-        // ----------------------------------------------------
+     
         // Scheduler adapter
-        // ----------------------------------------------------
+     
 
         public async Task<EmailSendResult> SendEmailAsync(string toEmail,string subject,string body)
         {

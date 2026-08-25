@@ -71,7 +71,7 @@
             public int? Ref_OpportunityStageId { get; set; }
         }
 
-        // ===================== NEW: PERMISSION MANAGER =====================
+        //================== NEW: PERMISSION MANAGER==================
 
         // ----- MODULE -----
         public class CreateModuleRequest
