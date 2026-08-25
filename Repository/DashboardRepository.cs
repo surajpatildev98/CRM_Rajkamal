@@ -27,7 +27,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@IsAdmin", employeeId == null ? 1 : 0)  // ← If employeeId is null, it's Admin viewing all
                 );
 
-                if (ds.Tables.Count < 5)
+                if (ds.Tables.Count < 7)
                 {
                     return new ApiResponse { Status = false, Message = "Unexpected response from database." };
                 }
@@ -37,6 +37,8 @@ namespace CRMWebServices.Repository
                 var opportunityPipeline = ds.Tables[2].Rows.Cast<DataRow>().Select(RowToDict).ToList();
                 var pendingTasks = ds.Tables[3].Rows.Cast<DataRow>().Select(RowToDict).ToList();
                 var recentActivity = ds.Tables[4].Rows.Cast<DataRow>().Select(RowToDict).ToList();
+                var assignedLeads = ds.Tables[5].Rows.Count > 0? RowToDict(ds.Tables[5].Rows[0]): new Dictionary<string, object>();
+                var unassignedLeads = ds.Tables[6].Rows.Count > 0? RowToDict(ds.Tables[6].Rows[0]): new Dictionary<string, object>();
 
                 return new ApiResponse
                 {
@@ -48,7 +50,9 @@ namespace CRMWebServices.Repository
                         leadFunnel,
                         opportunityPipeline,
                         pendingTasks,
-                        recentActivity
+                        recentActivity,
+                        assignedLeads,
+                        unassignedLeads
                     }
                 };
             }

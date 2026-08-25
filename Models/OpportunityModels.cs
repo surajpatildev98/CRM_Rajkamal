@@ -186,6 +186,8 @@
             public List<OpportunityAttachmentInfo> Files { get; set; }
 
             public List<OpportunityFollowUpInfo> FollowUps { get; set; }
+          
+
         }
         public class OpportunityInfo
         {
@@ -326,6 +328,8 @@
             public string ActivityStatusColor { get; set; }
 
             public List<object>? Attachments { get; set; }   // NEW
+
+            public List<object>? Expenses { get; set; }
         }
         public class OpportunityAttachmentInfo
         {
@@ -453,6 +457,41 @@
 
             public string DeleteRemark { get; set; }
             public int? CreatedBy { get; set; }
+        }
+
+        public class AddOpportunityActivityExpenseRequest
+        {
+            public int Ref_OpportunityId { get; set; }
+
+            public int Ref_ActivityId { get; set; }
+
+            public List<OpportunityActivityExpenseItem> Expenses { get; set; } = new();
+
+            public int? CreatedBy { get; set; }
+        }
+
+        public class OpportunityActivityExpenseItem
+        {
+            public int Ref_ExpenseCategoryId { get; set; }
+
+            public int? Ref_TransportModeId { get; set; }
+
+            public decimal Amount { get; set; }
+
+            public string? Description { get; set; }
+
+            public string? FromLocation { get; set; }
+
+            public string? ToLocation { get; set; }
+
+            public List<OpportunityActivityExpenseAttachmentItem> Attachments { get; set; } = new();
+        }
+
+        public class OpportunityActivityExpenseAttachmentItem
+        {
+            public string FileName { get; set; } = null!;
+
+            public string Base64 { get; set; } = null!;
         }
     }
 }

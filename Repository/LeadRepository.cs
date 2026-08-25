@@ -179,7 +179,7 @@ namespace CRMWebServices.Repository
 
                         try
                         {
-                            string savedPath = SaveBase64Attachment(att.Base64Content,att.FileName,"LeadAttachments");
+                            string savedPath = SaveBase64Attachment(att.Base64Content, att.FileName, "LeadAttachments");
 
                             savedAttachments.Add(new
                             {
@@ -204,13 +204,13 @@ namespace CRMWebServices.Repository
                     }
                 }
 
-                string attachmentsJson = savedAttachments.Count > 0  ? JsonConvert.SerializeObject(savedAttachments): null;
+                string attachmentsJson = savedAttachments.Count > 0 ? JsonConvert.SerializeObject(savedAttachments) : null;
 
                 var dt = await _database.ExecuteDataTableAsync(
                     "USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "CREATE_LEAD"),
                     //new SqlParameter("@CustomerName", model.CustomerName),
-                    new SqlParameter("@CustomerName",(object?)model.CustomerName?.Trim() ?? DBNull.Value),
+                    new SqlParameter("@CustomerName", (object?)model.CustomerName?.Trim() ?? DBNull.Value),
                     new SqlParameter("@Address", (object?)model.Address?.Trim() ?? DBNull.Value),
                     new SqlParameter("@Ref_CountryId", (object?)model.Ref_CountryId ?? DBNull.Value),
                     new SqlParameter("@Ref_StateId", (object?)model.Ref_StateId ?? DBNull.Value),
@@ -218,8 +218,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@PinCode", (object?)model.PinCode?.Trim() ?? DBNull.Value),
                     //new SqlParameter("@Gst", (object?)model.Gst?.Trim() ?? DBNull.Value),
                     //new SqlParameter("@Pan", (object?)model.Pan?.Trim() ?? DBNull.Value),
-                    new SqlParameter("@Gst",string.IsNullOrWhiteSpace(model.Gst)? DBNull.Value: model.Gst.Trim()),
-                    new SqlParameter("@Pan",string.IsNullOrWhiteSpace(model.Pan) ? DBNull.Value : model.Pan.Trim()),
+                    new SqlParameter("@Gst", string.IsNullOrWhiteSpace(model.Gst) ? DBNull.Value : model.Gst.Trim()),
+                    new SqlParameter("@Pan", string.IsNullOrWhiteSpace(model.Pan) ? DBNull.Value : model.Pan.Trim()),
                     new SqlParameter("@Contacts", (object?)contactsJson ?? DBNull.Value),
                     new SqlParameter("@Requirements", (object?)requirementsJson ?? DBNull.Value),
                     new SqlParameter("@Requirement", (object?)model.Requirement?.Trim() ?? DBNull.Value),
@@ -228,7 +228,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@AssignedToEmployeeId", (object?)model.AssignedToEmployeeId ?? DBNull.Value),
                     new SqlParameter("@AssignmentRemark", (object?)model.AssignmentRemark ?? DBNull.Value),
                     new SqlParameter("@Attachments", (object?)attachmentsJson ?? DBNull.Value),
-                    new SqlParameter("@LeadOrganizationId",(object?)model.LeadOrganizationId ?? DBNull.Value), // ADDED fOR LEAD ORGANIZATION
+                    new SqlParameter("@LeadOrganizationId", (object?)model.LeadOrganizationId ?? DBNull.Value), // ADDED fOR LEAD ORGANIZATION
                     new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
                 );
 
@@ -369,9 +369,7 @@ namespace CRMWebServices.Repository
                                 FileName = att.FileName,
                                 FilePath = relativePath,
                                 FileType = Path.GetExtension(att.FileName).TrimStart('.'),
-                                FileSize = Convert.FromBase64String(
-                                    att.Base64.Contains(",") ? att.Base64.Substring(att.Base64.IndexOf(",") + 1) : att.Base64
-                                ).Length
+                                FileSize = Convert.FromBase64String(att.Base64.Contains(",") ? att.Base64.Substring(att.Base64.IndexOf(",") + 1) : att.Base64).Length
                             });
                         }
                         catch (Exception ex)
@@ -394,10 +392,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Outcome", (object?)model.Outcome ?? DBNull.Value),
                     new SqlParameter("@ActivityDateTime", model.ActivityDateTime),
                     new SqlParameter("@DurationInMinutes", (object?)model.DurationInMinutes ?? DBNull.Value),
-
                     new SqlParameter("@Ref_ActivityStatusId", (object?)model.Ref_ActivityStatusId ?? DBNull.Value),
                     new SqlParameter("@Ref_NewLeadStatusId", (object?)model.Ref_NewLeadStatusId ?? DBNull.Value),
-
                     new SqlParameter("@Latitude", (object?)model.Latitude ?? DBNull.Value),
                     new SqlParameter("@Longitude", (object?)model.Longitude ?? DBNull.Value),
                      new SqlParameter("@LocationAddress", (object?)model.LocationAddress ?? DBNull.Value),
@@ -661,22 +657,271 @@ namespace CRMWebServices.Repository
                     createdByName = r["CreatedByName"]?.ToString()
                 }).ToList();
 
-                var timeline = ds.Tables[6].Rows.Cast<DataRow>()
-                    .Select(r => new
+                //var timeline = ds.Tables[6].Rows.Cast<DataRow>()
+                //    .Select(r => new
+                //    {
+                //        itemType = r["ItemType"]?.ToString(),
+                //        itemId = Convert.ToInt32(r["ItemId"]),
+                //        activityType = r["ActivityType"]?.ToString(),
+                //        itemDate = Convert.ToDateTime(r["ActivityDate"]),
+                //        subject = r["Subject"]?.ToString(),
+                //        description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                //        outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                //        locationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
+                //        createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString(),
+                //        status = r["Status"]?.ToString(),
+                //        statusColor = r["StatusColor"]?.ToString(),
+                //        createdOn = Convert.ToDateTime(r["CreatedOn"])
+                //    }).ToList();
+
+                var timeline = ds.Tables[6].Rows.Cast<DataRow>().Select(r =>
+                {
+
+                    List<object> attachments = new List<object>();
+
+                    if (r["AttachmentsJson"] != DBNull.Value)
+                    {
+                        var json = r["AttachmentsJson"]?.ToString();
+
+                        if (!string.IsNullOrWhiteSpace(json))
+                        {
+                            var attachmentList = JsonConvert.DeserializeObject<List<dynamic>>(json);
+
+                            if (attachmentList != null)
+                            {
+                                attachments = attachmentList
+                                    .Select(a => new
+                                    {
+                                        attachmentId =Convert.ToInt32(a.AttachmentId),
+                                        fileName =a.FileName?.ToString(),
+                                        fileType =a.FileType?.ToString(),
+                                        fileSize =a.FileSize != null? Convert.ToInt64(a.FileSize): (long?)null,
+                                        fileUrl =BuildFileUrl(a.FilePath?.ToString()),
+                                        uploadedOn =a.CreatedOn != null? Convert.ToDateTime(a.CreatedOn.ToString()): (DateTime?)null
+                                    }).Cast<object>().ToList();
+                            }
+                        }
+                    }
+
+                    // Activity Expenses
+
+                    //List<object> expenses = new List<object>();
+                    //if (r["ExpensesJson"] != DBNull.Value)
+                    //{
+                    //    var json = r["ExpensesJson"]?.ToString();
+
+                    //    if (!string.IsNullOrWhiteSpace(json))
+                    //    {
+                    //        var expenseList =JsonConvert.DeserializeObject<List<dynamic>>(json);
+
+                    //        if (expenseList != null)
+                    //        {
+                    //            expenses = expenseList
+                    //                .Select(e => new
+                    //                {
+                    //                    activityExpenseId =Convert.ToInt32(e.ActivityExpenseId),
+                    //                    expenseCategoryId =Convert.ToInt32(e.Ref_ExpenseCategoryId),
+                    //                    categoryCode =e.CategoryCode?.ToString(),
+                    //                    categoryName =e.CategoryName?.ToString(),
+                    //                    transportModeId =e.Ref_TransportModeId != null? Convert.ToInt32(e.Ref_TransportModeId): (int?)null,
+                    //                    modeCode =e.ModeCode?.ToString(),
+                    //                    modeName =e.ModeName?.ToString(),
+                    //                    amount =e.Amount != null? Convert.ToDecimal(e.Amount): 0,
+                    //                    description =e.Description?.ToString(),
+                    //                    fromLocation =e.FromLocation?.ToString(),
+                    //                    toLocation =e.ToLocation?.ToString(),
+                    //                    expenseDate =e.ExpenseDate != null? Convert.ToDateTime(e.ExpenseDate.ToString()): (DateTime?)null,
+                    //                    createdOn =e.CreatedOn != null? Convert.ToDateTime(e.CreatedOn.ToString()): (DateTime?)null
+                    //                }).Cast<object>().ToList();
+                    //        }
+                    //    }
+                    //}                    
+
+                    // Activity Expenses
+                    List<object> expenses = new List<object>();
+
+                    if (r["ExpensesJson"] != DBNull.Value)
+                    {
+                        var json = r["ExpensesJson"]?.ToString();
+
+                        if (!string.IsNullOrWhiteSpace(json))
+                        {
+                            var expenseList =
+                                JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(json);
+
+                            if (expenseList != null)
+                            {
+                                foreach (var e in expenseList)
+                                {
+                                    // -------------------------------------------------
+                                    // Expense Attachments
+                                    // -------------------------------------------------
+                                    List<object> expenseAttachments = new List<object>();
+
+                                    if (e.ContainsKey("AttachmentsJson") &&
+                                        e["AttachmentsJson"] != null)
+                                    {
+                                        var attachmentJson =
+                                            e["AttachmentsJson"]?.ToString();
+
+                                        if (!string.IsNullOrWhiteSpace(attachmentJson))
+                                        {
+                                            var expenseAttachmentList =
+                                                JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(
+                                                    attachmentJson
+                                                );
+
+                                            if (expenseAttachmentList != null)
+                                            {
+                                                foreach (var a in expenseAttachmentList)
+                                                {
+                                                    expenseAttachments.Add(new
+                                                    {
+                                                        attachmentId =
+                                                            a.ContainsKey("AttachmentId") &&
+                                                            a["AttachmentId"] != null
+                                                                ? Convert.ToInt32(a["AttachmentId"])
+                                                                : 0,
+
+                                                        fileName =
+                                                            a.ContainsKey("FileName")
+                                                                ? a["FileName"]?.ToString()
+                                                                : null,
+
+                                                        fileType =
+                                                            a.ContainsKey("FileType")
+                                                                ? a["FileType"]?.ToString()
+                                                                : null,
+
+                                                        fileSize =
+                                                            a.ContainsKey("FileSize") &&
+                                                            a["FileSize"] != null
+                                                                ? Convert.ToInt64(a["FileSize"])
+                                                                : (long?)null,
+
+                                                        fileUrl =
+                                                            a.ContainsKey("FilePath")
+                                                                ? BuildFileUrl(
+                                                                    a["FilePath"]?.ToString()
+                                                                  )
+                                                                : null,
+
+                                                        uploadedOn =
+                                                            a.ContainsKey("CreatedOn") &&
+                                                            a["CreatedOn"] != null
+                                                                ? Convert.ToDateTime(a["CreatedOn"])
+                                                                : (DateTime?)null
+                                                    });
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // -------------------------------------------------
+                                    // Expense
+                                    // -------------------------------------------------
+                                    expenses.Add(new
+                                    {
+                                        activityExpenseId =
+                                            e.ContainsKey("ActivityExpenseId") &&
+                                            e["ActivityExpenseId"] != null
+                                                ? Convert.ToInt32(e["ActivityExpenseId"])
+                                                : 0,
+
+                                        expenseCategoryId =
+                                            e.ContainsKey("Ref_ExpenseCategoryId") &&
+                                            e["Ref_ExpenseCategoryId"] != null
+                                                ? Convert.ToInt32(e["Ref_ExpenseCategoryId"])
+                                                : 0,
+
+                                        categoryCode =
+                                            e.ContainsKey("CategoryCode")
+                                                ? e["CategoryCode"]?.ToString()
+                                                : null,
+
+                                        categoryName =
+                                            e.ContainsKey("CategoryName")
+                                                ? e["CategoryName"]?.ToString()
+                                                : null,
+
+                                        transportModeId =
+                                            e.ContainsKey("Ref_TransportModeId") &&
+                                            e["Ref_TransportModeId"] != null
+                                                ? Convert.ToInt32(e["Ref_TransportModeId"])
+                                                : (int?)null,
+
+                                        modeCode =
+                                            e.ContainsKey("ModeCode")
+                                                ? e["ModeCode"]?.ToString()
+                                                : null,
+
+                                        modeName =
+                                            e.ContainsKey("ModeName")
+                                                ? e["ModeName"]?.ToString()
+                                                : null,
+
+                                        amount =
+                                            e.ContainsKey("Amount") &&
+                                            e["Amount"] != null
+                                                ? Convert.ToDecimal(e["Amount"])
+                                                : 0,
+
+                                        description =
+                                            e.ContainsKey("Description")
+                                                ? e["Description"]?.ToString()
+                                                : null,
+
+                                        fromLocation =
+                                            e.ContainsKey("FromLocation")
+                                                ? e["FromLocation"]?.ToString()
+                                                : null,
+
+                                        toLocation =
+                                            e.ContainsKey("ToLocation")
+                                                ? e["ToLocation"]?.ToString()
+                                                : null,
+
+                                        expenseDate =
+                                            e.ContainsKey("ExpenseDate") &&
+                                            e["ExpenseDate"] != null
+                                                ? Convert.ToDateTime(e["ExpenseDate"])
+                                                : (DateTime?)null,
+
+                                        createdOn =
+                                            e.ContainsKey("CreatedOn") &&
+                                            e["CreatedOn"] != null
+                                                ? Convert.ToDateTime(e["CreatedOn"])
+                                                : (DateTime?)null,
+
+                                        // Expense-specific receipts
+                                        attachments = expenseAttachments
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    // Timeline object                    
+                    return new
                     {
                         itemType = r["ItemType"]?.ToString(),
-                        itemId = Convert.ToInt32(r["ItemId"]),
-                        activityType = r["ActivityType"]?.ToString(),
-                        itemDate = Convert.ToDateTime(r["ActivityDate"]),
-                        subject = r["Subject"]?.ToString(),
-                        description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
-                        outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
-                        locationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
-                        createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString(),
-                        status = r["Status"]?.ToString(),
-                        statusColor = r["StatusColor"]?.ToString(),
-                        createdOn = Convert.ToDateTime(r["CreatedOn"])
-                    }).ToList();
+                        itemId =Convert.ToInt32(r["ItemId"]),
+                        activityType =r["ActivityType"]?.ToString(),
+                        itemDate =Convert.ToDateTime(r["ActivityDate"]),
+                        subject =r["Subject"]?.ToString(),
+                        description =r["Description"] == DBNull.Value? null: r["Description"].ToString(),
+                        outcome =r["Outcome"] == DBNull.Value? null: r["Outcome"].ToString(),
+                        locationAddress =r["LocationAddress"] == DBNull.Value? null: r["LocationAddress"].ToString(),
+                        createdBy =r["CreatedBy"] == DBNull.Value? null: r["CreatedBy"].ToString(),
+                        status =r["Status"]?.ToString(),
+                        statusColor =r["StatusColor"]?.ToString(),
+                        createdOn =Convert.ToDateTime(r["CreatedOn"]),
+                        // NEW
+                        attachments,
+                        // NEW
+                        expenses
+                    };
+                })
+                .ToList();
 
                 return new ApiResponse
                 {
@@ -1158,5 +1403,393 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
+
+        #region // Add Activity Expenses
+        //public async Task<ApiResponse> AddActivityExpenses(LeadActivityExpenseRequest model)
+        //{
+        //    try
+        //    {
+        //        if (model == null)
+        //        {
+        //            return new ApiResponse
+        //            {
+        //                Status = false,
+        //                Message = "Request is required."
+        //            };
+        //        }
+
+        //        if (model.Ref_LeadId <= 0)
+        //        {
+        //            return new ApiResponse
+        //            {
+        //                Status = false,
+        //                Message = "Lead Id is required."
+        //            };
+        //        }
+
+        //        if (model.Ref_ActivityId <= 0)
+        //        {
+        //            return new ApiResponse
+        //            {
+        //                Status = false,
+        //                Message = "Activity Id is required."
+        //            };
+        //        }
+
+        //        if (model.Expenses == null || model.Expenses.Count == 0)
+        //        {
+        //            return new ApiResponse
+        //            {
+        //                Status = false,
+        //                Message = "At least one expense is required."
+        //            };
+        //        }
+
+        //        string expensesJson = JsonConvert.SerializeObject(
+        //            model.Expenses
+        //        );
+
+        //        var dt = await _database.ExecuteDataTableAsync(
+        //            "USP_CRM_LeadManagement",
+
+        //            new SqlParameter(
+        //                "@Status",
+        //                "CREATE_ACTIVITY_EXPENSE"
+        //            ),
+
+        //            new SqlParameter(
+        //                "@Ref_LeadId",
+        //                model.Ref_LeadId
+        //            ),
+
+        //            new SqlParameter(
+        //                "@Ref_ActivityId",
+        //                model.Ref_ActivityId
+        //            ),
+
+        //            new SqlParameter(
+        //                "@ExpenseItems",
+        //                (object?)expensesJson ?? DBNull.Value
+        //            ),
+
+        //            new SqlParameter(
+        //                "@CreatedBy",
+        //                (object?)model.CreatedBy ?? DBNull.Value
+        //            )
+        //        );
+
+        //        var response = new ApiResponse();
+
+        //        if (dt == null || dt.Rows.Count == 0)
+        //        {
+        //            response.Status = false;
+        //            response.Message =
+        //                "No response returned from database.";
+
+        //            return response;
+        //        }
+
+        //        var row = dt.Rows[0];
+
+        //        bool status =
+        //            Convert.ToInt32(row["Status"]) == 1;
+
+        //        response.Status = status;
+
+        //        response.Message =
+        //            row["Message"]?.ToString();
+
+        //        if (status)
+        //        {
+        //            response.Data = new
+        //            {
+        //                LeadId = model.Ref_LeadId,
+
+        //                ActivityId = model.Ref_ActivityId,
+
+        //                TotalItems =
+        //                    row["TotalItems"] == DBNull.Value
+        //                        ? 0
+        //                        : Convert.ToInt32(row["TotalItems"]),
+
+        //                TotalAmount =
+        //                    row["TotalAmount"] == DBNull.Value
+        //                        ? 0
+        //                        : Convert.ToDecimal(row["TotalAmount"])
+        //            };
+        //        }
+
+        //        return response;
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        return new ApiResponse
+        //        {
+        //            Status = false,
+        //            Message = $"Database Error: {ex.Message}"
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new ApiResponse
+        //        {
+        //            Status = false,
+        //            Message = $"Error: {ex.Message}"
+        //        };
+        //    }
+        //}
+
+      
+
+        public async Task<ApiResponse> AddActivityExpenses(LeadActivityExpenseRequest model)
+        {
+            try
+            {
+                if (model == null)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Request is required."
+                    };
+                }
+
+                if (model.Ref_LeadId <= 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Lead Id is required."
+                    };
+                }
+
+                if (model.Ref_ActivityId <= 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Activity Id is required."
+                    };
+                }
+
+                if (model.Expenses == null || model.Expenses.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "At least one expense is required."
+                    };
+                }   
+
+                // Prepare expenses with saved attachment metadata   
+                var expenseItems = new List<object>();
+                foreach (var expense in model.Expenses)
+                {
+                    if (expense.Ref_ExpenseCategoryId <= 0)
+                    {
+                        return new ApiResponse
+                        {
+                            Status = false,
+                            Message = "Expense Category is required for every expense."
+                        };
+                    }
+
+                    if (expense.Amount <= 0)
+                    {
+                        return new ApiResponse
+                        {
+                            Status = false,
+                            Message = "Expense Amount must be greater than zero."
+                        };
+                    }                 
+
+                    var savedExpenseAttachments = new List<object>();
+                    if (expense.Attachments != null &&
+                        expense.Attachments.Count > 0)
+                    {
+                        foreach (var attachment in expense.Attachments)
+                        {
+                            if (string.IsNullOrWhiteSpace(attachment.Base64) ||
+                                string.IsNullOrWhiteSpace(attachment.FileName))
+                            {
+                                continue;
+                            }
+
+                            try
+                            {
+                                // Use the SAME existing attachment method
+                                // already used by CreateActivity.
+                                string relativePath = SaveBase64Attachment(
+                                    attachment.Base64,
+                                    attachment.FileName,
+                                    "LeadActivityAttachments"
+                                );
+
+                                string base64Content = attachment.Base64;
+
+                                // Remove data URI prefix if present
+                                if (base64Content.Contains(","))
+                                {
+                                    base64Content =
+                                        base64Content.Substring(
+                                            base64Content.IndexOf(",") + 1
+                                        );
+                                }
+
+                                int fileSize =
+                                    Convert.FromBase64String(base64Content).Length;
+
+                                savedExpenseAttachments.Add(new
+                                {
+                                    FileName = attachment.FileName,
+                                    FilePath = relativePath,
+                                    FileType = Path
+                                        .GetExtension(attachment.FileName)
+                                        .TrimStart('.')
+                                        .ToLowerInvariant(),
+                                    FileSize = fileSize
+                                });
+                            }
+                            catch (Exception ex)
+                            {
+                                return new ApiResponse
+                                {
+                                    Status = false,
+                                    Message =
+                                        $"Error processing expense attachment '{attachment.FileName}': {ex.Message}"
+                                };
+                            }
+                        }
+                    }
+                    
+                    expenseItems.Add(new
+                    {
+                        Ref_ExpenseCategoryId =expense.Ref_ExpenseCategoryId,
+                        Ref_TransportModeId =expense.Ref_TransportModeId,
+                        Amount =expense.Amount,
+                        Description =expense.Description,
+                        FromLocation =expense.FromLocation,
+                        ToLocation =expense.ToLocation,
+                        Attachments =savedExpenseAttachments
+                    });
+                }
+               
+   
+                string expensesJson =JsonConvert.SerializeObject(expenseItems);
+
+
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
+                    new SqlParameter("@Status","CREATE_ACTIVITY_EXPENSE"),
+                    new SqlParameter("@Ref_LeadId",model.Ref_LeadId),
+                    new SqlParameter("@Ref_ActivityId",model.Ref_ActivityId),
+                    new SqlParameter("@ExpenseItems",(object?)expensesJson ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy",(object?)model.CreatedBy ?? DBNull.Value
+                    )
+                );
+
+                var response = new ApiResponse();
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    response.Status = false;
+                    response.Message =
+                        "No response returned from database.";
+
+                    return response;
+                }
+
+                var row = dt.Rows[0];
+                bool status =Convert.ToInt32(row["Status"]) == 1;
+                response.Status = status;
+                response.Message =row["Message"]?.ToString();
+
+                if (status)
+                {
+                    response.Data = new
+                    {
+                        LeadId = model.Ref_LeadId,
+                        ActivityId = model.Ref_ActivityId,
+                        TotalItems =row["TotalItems"] == DBNull.Value? 0: Convert.ToInt32(row["TotalItems"]),
+                        TotalAmount =row["TotalAmount"] == DBNull.Value? 0: Convert.ToDecimal(row["TotalAmount"])
+                    };
+                }
+
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+
+        #endregion
+
+        public async Task<ApiResponse> GetActivityExpenseMasters()
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync("USP_CRM_LeadManagement",new SqlParameter("@Status", "GET_EXPENSE_MASTER_DATA"));
+
+                if (ds == null || ds.Tables.Count < 2)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Expense master data could not be loaded."
+                    };
+                }
+
+                var categories = ds.Tables[0].Rows.Cast<DataRow>()
+                    .Select(r => new
+                    {
+                        expenseCategoryId = Convert.ToInt32(r["ExpenseCategoryId"]),
+                        categoryCode = r["CategoryCode"]?.ToString(),
+                        categoryName = r["CategoryName"]?.ToString(),
+                        requiresTransportMode =Convert.ToBoolean(r["RequiresTransportMode"]),
+                        requiresFromLocation =Convert.ToBoolean(r["RequiresFromLocation"]),
+                        requiresToLocation =Convert.ToBoolean(r["RequiresToLocation"])
+                    }).ToList();
+
+                var transportModes = ds.Tables[1].Rows.Cast<DataRow>()
+                    .Select(r => new
+                    {
+                        transportModeId =Convert.ToInt32(r["TransportModeId"]),
+                        modeCode = r["ModeCode"]?.ToString(),
+                        modeName = r["ModeName"]?.ToString()
+                    })
+                    .ToList();
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = "Expense masters fetched successfully.",
+                    Data = new
+                    {
+                        categories,
+                        transportModes
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
     }
 }

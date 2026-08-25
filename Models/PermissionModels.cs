@@ -71,7 +71,7 @@
             public int? Ref_OpportunityStageId { get; set; }
         }
 
-        // ===================== NEW: PERMISSION MANAGER =====================
+        //================== NEW: PERMISSION MANAGER==================
 
         // ----- MODULE -----
         public class CreateModuleRequest
@@ -242,6 +242,14 @@
             public string PermissionCode { get; set; }
             public string PermissionName { get; set; }
             public bool IsAllowed { get; set; }
+        }
+
+        public class RegisterEmployeeDeviceRequest
+        {
+            public string DeviceId { get; set; } = string.Empty;
+            public string DeviceToken { get; set; } = string.Empty;
+            public string DeviceType { get; set; } = string.Empty;
+            public string? AppVersion { get; set; }
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using CRMWebServices.Helpers;
+using System.Data;
 using static CRMWebServices.Models.PermissionModels;
 
 namespace CRMWebServices.Interfaces
@@ -9,5 +10,7 @@ namespace CRMWebServices.Interfaces
 
         // IAuthRepository.cs
         Task<(DataRow? EmployeeRow, List<ModuleAccessInfo> Modules)> GetEmployeeForLogin(string loginId);
+
+        Task<ApiResponse> RegisterEmployeeDevice(int employeeId,RegisterEmployeeDeviceRequest request);
     }
 }

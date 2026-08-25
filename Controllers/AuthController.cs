@@ -5,6 +5,7 @@ using CRMWebServices.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using static CRMWebServices.Models.PermissionModels;
 
 namespace CRMWebServices.Controllers
 {
@@ -69,6 +70,21 @@ namespace CRMWebServices.Controllers
             int employeeId = Convert.ToInt32(row["EmployeeId"]);
             string employeeCode = row["EmployeeCode"]?.ToString();
             string roleIds = row["RoleIds"] == DBNull.Value ? "" : row["RoleIds"].ToString();
+
+      
+            // Register / Update Firebase device           
+
+            if (!string.IsNullOrWhiteSpace(request.DeviceId) &&!string.IsNullOrWhiteSpace(request.DeviceToken))
+            {
+                await _authRepo.RegisterEmployeeDevice(employeeId,
+                    new RegisterEmployeeDeviceRequest
+                    {
+                        DeviceId = request.DeviceId,
+                        DeviceToken = request.DeviceToken,
+                        DeviceType = request.DeviceType,
+                        AppVersion = request.AppVersion
+                    });
+            }
 
             string token = _jwt.GenerateToken(employeeId, request.LoginId, employeeCode, roleIds);
 
