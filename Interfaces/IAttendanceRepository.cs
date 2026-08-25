@@ -7,5 +7,6 @@ namespace CRMWebServices.Interfaces
         Task<AttendanceResponse> GetAttendance(AttendanceRequest request);
         Task<AttendancePunchResponse> GetPunches(AttendancePunchRequest request);
         Task<ManualPunchResponse> ManualPunch(ManualPunchRequest request);
+        Task<AttendanceDashboardResponse> GetDashboardCount(AttendanceDashboardRequest request);
     }
 }

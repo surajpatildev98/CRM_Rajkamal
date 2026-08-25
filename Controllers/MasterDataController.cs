@@ -173,5 +173,52 @@ namespace CRMWebServices.Controllers
         [HttpGet("documentTypes")]
         public async Task<IActionResult> DocumentTypes()
           => Ok(new ApiResponse { Status = true, Data = await _repo.GetDocumentTypes() });
+
+        [HttpGet("managers")]
+        public async Task<IActionResult> Managers([FromQuery] int officeId,[FromQuery] int departmentId)
+        {
+            try
+            {
+                if (officeId <= 0)
+                {
+                    return BadRequest(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Office is required."
+                    });
+                }
+
+                if (departmentId <= 0)
+                {
+                    return BadRequest(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Department is required."
+                    });
+                }
+
+                var managers = await _repo.GetManagersAsync(
+                    officeId,
+                    departmentId);
+
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Message = "Managers retrieved successfully.",
+                    Data = managers
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    StatusCodes.Status500InternalServerError,
+                    new ApiResponse
+                    {
+                        Status = false,
+                        Message = ex.Message
+                    });
+            }
+        }
+
     }
 }

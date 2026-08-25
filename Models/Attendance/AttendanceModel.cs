@@ -143,4 +143,47 @@
 
         public decimal? DistanceKm { get; set; }
     }
+
+    public class AttendanceDashboardRequest
+    {
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+    }
+
+    public class AttendanceTrendModel
+    {
+        public DateTime Date { get; set; }
+
+        public int Present { get; set; }
+
+        public int Absent { get; set; }
+
+        public int Late { get; set; }
+
+        public int OnLeave { get; set; }
+    }
+
+
+    public class AttendanceDashboardModel
+    {
+        public int Present { get; set; }
+        public int Absent { get; set; }
+        public int Late { get; set; }
+        public int OnLeave { get; set; }
+        public int TotalAttendance { get; set; }
+
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+        public List<AttendanceTrendModel> AttendanceTrend { get; set; } = new();
+    }
+
+
+    public class AttendanceDashboardResponse
+    {
+        public bool Status { get; set; }
+
+        public string Message { get; set; } = string.Empty;
+
+        public AttendanceDashboardModel? Data { get; set; }
+    }
 }

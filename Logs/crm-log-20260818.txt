@@ -47,3 +47,68 @@
 2026-08-18 10:24:37.967 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 70.0946 ms
 2026-08-18 10:24:46.038 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2247.5379 ms
 2026-08-18 10:24:53.112 +05:30 [INF] HTTP GET /api/lead/Details responded 200 in 268.7855 ms
+2026-08-18 12:18:15.388 +05:30 [INF] Starting CRM Web Services
+2026-08-18 12:18:16.126 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend\wwwroot. Static files may be unavailable.
+2026-08-18 12:18:16.591 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 12:18:16.595 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 12:18:17.341 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 12:18:17.357 +05:30 [INF] Hosting environment: Development
+2026-08-18 12:18:17.366 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend
+2026-08-18 12:18:20.961 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 399.2234 ms
+2026-08-18 12:18:22.234 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 329.8782 ms
+2026-08-18 12:18:44.144 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2516.4688 ms
+2026-08-18 12:19:13.905 +05:30 [INF] HTTP GET /api/PermissionManager/role/21/permissions responded 200 in 247.0765 ms
+2026-08-18 15:40:53.618 +05:30 [INF] Starting CRM Web Services
+2026-08-18 15:40:54.052 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend\wwwroot. Static files may be unavailable.
+2026-08-18 15:40:54.348 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 15:40:54.353 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 15:40:54.974 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 15:40:54.980 +05:30 [INF] Hosting environment: Development
+2026-08-18 15:40:54.985 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend
+2026-08-18 15:40:57.743 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 525.9963 ms
+2026-08-18 15:40:58.911 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 445.9829 ms
+2026-08-18 15:41:28.325 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 3786.5648 ms
+2026-08-18 15:42:10.162 +05:30 [INF] HTTP GET /api/master/managers responded 200 in 524.4000 ms
+2026-08-18 15:42:18.121 +05:30 [INF] HTTP GET /api/master/managers responded 200 in 34.2882 ms
+2026-08-18 15:42:24.154 +05:30 [INF] HTTP GET /api/master/managers responded 200 in 21.1854 ms
+2026-08-18 15:42:34.602 +05:30 [INF] HTTP GET /api/master/managers responded 200 in 11.4034 ms
+2026-08-18 16:20:09.518 +05:30 [INF] Starting CRM Web Services
+2026-08-18 16:20:10.070 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend\wwwroot. Static files may be unavailable.
+2026-08-18 16:20:10.518 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 16:20:10.522 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 16:20:11.100 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 16:20:11.108 +05:30 [INF] Hosting environment: Development
+2026-08-18 16:20:11.111 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend
+2026-08-18 16:20:13.465 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 573.4888 ms
+2026-08-18 16:20:15.217 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 821.3748 ms
+2026-08-18 16:21:38.737 +05:30 [INF] HTTP POST /api/auth/login responded 400 in 1145.2924 ms
+2026-08-18 16:21:51.006 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 428.7757 ms
+2026-08-18 16:26:12.574 +05:30 [INF] HTTP GET /api/master/managers responded 200 in 298.2436 ms
+2026-08-18 16:28:33.104 +05:30 [INF] HTTP GET /api/master/managers responded 200 in 19019.9331 ms
+2026-08-18 16:42:04.082 +05:30 [INF] Starting CRM Web Services
+2026-08-18 16:42:04.551 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend\wwwroot. Static files may be unavailable.
+2026-08-18 16:42:04.965 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 16:42:04.968 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 16:42:05.328 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 16:42:05.332 +05:30 [INF] Hosting environment: Development
+2026-08-18 16:42:05.334 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend
+2026-08-18 16:42:06.818 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 381.2284 ms
+2026-08-18 16:42:07.587 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 299.7931 ms
+2026-08-18 16:42:57.986 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 2492.5464 ms
+2026-08-18 16:43:21.624 +05:30 [INF] HTTP GET /api/master/managers responded 200 in 240.8977 ms
+2026-08-18 16:55:13.204 +05:30 [ERR] HTTP GET /api/master/managers responded 500 in 269.7348 ms
+2026-08-18 16:57:44.794 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 15.7458 ms
+2026-08-18 16:57:45.309 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 96.9721 ms
+2026-08-18 16:58:07.663 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 502.3983 ms
+2026-08-18 16:58:30.891 +05:30 [INF] HTTP GET /api/master/managers responded 200 in 45.8787 ms
+2026-08-18 17:34:29.510 +05:30 [INF] Starting CRM Web Services
+2026-08-18 17:34:30.045 +05:30 [WRN] The WebRootPath was not found: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend\wwwroot. Static files may be unavailable.
+2026-08-18 17:34:30.328 +05:30 [INF] Now listening on: https://localhost:7022
+2026-08-18 17:34:30.332 +05:30 [INF] Now listening on: http://localhost:5163
+2026-08-18 17:34:30.533 +05:30 [INF] Application started. Press Ctrl+C to shut down.
+2026-08-18 17:34:30.538 +05:30 [INF] Hosting environment: Development
+2026-08-18 17:34:30.542 +05:30 [INF] Content root path: D:\Dikshita\Project\HRMS\MergeCode_Backend\backend
+2026-08-18 17:34:32.851 +05:30 [INF] HTTP GET /swagger/index.html responded 200 in 342.0483 ms
+2026-08-18 17:34:33.486 +05:30 [INF] HTTP GET /swagger/v1/swagger.json responded 200 in 212.6899 ms
+2026-08-18 17:35:08.866 +05:30 [INF] HTTP POST /api/auth/login responded 200 in 3731.9036 ms
+2026-08-18 17:35:52.280 +05:30 [INF] HTTP GET /api/master/managers responded 200 in 200.6965 ms

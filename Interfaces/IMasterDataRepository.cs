@@ -35,6 +35,7 @@ namespace CRMWebServices.Interfaces
         Task<List<DropdownItem>> GetAccountTypes();
         Task<List<DropdownItem>> GetFamilyRelationShips();
         Task<List<DropdownItem>> GetDocumentTypes();
+        Task<List<ManagerDropdownItem>> GetManagersAsync(int officeId,int departmentId);
 
     }
 }

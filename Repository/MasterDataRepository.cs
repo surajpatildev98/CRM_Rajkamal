@@ -1,5 +1,6 @@
 ﻿using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
+using CRMWebServices.Services;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -71,7 +72,7 @@ namespace CRMWebServices.Repository
         public async Task<List<DropdownItem>> GetDepartmentsByOffice(int officeId)
         {
             var dt = await _database.ExecuteDataTableAsync(
-                "USP_ORG_EmployeeManagement",
+                "USP_ORG_NewEmployeeManagement",
                 new SqlParameter("@Status", "GET_DEPARTMENTS_BY_OFFICE"),
                 new SqlParameter("@OfficeId", officeId));
             return MapToDropdown(dt);
@@ -255,6 +256,32 @@ namespace CRMWebServices.Repository
                 "USP_ORG_NewEmployeeManagement",
                 new SqlParameter("@Status", "GET_DOCUMENT_TYPES"));
             return MapToDropdown(dt);
+        }
+
+        public async Task<List<ManagerDropdownItem>> GetManagersAsync(int officeId,int departmentId)
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_MANAGERS_BY_OFFICE_DEPARTMENT"),
+                new SqlParameter("@OfficeId", officeId),
+                new SqlParameter("@DepartmentId", departmentId));
+
+            var managers = new List<ManagerDropdownItem>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                managers.Add(new ManagerDropdownItem
+                {
+                    EmployeeId = Convert.ToInt32(row["EmployeeId"]),
+                    EmployeeCode = row["EmployeeCode"]?.ToString(),
+                    EmployeeName = row["FirstName"]?.ToString() + " " + row["LastName"]?.ToString(),
+                    RoleId = Convert.ToInt32(row["Ref_RoleId"]),
+                    RoleCode = row["RoleCode"]?.ToString(),
+                    RoleName = row["RoleName"]?.ToString()
+                });
+            }
+
+            return managers;
         }
     }
 }
