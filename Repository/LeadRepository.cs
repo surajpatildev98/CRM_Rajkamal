@@ -53,10 +53,7 @@ namespace CRMWebServices.Repository
             if (fileBytes.Length > MaxFileSizeBytes)
                 throw new Exception("File exceeds 10MB limit.");
 
-            var uploadsFolder = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "Uploads",
-                folderName);
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(),"Uploads",folderName);
 
             Directory.CreateDirectory(uploadsFolder);
 
@@ -84,7 +81,9 @@ namespace CRMWebServices.Repository
                 var relative = filePath.Replace("Uploads/", "").Replace("Uploads\\", "");
                 var segments = relative.Split('/').Select(Uri.EscapeDataString);
 
-                return "/files/" + string.Join("/", segments);
+                //return "/files/" + string.Join("/", segments);
+                return "/Uploads/" + string.Join("/", segments);
+
             }
             catch (Exception ex)
             {

@@ -38,7 +38,8 @@ namespace CRMWebServices.Repository
                 var relative = filePath.Replace("Uploads/", "").Replace("Uploads\\", "");
                 var segments = relative.Split('/').Select(Uri.EscapeDataString);
 
-                return "/files/" + string.Join("/", segments);
+                //return "/files/" + string.Join("/", segments);
+                return "/Uploads/" + string.Join("/", segments);
             }
             catch (Exception ex)
             {
