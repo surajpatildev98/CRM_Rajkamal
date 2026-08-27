@@ -58,5 +58,96 @@ namespace CRMWebServices.Controllers
         }
 
         #endregion
+
+        [HttpGet]
+        [Route("GetEmployeeMaster")]
+        public async Task<IActionResult> GetEmployeeMaster()
+        {
+            try
+            {
+                var employees = await _repository.GetEmployeeMaster();
+
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Message = "Employees retrieved successfully.",
+                    Data = employees
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        [HttpGet]
+        [Route("GetEmployeeDetails/{employeeId}")]
+        public async Task<IActionResult> GetEmployeeDetails(int employeeId)
+        {
+            try
+            {
+                var employee = await _repository.GetEmployeeDetails(employeeId);
+
+                if (employee == null)
+                {
+                    return NotFound(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Employee details not found."
+                    });
+                }
+
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Message = "Employee details retrieved successfully.",
+                    Data = employee
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        [HttpPost]
+        [Route("UpdateEmployee")]
+        public async Task<IActionResult> UpdateEmployee(
+    [FromBody] UpdateEmployeeRequest request)
+        {
+            try
+            {
+                // Get UpdatedBy from logged-in user's token
+                var employeeIdClaim =
+                    User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+
+                request.UpdatedBy =
+                    employeeIdClaim != null
+                        ? int.Parse(employeeIdClaim)
+                        : null;
+
+                var response = await _repository.UpdateEmployee(request);
+
+                return response.Status
+                    ? Ok(response)
+                    : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }

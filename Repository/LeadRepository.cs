@@ -14,11 +14,14 @@ namespace CRMWebServices.Repository
     {
         private readonly IDatabaseService _database;
         private readonly ILogger<PermissionService> _logger;
+        private readonly ISchedulerExecutionService _schedulerExecutionService;
 
-        public LeadRepository(IDatabaseService database, ILogger<PermissionService> logger)
+
+        public LeadRepository(IDatabaseService database, ILogger<PermissionService> logger, ISchedulerExecutionService schedulerExecutionService)
         {
             _database = database;
             _logger = logger;
+            _schedulerExecutionService = schedulerExecutionService;
         }
 
         #region // Attachment Handling and File Saving & Map Response
@@ -231,7 +234,67 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
                 );
 
-                return MapResponse(dt, isCreate: true);
+                //  return MapResponse(dt, isCreate: true);
+
+                var response = MapResponse(dt, isCreate: true);
+
+                if (response.Status)
+                {
+                    int leadId = Convert.ToInt32(dt.Rows[0]["LeadId"]);
+
+                    string leadNo =
+                        dt.Rows[0]["LeadNo"]?.ToString() ?? "";
+
+                    // ============================================
+                    // CASE 1: LEAD IS ASSIGNED
+                    // ============================================
+
+                    if (model.AssignedToEmployeeId.HasValue)
+                    {
+                        try
+                        {
+                            await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                schedulerJobItemId: null,
+                                employeeId: model.AssignedToEmployeeId.Value,
+                                entityId: leadId,
+                                title: "New Lead Assigned",
+                                message: $"Lead {leadNo} has been assigned to you.",
+                                entityType: "LEAD",
+                                recipientType: "ASSIGNEE"
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
+                                leadId,
+                                model.AssignedToEmployeeId.Value);
+                        }
+                    }
+
+                    // ============================================
+                    // CASE 2: LEAD IS NOT ASSIGNED
+                    // ============================================
+
+                    else
+                    {
+                        try
+                        {
+                            await _schedulerExecutionService
+                                .NotifyUnassignedLeadAsync(leadId);
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to send unassigned Lead notification. LeadId {LeadId}",
+                                leadId);
+                        }
+                    }
+                }
+
+                return response;
             }
             catch (SqlException ex)
             {

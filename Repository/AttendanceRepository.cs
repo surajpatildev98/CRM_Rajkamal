@@ -269,5 +269,131 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+
+        public async Task<AttendanceDashboardResponse> GetDashboardCount(AttendanceDashboardRequest request)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataSetAsync("USP_ORG_Attendance",
+
+                    new SqlParameter("@Status","GET_DASHBOARD_COUNT"),
+
+                    new SqlParameter("@FromDate",request.FromDate.HasValue ? request.FromDate.Value.Date : DBNull.Value),
+
+                    new SqlParameter("@ToDate",request.ToDate.HasValue ? request.ToDate.Value.Date : DBNull.Value)
+                );
+
+                if (dt.Tables.Count == 0 || dt == null)
+                {
+                    return new AttendanceDashboardResponse
+                    {
+                        Status = false,
+                        Message = "No dashboard data found.",
+                        Data = null
+                    };
+                }
+
+                DataTable summaryTable = dt.Tables[0];
+
+                if (summaryTable.Rows.Count == 0)
+                {
+                    return new AttendanceDashboardResponse
+                    {
+                        Status = false,
+                        Message = "No dashboard data found.",
+                        Data = null
+                    };
+                }
+
+                DataRow row = summaryTable.Rows[0];
+
+                // SP validation error
+                if (row.Table.Columns.Contains("Status") && row["Status"] != DBNull.Value && !Convert.ToBoolean(row["Status"]))
+                {
+                    return new AttendanceDashboardResponse
+                    {
+                        Status = false,
+                        Message = row["Message"]?.ToString()
+                                  ?? "Unable to retrieve dashboard data.",
+                        Data = null
+                    };
+                }
+
+                return new AttendanceDashboardResponse
+                {
+                    Status = true,
+
+                    Message = "Attendance dashboard count retrieved successfully.",
+
+                    Data = new AttendanceDashboardModel
+                    {
+                        Present = row["Present"] != DBNull.Value ? Convert.ToInt32(row["Present"]) : 0,
+
+                        Absent = row["Absent"] != DBNull.Value ? Convert.ToInt32(row["Absent"]) : 0,
+
+                        Late = row["Late"] != DBNull.Value ? Convert.ToInt32(row["Late"]) : 0,
+
+                        OnLeave = row["OnLeave"] != DBNull.Value ? Convert.ToInt32(row["OnLeave"]) : 0,
+
+                        TotalAttendance = row["TotalAttendance"] != DBNull.Value ? Convert.ToInt32(row["TotalAttendance"]) : 0,
+
+                        FromDate =  row["FromDate"] != DBNull.Value ? Convert.ToDateTime(row["FromDate"]) : DateTime.MinValue,
+
+                        ToDate = row["ToDate"] != DBNull.Value ? Convert.ToDateTime(row["ToDate"]) : DateTime.MinValue
+                    }
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new AttendanceDashboardResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}",
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                return new AttendanceDashboardResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}",
+                    Data = null
+                };
+            }
+        }
+
+        private List<AttendanceTrendModel> MapAttendanceTrend(DataTable dt)
+        {
+            var list = new List<AttendanceTrendModel>();
+
+            foreach (DataRow row in dt.Rows)
+            {
+                list.Add(new AttendanceTrendModel
+                {
+                    Date = row["Date"] != DBNull.Value
+                        ? Convert.ToDateTime(row["Date"])
+                        : DateTime.MinValue,
+
+                    Present = row["Present"] != DBNull.Value
+                        ? Convert.ToInt32(row["Present"])
+                        : 0,
+
+                    Absent = row["Absent"] != DBNull.Value
+                        ? Convert.ToInt32(row["Absent"])
+                        : 0,
+
+                    Late = row["Late"] != DBNull.Value
+                        ? Convert.ToInt32(row["Late"])
+                        : 0,
+
+                    OnLeave = row["OnLeave"] != DBNull.Value
+                        ? Convert.ToInt32(row["OnLeave"])
+                        : 0
+                });
+            }
+
+            return list;
+        }
     }
 }

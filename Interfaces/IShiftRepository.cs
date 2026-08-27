@@ -6,9 +6,10 @@ namespace CRMWebServices.Interfaces
 {
     public interface IShiftRepository
     {
-        Task<ShiftResponse> GetShifts();
+        Task<ShiftResponse> GetShifts(bool activeOnly = true);
         Task<ApiResponse> AddShift(ShiftModel model);
         Task<ShiftResponse> UpdateShift(ShiftModel shift);
         Task<ApiResponse> DeleteShift(int shiftId);
+       // Task<ShiftResponse> GetEmployeeShift(int employeeId);
     }
 }

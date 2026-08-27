@@ -52,19 +52,13 @@ namespace CRMWebServices.Repository
         }
 
 
-
-        /*  public async Task<List<ShiftModel>> GetShifts()
-          {
-              var dt = await _database.ExecuteDataTableAsync("USP_ORG_SHIFTMANAGEMENT",
-                  new SqlParameter("@Status", "GET_SHIFT"));
-              return MapToDropdown(dt);
-          }*/
-
-        public async Task<ShiftResponse> GetShifts()
+        public async Task<ShiftResponse> GetShifts(bool activeOnly = true)
         {
             var ds = await _database.ExecuteDataSetAsync(
                 "USP_ORG_SHIFTMANAGEMENT",
-                new SqlParameter("@Status", "GET_SHIFT"));
+                new SqlParameter("@Status", "GET_SHIFT"),
+                 new SqlParameter("@IsActive", activeOnly)
+                 );
 
             var response = new ShiftResponse();
 
@@ -259,6 +253,63 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+       /* public async Task<ShiftResponse> GetEmployeeShift(int employeeId)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync("USP_ORG_SHIFTMANAGEMENT",
+
+                    new SqlParameter("@Status", "GET_EMPLOYEE_SHIFT"),
+                    new SqlParameter("@EmployeeId", employeeId)
+                );
+
+                var response = new ShiftResponse
+                {
+                    Status = false,
+                    Message = "No response returned from database.",
+                    Data = new List<ShiftModel>()
+                };
+
+                // Response table
+                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    var row = ds.Tables[0].Rows[0];
+
+                    response.Status =
+                        row["Status"] != DBNull.Value &&
+                        Convert.ToBoolean(row["Status"]);
+
+                    response.Message =
+                        row["Message"]?.ToString() ?? "";
+                }
+
+                // Employee Shift Data
+                if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
+                {
+                    response.Data = MapToDropdown(ds.Tables[1]);
+                }
+
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                return new ShiftResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}",
+                    Data = new List<ShiftModel>()
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ShiftResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}",
+                    Data = new List<ShiftModel>()
+                };
+            }
+        }*/
 
     }
 }
