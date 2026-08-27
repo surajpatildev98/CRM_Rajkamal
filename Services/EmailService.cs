@@ -20,9 +20,7 @@ namespace CRMWebServices.Services
             _logger = logger;
         }
 
-        public async Task<bool> SendAsync(
-            EmailMessage message,
-            CancellationToken cancellationToken = default)
+        public async Task<bool> SendAsync(EmailMessage message,CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(message.ToEmail))
             {
@@ -61,18 +59,11 @@ namespace CRMWebServices.Services
 
                 var security =config.SSL? SecureSocketOptions.StartTls: SecureSocketOptions.None;
 
-                await smtp.ConnectAsync(
-                    config.Host,
-                    config.Port,
-                    security,
-                    cancellationToken);
+                await smtp.ConnectAsync(config.Host,config.Port,security,cancellationToken);
 
                 if (!string.IsNullOrWhiteSpace(config.Email))
                 {
-                    await smtp.AuthenticateAsync(
-                        config.Email,
-                        config.Password,
-                        cancellationToken);
+                    await smtp.AuthenticateAsync(config.Email,config.Password,cancellationToken);
                 }
 
                 await smtp.SendAsync(email,cancellationToken);
@@ -86,11 +77,8 @@ namespace CRMWebServices.Services
                 return false;
             }
         }
-
-     
+        
         // Scheduler adapter
-     
-
         public async Task<EmailSendResult> SendEmailAsync(string toEmail,string subject,string body)
         {
             try
@@ -107,9 +95,7 @@ namespace CRMWebServices.Services
                 return new EmailSendResult
                 {
                     Success = success,
-                    ErrorMessage = success
-                        ? null
-                        : "Email could not be sent."
+                    ErrorMessage = success ? null: "Email could not be sent."
                 };
             }
             catch (Exception ex)
