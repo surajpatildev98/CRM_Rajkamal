@@ -146,7 +146,9 @@ namespace CRMWebServices.Services
                 try
                 {
                     // Firebase
-                    await SendFirebaseNotificationsAsync(schedulerJobItemId, leadId, employeeId, recipientType);
+                    //await SendFirebaseNotificationsAsync(schedulerJobItemId, leadId, employeeId, recipientType);
+                    await NotifyUnassignedLeadAsync(leadId);
+
                 }
                 catch (Exception ex)
                 {
@@ -176,64 +178,177 @@ namespace CRMWebServices.Services
                 await CompleteJobItemAsync(schedulerJobItemId);
             }
         }
-        private async Task SendFirebaseNotificationsAsync(long schedulerJobItemId, int leadId, int employeeId, string recipientType)
+      
+        public async Task SendEmployeeNotificationAsync(long? schedulerJobItemId,int employeeId,int entityId,string title,string message,string entityType,string recipientType)
         {
-            var devices = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status", "GET_EMPLOYEE_DEVICES"),
-                    new SqlParameter("@EmployeeId", employeeId)
-                );
+            var devices = await _database.ExecuteDataTableAsync(
+         "USP_CRM_SchedulerManagement",
+         new SqlParameter("@Status", "GET_EMPLOYEE_DEVICES"),
+         new SqlParameter("@EmployeeId", employeeId)
+     );
 
             if (devices == null || devices.Rows.Count == 0)
             {
-                _logger.LogInformation("No active devices found for EmployeeId {EmployeeId}.", employeeId);
+                _logger.LogInformation(
+                    "No active device found for EmployeeId {EmployeeId}.",
+                    employeeId);
+
                 return;
             }
 
-            foreach (DataRow device in devices.Rows)
+            DataRow device = devices.Rows[0];
+
+            string deviceToken =
+                device["DeviceToken"]?.ToString() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(deviceToken))
             {
-                string deviceToken = device["DeviceToken"]?.ToString() ?? "";
+                _logger.LogWarning(
+                    "No Firebase token found for EmployeeId {EmployeeId}.",
+                    employeeId);
 
-                if (string.IsNullOrWhiteSpace(deviceToken))
-                    continue;
+                return;
+            }
 
-                var notification = await CreateNotificationAsync(
+            try
+            {
+                long notificationId = 0;
+
+                // ============================================
+                // CREATE SCHEDULER NOTIFICATION
+                // ONLY FOR SCHEDULER EXECUTION
+                // ============================================
+
+                if (schedulerJobItemId.HasValue)
+                {
+                    var notification = await CreateNotificationAsync(
                         schedulerJobItemId,
                         employeeId,
                         deviceToken,
                         "PUSH",
-                        "Unassigned Lead",
-                        $"Lead #{leadId} is still unassigned.");
+                        title,
+                        message);
 
-                if (notification == null ||
-                    notification.Rows.Count == 0)
-                {
-                    _logger.LogWarning("Could not create notification record for EmployeeId {EmployeeId}.", employeeId);
-                    continue;
+                    if (notification == null ||
+                        notification.Rows.Count == 0)
+                    {
+                        _logger.LogWarning(
+                            "Could not create notification record for EmployeeId {EmployeeId}.",
+                            employeeId);
+
+                        return;
+                    }
+
+                    notificationId = Convert.ToInt64(
+                        notification.Rows[0]["SchedulerNotificationId"]);
                 }
 
-                long notificationId = Convert.ToInt64(notification.Rows[0]["SchedulerNotificationId"]);
+                // ============================================
+                // SEND FIREBASE NOTIFICATION
+                // ============================================
 
-                var result = await _firebase.SendNotificationAsync(deviceToken,
-                        "Unassigned Lead",
-                        $"Lead #{leadId} is still unassigned.",
-                        new Dictionary<string, string>
-                        {
-                            ["EntityType"] = "LEAD",
-                            ["EntityId"] = leadId.ToString(),
-                            ["RecipientType"] = recipientType
-                        });
+                var result = await _firebase.SendNotificationAsync(
+                    deviceToken,
+                    title,
+                    message,
+                    new Dictionary<string, string>
+                    {
+                        ["EntityType"] = entityType,
+                        ["EntityId"] = entityId.ToString(),
+                        ["RecipientType"] = recipientType
+                    });
+
+                // ============================================
+                // UPDATE SCHEDULER NOTIFICATION
+                // ONLY IF IT WAS CREATED
+                // ============================================
 
                 if (result.Success)
                 {
-                    await MarkNotificationSentAsync(notificationId, result.MessageId);
+                    if (schedulerJobItemId.HasValue && notificationId > 0)
+                    {
+                        await MarkNotificationSentAsync(
+                            notificationId,
+                            result.MessageId);
+                    }
+
+                    _logger.LogInformation(
+                        "Firebase notification sent successfully to EmployeeId {EmployeeId}.",
+                        employeeId);
                 }
                 else
                 {
-                    await MarkNotificationFailedAsync(notificationId, result.ErrorMessage);
+                    if (schedulerJobItemId.HasValue && notificationId > 0)
+                    {
+                        await MarkNotificationFailedAsync(
+                            notificationId,
+                            result.ErrorMessage);
+                    }
+
+                    _logger.LogWarning(
+                        "Firebase notification failed for EmployeeId {EmployeeId}. Error: {Error}",
+                        employeeId,
+                        result.ErrorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Notification failed for EmployeeId {EmployeeId}.",
+                    employeeId);
+
+                throw;
+            }
+
+        }
+
+        public async Task NotifyUnassignedLeadAsync(int leadId)
+        {
+            var recipients = await _database.ExecuteDataTableAsync(
+                SP_NAME,
+                new SqlParameter("@Status", "GET_LEAD_RECIPIENTS"),
+                new SqlParameter("@EntityId", leadId)
+            );
+
+            if (recipients == null || recipients.Rows.Count == 0)
+            {
+                _logger.LogWarning(
+                    "No recipients found for Lead {LeadId}.",
+                    leadId);
+
+                return;
+            }
+
+            foreach (DataRow recipient in recipients.Rows)
+            {
+                int employeeId = Convert.ToInt32(recipient["EmployeeId"]);
+
+                string recipientType =
+                    recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
+
+                try
+                {
+                    await SendEmployeeNotificationAsync(
+                        schedulerJobItemId: null,
+                        employeeId: employeeId,
+                        entityId: leadId,
+                        title: "Unassigned Lead",
+                        message: $"Lead #{leadId} is still unassigned.",
+                        entityType: "LEAD",
+                        recipientType: recipientType
+                    );
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",
+                        employeeId,
+                        leadId);
                 }
             }
         }
-
 
         private async Task<DataTable> ClaimJobItemAsync(long schedulerJobItemId)
         {
@@ -392,12 +507,12 @@ namespace CRMWebServices.Services
             }
         }
 
-        private async Task<DataTable?> CreateNotificationAsync(long schedulerJobItemId, int employeeId, string? deviceToken, string notificationType, string title, string message)
+        private async Task<DataTable?> CreateNotificationAsync(long? schedulerJobItemId, int employeeId, string? deviceToken, string notificationType, string title, string message)
         {
             var dt = await _database.ExecuteDataTableAsync(SP_NAME,
 
                     new SqlParameter("@Status", "CREATE_NOTIFICATION"),
-                    new SqlParameter("@SchedulerJobItemId", schedulerJobItemId),
+                    new SqlParameter("@SchedulerJobItemId", (object?)schedulerJobItemId ?? DBNull.Value),
                     new SqlParameter("@RecipientEmployeeId", employeeId),
                     new SqlParameter("@DeviceToken", (object?)deviceToken ?? DBNull.Value),
                     new SqlParameter("@NotificationType", notificationType),
