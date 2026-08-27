@@ -77,5 +77,25 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+
+        [HttpPost("GetDashboardCount")]
+        public async Task<IActionResult> GetDashboardCount([FromBody] AttendanceDashboardRequest request)
+        {
+            try
+            {
+                var response =
+                    await _attendanceRepository.GetDashboardCount(request);
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }

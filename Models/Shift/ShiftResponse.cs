@@ -33,7 +33,7 @@
 
         public bool IsNightShift { get; set; }
 
-        public bool IsActive { get; set; }
+        public bool? IsActive { get; set; }
 
         public int? CreatedBy { get; set; }
     }

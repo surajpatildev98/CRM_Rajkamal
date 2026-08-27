@@ -1,5 +1,6 @@
 ﻿using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
+using CRMWebServices.Models;
 using CRMWebServices.Models.Shift;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +20,11 @@ namespace CRMWebServices.Controllers
         }
 
         [HttpGet("GetShifts")]
-        public async Task<IActionResult> GetShifts()
+        public async Task<IActionResult> GetShifts([FromQuery] bool activeOnly = true)
         {
             try
             {
-                var shifts = await _shiftRepository.GetShifts();
+                var shifts = await _shiftRepository.GetShifts(activeOnly);
 
                 return Ok(new ApiResponse
                 {
@@ -112,13 +113,35 @@ namespace CRMWebServices.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new ApiResponse
-                {
-                    Status = false,
-                    Message = ex.Message
-                });
+                return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+/*
+        [HttpGet]
+        [Route("Employee/{employeeId}")]
+        public async Task<IActionResult> GetEmployeeShift(int employeeId)
+        {
+            try
+            {
+                if (employeeId <= 0)
+                {
+                    return BadRequest(new ShiftResponse
+                    {
+                        Status = false,
+                        Message = "Valid Employee Id is required.",
+                        Data = new List<ShiftModel>()
+                    });
+                }
+
+                var response = await _shiftRepository.GetEmployeeShift(employeeId);
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
+            }
+        }*/
 
     }
 }
