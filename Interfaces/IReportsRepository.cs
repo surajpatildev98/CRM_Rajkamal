@@ -7,5 +7,7 @@ namespace CRMWebServices.Interfaces
     {
         Task<ApiResponse> GetDashboard(ReportModels.CRMReportFilterRequest request);
         Task<ApiResponse> GetJourney(ReportModels.CRMReportJourneyRequest request);
+
+        Task<ApiResponse> GetReportFilters();
     }
 }
