@@ -11,13 +11,16 @@ namespace CRMWebServices.Services
     {
         private readonly IEmailConfigurationRepository _configurationRepository;
         private readonly ILogger<EmailService> _logger;
+        private readonly IConfiguration _config;
 
         public EmailService(
             IEmailConfigurationRepository configurationRepository,
-            ILogger<EmailService> logger)
+            ILogger<EmailService> logger,
+            IConfiguration config)
         {
             _configurationRepository = configurationRepository;
             _logger = logger;
+            _config = config;
         }
 
         public async Task<bool> SendAsync(EmailMessage message,CancellationToken cancellationToken = default)
@@ -50,10 +53,28 @@ namespace CRMWebServices.Services
                 email.To.Add(MailboxAddress.Parse(message.ToEmail));
                 email.Subject = message.Subject;
 
-                email.Body = new BodyBuilder
+                //email.Body = new BodyBuilder
+                //{
+                //    HtmlBody = message.HtmlBody
+                //}.ToMessageBody();
+
+                var builder = new BodyBuilder { HtmlBody = message.HtmlBody };
+
+                string logoPath = Path.Combine(AppContext.BaseDirectory, _config["EmailSettings:CompanyLogoPath"] ?? "");
+
+                if (File.Exists(logoPath))
                 {
-                    HtmlBody = message.HtmlBody
-                }.ToMessageBody();
+                    var logo = (MimePart)builder.LinkedResources.Add(logoPath);
+                    logo.ContentId = "companylogo";
+                    logo.ContentDisposition = new MimeKit.ContentDisposition(MimeKit.ContentDisposition.Inline);
+                    logo.FileName = "logo.jpg";
+                }
+                else
+                {
+                    _logger.LogWarning("Company logo not found at {Path}; sending email without inline logo.", logoPath);
+                }
+
+                email.Body = builder.ToMessageBody();
 
                 using var smtp = new SmtpClient();
 
