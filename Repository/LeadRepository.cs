@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Data;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using static Google.Apis.Requests.BatchRequest;
 
 namespace CRMWebServices.Repository
 {
@@ -333,8 +334,38 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
                 );
 
-                return MapResponse(dt, isCreate: false);
+                // return MapResponse(dt, isCreate: false);
+                var response = MapResponse(dt, isCreate: false);
+                if (response.Status && dt.Rows.Count > 0)
+                {
+                    int leadId = Convert.ToInt32(dt.Rows[0]["LeadId"]);
 
+                    string leadNo =
+                        dt.Rows[0]["LeadNo"]?.ToString() ?? "";
+
+                    try
+                    {
+                        await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                            schedulerJobItemId: null,
+                            employeeId: model.AssignedToEmployeeId,
+                            entityId: leadId,
+                            title: "Lead Transfer",
+                            message: $"Lead {leadNo} has been assigned to you.",
+                            entityType: "LEAD",
+                            recipientType: "TRANSFER"
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(
+                            ex,
+                            "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
+                            leadId,
+                            model.AssignedToEmployeeId);
+                    }
+                }
+
+                return response;
             }
             catch (Exception ex)
             {
@@ -1314,13 +1345,53 @@ namespace CRMWebServices.Repository
 
             response.Status = status;
             response.Message = row["Message"]?.ToString();
-            response.Data = status
-                ? new
+            /* response.Data = status
+                 ? new
+                 {
+                     LeadId = Convert.ToInt32(row["LeadId"]),
+                     AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                 }
+                 : null;
+
+             return response;*/
+
+            if (status)
+            {
+                int leadId = Convert.ToInt32(row["LeadId"]);
+                int assignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"]);
+
+                response.Data = new
                 {
-                    LeadId = Convert.ToInt32(row["LeadId"]),
-                    AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                    LeadId = leadId,
+                    AssignedToEmployeeId = assignedToEmployeeId
+                };
+
+                // Send notification to assigned employee
+                try
+                {
+                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                        schedulerJobItemId: null,
+                        employeeId: assignedToEmployeeId,
+                        entityId: leadId,
+                        title: "Lead Assigned",
+                        message: $"Lead has been assigned to you.",
+                        entityType: "LEAD",
+                        recipientType: "ASSIGN"
+                    );
                 }
-                : null;
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
+                        leadId,
+                        assignedToEmployeeId);
+                }
+            }
+            else
+            {
+                response.Data = null;
+            }
 
             return response;
         }
