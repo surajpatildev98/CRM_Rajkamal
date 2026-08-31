@@ -1,5 +1,6 @@
 ﻿using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
+using CRMWebServices.Services;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Data;
@@ -9,10 +10,12 @@ namespace CRMWebServices.Repository
     public class AuthRepository : IAuthRepository
     {
         private readonly IDatabaseService _database;
+        private readonly ILogger<AuthRepository> _logger;
 
-        public AuthRepository(IDatabaseService database)
+        public AuthRepository(IDatabaseService database, ILogger<AuthRepository> logger)
         {
             _database = database;
+            _logger = logger;
         }
 
         #region // IAuthRepository Implementation used for authentication and authorization     
@@ -69,7 +72,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        public async Task<ApiResponse> RegisterEmployeeDevice(int employeeId,RegisterEmployeeDeviceRequest request)
+        /*public async Task<ApiResponse> RegisterEmployeeDevice(int employeeId,RegisterEmployeeDeviceRequest request)
         {
             try
             {
@@ -108,6 +111,109 @@ namespace CRMWebServices.Repository
             }
             catch (Exception ex)
             {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                };
+            }
+        }*/
+
+        public async Task<ApiResponse> RegisterEmployeeDevice(
+    int employeeId,
+    RegisterEmployeeDeviceRequest request)
+        {
+            try
+            {
+                // STEP 2: Check what values are coming from the app
+                _logger.LogInformation(
+                    "REGISTER DEVICE - EmployeeId: {EmployeeId}",
+                    employeeId);
+
+                _logger.LogInformation(
+                    "REGISTER DEVICE - DeviceId: {DeviceId}",
+                    request.DeviceId);
+
+                _logger.LogInformation(
+                    "REGISTER DEVICE - DeviceType: {DeviceType}",
+                    request.DeviceType);
+
+                _logger.LogInformation(
+                    "REGISTER DEVICE - AppVersion: {AppVersion}",
+                    request.AppVersion);
+
+                _logger.LogInformation(
+                    "REGISTER DEVICE - DeviceToken exists: {HasToken}",
+                    !string.IsNullOrWhiteSpace(request.DeviceToken));
+
+
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_Authentication",
+
+                    new SqlParameter(
+                        "@Status",
+                        "REGISTER_EMPLOYEE_DEVICE"),
+
+                    new SqlParameter(
+                        "@EmployeeId",
+                        employeeId),
+
+                    new SqlParameter(
+                        "@DeviceId",
+                        (object?)request.DeviceId ?? DBNull.Value),
+
+                    new SqlParameter(
+                        "@DeviceToken",
+                        (object?)request.DeviceToken ?? DBNull.Value),
+
+                    new SqlParameter(
+                        "@DeviceType",
+                        (object?)request.DeviceType ?? DBNull.Value),
+
+                    new SqlParameter(
+                        "@AppVersion",
+                        (object?)request.AppVersion ?? DBNull.Value)
+                );
+
+
+                if (dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Device registration failed."
+                    };
+                }
+
+
+                return new ApiResponse
+                {
+                    Status = Convert.ToBoolean(
+                        dt.Rows[0]["Status"]),
+
+                    Message = dt.Rows[0]["Message"]?.ToString()
+                };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "SQL error while registering device for EmployeeId {EmployeeId}",
+                    employeeId);
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while registering device for EmployeeId {EmployeeId}",
+                    employeeId);
+
                 return new ApiResponse
                 {
                     Status = false,

@@ -178,8 +178,8 @@ namespace CRMWebServices.Services
                 await CompleteJobItemAsync(schedulerJobItemId);
             }
         }
-      
-        public async Task SendEmployeeNotificationAsync(long? schedulerJobItemId,int employeeId,int entityId,string title,string message,string entityType,string recipientType)
+
+        public async Task SendEmployeeNotificationAsync(long? schedulerJobItemId, int employeeId, int entityId, string title, string message, string entityType, string recipientType)
         {
             var devices = await _database.ExecuteDataTableAsync(
          "USP_CRM_SchedulerManagement",
@@ -305,6 +305,10 @@ namespace CRMWebServices.Services
 
         public async Task NotifyUnassignedLeadAsync(int leadId)
         {
+            _logger.LogInformation(
+      "Starting unassigned lead notification. LeadId: {LeadId}",
+      leadId);
+
             var recipients = await _database.ExecuteDataTableAsync(
                 SP_NAME,
                 new SqlParameter("@Status", "GET_LEAD_RECIPIENTS"),
@@ -320,12 +324,24 @@ namespace CRMWebServices.Services
                 return;
             }
 
+
+            _logger.LogInformation(
+                "Found {Count} recipient(s) for Lead {LeadId}.",
+                recipients.Rows.Count,
+                leadId);
+
             foreach (DataRow recipient in recipients.Rows)
             {
                 int employeeId = Convert.ToInt32(recipient["EmployeeId"]);
 
                 string recipientType =
                     recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
+
+                _logger.LogInformation(
+           "Sending unassigned lead notification. LeadId: {LeadId}, EmployeeId: {EmployeeId}, RecipientType: {RecipientType}",
+           leadId,
+           employeeId,
+           recipientType);
 
                 try
                 {

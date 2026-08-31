@@ -258,17 +258,19 @@ namespace CRMWebServices.Controllers
                 if (leadId == null)
                 {
                     // Get access filter based on user's permissions
-                    var accessFilter = await _authorization.GetAccessFilter(User, "Lead");
+                    //var accessFilter = await _authorization.GetAccessFilter(User, "Lead");
 
-                    // Apply filter based on user's access level
-                    if (!accessFilter.CanViewAll)
-                    {
-                        // For Sales: Show only assigned leads
-                        // For PreSales: Show created AND assigned leads
-                        filter.LoggedInEmployeeId = accessFilter.EmployeeId;
-                        filter.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
-                    }
+                    //// Apply filter based on user's access level
+                    //if (!accessFilter.CanViewAll)
+                    //{
+                    //    // For Sales: Show only assigned leads
+                    //    // For PreSales: Show created AND assigned leads
+                    //    filter.LoggedInEmployeeId = accessFilter.EmployeeId;
+                    //    filter.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
+                    //}
                     // If CanViewAll = true (Admin/Manager), no filter applied
+
+                    filter.LoggedInEmployeeId = User.EmployeeId();
 
                     var listResponse = await _repository.GetLeadList(filter);
                     return Ok(listResponse);
