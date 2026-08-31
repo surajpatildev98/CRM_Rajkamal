@@ -19,11 +19,13 @@ namespace CRMWebServices.Repository
     {
         private readonly IDatabaseService _database;
         private readonly ILogger<PermissionService> _logger;
+        private readonly ISchedulerExecutionService _schedulerExecutionService;
 
-        public OpportunityRepository(IDatabaseService database, ILogger<PermissionService> logger)
+        public OpportunityRepository(IDatabaseService database, ILogger<PermissionService> logger,ISchedulerExecutionService schedulerExecutionService)
         {
             _database = database;
             _logger = logger;
+            _schedulerExecutionService = schedulerExecutionService;
         }
 
 
@@ -503,12 +505,71 @@ namespace CRMWebServices.Repository
 
                 if (status == 1)
                 {
-                    var data = new ConvertLeadResponse
+                    /*var data = new ConvertLeadResponse
                     {
                         OpportunityId = Convert.ToInt32(row["OpportunityId"]),
                         CustomerId = row["CustomerId"] == DBNull.Value ? null : Convert.ToInt32(row["CustomerId"]),
                         OpportunityNo = row["OpportunityNo"]?.ToString()
                     };
+                    return new ApiResponse
+                    {
+                        Status = true,
+                        Message = message,
+                        Data = data
+                    };*/
+
+                    int opportunityId =
+       Convert.ToInt32(row["OpportunityId"]);
+
+                    string opportunityNo =
+                        row["OpportunityNo"]?.ToString();
+
+                    int assignedEmployeeId =
+                        row["AssignedToEmployeeId"] == DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(row["AssignedToEmployeeId"]);
+                    if (assignedEmployeeId > 0)
+                    {
+                        try
+                        {
+                            await _schedulerExecutionService
+                                .SendEmployeeNotificationAsync(
+                                    schedulerJobItemId: null,
+                                    employeeId: assignedEmployeeId,
+                                    entityId: opportunityId,
+                                    title: "Opportunity Assigned",
+                                    message: $"Opportunity {opportunityNo} has been assigned to you.",
+                                    entityType: "OPPORTUNITY",
+                                    recipientType: "ASSIGNED_EMPLOYEE"
+                                );
+                        }
+                        catch (Exception ex)
+                        {
+                            // Notification failure should not make
+                            // opportunity conversion fail
+                            _logger.LogError(
+                                ex,
+                                "Failed to send opportunity assignment notification. " +
+                                "OpportunityId {OpportunityId}, " +
+                                "OpportunityNo {OpportunityNo}, " +
+                                "AssignedEmployeeId {AssignedEmployeeId}",
+                                opportunityId,
+                                opportunityNo,
+                                assignedEmployeeId);
+                        }
+                    }
+                    var data = new ConvertLeadResponse
+                    {
+                        OpportunityId = opportunityId,
+
+                        CustomerId =
+                            row["CustomerId"] == DBNull.Value
+                                ? null
+                                : Convert.ToInt32(row["CustomerId"]),
+
+                        OpportunityNo = opportunityNo
+                    };
+
                     return new ApiResponse
                     {
                         Status = true,
@@ -568,13 +629,43 @@ namespace CRMWebServices.Repository
 
             response.Status = status;
             response.Message = row["Message"]?.ToString();
-            response.Data = status
-                ? new
+            if (status)
+            {
+                int opportunityId = Convert.ToInt32(row["OpportunityId"]);
+                int assignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"]);
+
+                response.Data = new
                 {
-                    OpportunityId = Convert.ToInt32(row["OpportunityId"]),
-                    AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
+                    OpportunityId = opportunityId,
+                    AssignedToEmployeeId = assignedToEmployeeId
+                };
+
+                // Send notification to assigned employee
+                try
+                {
+                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                        schedulerJobItemId: null,
+                        employeeId: assignedToEmployeeId,
+                        entityId: opportunityId,
+                        title: "Opportunity Assigned",
+                        message: "An opportunity has been assigned to you.",
+                        entityType: "OPPORTUNITY",
+                        recipientType: "ASSIGN"
+                    );
                 }
-                : null;
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Failed to send assigned Opportunity notification. OpportunityId {OpportunityId}, EmployeeId {EmployeeId}",
+                        opportunityId,
+                        assignedToEmployeeId);
+                }
+            }
+            else
+            {
+                response.Data = null;
+            }
 
             return response;
         }

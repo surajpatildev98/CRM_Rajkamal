@@ -18,13 +18,15 @@ namespace CRMWebServices.Repository
     {
         private readonly IDatabaseService _database;
         private readonly ILogger<PermissionService> _logger;
+        private readonly ISchedulerExecutionService _schedulerExecutionService;
 
         private const string SP_NAME = "USP_CRM_OpportunityQuotationManagement";
 
-        public OpportunityQuotationRepository(IDatabaseService database, ILogger<PermissionService> logger)
+        public OpportunityQuotationRepository(IDatabaseService database, ILogger<PermissionService> logger,ISchedulerExecutionService schedulerExecutionService)
         {
             _database = database;
             _logger = logger;
+            _schedulerExecutionService = schedulerExecutionService;
         }
 
         #region  Helper Methods
@@ -217,7 +219,41 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@CreatedBy", model.CreatedBy)
                 );
 
-                return MapResponse(dt);
+                var response = MapResponse(dt);
+                if (response.Status)
+                {
+                    int opportunityId = model.Ref_OpportunityId;
+                    string quotationNo = Convert.ToString(dt.Rows[0]["QuotationNo"]);
+
+                    int managerEmployeeId =
+                        Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
+
+                    if (managerEmployeeId > 0)
+                    {
+                        try
+                        {
+                            await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                schedulerJobItemId: null,
+                                employeeId: managerEmployeeId,
+                                entityId: opportunityId,
+                                title: "Quotation Raised",
+                                message: $"Quotation {quotationNo} has been raised.",
+                                entityType: "OPPORTUNITY",
+                                recipientType: "MANAGER"
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to send quotation notification to Manager. OpportunityId {OpportunityId}, ManagerEmployeeId {ManagerEmployeeId}",
+                                opportunityId,
+                                managerEmployeeId);
+                        }
+                    }
+                }
+
+                return response;
             }
             catch (SqlException ex)
             {
@@ -743,7 +779,79 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@CreatedBy", model.CreatedBy)
                 );
 
-                return MapResponse(dt);
+                // return MapResponse(dt);
+                var response = MapResponse(dt);
+
+                if (response.Status && dt.Rows.Count > 0)
+                {
+                    int quotationRaisedByEmployeeId =
+                        Convert.ToInt32(
+                            dt.Rows[0]["QuotationRaisedByEmployeeId"]);
+
+                    int opportunityId =
+                        Convert.ToInt32(
+                            dt.Rows[0]["OpportunityId"]);
+
+                    string quotationNo =
+                        Convert.ToString(
+                            dt.Rows[0]["QuotationNo"]);
+
+                    string decisionCode =
+                        Convert.ToString(
+                            dt.Rows[0]["DecisionCode"]);
+
+                    if (quotationRaisedByEmployeeId > 0)
+                    {
+                        try
+                        {
+                            string title;
+                            string message;
+
+                            if (decisionCode == "APPROVED")
+                            {
+                                title = "Quotation Approved";
+
+                                message =
+                                    $"Quotation {quotationNo} has been approved by Management.";
+                            }
+                            else
+                            {
+                                title = "Quotation Rejected";
+
+                                message =
+                                    $"Quotation {quotationNo} has been rejected by Management.";
+                            }
+
+                            await _schedulerExecutionService
+                                .SendEmployeeNotificationAsync(
+                                    schedulerJobItemId: null,
+                                    employeeId: quotationRaisedByEmployeeId,
+                                    entityId: opportunityId,
+                                    title: title,
+                                    message: message,
+                                    entityType: "OPPORTUNITY",
+                                    recipientType: "QUOTATION_RAISED_BY"
+                                );
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to send Management Review notification. " +
+                                "QuotationId {QuotationId}, " +
+                                "QuotationNo {QuotationNo}, " +
+                                "EmployeeId {EmployeeId}, " +
+                                "Decision {DecisionCode}",
+                                model.QuotationId,
+                                quotationNo,
+                                quotationRaisedByEmployeeId,
+                                decisionCode);
+                        }
+                    }
+                }
+
+                return response;
+
             }
             catch (SqlException ex)
             {
@@ -835,7 +943,47 @@ namespace CRMWebServices.Repository
                     )
                 );
 
-                return MapResponse(dt);
+                var response = MapResponse(dt);
+
+                if (response.Status)
+                {
+                    int opportunityId =
+                        Convert.ToInt32(dt.Rows[0]["OpportunityId"]);
+                    string quotationNo = Convert.ToString(dt.Rows[0]["QuotationNo"]);
+
+                    int managerEmployeeId =
+                        Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
+
+                    // ============================================
+                    // NOTIFY MANAGER - QUOTATION REVISED
+                    // ============================================
+
+                    if (managerEmployeeId > 0)
+                    {
+                        try
+                        {
+                            await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                schedulerJobItemId: null,
+                                employeeId: managerEmployeeId,
+                                entityId: opportunityId,
+                                title: "Quotation Revised",
+                                message: $"Quotation {quotationNo} has been revised.",
+                                entityType: "OPPORTUNITY",
+                                recipientType: "MANAGER"
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to send revised quotation notification to Manager. OpportunityId {OpportunityId}, ManagerEmployeeId {ManagerEmployeeId}",
+                                opportunityId,
+                                managerEmployeeId);
+                        }
+                    }
+                }
+
+                return response;
             }
             catch (SqlException ex)
             {
