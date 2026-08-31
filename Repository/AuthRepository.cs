@@ -10,7 +10,11 @@ namespace CRMWebServices.Repository
     public class AuthRepository : IAuthRepository
     {
         private readonly IDatabaseService _database;
+
         private readonly ILogger<AuthRepository> _logger;
+
+        
+
 
         public AuthRepository(IDatabaseService database, ILogger<AuthRepository> logger)
         {
@@ -221,5 +225,256 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+
+        #region // Password Reset - Generate OTP
+        public async Task<ApiResponse> GenerateResetOtp(int employeeId, string otpHash)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_Authentication",
+                    new SqlParameter("@Status", "GENERATE_RESET_OTP"),
+                    new SqlParameter("@EmployeeId", employeeId),
+                    new SqlParameter("@OTPHash", otpHash)
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "No response returned from database."
+                    };
+                }
+
+                var row = dt.Rows[0];
+
+                return new ApiResponse
+                {
+                    Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]),
+                    Message = row["Message"]?.ToString() ?? string.Empty
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        #region // Password Reset - Get OTP
+        public async Task<DataRow?> GetResetOtp(int employeeId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_Authentication",
+                    new SqlParameter("@Status", "GET_RESET_OTP"),
+                    new SqlParameter("@EmployeeId", employeeId)
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return null;
+
+                return dt.Rows[0];
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        #endregion
+
+        #region // Password Reset - Increment OTP Attempt
+        public async Task<ApiResponse> IncrementOtpAttempt(int employeeId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_Authentication",
+                    new SqlParameter("@Status", "INCREMENT_OTP_ATTEMPT"),
+                    new SqlParameter("@EmployeeId", employeeId)
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "No response returned from database."
+                    };
+                }
+
+                var row = dt.Rows[0];
+
+                return new ApiResponse
+                {
+                    Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]),
+                    Message = row["Message"]?.ToString() ?? string.Empty
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        #region // Password Reset - Verify OTP
+        public async Task<ApiResponse> VerifyResetOtp(int employeeId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_Authentication",
+                    new SqlParameter("@Status", "VERIFY_RESET_OTP"),
+                    new SqlParameter("@EmployeeId", employeeId)
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "No response returned from database."
+                    };
+                }
+
+                var row = dt.Rows[0];
+
+                bool status =
+                    row["Status"] != DBNull.Value &&
+                    Convert.ToBoolean(row["Status"]);
+
+                return new ApiResponse
+                {
+                    Status = status,
+                    Message = row["Message"]?.ToString() ?? string.Empty,
+                    Data = status
+                        ? new
+                        {
+                            ResetToken = row["ResetToken"] != DBNull.Value
+                                ? Guid.Parse(row["ResetToken"].ToString()!)
+                                : Guid.Empty
+                        }
+                        : null
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        #region // Password Reset - Reset Password
+        public async Task<ApiResponse> ResetPassword(int employeeId,Guid resetToken,string newPasswordHash)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
+                    new SqlParameter("@Status", "RESET_PASSWORD"),
+                    new SqlParameter("@EmployeeId", employeeId),
+                    new SqlParameter("@ResetToken", resetToken),
+                    new SqlParameter("@NewPassword", newPasswordHash)
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "No response returned from database."
+                    };
+                }
+
+                var row = dt.Rows[0];
+
+                return new ApiResponse
+                {
+                    Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]),
+                    Message = row["Message"]?.ToString() ?? string.Empty
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        #region // Password Reset - Get Employee By Reset Token
+        public async Task<int?> GetResetEmployeeByToken(Guid resetToken)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_Authentication",
+                    new SqlParameter("@Status", "GET_RESET_EMPLOYEE"),
+                    new SqlParameter("@ResetToken", resetToken)
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return null;
+
+                if (dt.Rows[0]["EmployeeId"] == DBNull.Value)
+                    return null;
+
+                return Convert.ToInt32(dt.Rows[0]["EmployeeId"]);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        #endregion
     }
 }
