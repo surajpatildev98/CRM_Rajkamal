@@ -178,35 +178,27 @@ namespace CRMWebServices.Services
                 await CompleteJobItemAsync(schedulerJobItemId);
             }
         }
-      
-        public async Task SendEmployeeNotificationAsync(long? schedulerJobItemId,int employeeId,int entityId,string title,string message,string entityType,string recipientType)
+
+        public async Task SendEmployeeNotificationAsync(long? schedulerJobItemId, int employeeId, int entityId, string title, string message, string entityType, string recipientType)
         {
-            var devices = await _database.ExecuteDataTableAsync(
-         "USP_CRM_SchedulerManagement",
-         new SqlParameter("@Status", "GET_EMPLOYEE_DEVICES"),
-         new SqlParameter("@EmployeeId", employeeId)
+            var devices = await _database.ExecuteDataTableAsync("USP_CRM_SchedulerManagement",
+                new SqlParameter("@Status", "GET_EMPLOYEE_DEVICES"),
+                new SqlParameter("@EmployeeId", employeeId)
      );
 
             if (devices == null || devices.Rows.Count == 0)
             {
-                _logger.LogInformation(
-                    "No active device found for EmployeeId {EmployeeId}.",
-                    employeeId);
-
+                _logger.LogInformation("No active device found for EmployeeId {EmployeeId}.",employeeId);
                 return;
             }
 
             DataRow device = devices.Rows[0];
 
-            string deviceToken =
-                device["DeviceToken"]?.ToString() ?? string.Empty;
+            string deviceToken =device["DeviceToken"]?.ToString() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(deviceToken))
             {
-                _logger.LogWarning(
-                    "No Firebase token found for EmployeeId {EmployeeId}.",
-                    employeeId);
-
+                _logger.LogWarning("No Firebase token found for EmployeeId {EmployeeId}.",employeeId);
                 return;
             }
 
