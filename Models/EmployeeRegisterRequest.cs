@@ -95,6 +95,7 @@
         public DateTime? VerifiedOn { get; set; }
 
         public string? Remarks { get; set; }
+        public string Base64Content { get; set; }
     }
 
     public class EmployeeMasterModel

@@ -17,6 +17,78 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
+        private static readonly string[] AllowedExtensions = { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png" };
+        private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
+        private string SaveBase64Attachment(string base64, string originalFileName, string folderName)
+        {
+            if (string.IsNullOrWhiteSpace(base64) || string.IsNullOrWhiteSpace(originalFileName))
+                return null;
+
+            // Remove data URI prefix if Android sends it
+            if (base64.Contains(","))
+                base64 = base64.Substring(base64.IndexOf(",") + 1);
+
+            var extension = Path.GetExtension(originalFileName).ToLowerInvariant();
+
+            if (!AllowedExtensions.Contains(extension))
+                throw new Exception("Unsupported file type.");
+
+            byte[] fileBytes;
+            try
+            {
+                fileBytes = Convert.FromBase64String(base64);
+            }
+            catch (FormatException)
+            {
+                throw new Exception("Attachment data is not valid Base64.");
+            }
+
+            if (fileBytes.Length > MaxFileSizeBytes)
+                throw new Exception("File exceeds 10MB limit.");
+
+            var uploadsFolder = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Uploads",
+                folderName);
+
+            Directory.CreateDirectory(uploadsFolder);
+
+            // Remove invalid characters from filename
+            var fileName = Path.GetFileNameWithoutExtension(originalFileName);
+            fileName = string.Concat(fileName.Split(Path.GetInvalidFileNameChars()));
+
+            // Generate unique filename
+            var uniqueFileName = $"{fileName}_{DateTime.Now:yyyyMMddHHmmssfff}{extension}";
+
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            File.WriteAllBytes(filePath, fileBytes);
+
+            return Path.Combine("Uploads", folderName, uniqueFileName).Replace("\\", "/");
+        }
+        private string? BuildFileUrl(string? filePath)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(filePath))
+                    return null;
+
+                var relative = filePath
+                    .Replace("Uploads/", "")
+                    .Replace("Uploads\\", "");
+
+                var segments = relative
+                    .Split('/', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(Uri.EscapeDataString);
+
+                return "/files/" + string.Join("/", segments);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error while building document URL.", ex);
+            }
+        }
+
         // Employee Registration 
         public async Task<ApiResponse> Register(EmployeeRegisterRequest model)
         {
@@ -101,9 +173,45 @@ namespace CRMWebServices.Repository
                     ? JsonConvert.SerializeObject(model.FamilyDetails)
                     : null;
 
-                string documentJson = model.Documents != null && model.Documents.Count > 0
-                    ? JsonConvert.SerializeObject(model.Documents)
-                    : null;
+                //string documentJson = model.Documents != null && model.Documents.Count > 0
+                //    ? JsonConvert.SerializeObject(model.Documents)
+                //    : null;
+
+                // Process EMPLOYEE DOCUMENTS - save files, build metadata list
+                List<object> savedDocuments = new List<object>();
+
+                if (model.Documents != null && model.Documents.Count > 0)
+                {
+                    foreach (var doc in model.Documents)
+                    {
+                        if (string.IsNullOrWhiteSpace(doc.Base64Content) || string.IsNullOrWhiteSpace(doc.DocumentName))
+                            continue;
+
+                        try
+                        {
+                            string savedPath = SaveBase64Attachment(doc.Base64Content, doc.DocumentName, "EmployeeDocuments");
+
+                            savedDocuments.Add(new
+                            {
+                                DocumentTypeId = doc.DocumentTypeId,
+                                DocumentName = doc.DocumentName,
+                                DocumentPath = savedPath,
+                                IssueDate = doc.IssueDate,
+                                ExpiryDate = doc.ExpiryDate
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            return new ApiResponse
+                            {
+                                Status = false,
+                                Message = $"Error processing document '{doc.DocumentName}': {ex.Message}"
+                            };
+                        }
+                    }
+                }
+
+                string documentJson = savedDocuments.Count > 0 ? JsonConvert.SerializeObject(savedDocuments) : null;
 
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
@@ -530,7 +638,7 @@ namespace CRMWebServices.Repository
 
                             DocumentPath = row["DocumentPath"] == DBNull.Value
                                 ? null
-                                : row["DocumentPath"]?.ToString(),
+                                : BuildFileUrl(row["DocumentPath"]?.ToString()),
                             IssueDate = row["IssueDate"] == DBNull.Value ? null : Convert.ToDateTime(row["IssueDate"]),
 
                             ExpiryDate = row["ExpiryDate"] == DBNull.Value
@@ -584,10 +692,46 @@ namespace CRMWebServices.Repository
                         ? JsonConvert.SerializeObject(model.FamilyDetails)
                         : null;
 
+                //string documentJson =
+                //    model.Document != null && model.Document.Count > 0
+                //        ? JsonConvert.SerializeObject(model.Document)
+                //        : null;
+
+                List<object> savedDocuments = new List<object>();
+
+                if (model.Document != null && model.Document.Count > 0)
+                {
+                    foreach (var doc in model.Document)
+                    {
+                        if (string.IsNullOrWhiteSpace(doc.Base64Content) || string.IsNullOrWhiteSpace(doc.DocumentName))
+                            continue;
+
+                        try
+                        {
+                            string savedPath = SaveBase64Attachment(doc.Base64Content, doc.DocumentName, "EmployeeDocuments");
+
+                            savedDocuments.Add(new
+                            {
+                                DocumentTypeId = doc.DocumentTypeId,
+                                DocumentName = doc.DocumentName,
+                                DocumentPath = savedPath,
+                                IssueDate = doc.IssueDate,
+                                ExpiryDate = doc.ExpiryDate
+                            });
+                        }
+                        catch (Exception ex)
+                        {
+                            return new ApiResponse
+                            {
+                                Status = false,
+                                Message = $"Error processing document '{doc.DocumentName}': {ex.Message}"
+                            };
+                        }
+                    }
+                }
+
                 string documentJson =
-                    model.Document != null && model.Document.Count > 0
-                        ? JsonConvert.SerializeObject(model.Document)
-                        : null;
+                    savedDocuments.Count > 0 ? JsonConvert.SerializeObject(savedDocuments) : null;
 
 
                 var parameters = new List<SqlParameter>

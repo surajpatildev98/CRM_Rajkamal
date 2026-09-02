@@ -4,6 +4,7 @@ using CRMWebServices.Services;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
 using System.Data;
+using static CRMWebServices.Models.LogoutModels;
 using static CRMWebServices.Models.PermissionModels;
 namespace CRMWebServices.Repository
 {
@@ -11,11 +12,13 @@ namespace CRMWebServices.Repository
     {
         private readonly IDatabaseService _database;
         private readonly ILogger<AuthRepository> _logger;
+        private readonly IFirebaseNotificationService _firebaseNotificationService;
 
-        public AuthRepository(IDatabaseService database, ILogger<AuthRepository> logger)
+        public AuthRepository(IDatabaseService database, ILogger<AuthRepository> logger, IFirebaseNotificationService firebaseNotificationService)
         {
             _database = database;
             _logger = logger;
+            _firebaseNotificationService = firebaseNotificationService;
         }
 
         #region // IAuthRepository Implementation used for authentication and authorization     
@@ -219,6 +222,317 @@ namespace CRMWebServices.Repository
                     Status = false,
                     Message = ex.Message
                 };
+            }
+        }
+
+        public async Task<ApiResponse> ForceLogoutDevice(int employeeId,string deviceId)
+        {
+            try
+            {
+                _logger.LogInformation(
+                    "FORCE LOGOUT - EmployeeId: {EmployeeId}, DeviceId: {DeviceId}",
+                    employeeId,
+                    deviceId);
+
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_Authentication",
+
+                    new SqlParameter(
+                        "@Status",
+                        "FORCE_LOGOUT_DEVICE"),
+
+                    new SqlParameter(
+                        "@EmployeeId",
+                        employeeId),
+
+                    new SqlParameter(
+                        "@DeviceId",
+                        deviceId)
+                );
+
+
+                if (dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Old device not found."
+                    };
+                }
+
+
+                bool status = Convert.ToBoolean(
+                    dt.Rows[0]["Status"]);
+
+                string message =
+                    dt.Rows[0]["Message"]?.ToString()
+                    ?? "Force logout failed.";
+
+
+                if (!status)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = message
+                    };
+                }
+
+
+                // ------------------------------------------
+                // Get OLD DEVICE Firebase token
+                // ------------------------------------------
+
+                string? oldDeviceToken = null;
+
+                if (dt.Columns.Contains("DeviceToken") &&
+                    dt.Rows[0]["DeviceToken"] != DBNull.Value)
+                {
+                    oldDeviceToken =
+                        dt.Rows[0]["DeviceToken"]?.ToString();
+                }
+
+
+                _logger.LogInformation(
+                    "FORCE LOGOUT - Old Device Token exists: {HasToken}",
+                    !string.IsNullOrWhiteSpace(oldDeviceToken));
+
+
+                // ------------------------------------------
+                // Send FORCE_LOGOUT notification
+                // ------------------------------------------
+
+                if (!string.IsNullOrWhiteSpace(oldDeviceToken))
+                {
+                    var notificationResult =
+                        await _firebaseNotificationService.SendNotificationAsync(
+                            oldDeviceToken,
+                            "Session Expired",
+                            "Your account has been logged in on another device. You have been logged out.",
+                            new Dictionary<string, string>
+                            {
+                        { "type", "FORCE_LOGOUT" },
+                        { "employeeId", employeeId.ToString() },
+                        { "deviceId", deviceId }
+                            });
+
+                    if (notificationResult.Success)
+                    {
+                        _logger.LogInformation(
+                            "FORCE LOGOUT notification sent successfully. MessageId: {MessageId}",
+                            notificationResult.MessageId);
+                    }
+                    else
+                    {
+                        _logger.LogWarning(
+                            "FORCE LOGOUT notification failed. Error: {Error}",
+                            notificationResult.ErrorMessage);
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning(
+                        "FORCE LOGOUT - Old device has no Firebase token.");
+                }
+
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = "Old device logged out successfully."
+                };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "SQL error while force logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",
+                    employeeId,
+                    deviceId);
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while force logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",
+                    employeeId,
+                    deviceId);
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<ApiResponse> Logout(int employeeId,string deviceId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_Authentication",
+
+                    new SqlParameter(
+                        "@Status",
+                        "LOGOUT_DEVICE"),
+
+                    new SqlParameter(
+                        "@EmployeeId",
+                        employeeId),
+
+                    new SqlParameter(
+                        "@DeviceId",
+                        deviceId)
+                );
+
+
+                if (dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Logout failed."
+                    };
+                }
+
+
+                bool status = Convert.ToBoolean(
+                    dt.Rows[0]["Status"]);
+
+
+                string message =
+                    dt.Rows[0]["Message"]?.ToString()
+                    ?? "Logout failed.";
+
+
+                return new ApiResponse
+                {
+                    Status = status,
+                    Message = message
+                };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "SQL error while logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",
+                    employeeId,
+                    deviceId);
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",
+                    employeeId,
+                    deviceId);
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                };
+            }
+        }
+
+        public async Task<ActiveDeviceInfo?> CheckActiveDevice(int employeeId,string deviceId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_Authentication",
+
+                    new SqlParameter(
+                        "@Status",
+                        "CHECK_ACTIVE_DEVICE"),
+
+                    new SqlParameter(
+                        "@EmployeeId",
+                        employeeId),
+
+                    new SqlParameter(
+                        "@DeviceId",
+                        deviceId)
+                );
+
+
+                // No active device
+                if (dt.Rows.Count == 0)
+                {
+                    return null;
+                }
+
+
+                DataRow row = dt.Rows[0];
+
+
+                return new ActiveDeviceInfo
+                {
+                    EmployeeDeviceId = Convert.ToInt32(
+                        row["EmployeeDeviceId"]),
+
+                    Ref_EmployeeId = Convert.ToInt32(
+                        row["Ref_EmployeeId"]),
+
+                    ActiveDeviceId = row["ActiveDeviceId"]?.ToString(),
+
+                    ActiveDeviceToken =
+                        row["ActiveDeviceToken"] == DBNull.Value
+                            ? null
+                            : row["ActiveDeviceToken"]?.ToString(),
+
+                    DeviceType =
+                        row["DeviceType"] == DBNull.Value
+                            ? null
+                            : row["DeviceType"]?.ToString(),
+
+                    AppVersion =
+                        row["AppVersion"] == DBNull.Value
+                            ? null
+                            : row["AppVersion"]?.ToString(),
+
+                    IsActive = Convert.ToBoolean(
+                        row["IsActive"]),
+
+                    LastSeenOn =
+                        row["LastSeenOn"] == DBNull.Value
+                            ? null
+                            : Convert.ToDateTime(row["LastSeenOn"]),
+
+                    IsSameDevice = Convert.ToBoolean(
+                        row["IsSameDevice"])
+                };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "SQL error while checking active device for EmployeeId {EmployeeId}",
+                    employeeId);
+
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while checking active device for EmployeeId {EmployeeId}",
+                    employeeId);
+
+                throw;
             }
         }
     }
