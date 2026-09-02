@@ -193,6 +193,7 @@ namespace CRMWebServices.Services
             if (await HasPermission(user, $"{resourceType}_ViewAll"))
             {
                 filter.CanViewAll = true;
+                filter.EmployeeId = employeeId;   // ADDED — was missing
                 filter.FilterType = "All";
                 return filter;
             }

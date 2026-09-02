@@ -112,11 +112,14 @@ namespace CRMWebServices.Controllers
             try
             {
                 // ✅ Use "Opp" for Opportunity resource
-                var accessFilter = await _authorization.GetAccessFilter(User, "Opp");
+                var accessFilter = await _authorization.GetAccessFilter(User, "Opp");              
+
+                // IMPORTANT: Pass logged-in employee to SP
+                request.LoggedInEmployeeId = accessFilter.EmployeeId;
 
                 if (!accessFilter.CanViewAll)
                 {
-                    request.FilterOwnerId = accessFilter.EmployeeId;
+                    //request.FilterOwnerId = accessFilter.EmployeeId;
                     request.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
                 }
 
