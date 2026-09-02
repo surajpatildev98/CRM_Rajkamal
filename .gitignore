@@ -132,4 +132,4 @@ appsettings.Local.json
 
 publish/
 Publish/
-artifacts/
+artifacts/Firebase/firebase-service-account.json 

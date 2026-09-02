@@ -267,8 +267,11 @@
             public List<CRMReportOpportunityDetailsResponse> Opportunities { get; set; }
                 = new List<CRMReportOpportunityDetailsResponse>();
 
-            public List<CRMReportOpportunityRequirementResponse> Requirements { get; set; }
-                = new List<CRMReportOpportunityRequirementResponse>();
+            //public List<CRMReportOpportunityRequirementResponse> Requirements { get; set; }
+            //    = new List<CRMReportOpportunityRequirementResponse>();
+
+            public List<CRMReportRequirementResponse> Requirements { get; set; }
+    = new List<CRMReportRequirementResponse>();
 
             public List<CRMReportQuotationResponse> Quotations { get; set; }
                 = new List<CRMReportQuotationResponse>();
@@ -294,8 +297,11 @@
             public List<CRMReportOpportunityAssignmentResponse> OpportunityAssignments { get; set; }
                 = new List<CRMReportOpportunityAssignmentResponse>();
 
-            public List<CRMReportActivityAttachmentResponse> ActivityAttachments { get; set; }
-                = new List<CRMReportActivityAttachmentResponse>();
+            //public List<CRMReportActivityAttachmentResponse> ActivityAttachments { get; set; }
+            //    = new List<CRMReportActivityAttachmentResponse>();
+
+            public List<CRMReportActivityExpenseResponse> Expenses { get; set; } = new();
+
         }
 
 
@@ -433,6 +439,8 @@
             public int? Ref_NewLeadStatusId { get; set; }
 
             public DateTime? CreatedOn { get; set; }
+
+            public List<CRMReportActivityAttachmentResponse> Attachments { get; set; } = new();
         }
 
 
@@ -539,46 +547,68 @@
         // OPPORTUNITY REQUIREMENTS
 
 
-        public class CRMReportOpportunityRequirementResponse
+        //public class CRMReportOpportunityRequirementResponse
+        //{
+        //    public int OpportunityRequirementId { get; set; }
+
+        //    public int Ref_OpportunityId { get; set; }
+
+        //    public int? Ref_LeadRequirementId { get; set; }
+
+        //    public int Ref_ProductId { get; set; }
+
+        //    public string? ProductCode { get; set; }
+
+        //    public string? ProductName { get; set; }
+
+        //    public int? Ref_ProductCategoryId { get; set; }
+
+        //    public string? CategoryCode { get; set; }
+
+        //    public string? CategoryName { get; set; }
+
+        //    public decimal Quantity { get; set; }
+
+        //    public string? RequirementRemark { get; set; }
+
+        //    public int Ref_UnitId { get; set; }
+
+        //    public bool IsActive { get; set; }
+
+        //    public bool IsDeleted { get; set; }
+
+        //    public DateTime? CreatedOn { get; set; }
+
+        //    public long CreatedBy { get; set; }
+
+        //    public DateTime? UpdatedOn { get; set; }
+
+        //    public long? UpdatedBy { get; set; }
+        //}
+
+        public class CRMReportRequirementResponse
         {
-            public int OpportunityRequirementId { get; set; }
-
-            public int Ref_OpportunityId { get; set; }
-
+            public string? RequirementType { get; set; }
+            public int RequirementId { get; set; }
+            public int LeadId { get; set; }
+            public int? OpportunityId { get; set; }
             public int? Ref_LeadRequirementId { get; set; }
-
-            public int Ref_ProductId { get; set; }
-
+            public int? Ref_ProductId { get; set; }
             public string? ProductCode { get; set; }
-
             public string? ProductName { get; set; }
-
             public int? Ref_ProductCategoryId { get; set; }
-
             public string? CategoryCode { get; set; }
-
             public string? CategoryName { get; set; }
-
-            public decimal Quantity { get; set; }
-
+            public decimal? Quantity { get; set; }
             public string? RequirementRemark { get; set; }
-
-            public int Ref_UnitId { get; set; }
-
+            public int? Ref_UnitId { get; set; }
             public bool IsActive { get; set; }
-
             public bool IsDeleted { get; set; }
-
             public DateTime? CreatedOn { get; set; }
-
-            public long CreatedBy { get; set; }
-
+            public long? CreatedBy { get; set; }
             public DateTime? UpdatedOn { get; set; }
-
             public long? UpdatedBy { get; set; }
         }
-
-
 
         // JOURNEY RESULT SET 7
         // QUOTATIONS
@@ -645,8 +675,21 @@
             public DateTime? UpdatedOn { get; set; }
 
             public int? UpdatedBy { get; set; }
+
+            public List<CRMReportQuotationAttachmentResponse> Attachments { get; set; } = new();
         }
 
+        public class CRMReportQuotationAttachmentResponse
+        {
+            public int AttachmentId { get; set; }
+            public int Ref_OpportunityQuotationId { get; set; }
+            public string? FileName { get; set; }
+            public string? FilePath { get; set; }
+            public string? FileType { get; set; }
+            public long? FileSize { get; set; }
+            public DateTime? CreatedOn { get; set; }
+            public int? CreatedBy { get; set; }
+        }
 
 
         // JOURNEY RESULT SET 8
@@ -805,6 +848,8 @@
             public DateTime? UpdatedOn { get; set; }
 
             public long? UpdatedBy { get; set; }
+
+            public List<CRMReportActivityAttachmentResponse> Attachments { get; set; } = new();
         }
 
 
@@ -935,24 +980,118 @@
         public class CRMReportActivityAttachmentResponse
         {
             public int AttachmentId { get; set; }
-
-            public long Ref_OpportunityActivityId { get; set; }
-
-            public long Ref_OpportunityId { get; set; }
-
+            public long? Ref_ActivityId { get; set; }
+            public long? Ref_OpportunityActivityId { get; set; }
+            public long? Ref_OpportunityId { get; set; }
             public string? FileName { get; set; }
-
             public string? FilePath { get; set; }
-
             public string? FileType { get; set; }
-
             public long? FileSize { get; set; }
-
             public long? CreatedBy { get; set; }
-
             public DateTime? CreatedOn { get; set; }
-
             public int? Ref_ActivityExpenseId { get; set; }
         }
+        public class CRMReportFilterOption
+        {
+            public int Id { get; set; }
+
+            public string? Code { get; set; }
+
+            public string? Name { get; set; }
+        }
+
+        public class CRMReportActivityExpenseResponse
+        {
+            public int ActivityExpenseId { get; set; }
+            public string? ExpenseType { get; set; }
+            public int? Ref_LeadId { get; set; }
+            public long? Ref_LeadActivityId { get; set; }
+            public int? Ref_OpportunityId { get; set; }
+            public long? Ref_OpportunityActivityId { get; set; }
+            public int? Ref_ExpenseCategoryId { get; set; }
+            public string? CategoryCode { get; set; }
+            public string? CategoryName { get; set; }
+            public int? Ref_TransportModeId { get; set; }
+            public string? ModeCode { get; set; }
+            public string? ModeName { get; set; }
+            public DateTime ExpenseDate { get; set; }
+            public decimal Amount { get; set; }
+            public string? Description { get; set; }
+            public string? FromLocation { get; set; }
+            public string? ToLocation { get; set; }
+            public DateTime? CreatedOn { get; set; }
+            public int? CreatedBy { get; set; }
+            public DateTime? UpdatedOn { get; set; }
+            public int? UpdatedBy { get; set; }
+
+            public List<CRMReportActivityAttachmentResponse> Attachments { get; set; } = new();
+        }
+
+        public class CRMReportFilterOptionsResponse
+        {
+            public List<CRMReportFilterOption> Employees { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> Companies { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> Priorities { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> Products { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> LeadStatuses { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> LeadSources { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> OpportunityStages { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> OpportunityTypes { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> ActivityTypes { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> ActivityStatuses { get; set; }
+                = new();
+
+            public List<CRMReportFilterOption> FollowUpStatuses { get; set; }
+                = new();
+
+            public List<string> DateTypes { get; set; }
+                = new();
+
+            public List<string> BusinessStates { get; set; }
+                = new();
+        }
+
+        public static List<string> ReportDateTypes =>
+    new()
+    {
+        "CREATED",
+        "EXPECTED_CLOSE",
+        "ACTIVITY",
+        "FOLLOWUP",
+        "ASSIGNMENT",
+        "STATUS"
+    };
+
+        public static List<string> ReportBusinessStates =>
+            new()
+            {
+        "ALL",
+        "LEAD",
+        "QUALIFIED",
+        "OPPORTUNITY",
+        "QUOTE",
+        "NEGOTIATION",
+        "REVIEW",
+        "WON",
+        "LOST"
+            };
     }
 }

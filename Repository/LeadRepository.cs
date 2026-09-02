@@ -57,10 +57,7 @@ namespace CRMWebServices.Repository
             if (fileBytes.Length > MaxFileSizeBytes)
                 throw new Exception("File exceeds 10MB limit.");
 
-            var uploadsFolder = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "Uploads",
-                folderName);
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(),"Uploads",folderName);
 
             Directory.CreateDirectory(uploadsFolder);
 
@@ -88,7 +85,9 @@ namespace CRMWebServices.Repository
                 var relative = filePath.Replace("Uploads/", "").Replace("Uploads\\", "");
                 var segments = relative.Split('/').Select(Uri.EscapeDataString);
 
-                return "/files/" + string.Join("/", segments);
+                //return "/files/" + string.Join("/", segments);
+                return "/Uploads/" + string.Join("/", segments);
+
             }
             catch (Exception ex)
             {
@@ -157,6 +156,24 @@ namespace CRMWebServices.Repository
                     Message = $"Error: {ex.Message}"
                 };
             }
+        }
+
+
+        private async Task<int?> GetEmployeeManagerIdAsync(int employeeId)
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_EMPLOYEE_MANAGER"),
+                new SqlParameter("@EmployeeId", employeeId)
+            );
+
+            if (dt.Rows.Count == 0)
+                return null;
+
+            if (dt.Rows[0]["ManagerEmployeeId"] == DBNull.Value)
+                return null;
+
+            return Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
         }
         #endregion
 
@@ -247,33 +264,148 @@ namespace CRMWebServices.Repository
                     string leadNo =
                         dt.Rows[0]["LeadNo"]?.ToString() ?? "";
 
-                    // ============================================
-                    // CASE 1: LEAD IS ASSIGNED
-                    // ============================================
+            
 
                     if (model.AssignedToEmployeeId.HasValue)
+
                     {
+
+                        int assignedEmployeeId = model.AssignedToEmployeeId.Value;
+
+                        // --------------------------------------------
+
+                        // 1. Notify Assigned Employee
+
+                        // --------------------------------------------
+
                         try
+
                         {
+
                             await _schedulerExecutionService.SendEmployeeNotificationAsync(
+
                                 schedulerJobItemId: null,
-                                employeeId: model.AssignedToEmployeeId.Value,
+
+                                employeeId: assignedEmployeeId,
+
                                 entityId: leadId,
+
                                 title: "New Lead Assigned",
+
                                 message: $"Lead {leadNo} has been assigned to you.",
+
                                 entityType: "LEAD",
+
                                 recipientType: "ASSIGNEE"
+
                             );
+
                         }
+
                         catch (Exception ex)
+
                         {
+
                             _logger.LogError(
+
                                 ex,
+
                                 "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
+
                                 leadId,
-                                model.AssignedToEmployeeId.Value);
+
+                                assignedEmployeeId);
+
                         }
+
+                        // --------------------------------------------
+
+                        // 2. Get Assigned Employee's Manager
+
+                        // --------------------------------------------
+
+                        try
+
+                        {
+
+                            int? managerEmployeeId =
+
+                                await GetEmployeeManagerIdAsync(assignedEmployeeId);
+
+                            if (managerEmployeeId.HasValue &&
+
+                                managerEmployeeId.Value != assignedEmployeeId)
+
+                            {
+
+                                // --------------------------------------------
+
+                                // 3. Notify Manager
+
+                                // --------------------------------------------
+
+                                try
+
+                                {
+
+                                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
+
+                                        schedulerJobItemId: null,
+
+                                        employeeId: managerEmployeeId.Value,
+
+                                        entityId: leadId,
+
+                                        title: "Lead Assigned",
+
+                                        message: $"Lead {leadNo} has been assigned to your team member.",
+
+                                        entityType: "LEAD",
+
+                                        recipientType: "MANAGER"
+
+                                    );
+
+                                }
+
+                                catch (Exception ex)
+
+                                {
+
+                                    _logger.LogError(
+
+                                        ex,
+
+                                        "Failed to send Manager Lead notification. LeadId {LeadId}, ManagerId {ManagerId}",
+
+                                        leadId,
+
+                                        managerEmployeeId.Value);
+
+                                }
+
+                            }
+
+                        }
+
+                        catch (Exception ex)
+
+                        {
+
+                            _logger.LogError(
+
+                                ex,
+
+                                "Failed to get manager for assigned Employee. LeadId {LeadId}, EmployeeId {EmployeeId}",
+
+                                leadId,
+
+                                assignedEmployeeId);
+
+                        }
+
                     }
+
 
                     // ============================================
                     // CASE 2: LEAD IS NOT ASSIGNED

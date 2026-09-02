@@ -1,4 +1,5 @@
-﻿using CRMWebServices.Interfaces;
+﻿using CRMWebServices.Helpers;
+using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,27 @@ namespace CRMWebServices.Controllers
             var response =await _reportsRepository.GetJourney(request);
 
             return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("filters")]
+        public async Task<IActionResult> GetReportFilters()
+        {
+            try
+            {
+                var response =await _reportsRepository.GetReportFilters();
+                return response.Status? Ok(response): BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new ApiResponse
+                    {
+                        Status = false,
+                        Message = $"Error: {ex.Message}"
+                    }
+                );
+            }
         }
     }
 }
