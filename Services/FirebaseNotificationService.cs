@@ -21,21 +21,53 @@ namespace CRMWebServices.Services
         private void InitializeFirebase()
         {
             if (FirebaseApp.DefaultInstance != null)
+            {
+                _logger.LogInformation(
+                    "Firebase Admin SDK already initialized.");
                 return;
+            }
 
-            var credentialPath = Path.Combine(Directory.GetCurrentDirectory(),"Firebase","firebase-service-account.json");
+            var credentialPath = Path.Combine(
+                Directory.GetCurrentDirectory(),
+                "Firebase",
+                "firebase-service-account.json");
+
+            _logger.LogInformation(
+                "Firebase credential path: {CredentialPath}",
+                credentialPath);
+
+            _logger.LogInformation(
+                "Firebase credential file exists: {Exists}",
+                File.Exists(credentialPath));
 
             if (!File.Exists(credentialPath))
             {
-                throw new FileNotFoundException("Firebase service account file was not found.",credentialPath);
+                throw new FileNotFoundException(
+                    "Firebase service account file was not found.",
+                    credentialPath);
             }
 
-            FirebaseApp.Create(new AppOptions
+            try
             {
-                Credential =GoogleCredential.FromFile(credentialPath)
-            });
+                var credential =
+                    GoogleCredential.FromFile(credentialPath);
 
-            _logger.LogInformation("Firebase Admin SDK initialized successfully.");
+                FirebaseApp.Create(new AppOptions
+                {
+                    Credential = credential
+                });
+
+                _logger.LogInformation(
+                    "Firebase Admin SDK initialized successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Firebase Admin SDK initialization failed.");
+
+                throw;
+            }
         }
 
         public async Task<FirebaseSendResult> SendNotificationAsync(string deviceToken,string title,string message,Dictionary<string, string>? data = null)

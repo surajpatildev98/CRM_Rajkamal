@@ -2,9 +2,11 @@
 using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
+using CRMWebServices.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
+using static CRMWebServices.Models.LogoutModels;
 using static CRMWebServices.Models.PermissionModels;
 
 namespace CRMWebServices.Controllers
@@ -71,20 +73,110 @@ namespace CRMWebServices.Controllers
             string employeeCode = row["EmployeeCode"]?.ToString();
             string roleIds = row["RoleIds"] == DBNull.Value ? "" : row["RoleIds"].ToString();
 
-      
+            // DEVICE CHECK - ONE USER ONE DEVICE
+
+            if (!string.IsNullOrWhiteSpace(request.DeviceId))
+            {
+                var activeDevice = await _authRepo.CheckActiveDevice(
+                    employeeId,
+                    request.DeviceId);
+
+                // CASE 1: No active device
+
+                if (activeDevice == null)
+                {
+                    // No device currently logged in.
+                    // Register this device.
+
+                    if (!string.IsNullOrWhiteSpace(request.DeviceToken))
+                    {
+                        var registerResponse =
+                            await _authRepo.RegisterEmployeeDevice(
+                                employeeId,
+                                new RegisterEmployeeDeviceRequest
+                                {
+                                    DeviceId = request.DeviceId,
+                                    DeviceToken = request.DeviceToken,
+                                    DeviceType = request.DeviceType,
+                                    AppVersion = request.AppVersion
+                                });
+
+
+                        if (!registerResponse.Status)
+                        {
+                            return BadRequest(registerResponse);
+                        }
+                    }
+                }
+
+
+                // CASE 2: Same device
+
+                else if (activeDevice.IsSameDevice)
+                {
+                    // Same device is already logged in.
+                    //
+                    // We can update the FCM token and other
+                    // device information.
+
+                    if (!string.IsNullOrWhiteSpace(request.DeviceToken))
+                    {
+                        var registerResponse =
+                            await _authRepo.RegisterEmployeeDevice(
+                                employeeId,
+                                new RegisterEmployeeDeviceRequest
+                                {
+                                    DeviceId = request.DeviceId,
+                                    DeviceToken = request.DeviceToken,
+                                    DeviceType = request.DeviceType,
+                                    AppVersion = request.AppVersion
+                                });
+
+
+                        if (!registerResponse.Status)
+                        {
+                            return BadRequest(registerResponse);
+                        }
+                    }
+                }
+
+                // CASE 3: Different device
+
+                else
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = false,
+                        Message =
+                            "You are already logged in on another device. " +
+                            "Do you want to logout from that device and continue?",
+
+                        Data = new
+                        {
+                            Code = "ALREADY_LOGGED_IN",
+
+                            EmployeeId = employeeId,
+
+                            OldDeviceId = activeDevice.ActiveDeviceId
+                        }
+                    });
+                }
+            }
+
             // Register / Update Firebase device           
 
-            if (!string.IsNullOrWhiteSpace(request.DeviceId) &&!string.IsNullOrWhiteSpace(request.DeviceToken))
-            {
-                await _authRepo.RegisterEmployeeDevice(employeeId,
-                    new RegisterEmployeeDeviceRequest
-                    {
-                        DeviceId = request.DeviceId,
-                        DeviceToken = request.DeviceToken,
-                        DeviceType = request.DeviceType,
-                        AppVersion = request.AppVersion
-                    });
-            }
+            //if (!string.IsNullOrWhiteSpace(request.DeviceId) &&!string.IsNullOrWhiteSpace(request.DeviceToken))
+            //{
+            //    await _authRepo.RegisterEmployeeDevice(employeeId,
+            //        new RegisterEmployeeDeviceRequest
+            //        {
+            //            DeviceId = request.DeviceId,
+            //            DeviceToken = request.DeviceToken,
+            //            DeviceType = request.DeviceType,
+            //            AppVersion = request.AppVersion
+            //        });
+            //}
+
 
             string token = _jwt.GenerateToken(employeeId, request.LoginId, employeeCode, roleIds);
 
@@ -107,5 +199,25 @@ namespace CRMWebServices.Controllers
             return Ok(response);
         }
         #endregion
+
+        [HttpPost("ForceLogout")]
+        public async Task<IActionResult> ForceLogout([FromBody] ForceLogoutRequest model)
+        {
+            var response = await _authRepo.ForceLogoutDevice(
+                model.EmployeeId,
+                model.DeviceId);
+
+            return Ok(response);
+        }
+
+        [HttpPost("Logout")]
+        public async Task<IActionResult> Logout([FromBody] LogoutRequest model)
+        {
+            var response = await _authRepo.Logout(
+                model.EmployeeId,
+                model.DeviceId);
+
+            return Ok(response);
+        }
     }
 }
