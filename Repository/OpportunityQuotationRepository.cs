@@ -38,7 +38,8 @@ namespace CRMWebServices.Repository
             var relative = filePath.Replace("Uploads/", "").Replace("Uploads\\", "");
             var segments = relative.Split('/').Select(Uri.EscapeDataString);
 
-            return "/files/" + string.Join("/", segments);
+            //return "/files/" + string.Join("/", segments);
+                        return "/Uploads/" + string.Join("/", segments);
         }
 
         private string SaveBase64Attachment(string base64Content, string fileName, string subFolder)
@@ -916,88 +917,29 @@ namespace CRMWebServices.Repository
                         return new ApiResponse
                         {
                             Status = false,
-                            Message =
-                                $"Error processing quotation PDF: {ex.Message}"
+                            Message =$"Error processing quotation PDF: {ex.Message}"
                         };
                     }
                 }
-
           
-                // Serialize request data
-         
-                string? attachmentsJson =
-                    savedAttachments.Count > 0
-                        ? JsonConvert.SerializeObject(savedAttachments)
-                        : null;
-
-                string itemsJson =
-                    JsonConvert.SerializeObject(model.Items);
-
-
-  
-                // Call SP
+                // Serialize request data         
+                string? attachmentsJson =savedAttachments.Count > 0? JsonConvert.SerializeObject(savedAttachments): null;
+                string itemsJson =JsonConvert.SerializeObject(model.Items); 
+                
           
-                var dt = await _database.ExecuteDataTableAsync(
-                    SP_NAME,
-
-                    new SqlParameter(
-                        "@Status",
-                        "REVISE_QUOTATION"
-                    ),
-
-                    new SqlParameter(
-                        "@Ref_OpportunityQuotationId",
-                        model.Ref_OpportunityQuotationId
-                    ),
-
-                    new SqlParameter(
-                        "@QuotationDate",
-                        (object?)model.QuotationDate ?? DBNull.Value
-                    ),
-
-                    new SqlParameter(
-                        "@ValidUntil",
-                        (object?)model.ValidUntil ?? DBNull.Value
-                    ),
-
-                    new SqlParameter(
-                        "@FreightAmount",
-                        (object?)model.FreightAmount ?? DBNull.Value
-                    ),
-
-                    new SqlParameter(
-                        "@FreightPercent",
-                        (object?)model.FreightPercent ?? DBNull.Value
-                    ),
-
-                    new SqlParameter(
-                        "@TaxAmount",
-                        (object?)model.TaxAmount ?? DBNull.Value
-                    ),
-
-                    new SqlParameter(
-                        "@TaxPercent",
-                        (object?)model.TaxPercent ?? DBNull.Value
-                    ),
-
-                    new SqlParameter(
-                        "@TermsRemark",
-                        (object?)model.TermsRemark ?? DBNull.Value
-                    ),
-
-                    new SqlParameter(
-                        "@ItemsJson",
-                        itemsJson
-                    ),
-
-                    new SqlParameter(
-                        "@AttachmentsMeta",
-                        (object?)attachmentsJson ?? DBNull.Value
-                    ),
-
-                    new SqlParameter(
-                        "@CreatedBy",
-                        model.CreatedBy
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status","REVISE_QUOTATION"),
+                    new SqlParameter("@Ref_OpportunityQuotationId",model.Ref_OpportunityQuotationId),
+                    new SqlParameter("@QuotationDate",(object?)model.QuotationDate ?? DBNull.Value),
+                    new SqlParameter("@ValidUntil",(object?)model.ValidUntil ?? DBNull.Value),
+                    new SqlParameter("@FreightAmount",(object?)model.FreightAmount ?? DBNull.Value),
+                    new SqlParameter("@FreightPercent",(object?)model.FreightPercent ?? DBNull.Value),
+                    new SqlParameter("@TaxAmount",(object?)model.TaxAmount ?? DBNull.Value),
+                    new SqlParameter("@TaxPercent",(object?)model.TaxPercent ?? DBNull.Value),
+                    new SqlParameter("@TermsRemark",(object?)model.TermsRemark ?? DBNull.Value),
+                    new SqlParameter("@ItemsJson",itemsJson),
+                    new SqlParameter("@AttachmentsMeta",(object?)attachmentsJson ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy",model.CreatedBy
                     )
                 );
 
@@ -1048,7 +990,7 @@ namespace CRMWebServices.Repository
                 return new ApiResponse
                 {
                     Status = false,
-                    Message = $"Database Error: {ex.Message}"
+                    Message = ex.Message
                 };
             }
             catch (Exception ex)
@@ -1056,7 +998,7 @@ namespace CRMWebServices.Repository
                 return new ApiResponse
                 {
                     Status = false,
-                    Message = $"Error: {ex.Message}"
+                    Message = ex.Message
                 };
             }
         }

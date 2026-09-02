@@ -11,18 +11,19 @@ namespace CRMWebServices.Services
     {
         private readonly IEmailConfigurationRepository _configurationRepository;
         private readonly ILogger<EmailService> _logger;
+        private readonly IConfiguration _config;
 
         public EmailService(
             IEmailConfigurationRepository configurationRepository,
-            ILogger<EmailService> logger)
+            ILogger<EmailService> logger,
+            IConfiguration config)
         {
             _configurationRepository = configurationRepository;
             _logger = logger;
+            _config = config;
         }
 
-        public async Task<bool> SendAsync(
-            EmailMessage message,
-            CancellationToken cancellationToken = default)
+        public async Task<bool> SendAsync(EmailMessage message,CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(message.ToEmail))
             {
@@ -52,27 +53,38 @@ namespace CRMWebServices.Services
                 email.To.Add(MailboxAddress.Parse(message.ToEmail));
                 email.Subject = message.Subject;
 
-                email.Body = new BodyBuilder
+                //email.Body = new BodyBuilder
+                //{
+                //    HtmlBody = message.HtmlBody
+                //}.ToMessageBody();
+
+                var builder = new BodyBuilder { HtmlBody = message.HtmlBody };
+
+                string logoPath = Path.Combine(AppContext.BaseDirectory, _config["EmailSettings:CompanyLogoPath"] ?? "");
+
+                if (File.Exists(logoPath))
                 {
-                    HtmlBody = message.HtmlBody
-                }.ToMessageBody();
+                    var logo = (MimePart)builder.LinkedResources.Add(logoPath);
+                    logo.ContentId = "companylogo";
+                    logo.ContentDisposition = new MimeKit.ContentDisposition(MimeKit.ContentDisposition.Inline);
+                    logo.FileName = "logo.jpg";
+                }
+                else
+                {
+                    _logger.LogWarning("Company logo not found at {Path}; sending email without inline logo.", logoPath);
+                }
+
+                email.Body = builder.ToMessageBody();
 
                 using var smtp = new SmtpClient();
 
                 var security =config.SSL? SecureSocketOptions.StartTls: SecureSocketOptions.None;
 
-                await smtp.ConnectAsync(
-                    config.Host,
-                    config.Port,
-                    security,
-                    cancellationToken);
+                await smtp.ConnectAsync(config.Host,config.Port,security,cancellationToken);
 
                 if (!string.IsNullOrWhiteSpace(config.Email))
                 {
-                    await smtp.AuthenticateAsync(
-                        config.Email,
-                        config.Password,
-                        cancellationToken);
+                    await smtp.AuthenticateAsync(config.Email,config.Password,cancellationToken);
                 }
 
                 await smtp.SendAsync(email,cancellationToken);
@@ -86,11 +98,8 @@ namespace CRMWebServices.Services
                 return false;
             }
         }
-
-     
+        
         // Scheduler adapter
-     
-
         public async Task<EmailSendResult> SendEmailAsync(string toEmail,string subject,string body)
         {
             try
@@ -107,9 +116,7 @@ namespace CRMWebServices.Services
                 return new EmailSendResult
                 {
                     Success = success,
-                    ErrorMessage = success
-                        ? null
-                        : "Email could not be sent."
+                    ErrorMessage = success ? null: "Email could not be sent."
                 };
             }
             catch (Exception ex)

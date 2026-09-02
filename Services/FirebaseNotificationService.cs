@@ -5,16 +5,13 @@ using Google.Apis.Auth.OAuth2;
 
 namespace CRMWebServices.Services
 {
-    public class FirebaseNotificationService
-        : IFirebaseNotificationService
+    public class FirebaseNotificationService: IFirebaseNotificationService
     {
         private readonly ILogger<FirebaseNotificationService> _logger;
 
-        public FirebaseNotificationService(
-            ILogger<FirebaseNotificationService> logger)
+        public FirebaseNotificationService(ILogger<FirebaseNotificationService> logger)
         {
             _logger = logger;
-
             InitializeFirebase();
         }
 

@@ -251,5 +251,25 @@
             public string DeviceType { get; set; } = string.Empty;
             public string? AppVersion { get; set; }
         }
+
+        public class ForgotPasswordRequest
+        {
+            public string LoginId { get; set; }
+        }
+
+        public class VerifyResetOtpRequest
+        {
+            public string LoginId { get; set; }
+            public string OTP { get; set; }
+        }
+
+        public class ResetPasswordRequest
+        {
+            public Guid ResetToken { get; set; }
+            public string NewPassword { get; set; }
+            public string ConfirmPassword { get; set; }
+        }
+
+
     }
 }

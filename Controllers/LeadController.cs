@@ -267,8 +267,12 @@ namespace CRMWebServices.Controllers
                     //    // For PreSales: Show created AND assigned leads
                     //    filter.LoggedInEmployeeId = accessFilter.EmployeeId;
                     //    filter.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
-                    //}
+
                     // If CanViewAll = true (Admin/Manager), no filter applied
+                    //// If CanViewAll = true (Admin/Manager), no filter applied
+                    ///                  
+
+                    filter.LoggedInEmployeeId = User.EmployeeId();
 
                     filter.LoggedInEmployeeId = User.EmployeeId();
 
