@@ -270,9 +270,7 @@ namespace CRMWebServices.Controllers
 
                     // If CanViewAll = true (Admin/Manager), no filter applied
                     //// If CanViewAll = true (Admin/Manager), no filter applied
-                    ///
-                    filter.LoggedInEmployeeId = User.EmployeeId();
-
+                    ///                  
 
                     filter.LoggedInEmployeeId = User.EmployeeId();
 
