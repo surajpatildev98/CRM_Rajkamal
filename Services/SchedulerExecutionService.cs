@@ -112,6 +112,7 @@ namespace CRMWebServices.Services
             }
 
             bool isUnassigned = Convert.ToBoolean(statusTable.Rows[0]["IsUnassigned"]);
+            int createdByEmployeeId = Convert.ToInt32(statusTable.Rows[0]["CreatedBy"]);
 
             // 2. Lead has now been assigned    
             if (!isUnassigned)
@@ -147,7 +148,7 @@ namespace CRMWebServices.Services
                 {
                     // Firebase
                     //await SendFirebaseNotificationsAsync(schedulerJobItemId, leadId, employeeId, recipientType);
-                    await NotifyUnassignedLeadAsync(leadId);
+                    await NotifyUnassignedLeadAsync(leadId, createdByEmployeeId);
 
                 }
                 catch (Exception ex)
@@ -295,66 +296,169 @@ namespace CRMWebServices.Services
 
         }
 
-        public async Task NotifyUnassignedLeadAsync(int leadId)
+        /* public async Task NotifyUnassignedLeadAsync(int leadId)
+         {
+             _logger.LogInformation(
+       "Starting unassigned lead notification. LeadId: {LeadId}",
+       leadId);
+
+             var recipients = await _database.ExecuteDataTableAsync(
+                 SP_NAME,
+                 new SqlParameter("@Status", "GET_LEAD_RECIPIENTS"),
+                 new SqlParameter("@EntityId", leadId)
+             );
+
+             if (recipients == null || recipients.Rows.Count == 0)
+             {
+                 _logger.LogWarning(
+                     "No recipients found for Lead {LeadId}.",
+                     leadId);
+
+                 return;
+             }
+
+
+             _logger.LogInformation(
+                 "Found {Count} recipient(s) for Lead {LeadId}.",
+                 recipients.Rows.Count,
+                 leadId);
+
+             foreach (DataRow recipient in recipients.Rows)
+             {
+                 int employeeId = Convert.ToInt32(recipient["EmployeeId"]);
+
+                 string recipientType =
+                     recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
+
+                 // ============================================
+                 // IMPORTANT:
+                 // For an unassigned lead, notify ONLY MANAGER
+                 // ============================================
+
+                 if (!string.Equals(
+                         recipientType,
+                         "MANAGER",
+                         StringComparison.OrdinalIgnoreCase))
+                 {
+                     _logger.LogInformation(
+                         "Skipping non-manager recipient for Lead {LeadId}. RecipientType: {RecipientType}",
+                         leadId,
+                         recipientType);
+
+                     continue;
+                 }
+
+                 try
+                 {
+                     await SendEmployeeNotificationAsync(
+                         schedulerJobItemId: null,
+                         employeeId: employeeId,
+                         entityId: leadId,
+                         title: "Unassigned Lead",
+                         message: $"Lead #{leadId} is still unassigned.",
+                         entityType: "LEAD",
+                         recipientType: "MANAGER"
+                     );
+                 }
+                 catch (Exception ex)
+                 {
+                     _logger.LogError(
+                         ex,
+                         "Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",
+                         employeeId,
+                         leadId);
+                 }
+             }
+         }*/
+public async Task NotifyUnassignedLeadAsync(int leadId, int createdByEmployeeId)
         {
             _logger.LogInformation(
-      "Starting unassigned lead notification. LeadId: {LeadId}",
-      leadId);
+                "Starting unassigned lead notification. LeadId: {LeadId}, CreatedByEmployeeId: {CreatedByEmployeeId}",
+                leadId,
+                createdByEmployeeId);
 
-            var recipients = await _database.ExecuteDataTableAsync(
-                SP_NAME,
-                new SqlParameter("@Status", "GET_LEAD_RECIPIENTS"),
-                new SqlParameter("@EntityId", leadId)
-            );
-
-            if (recipients == null || recipients.Rows.Count == 0)
+            try
             {
-                _logger.LogWarning(
-                    "No recipients found for Lead {LeadId}.",
-                    leadId);
+                // ============================================================
+                // 1. GET CREATOR'S MANAGER
+                // ============================================================
 
-                return;
-            }
+                var managerDt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_NewEmployeeManagement",
 
+                    new SqlParameter("@Status","GET_EMPLOYEE_MANAGER"),
 
-            _logger.LogInformation(
-                "Found {Count} recipient(s) for Lead {LeadId}.",
-                recipients.Rows.Count,
-                leadId);
+                    new SqlParameter("@EmployeeId",createdByEmployeeId)
+                );
 
-            foreach (DataRow recipient in recipients.Rows)
-            {
-                int employeeId = Convert.ToInt32(recipient["EmployeeId"]);
+                if (managerDt == null || managerDt.Rows.Count == 0)
+                {
+                    _logger.LogWarning(
+                        "No manager found for EmployeeId {EmployeeId}. LeadId: {LeadId}",
+                        createdByEmployeeId,
+                        leadId);
 
-                string recipientType =
-                    recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
+                    return;
+                }
+
+                // ============================================================
+                // 2. GET MANAGER EMPLOYEE ID
+                // ============================================================
+
+                if (managerDt.Rows[0]["ManagerEmployeeId"] == DBNull.Value)
+                {
+                    _logger.LogWarning(
+                        "ManagerEmployeeId is NULL for EmployeeId {EmployeeId}. LeadId: {LeadId}",
+                        createdByEmployeeId,
+                        leadId);
+
+                    return;
+                }
+
+                int managerEmployeeId = Convert.ToInt32(managerDt.Rows[0]["ManagerEmployeeId"]);
+
+                // Do not notify if employee is somehow set as their own manager
+                if (managerEmployeeId == createdByEmployeeId)
+                {
+                    _logger.LogWarning(
+                        "EmployeeId {EmployeeId} is their own manager. Skipping notification for LeadId {LeadId}.",
+                        createdByEmployeeId,
+                        leadId);
+
+                    return;
+                }
 
                 _logger.LogInformation(
-           "Sending unassigned lead notification. LeadId: {LeadId}, EmployeeId: {EmployeeId}, RecipientType: {RecipientType}",
-           leadId,
-           employeeId,
-           recipientType);
+                    "Manager found. LeadId: {LeadId}, ManagerEmployeeId: {ManagerEmployeeId}",
+                    leadId,
+                    managerEmployeeId);
 
-                try
-                {
-                    await SendEmployeeNotificationAsync(
-                        schedulerJobItemId: null,
-                        employeeId: employeeId,
-                        entityId: leadId,
-                        title: "Unassigned Lead",
-                        message: $"Lead #{leadId} is still unassigned.",
-                        entityType: "LEAD",
-                        recipientType: recipientType
-                    );
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(
-                        ex,
-                        "Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",
-                        employeeId,
-                        leadId);
-                }
+                // ============================================================
+                // 3. SEND NOTIFICATION ONLY TO MANAGER
+                // ============================================================
+
+                await SendEmployeeNotificationAsync(
+                    schedulerJobItemId: null,
+                    employeeId: managerEmployeeId,
+                    entityId: leadId,
+                    title: "Unassigned Lead",
+                    message: $"Lead #{leadId} is still unassigned.",
+                    entityType: "LEAD",
+                    recipientType: "MANAGER"
+                );
+
+                _logger.LogInformation(
+                    "Unassigned Lead notification sent to manager. LeadId: {LeadId}, ManagerEmployeeId: {ManagerEmployeeId}",
+                    leadId,
+                    managerEmployeeId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to send unassigned Lead notification. LeadId: {LeadId}, CreatedByEmployeeId: {CreatedByEmployeeId}",
+                    leadId,
+                    createdByEmployeeId);
             }
         }
 

@@ -161,19 +161,31 @@ namespace CRMWebServices.Repository
 
         private async Task<int?> GetEmployeeManagerIdAsync(int employeeId)
         {
-            var dt = await _database.ExecuteDataTableAsync(
-                "USP_ORG_NewEmployeeManagement",
-                new SqlParameter("@Status", "GET_EMPLOYEE_MANAGER"),
-                new SqlParameter("@EmployeeId", employeeId)
-            );
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_ORG_NewEmployeeManagement",
+                    new SqlParameter("@Status", "GET_EMPLOYEE_MANAGER"),
+                    new SqlParameter("@EmployeeId", employeeId)
+                );
 
-            if (dt.Rows.Count == 0)
+                if (dt.Rows.Count == 0)
+                    return null;
+
+                if (dt.Rows[0]["ManagerEmployeeId"] == DBNull.Value)
+                    return null;
+
+                return Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to get manager for EmployeeId {EmployeeId}",
+                    employeeId);
+
                 return null;
-
-            if (dt.Rows[0]["ManagerEmployeeId"] == DBNull.Value)
-                return null;
-
-            return Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
+            }
         }
         #endregion
 
@@ -416,7 +428,7 @@ namespace CRMWebServices.Repository
                         try
                         {
                             await _schedulerExecutionService
-                                .NotifyUnassignedLeadAsync(leadId);
+                                .NotifyUnassignedLeadAsync(leadId,model.CreatedBy.Value);
                         }
                         catch (Exception ex)
                         {
