@@ -26,6 +26,7 @@
             public string? AppVersion { get; set; }
 
             public bool IsActive { get; set; }
+            public bool IsLoggedIn { get; set; }
 
             public DateTime? LastSeenOn { get; set; }
 
