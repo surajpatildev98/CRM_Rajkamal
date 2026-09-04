@@ -276,148 +276,240 @@ namespace CRMWebServices.Repository
                     string leadNo =
                         dt.Rows[0]["LeadNo"]?.ToString() ?? "";
 
-            
+
+                    #region // Notify Assigned Employee and Manager OLD
+                    //if (model.AssignedToEmployeeId.HasValue)
+                    //{
+
+                    //    int assignedEmployeeId = model.AssignedToEmployeeId.Value;                      
+                    //    // 1. Notify Assigned Employee
+
+
+
+                    //    try
+
+                    //    {
+
+                    //        await _schedulerExecutionService.SendEmployeeNotificationAsync(
+
+                    //            schedulerJobItemId: null,
+
+                    //            employeeId: assignedEmployeeId,
+
+                    //            entityId: leadId,
+
+                    //            title: "New Lead Assigned",
+
+                    //            message: $"Lead {leadNo} has been assigned to you.",
+
+                    //            entityType: "LEAD",
+
+                    //            recipientType: "ASSIGNEE"
+
+                    //        );
+
+                    //    }
+
+                    //    catch (Exception ex)
+
+                    //    {
+
+                    //        _logger.LogError(
+
+                    //            ex,
+
+                    //            "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
+
+                    //            leadId,
+
+                    //            assignedEmployeeId);
+
+                    //    }
+
+                    //    // --------------------------------------------
+
+                    //    // 2. Get Assigned Employee's Manager
+
+                    //    // --------------------------------------------
+
+                    //    try
+
+                    //    {
+
+                    //        int? managerEmployeeId =
+
+                    //            await GetEmployeeManagerIdAsync(assignedEmployeeId);
+
+                    //        if (managerEmployeeId.HasValue &&
+
+                    //            managerEmployeeId.Value != assignedEmployeeId)
+
+                    //        {
+
+                    //            // --------------------------------------------
+
+                    //            // 3. Notify Manager
+
+                    //            // --------------------------------------------
+
+                    //            try
+
+                    //            {
+
+                    //                await _schedulerExecutionService.SendEmployeeNotificationAsync(
+
+                    //                    schedulerJobItemId: null,
+
+                    //                    employeeId: managerEmployeeId.Value,
+
+                    //                    entityId: leadId,
+
+                    //                    title: "Lead Assigned",
+
+                    //                    message: $"Lead {leadNo} has been assigned to your team member.",
+
+                    //                    entityType: "LEAD",
+
+                    //                    recipientType: "MANAGER"
+
+                    //                );
+
+                    //            }
+
+                    //            catch (Exception ex)
+
+                    //            {
+
+                    //                _logger.LogError(
+
+                    //                    ex,
+
+                    //                    "Failed to send Manager Lead notification. LeadId {LeadId}, ManagerId {ManagerId}",
+
+                    //                    leadId,
+
+                    //                    managerEmployeeId.Value);
+
+                    //            }
+
+                    //        }
+
+                    //    }
+
+                    //    catch (Exception ex)
+
+                    //    {
+
+                    //        _logger.LogError(
+
+                    //            ex,
+
+                    //            "Failed to get manager for assigned Employee. LeadId {LeadId}, EmployeeId {EmployeeId}",
+
+                    //            leadId,
+
+                    //            assignedEmployeeId);
+
+                    //    }
+
+                    //}
+                    #endregion
 
                     if (model.AssignedToEmployeeId.HasValue)
-
                     {
-
                         int assignedEmployeeId = model.AssignedToEmployeeId.Value;
-
-                        // --------------------------------------------
-
                         // 1. Notify Assigned Employee
 
-                        // --------------------------------------------
-
                         try
-
                         {
-
                             await _schedulerExecutionService.SendEmployeeNotificationAsync(
-
                                 schedulerJobItemId: null,
-
                                 employeeId: assignedEmployeeId,
-
                                 entityId: leadId,
-
                                 title: "New Lead Assigned",
-
                                 message: $"Lead {leadNo} has been assigned to you.",
-
                                 entityType: "LEAD",
-
                                 recipientType: "ASSIGNEE"
-
                             );
 
+                            await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                                schedulerJobItemId: null,
+                                employeeId: assignedEmployeeId,
+                                entityId: leadId,
+                                title: "New Lead Assigned",
+                                message: $"Lead {leadNo} has been assigned to you.",
+                                entityType: "LEAD",
+                                recipientType: "ASSIGNEE",
+                                actionType: "ASSIGNED"
+                            );
                         }
-
                         catch (Exception ex)
-
                         {
-
                             _logger.LogError(
-
                                 ex,
-
                                 "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
-
                                 leadId,
-
                                 assignedEmployeeId);
-
                         }
 
                         // --------------------------------------------
-
                         // 2. Get Assigned Employee's Manager
-
                         // --------------------------------------------
 
                         try
-
                         {
-
                             int? managerEmployeeId =
-
                                 await GetEmployeeManagerIdAsync(assignedEmployeeId);
 
                             if (managerEmployeeId.HasValue &&
-
                                 managerEmployeeId.Value != assignedEmployeeId)
-
                             {
-
                                 // --------------------------------------------
-
                                 // 3. Notify Manager
-
                                 // --------------------------------------------
 
                                 try
-
                                 {
-
                                     await _schedulerExecutionService.SendEmployeeNotificationAsync(
-
                                         schedulerJobItemId: null,
-
                                         employeeId: managerEmployeeId.Value,
-
                                         entityId: leadId,
-
                                         title: "Lead Assigned",
-
                                         message: $"Lead {leadNo} has been assigned to your team member.",
-
                                         entityType: "LEAD",
-
                                         recipientType: "MANAGER"
-
                                     );
 
+                                    await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                                        schedulerJobItemId: null,
+                                        employeeId: managerEmployeeId.Value,
+                                        entityId: leadId,
+                                        title: "Lead Assigned",
+                                        message: $"Lead {leadNo} has been assigned to your team member.",
+                                        entityType: "LEAD",
+                                        recipientType: "MANAGER",
+                                        actionType: "ASSIGNED"
+                                    );
                                 }
-
                                 catch (Exception ex)
-
                                 {
-
                                     _logger.LogError(
-
                                         ex,
-
                                         "Failed to send Manager Lead notification. LeadId {LeadId}, ManagerId {ManagerId}",
-
                                         leadId,
-
                                         managerEmployeeId.Value);
-
                                 }
-
                             }
-
                         }
-
                         catch (Exception ex)
-
                         {
-
                             _logger.LogError(
-
                                 ex,
-
                                 "Failed to get manager for assigned Employee. LeadId {LeadId}, EmployeeId {EmployeeId}",
-
                                 leadId,
-
                                 assignedEmployeeId);
-
                         }
-
                     }
-
 
                     // ============================================
                     // CASE 2: LEAD IS NOT ASSIGNED
@@ -428,7 +520,7 @@ namespace CRMWebServices.Repository
                         try
                         {
                             await _schedulerExecutionService
-                                .NotifyUnassignedLeadAsync(leadId,model.CreatedBy.Value);
+                                .NotifyUnassignedLeadAsync(leadId);
                         }
                         catch (Exception ex)
                         {
@@ -484,8 +576,7 @@ namespace CRMWebServices.Repository
                 {
                     int leadId = Convert.ToInt32(dt.Rows[0]["LeadId"]);
 
-                    string leadNo =
-                        dt.Rows[0]["LeadNo"]?.ToString() ?? "";
+                    string leadNo =dt.Rows[0]["LeadNo"]?.ToString() ?? "";
 
                     try
                     {
@@ -895,22 +986,7 @@ namespace CRMWebServices.Repository
                     createdByName = r["CreatedByName"]?.ToString()
                 }).ToList();
 
-                //var timeline = ds.Tables[6].Rows.Cast<DataRow>()
-                //    .Select(r => new
-                //    {
-                //        itemType = r["ItemType"]?.ToString(),
-                //        itemId = Convert.ToInt32(r["ItemId"]),
-                //        activityType = r["ActivityType"]?.ToString(),
-                //        itemDate = Convert.ToDateTime(r["ActivityDate"]),
-                //        subject = r["Subject"]?.ToString(),
-                //        description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
-                //        outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
-                //        locationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
-                //        createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString(),
-                //        status = r["Status"]?.ToString(),
-                //        statusColor = r["StatusColor"]?.ToString(),
-                //        createdOn = Convert.ToDateTime(r["CreatedOn"])
-                //    }).ToList();
+              
 
                 var timeline = ds.Tables[6].Rows.Cast<DataRow>().Select(r =>
                 {
@@ -1682,142 +1758,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Add Activity Expenses
-        //public async Task<ApiResponse> AddActivityExpenses(LeadActivityExpenseRequest model)
-        //{
-        //    try
-        //    {
-        //        if (model == null)
-        //        {
-        //            return new ApiResponse
-        //            {
-        //                Status = false,
-        //                Message = "Request is required."
-        //            };
-        //        }
-
-        //        if (model.Ref_LeadId <= 0)
-        //        {
-        //            return new ApiResponse
-        //            {
-        //                Status = false,
-        //                Message = "Lead Id is required."
-        //            };
-        //        }
-
-        //        if (model.Ref_ActivityId <= 0)
-        //        {
-        //            return new ApiResponse
-        //            {
-        //                Status = false,
-        //                Message = "Activity Id is required."
-        //            };
-        //        }
-
-        //        if (model.Expenses == null || model.Expenses.Count == 0)
-        //        {
-        //            return new ApiResponse
-        //            {
-        //                Status = false,
-        //                Message = "At least one expense is required."
-        //            };
-        //        }
-
-        //        string expensesJson = JsonConvert.SerializeObject(
-        //            model.Expenses
-        //        );
-
-        //        var dt = await _database.ExecuteDataTableAsync(
-        //            "USP_CRM_LeadManagement",
-
-        //            new SqlParameter(
-        //                "@Status",
-        //                "CREATE_ACTIVITY_EXPENSE"
-        //            ),
-
-        //            new SqlParameter(
-        //                "@Ref_LeadId",
-        //                model.Ref_LeadId
-        //            ),
-
-        //            new SqlParameter(
-        //                "@Ref_ActivityId",
-        //                model.Ref_ActivityId
-        //            ),
-
-        //            new SqlParameter(
-        //                "@ExpenseItems",
-        //                (object?)expensesJson ?? DBNull.Value
-        //            ),
-
-        //            new SqlParameter(
-        //                "@CreatedBy",
-        //                (object?)model.CreatedBy ?? DBNull.Value
-        //            )
-        //        );
-
-        //        var response = new ApiResponse();
-
-        //        if (dt == null || dt.Rows.Count == 0)
-        //        {
-        //            response.Status = false;
-        //            response.Message =
-        //                "No response returned from database.";
-
-        //            return response;
-        //        }
-
-        //        var row = dt.Rows[0];
-
-        //        bool status =
-        //            Convert.ToInt32(row["Status"]) == 1;
-
-        //        response.Status = status;
-
-        //        response.Message =
-        //            row["Message"]?.ToString();
-
-        //        if (status)
-        //        {
-        //            response.Data = new
-        //            {
-        //                LeadId = model.Ref_LeadId,
-
-        //                ActivityId = model.Ref_ActivityId,
-
-        //                TotalItems =
-        //                    row["TotalItems"] == DBNull.Value
-        //                        ? 0
-        //                        : Convert.ToInt32(row["TotalItems"]),
-
-        //                TotalAmount =
-        //                    row["TotalAmount"] == DBNull.Value
-        //                        ? 0
-        //                        : Convert.ToDecimal(row["TotalAmount"])
-        //            };
-        //        }
-
-        //        return response;
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        return new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = $"Database Error: {ex.Message}"
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = $"Error: {ex.Message}"
-        //        };
-        //    }
-        //}
-
-      
+        #region // Add Activity Expenses     
 
         public async Task<ApiResponse> AddActivityExpenses(LeadActivityExpenseRequest model)
         {
