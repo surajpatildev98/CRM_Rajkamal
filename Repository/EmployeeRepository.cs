@@ -81,7 +81,7 @@ namespace CRMWebServices.Repository
                     .Split('/', StringSplitOptions.RemoveEmptyEntries)
                     .Select(Uri.EscapeDataString);
 
-                return "/files/" + string.Join("/", segments);
+                return "/Uploads/" + string.Join("/", segments);
             }
             catch (Exception ex)
             {

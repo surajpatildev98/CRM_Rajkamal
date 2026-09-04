@@ -14,7 +14,7 @@
         public class ConvertLeadRequest
         {
             public int Ref_LeadId { get; set; }
-            public string OpportunityName { get; set; }
+            public string? OpportunityName { get; set; }
             public decimal ExpectedRevenue { get; set; }
             public DateTime ExpectedCloseDate { get; set; }
             public int Probability { get; set; }
@@ -24,7 +24,7 @@
             public int? AssignedToEmployeeId { get; set; }
 
             // Hidden/Auto fields (sent by Android but not in form)
-            public int Ref_OpportunityTypeId { get; set; } = 1; // Default: NEW
+            public int? Ref_OpportunityTypeId { get; set; } = 1; // Default: NEW
 
             //public int Ref_OpportunityStageId { get; set; } = 1; // Default: QUAL
         }

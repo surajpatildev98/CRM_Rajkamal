@@ -648,6 +648,17 @@ namespace CRMWebServices.Repository
                         entityType: "LEAD",
                         recipientType: "TRANSFER"
                     );
+
+                    await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                        schedulerJobItemId: null,
+                        employeeId: assignedToEmployeeId,
+                        entityId: leadId,
+                        title: "Lead Transferred",
+                        message: $"Lead {leadNo} has been assigned to you.",
+                        entityType: "LEAD",
+                        recipientType: "TRANSFER",
+                        actionType: "TRANSFERRED"
+                    );
                 }
                 catch (Exception ex)
                 {
@@ -674,6 +685,17 @@ namespace CRMWebServices.Repository
                             message: $"Your lead {leadNo} has been transferred to {assignedEmployeeName}.",
                             entityType: "LEAD",
                             recipientType: "CREATOR"
+                        );
+
+                        await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                            schedulerJobItemId: null,
+                            employeeId: leadCreatedBy,
+                            entityId: leadId,
+                            title: "Lead Transferred",
+                            message: $"Your lead {leadNo} has been transferred to {assignedEmployeeName}.",
+                            entityType: "LEAD",
+                            recipientType: "CREATOR",
+                            actionType: "TRANSFERRED"
                         );
                     }
                     catch (Exception ex)
@@ -704,6 +726,17 @@ namespace CRMWebServices.Repository
                             message: $"Lead {leadNo} has been transferred to {assignedEmployeeName}.",
                             entityType: "LEAD",
                             recipientType: "MANAGER"
+                        );
+
+                        await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                            schedulerJobItemId: null,
+                            employeeId: managerEmployeeId.Value,
+                            entityId: leadId,
+                            title: "Lead Transferred",
+                            message: $"Lead {leadNo} has been transferred to {assignedEmployeeName}.",
+                            entityType: "LEAD",
+                            recipientType: "MANAGER",
+                            actionType: "TRANSFERRED"
                         );
                     }
                     catch (Exception ex)
@@ -1659,10 +1692,21 @@ namespace CRMWebServices.Repository
                         entityType: "LEAD",
                         recipientType: "CREATOR"
                     );
+
+                    await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                        schedulerJobItemId: null,
+                        employeeId: creatorEmployeeId.Value,
+                        entityId: leadId,
+                        title: $"Lead {statusName}",
+                        message: $"Lead {leadNo} has been marked as {statusName}.",
+                        entityType: "LEAD",
+                        recipientType: "CREATOR",
+                        actionType: statusName.ToUpperInvariant()
+                    );
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogError( ex,"Failed to notify Lead Creator. LeadId {LeadId}, CreatorId {CreatorId}",  leadId, creatorEmployeeId.Value);
+                    _logger.LogError(ex, "Failed to notify Lead Creator. LeadId {LeadId}, CreatorId {CreatorId}", leadId, creatorEmployeeId.Value);
                 }
             }
 
@@ -1691,6 +1735,17 @@ namespace CRMWebServices.Repository
                                 entityType: "LEAD",
                                 recipientType: "MANAGER"
                             );
+
+                            await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                                schedulerJobItemId: null,
+                                employeeId: managerEmployeeId.Value,
+                                entityId: leadId,
+                                title: $"Lead {statusName}",
+                                message: $"Lead {leadNo} has been marked as {statusName} by your team member.",
+                                entityType: "LEAD",
+                                recipientType: "MANAGER",
+                                actionType: statusName.ToUpperInvariant()
+                            );
                         }
                         catch (Exception ex)
                         {
@@ -1711,7 +1766,6 @@ namespace CRMWebServices.Repository
                         assignedEmployeeId.Value);
                 }
             }
-
             return response;
         }
         #endregion
@@ -1877,15 +1931,21 @@ namespace CRMWebServices.Repository
                     entityType: "LEAD",
                     recipientType: "ASSIGN"
                 );
+
+                await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                    schedulerJobItemId: null,
+                    employeeId: assignedToEmployeeId,
+                    entityId: leadId,
+                    title: "Lead Assigned",
+                    message: $"Lead {leadNo} has been assigned to you.",
+                    entityType: "LEAD",
+                    recipientType: "ASSIGN",
+                    actionType: "ASSIGNED"
+                );
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
-                    leadId,
-                    assignedToEmployeeId
-                );
+                _logger.LogError(ex,"Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",leadId,assignedToEmployeeId);
             }
 
             // 2. Notification to LEAD CREATOR
@@ -1904,6 +1964,17 @@ namespace CRMWebServices.Repository
                         message: $"Your lead {leadNo} has been assigned to {assignedEmployeeName}.",
                         entityType: "LEAD",
                         recipientType: "CREATOR"
+                    );
+
+                    await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                        schedulerJobItemId: null,
+                        employeeId: leadCreatedBy,
+                        entityId: leadId,
+                        title: "Lead Assigned",
+                        message: $"Your lead {leadNo} has been assigned to {assignedEmployeeName}.",
+                        entityType: "LEAD",
+                        recipientType: "CREATOR",
+                        actionType: "ASSIGNED"
                     );
                 }
                 catch (Exception ex)
