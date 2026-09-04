@@ -21,5 +21,7 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> SearchCustomer(string searchText);
         Task<ApiResponse> AddActivityExpenses(LeadActivityExpenseRequest model);
         Task<ApiResponse> GetActivityExpenseMasters();
+        Task<int?> GetEmployeeManagerIdAsync(int employeeId);
+
     }
 }
