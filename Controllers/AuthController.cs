@@ -223,8 +223,6 @@ namespace CRMWebServices.Controllers
             return Ok(response);
         }
 
-
-
         #region // POST: api/auth/forgot-password
         [HttpPost("forgot_password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)

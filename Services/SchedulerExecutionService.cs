@@ -11,13 +11,16 @@ namespace CRMWebServices.Services
         private readonly IDatabaseService _database;
         private readonly IFirebaseNotificationService _firebase;
         private readonly IEmailService _email;
+
+        private readonly IConfiguration _config;
         private readonly ILogger<SchedulerExecutionService> _logger;
 
-        public SchedulerExecutionService(IDatabaseService database, IFirebaseNotificationService firebase, IEmailService email, ILogger<SchedulerExecutionService> logger)
+        public SchedulerExecutionService(IDatabaseService database, IFirebaseNotificationService firebase, IEmailService email, IConfiguration config, ILogger<SchedulerExecutionService> logger)
         {
             _database = database;
             _firebase = firebase;
             _email = email;
+            _config = config;
             _logger = logger;
         }
 
@@ -112,6 +115,10 @@ namespace CRMWebServices.Services
             }
 
             bool isUnassigned = Convert.ToBoolean(statusTable.Rows[0]["IsUnassigned"]);
+
+
+            //int createdByEmployeeId = Convert.ToInt32(statusTable.Rows[0]["CreatedBy"]);
+
 
             // 2. Lead has now been assigned    
             if (!isUnassigned)
@@ -307,17 +314,31 @@ namespace CRMWebServices.Services
 
             if (recipients == null || recipients.Rows.Count == 0)
             {
+
                 _logger.LogWarning("No recipients found for Lead {LeadId}.",leadId);
+
+                _logger.LogWarning(
+                    "No recipients found for Lead {LeadId}.",
+                    leadId);
+
 
                 return;
             }
 
 
+
             _logger.LogInformation("Found {Count} recipient(s) for Lead {LeadId}.",recipients.Rows.Count,leadId);
+
+            _logger.LogInformation(
+                "Found {Count} recipient(s) for Lead {LeadId}.",
+                recipients.Rows.Count,
+                leadId);
+
 
             foreach (DataRow recipient in recipients.Rows)
             {
                 int employeeId = Convert.ToInt32(recipient["EmployeeId"]);
+
                 string recipientType = recipient["RecipientType"]?.ToString() ?? "";
 
                 if (!string.Equals(recipientType, "CREATOR", StringComparison.OrdinalIgnoreCase) &&
@@ -340,24 +361,60 @@ namespace CRMWebServices.Services
                     message = $"Lead #{leadId} created by your team is currently unassigned.";
                 }
 
+
+
+                    //string recipientType =recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
+
+                // ============================================
+                // IMPORTANT:
+                // For an unassigned lead, notify ONLY MANAGER
+                // ============================================
+
+                if (!string.Equals(
+                        recipientType,
+                        "MANAGER",
+                        StringComparison.OrdinalIgnoreCase))
+                {
+                    _logger.LogInformation("Skipping non-manager recipient for Lead {LeadId}. RecipientType: {RecipientType}",
+                        leadId,
+                        recipientType);
+
+                    continue;
+                }
+
                 try
                 {
-                    await SendEmployeeNotificationAsync(
+                    await SendEmployeeNotificationAsync(schedulerJobItemId: null, employeeId: employeeId, entityId: leadId, title: "Unassigned Lead", message: $"Lead #{leadId} is still unassigned.", entityType: "LEAD", recipientType: "MANAGER");
+
+                    // Added By Suraj on 01-09-2026: Send Email Notification for Unassigned Lead
+                    await SendEmployeeEmailNotificationAsync(
                         schedulerJobItemId: null,
                         employeeId: employeeId,
                         entityId: leadId,
-                        title: title,
-                        message: message,
+                        title: "Unassigned Lead",
+                        message: $"Lead #{leadId} is still unassigned.",
                         entityType: "LEAD",
-                        recipientType: recipientType
+                        recipientType: "MANAGER", 
+                        actionType: "UNASSIGNED"
+
+
                     );
                 }
                 catch (Exception ex)
                 {
+
                     _logger.LogError(ex,"Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",employeeId,leadId);
+
+                    _logger.LogError(
+                        ex,
+                        "Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",
+                        employeeId,
+                        leadId);
+
                 }
             }
         }
+        
 
 
         private async Task<DataTable> ClaimJobItemAsync(long schedulerJobItemId)
@@ -517,6 +574,63 @@ namespace CRMWebServices.Services
             }
         }
 
+        public async Task SendEmployeeEmailNotificationAsync(
+    long? schedulerJobItemId, int employeeId, int entityId,
+    string title, string message, string entityType,
+    string recipientType, string actionType)
+        {
+            var employeeTable = await GetEmployeeEmailAsync(employeeId);
+
+            if (employeeTable == null || employeeTable.Rows.Count == 0)
+            {
+                _logger.LogWarning("No active email found for EmployeeId {EmployeeId}.", employeeId);
+                return;
+            }
+
+            string email = employeeTable.Rows[0]["OfficialEmail"]?.ToString() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                _logger.LogWarning("Official email is empty for EmployeeId {EmployeeId}.", employeeId);
+                return;
+            }
+
+            string color = ActionColors.TryGetValue(actionType, out var c) ? c : "#333333";
+            string logoUrl = $"{_config["EmailSettings:PublicBaseUrl"]}/assets/companylogo.jpg";
+            string body = BuildEmailBody(title, color, message, logoUrl);
+
+            var notificationTable = await CreateNotificationAsync(
+                    schedulerJobItemId, employeeId, null, "EMAIL", title, message);
+
+            if (notificationTable == null || notificationTable.Rows.Count == 0)
+            {
+                _logger.LogWarning("Notification record was not created for EmployeeId {EmployeeId}.", employeeId);
+                return;
+            }
+
+            long notificationId = Convert.ToInt64(notificationTable.Rows[0]["SchedulerNotificationId"]);
+
+            try
+            {
+                var result = await _email.SendEmailAsync(email, title, body);
+
+                if (result.Success)
+                {
+                    await MarkNotificationSentAsync(notificationId, null);
+                    _logger.LogInformation("Email notification sent successfully to EmployeeId {EmployeeId}.", employeeId);
+                }
+                else
+                {
+                    await MarkNotificationFailedAsync(notificationId, result.ErrorMessage);
+                    _logger.LogWarning("Email notification failed for EmployeeId {EmployeeId}. Error: {Error}", employeeId, result.ErrorMessage);
+                }
+            }
+            catch (Exception ex)
+            {
+                await MarkNotificationFailedAsync(notificationId, ex.Message);
+                throw;
+            }
+        }
         private async Task<DataTable?> CreateNotificationAsync(long? schedulerJobItemId, int employeeId, string? deviceToken, string notificationType, string title, string message)
         {
             var dt = await _database.ExecuteDataTableAsync(SP_NAME,
@@ -532,6 +646,70 @@ namespace CRMWebServices.Services
                 );
 
             return dt != null && dt.Rows.Count > 0 ? dt : null;
+        }
+
+        private static readonly Dictionary<string, string> ActionColors = new()
+        {
+            ["CREATED"] = "#6A1B9A",
+            ["ASSIGNED"] = "#2E7D32",
+            ["TRANSFERRED"] = "#1565C0",
+            ["UNASSIGNED"] = "#C8161D",
+        };
+
+        private string BuildEmailBody(string headerText, string color, string message, string logoUrl)
+        {
+            return $@"
+                <html>
+                <body style=""margin:0;padding:0;background-color:#f4f4f7;font-family:Segoe UI,Arial,sans-serif;"">
+                    <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"" style=""background-color:#f4f4f7;padding:30px 0;"">
+                        <tr>
+                            <td align=""center"">
+                                <table role=""presentation"" width=""480"" cellpadding=""0"" cellspacing=""0"" style=""background-color:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,0.08);"">
+
+                                    <!-- Header -->
+                                    <tr>
+                                        <td style=""padding:24px 32px;border-bottom:3px solid {color};text-align:center;"">
+                                            <img src=""{logoUrl}"" alt=""Rajkamal Bar Scan Systems Pvt. Ltd."" width=""220"" style=""display:block;height:auto;max-width:220px;margin:0 auto 12px auto;"" />
+                                            <span style=""font-size:16px;font-weight:600;color:{color};"">{headerText}</span>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Body -->
+                                    <tr>
+                                        <td style=""padding:32px;"">
+                                            <p style=""margin:0 0 20px 0;font-size:15px;color:#333333;"">Hello,</p>
+
+                                            <table role=""presentation"" width=""100%"" cellpadding=""0"" cellspacing=""0"">
+                                                <tr>
+                                                    <td align=""center"" style=""padding:8px 0 4px 0;"">
+                                                        <span style=""display:inline-block;background-color:{color}1A;border:1px dashed {color};border-radius:6px;padding:14px 24px;font-size:15px;font-weight:600;color:{color};line-height:1.5;"">
+                                                            {message}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            </table>
+
+                                            <p style=""margin:24px 0 0 0;font-size:13px;color:#999999;"">
+                                                This is an automated message from the CRM System.
+                                            </p>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Footer -->
+                                    <tr>
+                                        <td style=""background-color:#fafafa;padding:20px 32px;border-top:1px solid #eeeeee;"">
+                                            <p style=""margin:0;font-size:12px;color:#999999;"">
+                                                Rajkamal Bar Scan Systems Pvt. Ltd. — Please do not reply to this email.
+                                            </p>
+                                        </td>
+                                    </tr>
+
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>";
         }
     }
 }
