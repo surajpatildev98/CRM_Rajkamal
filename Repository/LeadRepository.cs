@@ -14,11 +14,11 @@ namespace CRMWebServices.Repository
     public class LeadRepository : ILeadRepository
     {
         private readonly IDatabaseService _database;
-        private readonly ILogger<PermissionService> _logger;
+        private readonly ILogger<LeadRepository> _logger;
         private readonly ISchedulerExecutionService _schedulerExecutionService;
 
 
-        public LeadRepository(IDatabaseService database, ILogger<PermissionService> logger, ISchedulerExecutionService schedulerExecutionService)
+        public LeadRepository(IDatabaseService database, ILogger<LeadRepository> logger, ISchedulerExecutionService schedulerExecutionService)
         {
             _database = database;
             _logger = logger;
@@ -159,7 +159,7 @@ namespace CRMWebServices.Repository
         }
 
 
-        private async Task<int?> GetEmployeeManagerIdAsync(int employeeId)
+        public async Task<int?> GetEmployeeManagerIdAsync(int employeeId)
         {
             try
             {
@@ -169,7 +169,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@EmployeeId", employeeId)
                 );
 
-                if (dt.Rows.Count == 0)
+                if (dt == null || dt.Rows.Count == 0)
                     return null;
 
                 if (dt.Rows[0]["ManagerEmployeeId"] == DBNull.Value)
@@ -428,7 +428,7 @@ namespace CRMWebServices.Repository
                         try
                         {
                             await _schedulerExecutionService
-                                .NotifyUnassignedLeadAsync(leadId,model.CreatedBy.Value);
+                                .NotifyUnassignedLeadAsync(leadId);
                         }
                         catch (Exception ex)
                         {
@@ -480,7 +480,7 @@ namespace CRMWebServices.Repository
 
                 // return MapResponse(dt, isCreate: false);
                 var response = MapResponse(dt, isCreate: false);
-                if (response.Status && dt.Rows.Count > 0)
+                /*if (response.Status && dt.Rows.Count > 0)
                 {
                     int leadId = Convert.ToInt32(dt.Rows[0]["LeadId"]);
 
@@ -508,8 +508,127 @@ namespace CRMWebServices.Repository
                             model.AssignedToEmployeeId);
                     }
                 }
+                return response;*/
+
+                if (!response.Status || dt == null || dt.Rows.Count == 0)
+                {
+                    return response;
+                }
+
+                var row = dt.Rows[0];
+
+                int leadId = Convert.ToInt32(row["LeadId"]);
+
+                string leadNo =
+                    row["LeadNo"]?.ToString() ?? $"Lead #{leadId}";
+
+                int assignedToEmployeeId =
+                    Convert.ToInt32(row["AssignedToEmployeeId"]);
+
+                int leadCreatedBy =
+                    Convert.ToInt32(row["LeadCreatedBy"]);
+
+                int? managerEmployeeId = null;
+
+                if (row["ManagerEmployeeId"] != DBNull.Value)
+                {
+                    managerEmployeeId =
+                        Convert.ToInt32(row["ManagerEmployeeId"]);
+                }
+
+                string assignedEmployeeName =
+                    row["AssignedEmployeeName"]?.ToString()
+                    ?? "the assigned employee";
+
+                string managerEmployeeName =
+                    row["ManagerEmployeeName"]?.ToString()
+                    ?? "Manager";
+
+                // 1. Notification to NEW ASSIGNED EMPLOYEE
+
+                try
+                {
+                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                        schedulerJobItemId: null,
+                        employeeId: assignedToEmployeeId,
+                        entityId: leadId,
+                        title: "Lead Transferred",
+                        message: $"Lead {leadNo} has been assigned to you.",
+                        entityType: "LEAD",
+                        recipientType: "TRANSFER"
+                    );
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Failed to send transfer notification to assigned employee. " +
+                        "LeadId {LeadId}, EmployeeId {EmployeeId}",
+                        leadId,
+                        assignedToEmployeeId
+                    );
+                }
+
+                // 2. Notification to LEAD CREATOR
+
+                if (leadCreatedBy != assignedToEmployeeId)
+                {
+                    try
+                    {
+                        await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                            schedulerJobItemId: null,
+                            employeeId: leadCreatedBy,
+                            entityId: leadId,
+                            title: "Lead Transferred",
+                            message: $"Your lead {leadNo} has been transferred to {assignedEmployeeName}.",
+                            entityType: "LEAD",
+                            recipientType: "CREATOR"
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(
+                            ex,
+                            "Failed to send transfer notification to lead creator. " +
+                            "LeadId {LeadId}, CreatorEmployeeId {CreatorEmployeeId}",
+                            leadId,
+                            leadCreatedBy
+                        );
+                    }
+                }
+
+                // 3. Notification to MANAGER
+
+                if (managerEmployeeId.HasValue &&
+                    managerEmployeeId.Value != assignedToEmployeeId &&
+                    managerEmployeeId.Value != leadCreatedBy)
+                {
+                    try
+                    {
+                        await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                            schedulerJobItemId: null,
+                            employeeId: managerEmployeeId.Value,
+                            entityId: leadId,
+                            title: "Lead Transferred",
+                            message: $"Lead {leadNo} has been transferred to {assignedEmployeeName}.",
+                            entityType: "LEAD",
+                            recipientType: "MANAGER"
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(
+                            ex,
+                            "Failed to send transfer notification to manager. " +
+                            "LeadId {LeadId}, ManagerEmployeeId {ManagerEmployeeId}",
+                            leadId,
+                            managerEmployeeId.Value
+                        );
+                    }
+                }
 
                 return response;
+
             }
             catch (Exception ex)
             {
@@ -1406,6 +1525,117 @@ namespace CRMWebServices.Repository
             var row = dt.Rows[0];
             response.Status = Convert.ToInt32(row["Status"]) == 1;
             response.Message = row["Message"]?.ToString();
+            if (!response.Status)
+            {
+                return response;
+            }
+
+            // GET LEAD INFORMATION
+
+            int leadId = Convert.ToInt32(row["LeadId"]);
+
+            string leadNo = row.Table.Columns.Contains("LeadNo") ? row["LeadNo"]?.ToString() ?? "" : "";
+
+            string statusName = row.Table.Columns.Contains("StatusName")
+                    ? row["StatusName"]?.ToString() ?? ""  : "";
+
+            // GET CREATOR + ASSIGNED EMPLOYEE
+
+            var leadInfo = await _database.ExecuteDataTableAsync(
+                "USP_CRM_LeadManagement",
+
+                new SqlParameter(
+                    "@Status",
+                    "GET_LEAD_NOTIFICATION_INFO"),
+
+                new SqlParameter(
+                    "@Ref_LeadId",
+                    leadId)
+            );
+
+            if (leadInfo == null || leadInfo.Rows.Count == 0)
+            {
+                _logger.LogWarning(
+                    "Lead closed but notification information not found. LeadId {LeadId}",
+                    leadId);
+
+                return response;
+            }
+
+            var leadRow = leadInfo.Rows[0];
+
+            int? creatorEmployeeId = leadRow["CreatedBy"] == DBNull.Value ? null : Convert.ToInt32(leadRow["CreatedBy"]);
+
+            int? assignedEmployeeId = leadRow["AssignedEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(leadRow["AssignedEmployeeId"]);
+
+            // 1. NOTIFY LEAD CREATOR
+
+            if (creatorEmployeeId.HasValue && creatorEmployeeId.Value != model.CreatedBy)
+            {
+                try
+                {
+                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                        schedulerJobItemId: null,
+                        employeeId: creatorEmployeeId.Value,
+                        entityId: leadId,
+                        title: $"Lead {statusName}",
+                        message: $"Lead {leadNo} has been marked as {statusName}.",
+                        entityType: "LEAD",
+                        recipientType: "CREATOR"
+                    );
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError( ex,"Failed to notify Lead Creator. LeadId {LeadId}, CreatorId {CreatorId}",  leadId, creatorEmployeeId.Value);
+                }
+            }
+
+            // 2. GET ASSIGNED EMPLOYEE'S MANAGER
+
+            if (assignedEmployeeId.HasValue)
+            {
+                try
+                {
+                    int? managerEmployeeId = await GetEmployeeManagerIdAsync(
+                            assignedEmployeeId.Value);
+
+                    if (managerEmployeeId.HasValue &&
+                        managerEmployeeId.Value != model.CreatedBy)
+                    {
+                        // 3. NOTIFY MANAGER
+
+                        try
+                        {
+                            await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                schedulerJobItemId: null,
+                                employeeId: managerEmployeeId.Value,
+                                entityId: leadId,
+                                title: $"Lead {statusName}",
+                                message: $"Lead {leadNo} has been marked as {statusName} by your team member.",
+                                entityType: "LEAD",
+                                recipientType: "MANAGER"
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to notify Lead Manager. LeadId {LeadId}, ManagerId {ManagerId}",
+                                leadId,
+                                managerEmployeeId.Value);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Failed to get manager for assigned employee. LeadId {LeadId}, AssignedEmployeeId {EmployeeId}",
+                        leadId,
+                        assignedEmployeeId.Value);
+                }
+            }
+
             return response;
         }
         #endregion
@@ -1499,7 +1729,7 @@ namespace CRMWebServices.Repository
 
              return response;*/
 
-            if (status)
+            /*if (status)
             {
                 int leadId = Convert.ToInt32(row["LeadId"]);
                 int assignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"]);
@@ -1535,6 +1765,80 @@ namespace CRMWebServices.Repository
             else
             {
                 response.Data = null;
+            }
+
+            return response;*/
+
+            if (!status)
+            {
+                response.Data = null;
+                return response;
+            }
+
+            int leadId = Convert.ToInt32(row["LeadId"]);
+            int assignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"]);
+            int leadCreatedBy = Convert.ToInt32(row["LeadCreatedBy"]);
+            string leadNo = row["LeadNo"]?.ToString() ?? $"Lead #{leadId}";
+
+            string assignedEmployeeName = row["AssignedEmployeeName"]?.ToString() ?? "an employee";
+
+            response.Data = new
+            {
+                LeadId = leadId,
+                AssignedToEmployeeId = assignedToEmployeeId,
+                LeadCreatedBy = leadCreatedBy
+            };
+
+            // 1. Notification to ASSIGNED EMPLOYEE
+            try
+            {
+                await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                    schedulerJobItemId: null,
+                    employeeId: assignedToEmployeeId,
+                    entityId: leadId,
+                    title: "Lead Assigned",
+                    message: $"Lead {leadNo} has been assigned to you.",
+                    entityType: "LEAD",
+                    recipientType: "ASSIGN"
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
+                    leadId,
+                    assignedToEmployeeId
+                );
+            }
+
+            // 2. Notification to LEAD CREATOR
+
+            // Avoid sending duplicate notification if creator
+            // and assigned employee are the same person.
+            if (leadCreatedBy != assignedToEmployeeId)
+            {
+                try
+                {
+                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                        schedulerJobItemId: null,
+                        employeeId: leadCreatedBy,
+                        entityId: leadId,
+                        title: "Lead Assigned",
+                        message: $"Your lead {leadNo} has been assigned to {assignedEmployeeName}.",
+                        entityType: "LEAD",
+                        recipientType: "CREATOR"
+                    );
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(
+                        ex,
+                        "Failed to send Lead creator notification. LeadId {LeadId}, CreatorEmployeeId {CreatorEmployeeId}",
+                        leadId,
+                        leadCreatedBy
+                    );
+                }
             }
 
             return response;
