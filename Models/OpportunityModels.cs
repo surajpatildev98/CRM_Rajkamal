@@ -186,7 +186,9 @@
             public List<OpportunityAttachmentInfo> Files { get; set; }
 
             public List<OpportunityFollowUpInfo> FollowUps { get; set; }
-          
+
+            public List<object> Timeline { get; set; }
+
 
         }
         public class OpportunityInfo
