@@ -30,16 +30,15 @@ namespace CRMWebServices.Controllers
         public async Task<IActionResult> GetWonLeads([FromQuery] int? leadId, [FromQuery] string? searchText)
         {
             try
-            {
-                
+            {               
 
                 if (leadId == null)
                 {
                     var accessFilter = await _authorization.GetAccessFilter(User, "Lead");
 
-                    int? assignedEmployeeId = accessFilter.CanViewAll ? null : User.EmployeeId();
-
-                    var response = await _repository.GetWonLeads(searchText, assignedEmployeeId);
+                    //int? assignedEmployeeId = accessFilter.CanViewAll ? null : User.EmployeeId();
+                    int? assignedEmployeeId = null;
+                    var response = await _repository.GetWonLeads(searchText, assignedEmployeeId, accessFilter.EmployeeId);
                     return response.Status ? Ok(response) : BadRequest(response);
                 }
 

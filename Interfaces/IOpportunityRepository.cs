@@ -8,7 +8,7 @@ namespace CRMWebServices.Repository
     public interface IOpportunityRepository
     {
         #region // Get Leads Details
-        Task<ApiResponse> GetWonLeads(string searchText = null, int? assignedEmployeeId = null);
+        Task<ApiResponse> GetWonLeads(string searchText = null, int? assignedEmployeeId = null,int? loggedInEmployeeId = null);
         Task<ApiResponse> GetWonLeadDetails(int leadId);
         #endregion  
 
