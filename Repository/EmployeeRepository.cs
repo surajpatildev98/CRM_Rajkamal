@@ -11,10 +11,13 @@ namespace CRMWebServices.Repository
     public class EmployeeRepository
     {
         private readonly IDatabaseService _database;
+        private readonly ILogger _logger;
 
-        public EmployeeRepository(IDatabaseService database)
+        public EmployeeRepository(IDatabaseService database, ILogger<EmployeeRepository> logger)
         {
             _database = database;
+            _logger = logger;
+          
         }
 
         private static readonly string[] AllowedExtensions = { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png" };
@@ -81,7 +84,7 @@ namespace CRMWebServices.Repository
                     .Split('/', StringSplitOptions.RemoveEmptyEntries)
                     .Select(Uri.EscapeDataString);
 
-                return "/files/" + string.Join("/", segments);
+                return "/Uploads/" + string.Join("/", segments);
             }
             catch (Exception ex)
             {
@@ -623,6 +626,7 @@ namespace CRMWebServices.Repository
                     {
                         result.Documents.Add(new EmployeeDocumentModel
                         {
+                          
                             DocumentTypeId = Convert.ToInt32(row["DocumentTypeId"]),
 
                             DocumentTypeName = row["DocumentTypeName"] == DBNull.Value
@@ -697,42 +701,107 @@ namespace CRMWebServices.Repository
                 //        ? JsonConvert.SerializeObject(model.Document)
                 //        : null;
 
-                List<object> savedDocuments = new List<object>();
+                List<object> documentList = new List<object>();
 
-                if (model.Document != null && model.Document.Count > 0)
+                _logger.LogInformation(
+                    "========== UPDATE EMPLOYEE DOCUMENTS START | EmployeeId: {EmployeeId} ==========",
+                    model.EmployeeId
+                );
+
+                _logger.LogInformation(
+                    "Document count received from request: {DocumentCount}",
+                    model.Document?.Count ?? 0
+                );
+
+                if (model.Document != null)
                 {
                     foreach (var doc in model.Document)
                     {
-                        if (string.IsNullOrWhiteSpace(doc.Base64Content) || string.IsNullOrWhiteSpace(doc.DocumentName))
-                            continue;
+                        _logger.LogInformation(
+                            "Document received | TypeId: {DocumentTypeId}, Name: {DocumentName}, HasBase64: {HasBase64}, Path: {DocumentPath}",
+                            doc.DocumentTypeId,
+                            doc.DocumentName,
+                            !string.IsNullOrWhiteSpace(doc.Base64Content),
+                            doc.DocumentPath
+                        );
 
-                        try
-                        {
-                            string savedPath = SaveBase64Attachment(doc.Base64Content, doc.DocumentName, "EmployeeDocuments");
+                        string? documentPath = doc.DocumentPath;
 
-                            savedDocuments.Add(new
-                            {
-                                DocumentTypeId = doc.DocumentTypeId,
-                                DocumentName = doc.DocumentName,
-                                DocumentPath = savedPath,
-                                IssueDate = doc.IssueDate,
-                                ExpiryDate = doc.ExpiryDate
-                            });
-                        }
-                        catch (Exception ex)
+                        // =====================================================
+                        // NEW DOCUMENT
+                        // =====================================================
+                        if (!string.IsNullOrWhiteSpace(doc.Base64Content))
                         {
-                            return new ApiResponse
+                            if (string.IsNullOrWhiteSpace(doc.DocumentName))
                             {
-                                Status = false,
-                                Message = $"Error processing document '{doc.DocumentName}': {ex.Message}"
-                            };
+                                _logger.LogWarning(
+                                    "Skipping document because DocumentName is empty | EmployeeId: {EmployeeId}",
+                                    model.EmployeeId
+                                );
+
+                                continue;
+                            }
+
+                            try
+                            {
+                                documentPath = SaveBase64Attachment(
+                                    doc.Base64Content,
+                                    doc.DocumentName,
+                                    "EmployeeDocuments"
+                                );
+
+                                _logger.LogInformation(
+                                    "New document saved | TypeId: {DocumentTypeId}, Path: {DocumentPath}",
+                                    doc.DocumentTypeId,
+                                    documentPath
+                                );
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(
+                                    ex,
+                                    "Error saving document | TypeId: {DocumentTypeId}, Name: {DocumentName}",
+                                    doc.DocumentTypeId,
+                                    doc.DocumentName
+                                );
+
+                                continue;
+                            }
                         }
+
+                        // =====================================================
+                        // EXISTING DOCUMENT
+                        // =====================================================
+                        // For an existing document Base64Content is empty,
+                        // so we keep the existing DocumentPath.
+                        // =====================================================
+
+                        documentList.Add(new
+                        {
+                            DocumentTypeId = doc.DocumentTypeId,
+                            DocumentName = doc.DocumentName,
+                            DocumentPath = documentPath,
+                            IssueDate = doc.IssueDate,
+                            ExpiryDate = doc.ExpiryDate,
+                            Verified = doc.Verified,
+                            VerifiedBy = doc.VerifiedBy,
+                            VerifiedOn = doc.VerifiedOn,
+                            Remarks = doc.Remarks
+                        });
                     }
                 }
 
-                string documentJson =
-                    savedDocuments.Count > 0 ? JsonConvert.SerializeObject(savedDocuments) : null;
+                // IMPORTANT:
+                // null  = document section was not sent
+                // []    = document section was sent but all documents removed
+                string? documentJson = model.Document != null
+                    ? JsonConvert.SerializeObject(documentList)
+                    : null;
 
+                _logger.LogInformation(
+                    "Final document JSON: {DocumentJson}",
+                    documentJson
+                );
 
                 var parameters = new List<SqlParameter>
         {
@@ -801,7 +870,11 @@ namespace CRMWebServices.Repository
             new SqlParameter("@Document",
                 (object?)documentJson ?? DBNull.Value)
         };
-
+                _logger.LogInformation(
+                    "Calling USP_ORG_UpdateEmployee | EmployeeId: {EmployeeId} | Document JSON: {DocumentJson}",
+                    model.EmployeeId,
+                    documentJson ?? "NULL"
+                );
 
                 DataTable dt = await _database.ExecuteDataTableAsync(
                     "USP_ORG_UpdateEmployee",
@@ -821,21 +894,55 @@ namespace CRMWebServices.Repository
 
                 DataRow row = dt.Rows[0];
 
+                _logger.LogInformation(
+                    "USP_ORG_UpdateEmployee returned | Columns: {Columns} | RowCount: {RowCount}",
+                    string.Join(", ", dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName)),
+                    dt.Rows.Count
+                );
+
+                foreach (DataColumn column in dt.Columns)
+                {
+                    _logger.LogInformation(
+                        "USP Result | {Column} = {Value}",
+                        column.ColumnName,
+                        row[column]
+                    );
+                }
+
+                if (!dt.Columns.Contains("Status"))
+                {
+                    _logger.LogError(
+                        "USP_ORG_UpdateEmployee result does NOT contain Status column."
+                    );
+
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Employee update failed. Stored procedure did not return Status."
+                    };
+                }
+
                 bool status = Convert.ToInt32(row["Status"]) == 1;
 
+                string message = dt.Columns.Contains("Message")
+                    ? row["Message"]?.ToString()
+                    : "Employee update completed.";
+
+                object data = null;
+
+                if (status && dt.Columns.Contains("EmployeeId"))
+                {
+                    data = new
+                    {
+                        EmployeeId = Convert.ToInt32(row["EmployeeId"])
+                    };
+                }
 
                 return new ApiResponse
                 {
                     Status = status,
-
-                    Message = row["Message"]?.ToString(),
-
-                    Data = status && dt.Columns.Contains("EmployeeId")
-                        ? new
-                        {
-                            EmployeeId = Convert.ToInt32(row["EmployeeId"])
-                        }
-                        : null
+                    Message = message,
+                    Data = data
                 };
             }
             catch (SqlException ex)
