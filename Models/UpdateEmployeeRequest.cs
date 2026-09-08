@@ -95,6 +95,7 @@
 
     public class DocumentModel
     {
+        public int? DocumentId { get; set; }
         public int DocumentTypeId { get; set; }
 
         public string? DocumentName { get; set; }
@@ -112,6 +113,6 @@
         public DateTime? VerifiedOn { get; set; }
 
         public string? Remarks { get; set; }
-        public string Base64Content { get; set; }
+        public string? Base64Content { get; set; }
     }
 }
