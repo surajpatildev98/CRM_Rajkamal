@@ -313,34 +313,57 @@ namespace CRMWebServices.Repository
                     return new AttendanceDashboardResponse
                     {
                         Status = false,
-                        Message = row["Message"]?.ToString()
-                                  ?? "Unable to retrieve dashboard data.",
+                        Message = row.Table.Columns.Contains("Message") && row["Message"] != DBNull.Value ? row["Message"].ToString()! : "Unable to retrieve dashboard data.",
                         Data = null
                     };
                 }
 
+                var dashboard = new AttendanceDashboardModel
+                {
+                    Present = row["Present"] != DBNull.Value ? Convert.ToInt32(row["Present"]) : 0,
+
+                    Absent =  row["Absent"] != DBNull.Value ? Convert.ToInt32(row["Absent"]) : 0,
+
+                    Late =  row["Late"] != DBNull.Value ? Convert.ToInt32(row["Late"]) : 0,
+
+                    OnLeave = row["OnLeave"] != DBNull.Value ? Convert.ToInt32(row["OnLeave"]) : 0,
+
+                    TotalAttendance = row["TotalAttendance"] != DBNull.Value ? Convert.ToInt32(row["TotalAttendance"]) : 0,
+
+                    FromDate = row["FromDate"] != DBNull.Value ? Convert.ToDateTime(row["FromDate"]) : DateTime.MinValue,
+
+                    ToDate = row["ToDate"] != DBNull.Value ? Convert.ToDateTime(row["ToDate"]) : DateTime.MinValue
+                };
+
+                if (dt.Tables.Count > 1)
+                {
+                    DataTable trendTable = dt.Tables[1];
+
+                    foreach (DataRow trendRow in trendTable.Rows)
+                    {
+                        dashboard.AttendanceTrend.Add(
+                            new AttendanceTrendModel
+                            {
+                                Date = trendRow["Date"] != DBNull.Value ? Convert.ToDateTime(trendRow["Date"] ) : DateTime.MinValue,
+
+                                Present = trendRow["Present"] != DBNull.Value ? Convert.ToInt32(trendRow["Present"]): 0,
+
+                                Absent = trendRow["Absent"] != DBNull.Value ? Convert.ToInt32(trendRow["Absent"]): 0,
+
+                                Late = trendRow["Late"] != DBNull.Value  ? Convert.ToInt32( trendRow["Late"] ): 0,
+
+                                OnLeave = trendRow["OnLeave"] != DBNull.Value ? Convert.ToInt32( trendRow["OnLeave"] ): 0
+                            }
+                        );
+                    }
+                }
                 return new AttendanceDashboardResponse
                 {
                     Status = true,
 
-                    Message = "Attendance dashboard count retrieved successfully.",
+                    Message ="Attendance dashboard count retrieved successfully.",
 
-                    Data = new AttendanceDashboardModel
-                    {
-                        Present = row["Present"] != DBNull.Value ? Convert.ToInt32(row["Present"]) : 0,
-
-                        Absent = row["Absent"] != DBNull.Value ? Convert.ToInt32(row["Absent"]) : 0,
-
-                        Late = row["Late"] != DBNull.Value ? Convert.ToInt32(row["Late"]) : 0,
-
-                        OnLeave = row["OnLeave"] != DBNull.Value ? Convert.ToInt32(row["OnLeave"]) : 0,
-
-                        TotalAttendance = row["TotalAttendance"] != DBNull.Value ? Convert.ToInt32(row["TotalAttendance"]) : 0,
-
-                        FromDate =  row["FromDate"] != DBNull.Value ? Convert.ToDateTime(row["FromDate"]) : DateTime.MinValue,
-
-                        ToDate = row["ToDate"] != DBNull.Value ? Convert.ToDateTime(row["ToDate"]) : DateTime.MinValue
-                    }
+                    Data = dashboard
                 };
             }
             catch (SqlException ex)
