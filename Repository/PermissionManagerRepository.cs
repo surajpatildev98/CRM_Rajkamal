@@ -262,26 +262,18 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region GET_ROLE_PERMISSIONS
-        public async Task<ApiResponse> GetRolePermissions(int roleId, int? moduleId)
+        public async Task<ApiResponse> GetRolePermissions(int roleId, int? moduleId, int? superModuleId = null)
         {
             try
             {
                 var dt = await _database.ExecuteDataTableAsync(SP_NAME,
                     new SqlParameter("@Status", "GET_ROLE_PERMISSIONS"),
                     new SqlParameter("@Ref_RoleId", roleId),
-                    new SqlParameter("@ModuleId", (object?)moduleId ?? DBNull.Value)
+                    new SqlParameter("@ModuleId", (object?)moduleId ?? DBNull.Value),
+                    new SqlParameter("@Ref_SuperModuleId", (object?)superModuleId ?? DBNull.Value)   // NEW
                 );
 
-                //var result = dt.Rows.Cast<DataRow>().Select(r => new RolePermissionItem
-                //{
-                //    ModuleId = Convert.ToInt32(r["ModuleId"]),
-                //    ModuleName = r["ModuleName"]?.ToString(),
-                //    PermissionId = Convert.ToInt32(r["PermissionId"]),
-                //    PermissionCode = r["PermissionCode"]?.ToString(),
-                //    PermissionName = r["PermissionName"]?.ToString(),
-                //    Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
-                //    IsAllowed = Convert.ToBoolean(r["IsAllowed"])
-                //}).ToList();
+                
                 var result = dt.Rows.Cast<DataRow>().Select(r => new RolePermissionItem
                 {
                     ModuleId = Convert.ToInt32(r["ModuleId"]),
@@ -326,22 +318,70 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region SAVE_ROLE_PERMISSIONS
+        #region SAVE_ROLE_PERMISSIONS     
+
         //public async Task<ApiResponse> SaveRolePermissions(SaveRolePermissionsRequest request)
         //{
         //    try
         //    {
-        //        if (request.Permissions == null || request.Permissions.Count == 0)
-        //            return new ApiResponse { Status = false, Message = "No permission changes provided." };
+        //        // At least one type of change must be provided
+        //        if ((request.Modules == null || request.Modules.Count == 0) &&
+        //            (request.Permissions == null || request.Permissions.Count == 0))
+        //        {
+        //            return new ApiResponse
+        //            {
+        //                Status = false,
+        //                Message = "No module or permission changes provided."
+        //            };
+        //        }
 
-        //        var json = JsonConvert.SerializeObject(request.Permissions);
-
-        //        var dt = await _database.ExecuteDataTableAsync(SP_NAME,
-        //            new SqlParameter("@Status", "SAVE_ROLE_PERMISSIONS"),
-        //            new SqlParameter("@Ref_RoleId", request.Ref_RoleId),
-        //            new SqlParameter("@RolePermissionsJson", json),
-        //            new SqlParameter("@CreatedBy", (object?)request.CreatedBy ?? DBNull.Value)
+        //        var permissionsJson = JsonConvert.SerializeObject(
+        //            request.Permissions ?? new List<SaveRolePermissionItem>()
         //        );
+
+        //        var modulesJson = JsonConvert.SerializeObject(
+        //            request.Modules ?? new List<SaveRoleModuleAccessItem>()
+        //        );
+
+        //        var dt = await _database.ExecuteDataTableAsync(
+        //            SP_NAME,
+
+        //            // IMPORTANT:
+        //            // One transaction handles BOTH module + permission access
+        //            new SqlParameter(
+        //                "@Status",
+        //                "SAVE_ROLE_ACCESS"
+        //            ),
+
+        //            new SqlParameter(
+        //                "@Ref_RoleId",
+        //                request.Ref_RoleId
+        //            ),
+
+        //            new SqlParameter(
+        //                "@RolePermissionsJson",
+        //                permissionsJson
+        //            ),
+
+        //            new SqlParameter(
+        //                "@RoleModuleAccessJson",
+        //                modulesJson
+        //            ),
+
+        //            new SqlParameter(
+        //                "@CreatedBy",
+        //                (object?)request.CreatedBy ?? DBNull.Value
+        //            )
+        //        );
+
+        //        if (dt.Rows.Count == 0)
+        //        {
+        //            return new ApiResponse
+        //            {
+        //                Status = false,
+        //                Message = "No response received from database."
+        //            };
+        //        }
 
         //        var row = dt.Rows[0];
         //        return new ApiResponse
@@ -352,24 +392,32 @@ namespace CRMWebServices.Repository
         //    }
         //    catch (SqlException ex)
         //    {
-        //        _logger.LogError(ex, "Error saving role permissions for role {RoleId}", request.Ref_RoleId);
-        //        return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+        //        _logger.LogError(
+        //            ex,
+        //            "Error saving role access for role {RoleId}",
+        //            request.Ref_RoleId
+        //        );
+
+        //        return new ApiResponse
+        //        {
+        //            Status = false,
+        //            Message = $"Database Error: {ex.Message}"
+        //        };
         //    }
         //}
 
-        public async Task<ApiResponse> SaveRolePermissions(
-    SaveRolePermissionsRequest request)
+        public async Task<ApiResponse> SaveRolePermissions(SaveRolePermissionsRequest request)
         {
             try
             {
-                // At least one type of change must be provided
                 if ((request.Modules == null || request.Modules.Count == 0) &&
-                    (request.Permissions == null || request.Permissions.Count == 0))
+                    (request.Permissions == null || request.Permissions.Count == 0) &&
+                    (request.SuperModules == null || request.SuperModules.Count == 0))
                 {
                     return new ApiResponse
                     {
                         Status = false,
-                        Message = "No module or permission changes provided."
+                        Message = "No super module, module or permission changes provided."
                     };
                 }
 
@@ -381,45 +429,21 @@ namespace CRMWebServices.Repository
                     request.Modules ?? new List<SaveRoleModuleAccessItem>()
                 );
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    SP_NAME,
+                var superModulesJson = JsonConvert.SerializeObject(
+                    request.SuperModules ?? new List<SaveRoleSuperModuleAccessItem>()
+                );
 
-                    // IMPORTANT:
-                    // One transaction handles BOTH module + permission access
-                    new SqlParameter(
-                        "@Status",
-                        "SAVE_ROLE_ACCESS"
-                    ),
-
-                    new SqlParameter(
-                        "@Ref_RoleId",
-                        request.Ref_RoleId
-                    ),
-
-                    new SqlParameter(
-                        "@RolePermissionsJson",
-                        permissionsJson
-                    ),
-
-                    new SqlParameter(
-                        "@RoleModuleAccessJson",
-                        modulesJson
-                    ),
-
-                    new SqlParameter(
-                        "@CreatedBy",
-                        (object?)request.CreatedBy ?? DBNull.Value
-                    )
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "SAVE_ROLE_ACCESS"),
+                    new SqlParameter("@Ref_RoleId", request.Ref_RoleId),
+                    new SqlParameter("@RolePermissionsJson", permissionsJson),
+                    new SqlParameter("@RoleModuleAccessJson", modulesJson),
+                    new SqlParameter("@RoleSuperModuleAccessJson", superModulesJson),   // NEW
+                    new SqlParameter("@CreatedBy", (object?)request.CreatedBy ?? DBNull.Value)
                 );
 
                 if (dt.Rows.Count == 0)
-                {
-                    return new ApiResponse
-                    {
-                        Status = false,
-                        Message = "No response received from database."
-                    };
-                }
+                    return new ApiResponse { Status = false, Message = "No response received from database." };
 
                 var row = dt.Rows[0];
                 return new ApiResponse
@@ -430,17 +454,8 @@ namespace CRMWebServices.Repository
             }
             catch (SqlException ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error saving role access for role {RoleId}",
-                    request.Ref_RoleId
-                );
-
-                return new ApiResponse
-                {
-                    Status = false,
-                    Message = $"Database Error: {ex.Message}"
-                };
+                _logger.LogError(ex, "Error saving role access for role {RoleId}", request.Ref_RoleId);
+                return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
             }
         }
         #endregion
@@ -501,6 +516,159 @@ namespace CRMWebServices.Repository
             catch (SqlException ex)
             {
                 _logger.LogError(ex, "Error saving module access for role {RoleId}", request.Ref_RoleId);
+                return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+            }
+        }
+        #endregion
+
+        #region GET_SUPER_MODULES
+        public async Task<ApiResponse> GetSuperModules()
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "GET_SUPER_MODULES")
+                );
+
+                var result = dt.Rows.Cast<DataRow>().Select(r => new SuperModuleInfo
+                {
+                    SuperModuleId = Convert.ToInt32(r["SuperModuleId"]),
+                    SuperModuleCode = r["SuperModuleCode"]?.ToString(),
+                    SuperModuleName = r["SuperModuleName"]?.ToString(),
+                    Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                    IconName = r["IconName"] == DBNull.Value ? null : r["IconName"].ToString(),
+                    DisplayOrder = r["DisplayOrder"] == DBNull.Value ? null : Convert.ToInt32(r["DisplayOrder"])
+                }).ToList();
+
+                return new ApiResponse { Status = true, Message = "Super modules fetched successfully.", Data = result };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error fetching super modules");
+                return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+            }
+        }
+        #endregion
+
+        #region GET_SUPERMODULE_MODULES
+        public async Task<ApiResponse> GetSuperModuleModules(int superModuleId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "GET_SUPERMODULE_MODULES"),
+                    new SqlParameter("@Ref_SuperModuleId", superModuleId)
+                );
+
+                var result = dt.Rows.Cast<DataRow>().Select(r => new SuperModuleModuleItem
+                {
+                    ModuleId = Convert.ToInt32(r["ModuleId"]),
+                    ModuleCode = r["ModuleCode"]?.ToString(),
+                    ModuleName = r["ModuleName"]?.ToString(),
+                    IconName = r["IconName"] == DBNull.Value ? null : r["IconName"].ToString(),
+                    DisplayOrder = r["DisplayOrder"] == DBNull.Value ? null : Convert.ToInt32(r["DisplayOrder"]),
+                    IsMapped = Convert.ToBoolean(r["IsMapped"])
+                }).ToList();
+
+                return new ApiResponse { Status = true, Message = "Modules fetched successfully.", Data = result };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error fetching modules for super module {SuperModuleId}", superModuleId);
+                return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+            }
+        }
+        #endregion
+
+        #region SAVE_SUPERMODULE_MAPPING
+        public async Task<ApiResponse> SaveSuperModuleMapping(SaveSuperModuleMappingRequest request)
+        {
+            try
+            {
+                if (request.Modules == null || request.Modules.Count == 0)
+                    return new ApiResponse { Status = false, Message = "No mapping changes provided." };
+
+                var json = JsonConvert.SerializeObject(request.Modules);
+
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "SAVE_SUPERMODULE_MAPPING"),
+                    new SqlParameter("@Ref_SuperModuleId", request.Ref_SuperModuleId),
+                    new SqlParameter("@SuperModuleMappingJson", json),
+                    new SqlParameter("@CreatedBy", (object?)request.CreatedBy ?? DBNull.Value)
+                );
+
+                var row = dt.Rows[0];
+                return new ApiResponse
+                {
+                    Status = Convert.ToBoolean(row["Success"]),
+                    Message = row["Message"]?.ToString()
+                };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error saving super module mapping for {SuperModuleId}", request.Ref_SuperModuleId);
+                return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+            }
+        }
+        #endregion
+
+
+        #region GET_ROLE_SUPERMODULE_ACCESS
+        public async Task<ApiResponse> GetRoleSuperModuleAccess(int roleId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "GET_ROLE_SUPERMODULE_ACCESS"),
+                    new SqlParameter("@Ref_RoleId", roleId)
+                );
+
+                var result = dt.Rows.Cast<DataRow>().Select(r => new RoleSuperModuleAccessItem
+                {
+                    SuperModuleId = Convert.ToInt32(r["SuperModuleId"]),
+                    SuperModuleCode = r["SuperModuleCode"]?.ToString(),
+                    SuperModuleName = r["SuperModuleName"]?.ToString(),
+                    IconName = r["IconName"] == DBNull.Value ? null : r["IconName"].ToString(),
+                    IsEnabled = Convert.ToBoolean(r["IsEnabled"])
+                }).ToList();
+
+                return new ApiResponse { Status = true, Message = "Super module access fetched successfully.", Data = result };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error fetching super module access for role {RoleId}", roleId);
+                return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+            }
+        }
+        #endregion
+
+        #region SAVE_ROLE_SUPERMODULE_ACCESS
+        public async Task<ApiResponse> SaveRoleSuperModuleAccess(SaveRoleSuperModuleAccessRequest request)
+        {
+            try
+            {
+                if (request.SuperModules == null || request.SuperModules.Count == 0)
+                    return new ApiResponse { Status = false, Message = "No super module access changes provided." };
+
+                var json = JsonConvert.SerializeObject(request.SuperModules);
+
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "SAVE_ROLE_SUPERMODULE_ACCESS"),
+                    new SqlParameter("@Ref_RoleId", request.Ref_RoleId),
+                    new SqlParameter("@RoleSuperModuleAccessJson", json),
+                    new SqlParameter("@CreatedBy", (object?)request.CreatedBy ?? DBNull.Value)
+                );
+
+                var row = dt.Rows[0];
+                return new ApiResponse
+                {
+                    Status = Convert.ToBoolean(row["Success"]),
+                    Message = row["Message"]?.ToString()
+                };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error saving super module access for role {RoleId}", request.Ref_RoleId);
                 return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
             }
         }

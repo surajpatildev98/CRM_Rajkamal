@@ -190,19 +190,27 @@
         //    public int? CreatedBy { get; set; }
         //}
 
+        //public class SaveRolePermissionsRequest
+        //{
+        //    public int Ref_RoleId { get; set; }
+
+        //    // Module-level access
+        //    public List<SaveRoleModuleAccessItem> Modules { get; set; } = new();
+
+        //    // Permission-level access
+        //    public List<SaveRolePermissionItem> Permissions { get; set; } = new();
+
+        //    public int? CreatedBy { get; set; }
+        //}
+
         public class SaveRolePermissionsRequest
         {
             public int Ref_RoleId { get; set; }
-
-            // Module-level access
-            public List<SaveRoleModuleAccessItem> Modules { get; set; } = new();
-
-            // Permission-level access
-            public List<SaveRolePermissionItem> Permissions { get; set; } = new();
-
+            public List<SaveRoleModuleAccessItem>? Modules { get; set; }
+            public List<SaveRolePermissionItem>? Permissions { get; set; }
+            public List<SaveRoleSuperModuleAccessItem>? SuperModules { get; set; }   // NEW
             public int? CreatedBy { get; set; }
         }
-
         // ----- ROLE -> MODULE ACCESS -----
         public class RoleModuleAccessItem
         {
@@ -270,6 +278,69 @@
             public string ConfirmPassword { get; set; }
         }
 
+        public class SuperModuleInfo
+        {
+            public int SuperModuleId { get; set; }
+            public string? SuperModuleCode { get; set; }
+            public string? SuperModuleName { get; set; }
+            public string? Description { get; set; }
+            public string? IconName { get; set; }
+            public int? DisplayOrder { get; set; }
+        }
 
+        public class SuperModuleModuleItem
+        {
+            public int ModuleId { get; set; }
+            public string? ModuleCode { get; set; }
+            public string? ModuleName { get; set; }
+            public string? IconName { get; set; }
+            public int? DisplayOrder { get; set; }
+            public bool IsMapped { get; set; }
+        }
+
+        public class SuperModuleMappingItem
+        {
+            public int ModuleId { get; set; }
+            public bool IsMapped { get; set; }
+        }
+
+        public class SaveSuperModuleMappingRequest
+        {
+            public int Ref_SuperModuleId { get; set; }
+            public List<SuperModuleMappingItem>? Modules { get; set; }
+            public int? CreatedBy { get; set; }
+        }
+
+        public class SuperModuleAccessInfo
+        {
+            public int SuperModuleId { get; set; }
+            public string? SuperModuleCode { get; set; }
+            public string? SuperModuleName { get; set; }
+            public string? IconName { get; set; }
+            public bool IsAllowed { get; set; }
+            public List<ModuleAccessInfo> Modules { get; set; } = new();
+        }
+
+        public class RoleSuperModuleAccessItem
+        {
+            public int SuperModuleId { get; set; }
+            public string? SuperModuleCode { get; set; }
+            public string? SuperModuleName { get; set; }
+            public string? IconName { get; set; }
+            public bool IsEnabled { get; set; }
+        }
+
+        public class SaveRoleSuperModuleAccessItem
+        {
+            public int SuperModuleId { get; set; }
+            public bool IsEnabled { get; set; }
+        }
+
+        public class SaveRoleSuperModuleAccessRequest
+        {
+            public int Ref_RoleId { get; set; }
+            public List<SaveRoleSuperModuleAccessItem>? SuperModules { get; set; }
+            public int? CreatedBy { get; set; }
+        }
     }
 }
