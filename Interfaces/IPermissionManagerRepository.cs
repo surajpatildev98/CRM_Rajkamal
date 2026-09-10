@@ -10,6 +10,14 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> UpdateModule(UpdateModuleRequest request);
         Task<ApiResponse> DeactivateModule(DeactivateModuleRequest request);
         Task<ApiResponse> GetModules();
+        Task<ApiResponse> GetSuperModules();
+
+        Task<ApiResponse> GetRoleSuperModuleAccess(int roleId);
+        Task<ApiResponse> SaveRoleSuperModuleAccess(SaveRoleSuperModuleAccessRequest request);
+
+        // NEW — from this API-driven mapping step
+        Task<ApiResponse> GetSuperModuleModules(int superModuleId);
+        Task<ApiResponse> SaveSuperModuleMapping(SaveSuperModuleMappingRequest request);
 
         // Permission catalog
         Task<ApiResponse> CreatePermission(CreatePermissionRequest request);
@@ -18,7 +26,7 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> GetModulePermissions(int moduleId);
 
         // Role -> Permission assignment
-        Task<ApiResponse> GetRolePermissions(int roleId, int? moduleId);
+        Task<ApiResponse> GetRolePermissions(int roleId, int? moduleId, int? superModuleId = null);
         Task<ApiResponse> SaveRolePermissions(SaveRolePermissionsRequest request);
 
         // Role -> Module access

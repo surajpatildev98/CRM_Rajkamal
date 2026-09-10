@@ -35,7 +35,9 @@ namespace CRMWebServices.Controllers
 
             //var row = await _authRepo.GetEmployeeForLogin(request.LoginId);
             // NEW
-            var (row, modules) = await _authRepo.GetEmployeeForLogin(request.LoginId);
+
+            //var (row, modules) = await _authRepo.GetEmployeeForLogin(request.LoginId);
+            var (row, superModules) = await _authRepo.GetEmployeeForLogin(request.LoginId);
 
             if (row == null)
             {
@@ -196,7 +198,8 @@ namespace CRMWebServices.Controllers
                 RoleNames = row["RoleNames"] == DBNull.Value ? "" : row["RoleNames"].ToString(),
                 DepartmentName = row["DepartmentName"] == DBNull.Value ? "" : row["DepartmentName"].ToString(),
                 OfficeName = row["OfficeName"] == DBNull.Value ? "" : row["OfficeName"].ToString(),
-                Modules = modules   // NEW
+                //Modules = modules,   // NEW
+                SuperModules = superModules,
             };
 
             return Ok(response);
