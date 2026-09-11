@@ -22,7 +22,8 @@
 
         public DateTime? DOJ { get; set; }
 
-
+        public string? MaritalStatus { get; set; }
+        public string? BloodGroup { get; set; }
         public string Password { get; set; }
 
         public int? RefDesignationId { get; set; }
@@ -36,6 +37,7 @@
         public int RefRoleId { get; set; }
         // NEW
         public int ShiftId { get; set; }
+        public int? RefLeavePolicyId { get; set; }
         public int? CreatedBy { get; set; }
         public List<EmployeeEducationRequest>? EducationDetails { get; set; }
 
@@ -84,6 +86,8 @@
         public int DocumentTypeId { get; set; }
         public string? DocumentName { get; set; }
         public string? DocumentPath { get; set; }
+
+        public string? DocumentNumber { get; set; }
         public DateTime? IssueDate { get; set; }
 
         public DateTime? ExpiryDate { get; set; }
@@ -126,6 +130,9 @@
 
         public DateTime? DOJ { get; set; }
 
+        public string? MaritalStatus { get; set; }
+        public string? BloodGroup { get; set; }
+
         public string? LoginId { get; set; }
 
         public bool IsActive { get; set; }
@@ -149,6 +156,9 @@
         public int? RefShiftId { get; set; }
 
         public string? ShiftName { get; set; }
+        public int? RefLeavePolicyId { get; set; }
+
+        public string? LeavePolicyName { get; set; }
     }
 
     public class EmployeeDetailsModel
@@ -189,6 +199,8 @@
         public DateTime? DOB { get; set; }
 
         public DateTime? DOJ { get; set; }
+        public string? MaritalStatus { get; set; }
+        public string? BloodGroup { get; set; }
 
         public string? LoginId { get; set; }
 
@@ -229,6 +241,9 @@
         public int? RefShiftId { get; set; }
 
         public string? ShiftName { get; set; }
+
+        public int? RefLeavePolicyId { get; set; }
+        public string? LeavePolicyName { get; set; }
     }
 
     public class EmployeeEducationModel
@@ -299,6 +314,8 @@
         public string? DocumentName { get; set; }
 
         public string? DocumentPath { get; set; }
+        public string? DocumentNumber { get; set; }
+        public string? FieldKind { get; set; }
         public DateTime? IssueDate { get; set; }
 
         public DateTime? ExpiryDate { get; set; }

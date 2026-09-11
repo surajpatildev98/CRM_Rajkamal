@@ -17,6 +17,8 @@
         public string? Gender { get; set; }
         public DateTime? DOB { get; set; }
         public DateTime? DOJ { get; set; }
+        public string? MaritalStatus { get; set; }
+        public string? BloodGroup { get; set; }
 
         public int? RefDesignationId { get; set; }
         public int? ReportingManagerId { get; set; }
@@ -25,6 +27,7 @@
         public int? RefDepartmentId { get; set; }
         public int? RefRoleId { get; set; }
         public int? ShiftId { get; set; }
+        public int? RefLeavePolicyId { get; set; }
 
         public int? UpdatedBy { get; set; }
 
@@ -101,7 +104,7 @@
         public string? DocumentName { get; set; }
 
         public string? DocumentPath { get; set; }
-
+        public string? DocumentNumber { get; set; }
         public DateTime? IssueDate { get; set; }
 
         public DateTime? ExpiryDate { get; set; }

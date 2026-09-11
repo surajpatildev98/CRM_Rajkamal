@@ -283,5 +283,15 @@ namespace CRMWebServices.Repository
 
             return managers;
         }
+
+        public async Task<List<DropdownItem>> GetLeavePolicies(int companyId)
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_LEAVE_POLICIES"),
+                new SqlParameter("@CompanyId", companyId));
+
+            return MapToDropdown(dt);
+        }
     }
 }

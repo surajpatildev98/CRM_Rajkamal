@@ -199,6 +199,7 @@ namespace CRMWebServices.Repository
                                 DocumentTypeId = doc.DocumentTypeId,
                                 DocumentName = doc.DocumentName,
                                 DocumentPath = savedPath,
+                                DocumentNumber = doc.DocumentNumber,
                                 IssueDate = doc.IssueDate,
                                 ExpiryDate = doc.ExpiryDate
                             });
@@ -231,6 +232,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Gender", (object?)model.Gender ?? DBNull.Value),
                     new SqlParameter("@DOB", (object?)model.DOB ?? DBNull.Value),
                     new SqlParameter("@DOJ", (object?)model.DOJ ?? DBNull.Value),
+                    new SqlParameter("@MaritalStatus", (object?)model.MaritalStatus ?? DBNull.Value),
+                    new SqlParameter("@BloodGroup", (object?)model.BloodGroup ?? DBNull.Value),
                     //new SqlParameter("@LoginId", model.UserName),
                     new SqlParameter("@Password", passwordHash),
                     new SqlParameter("@RefDesignationId", (object?)model.RefDesignationId ?? DBNull.Value),
@@ -240,6 +243,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@RefRoleId", model.RefRoleId),
                     new SqlParameter("@ShiftId", model.ShiftId),
                     new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value),
+                    new SqlParameter("@LeavePolicyId",(object?)model.RefLeavePolicyId ?? DBNull.Value),
                     new SqlParameter("@Education", (object?)educationJson ?? DBNull.Value),
                     new SqlParameter("@Bank", (object?)bankJson ?? DBNull.Value),
                     new SqlParameter("@FamilyDetails", (object?)familyJson ?? DBNull.Value),
@@ -327,6 +331,12 @@ namespace CRMWebServices.Repository
 
                         DOJ = row["DOJ"] == DBNull.Value ? null : Convert.ToDateTime(row["DOJ"]),
 
+                        MaritalStatus = row.Table.Columns.Contains("MaritalStatus") && row["MaritalStatus"] != DBNull.Value
+                            ? row["MaritalStatus"]?.ToString() : null,
+
+                        BloodGroup = row.Table.Columns.Contains("BloodGroup") && row["BloodGroup"] != DBNull.Value
+                            ? row["BloodGroup"]?.ToString() : null,
+
                         LoginId = row["LoginId"] == DBNull.Value ? null : row["LoginId"]?.ToString(),
 
                         IsActive = Convert.ToBoolean(row["IsActive"]),
@@ -349,7 +359,11 @@ namespace CRMWebServices.Repository
 
                         RefShiftId = row["Ref_ShiftId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_ShiftId"]),
 
-                        ShiftName = row["ShiftName"] == DBNull.Value ? null : row["ShiftName"]?.ToString()
+                        ShiftName = row["ShiftName"] == DBNull.Value ? null : row["ShiftName"]?.ToString(),
+                      
+                        RefLeavePolicyId = row["RefLeavePolicyId"] == DBNull.Value ? null : Convert.ToInt32(row["RefLeavePolicyId"]),
+
+                        LeavePolicyName = row["LeavePolicyName"] == DBNull.Value ? null : row["LeavePolicyName"]?.ToString()
                     });
                 }
 
@@ -418,6 +432,14 @@ namespace CRMWebServices.Repository
                         DOJ = row["DOJ"] == DBNull.Value
                             ? null
                             : Convert.ToDateTime(row["DOJ"]),
+
+                        MaritalStatus = row.Table.Columns.Contains("MaritalStatus") && row["MaritalStatus"] != DBNull.Value
+                            ? row["MaritalStatus"]?.ToString()
+                            : null,
+
+                        BloodGroup = row.Table.Columns.Contains("BloodGroup") && row["BloodGroup"] != DBNull.Value
+                            ? row["BloodGroup"]?.ToString()
+                            : null,
 
                         LoginId = row["LoginId"] == DBNull.Value
                             ? null
@@ -493,7 +515,11 @@ namespace CRMWebServices.Repository
 
                         ShiftName = row["ShiftName"] == DBNull.Value
                             ? null
-                            : row["ShiftName"]?.ToString()
+                            : row["ShiftName"]?.ToString(),
+
+                        RefLeavePolicyId = row["RefLeavePolicyId"] == DBNull.Value  ? null : Convert.ToInt32(row["RefLeavePolicyId"]),
+
+                        LeavePolicyName = row["LeavePolicyName"] == DBNull.Value ? null : row["LeavePolicyName"]?.ToString()
                     };
                 }
 
@@ -636,6 +662,10 @@ namespace CRMWebServices.Repository
                             IsMandatory = row["IsMandatory"] != DBNull.Value
                                 && Convert.ToBoolean(row["IsMandatory"]),
 
+                            FieldKind = row.Table.Columns.Contains("FieldKind") && row["FieldKind"] != DBNull.Value
+                                ? row["FieldKind"]?.ToString()
+                                : null,
+
                             DocumentName = row["DocumentName"] == DBNull.Value
                                 ? null
                                 : row["DocumentName"]?.ToString(),
@@ -644,6 +674,10 @@ namespace CRMWebServices.Repository
                                 ? null
                                 : BuildFileUrl(row["DocumentPath"]?.ToString()),
                             IssueDate = row["IssueDate"] == DBNull.Value ? null : Convert.ToDateTime(row["IssueDate"]),
+
+                            DocumentNumber = row.Table.Columns.Contains("DocumentNumber") && row["DocumentNumber"] != DBNull.Value
+                                ? row["DocumentNumber"]?.ToString()
+                                : null,
 
                             ExpiryDate = row["ExpiryDate"] == DBNull.Value
                                 ? null
@@ -781,6 +815,7 @@ namespace CRMWebServices.Repository
                             DocumentTypeId = doc.DocumentTypeId,
                             DocumentName = doc.DocumentName,
                             DocumentPath = documentPath,
+                            DocumentNumber = doc.DocumentNumber,
                             IssueDate = doc.IssueDate,
                             ExpiryDate = doc.ExpiryDate,
                             Verified = doc.Verified,
@@ -837,6 +872,12 @@ namespace CRMWebServices.Repository
             new SqlParameter("@DOJ",
                 (object?)model.DOJ ?? DBNull.Value),
 
+            new SqlParameter("@MaritalStatus",
+                (object?)model.MaritalStatus ?? DBNull.Value),
+
+            new SqlParameter("@BloodGroup",
+                (object?)model.BloodGroup ?? DBNull.Value),
+
             new SqlParameter("@RefDesignationId",
                 (object?)model.RefDesignationId ?? DBNull.Value),
 
@@ -854,6 +895,9 @@ namespace CRMWebServices.Repository
 
             new SqlParameter("@ShiftId",
                 (object?)model.ShiftId ?? DBNull.Value),
+
+            new SqlParameter("@LeavePolicyId",
+                (object?)model.RefLeavePolicyId ?? DBNull.Value),
 
             new SqlParameter("@UpdatedBy",
                 (object?)model.UpdatedBy ?? DBNull.Value),
