@@ -280,7 +280,8 @@ namespace CRMWebServices.Repository
 
                     new SqlParameter("@FromDate",request.FromDate.HasValue ? request.FromDate.Value.Date : DBNull.Value),
 
-                    new SqlParameter("@ToDate",request.ToDate.HasValue ? request.ToDate.Value.Date : DBNull.Value)
+                    new SqlParameter("@ToDate",request.ToDate.HasValue ? request.ToDate.Value.Date : DBNull.Value),
+                    new SqlParameter("@EmployeeId", request.EmployeeId ?? (object)DBNull.Value)
                 );
 
                 if (dt.Tables.Count == 0 || dt == null)

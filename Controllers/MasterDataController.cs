@@ -1,5 +1,6 @@
 ﻿using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
+using CRMWebServices.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -219,6 +220,10 @@ namespace CRMWebServices.Controllers
                     });
             }
         }
+
+        [HttpGet("leave-policies")]
+        public async Task<IActionResult> GetLeavePolicies([FromQuery] int companyId)
+         => Ok(new ApiResponse { Status = true, Data = await _repo.GetLeavePolicies(companyId) });
 
     }
 }
