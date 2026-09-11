@@ -256,6 +256,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Contacts", (object?)contactsJson ?? DBNull.Value),
                     new SqlParameter("@Requirements", (object?)requirementsJson ?? DBNull.Value),
                     new SqlParameter("@Requirement", (object?)model.Requirement?.Trim() ?? DBNull.Value),
+                    new SqlParameter("@LeadRequirementRemark",string.IsNullOrWhiteSpace(model.LeadRequirementRemark)? DBNull.Value: model.LeadRequirementRemark.Trim()),
                     new SqlParameter("@Ref_LeadSourceId", model.Ref_LeadSourceId),
                     new SqlParameter("@LeadRemark", (object?)model.LeadRemark ?? DBNull.Value),
                     new SqlParameter("@AssignedToEmployeeId", (object?)model.AssignedToEmployeeId ?? DBNull.Value),
@@ -272,148 +273,7 @@ namespace CRMWebServices.Repository
                 if (response.Status)
                 {
                     int leadId = Convert.ToInt32(dt.Rows[0]["LeadId"]);
-
-                    string leadNo =
-                        dt.Rows[0]["LeadNo"]?.ToString() ?? "";
-
-
-                    #region // Notify Assigned Employee and Manager OLD
-                    //if (model.AssignedToEmployeeId.HasValue)
-                    //{
-
-                    //    int assignedEmployeeId = model.AssignedToEmployeeId.Value;                      
-                    //    // 1. Notify Assigned Employee
-
-
-
-                    //    try
-
-                    //    {
-
-                    //        await _schedulerExecutionService.SendEmployeeNotificationAsync(
-
-                    //            schedulerJobItemId: null,
-
-                    //            employeeId: assignedEmployeeId,
-
-                    //            entityId: leadId,
-
-                    //            title: "New Lead Assigned",
-
-                    //            message: $"Lead {leadNo} has been assigned to you.",
-
-                    //            entityType: "LEAD",
-
-                    //            recipientType: "ASSIGNEE"
-
-                    //        );
-
-                    //    }
-
-                    //    catch (Exception ex)
-
-                    //    {
-
-                    //        _logger.LogError(
-
-                    //            ex,
-
-                    //            "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
-
-                    //            leadId,
-
-                    //            assignedEmployeeId);
-
-                    //    }
-
-                    //    // --------------------------------------------
-
-                    //    // 2. Get Assigned Employee's Manager
-
-                    //    // --------------------------------------------
-
-                    //    try
-
-                    //    {
-
-                    //        int? managerEmployeeId =
-
-                    //            await GetEmployeeManagerIdAsync(assignedEmployeeId);
-
-                    //        if (managerEmployeeId.HasValue &&
-
-                    //            managerEmployeeId.Value != assignedEmployeeId)
-
-                    //        {
-
-                    //            // --------------------------------------------
-
-                    //            // 3. Notify Manager
-
-                    //            // --------------------------------------------
-
-                    //            try
-
-                    //            {
-
-                    //                await _schedulerExecutionService.SendEmployeeNotificationAsync(
-
-                    //                    schedulerJobItemId: null,
-
-                    //                    employeeId: managerEmployeeId.Value,
-
-                    //                    entityId: leadId,
-
-                    //                    title: "Lead Assigned",
-
-                    //                    message: $"Lead {leadNo} has been assigned to your team member.",
-
-                    //                    entityType: "LEAD",
-
-                    //                    recipientType: "MANAGER"
-
-                    //                );
-
-                    //            }
-
-                    //            catch (Exception ex)
-
-                    //            {
-
-                    //                _logger.LogError(
-
-                    //                    ex,
-
-                    //                    "Failed to send Manager Lead notification. LeadId {LeadId}, ManagerId {ManagerId}",
-
-                    //                    leadId,
-
-                    //                    managerEmployeeId.Value);
-
-                    //            }
-
-                    //        }
-
-                    //    }
-
-                    //    catch (Exception ex)
-
-                    //    {
-
-                    //        _logger.LogError(
-
-                    //            ex,
-
-                    //            "Failed to get manager for assigned Employee. LeadId {LeadId}, EmployeeId {EmployeeId}",
-
-                    //            leadId,
-
-                    //            assignedEmployeeId);
-
-                    //    }
-
-                    //}
-                    #endregion
+                    string leadNo =dt.Rows[0]["LeadNo"]?.ToString() ?? "";                 
 
                     if (model.AssignedToEmployeeId.HasValue)
                     {
@@ -1058,6 +918,7 @@ namespace CRMWebServices.Repository
                     },
                     expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                     leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
+                    leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value? null:leadRow["LeadRequirementRemark"].ToString(),         //New Added 100926
 
                     // NEW: Attachments directly in lead object (as array)
                     attachments = leadAttachments.Any() ? leadAttachments : null,
@@ -1090,15 +951,56 @@ namespace CRMWebServices.Repository
                     email = r["Email"] == DBNull.Value ? null : r["Email"].ToString()
                 }).ToList();
 
-                var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new
+                //var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new
+                //{
+                //    leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
+                //    offeringId = Convert.ToInt32(r["OfferingId"]),
+                //    offeringName = r["OfferingName"]?.ToString(),
+                //    remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
+                //    quantity = Convert.ToDecimal(r["Quantity"]),
+                //    unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
+                //}).ToList();
+
+                var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new   //New Added 100926
                 {
                     leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
-                    offeringId = Convert.ToInt32(r["OfferingId"]),
-                    offeringName = r["OfferingName"]?.ToString(),
-                    remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
-                    quantity = Convert.ToDecimal(r["Quantity"]),
-                    unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
-                }).ToList();
+
+                    categoryId = r["CategoryId"] == DBNull.Value
+                    ? (int?)null
+                    : Convert.ToInt32(r["CategoryId"]),
+
+                                categoryName = r["CategoryName"] == DBNull.Value
+                    ? null
+                    : r["CategoryName"].ToString(),
+
+                                offeringId = r["OfferingId"] == DBNull.Value
+                    ? (int?)null
+                    : Convert.ToInt32(r["OfferingId"]),
+
+                                offeringName = r["OfferingName"] == DBNull.Value
+                    ? null
+                    : r["OfferingName"].ToString(),
+
+                                productId = r["ProductId"] == DBNull.Value
+                    ? (long?)null
+                    : Convert.ToInt64(r["ProductId"]),
+
+                                productName = r["ProductName"] == DBNull.Value
+                    ? null
+                    : r["ProductName"].ToString(),
+
+                                remark = r["Remark"] == DBNull.Value
+                    ? null
+                    : r["Remark"].ToString(),
+
+                                quantity = r["Quantity"] == DBNull.Value
+                    ? (decimal?)null
+                    : Convert.ToDecimal(r["Quantity"]),
+
+                                unit = r["Unit"] == DBNull.Value
+                    ? null
+                    : r["Unit"].ToString()
+                            }).ToList();
 
                 var activities = ds.Tables[3].Rows.Cast<System.Data.DataRow>().Select(r => new
                 {
@@ -1487,17 +1389,60 @@ namespace CRMWebServices.Repository
                             email = r["Email"] == DBNull.Value ? null : r["Email"].ToString()
                         }).ToList();
 
+                    //var requirements = requirementRows
+                    //    .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                    //    .Select(r => new
+                    //    {
+                    //        leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
+                    //        offeringId = Convert.ToInt32(r["OfferingId"]),
+                    //        offeringName = r["OfferingName"]?.ToString(),
+                    //        remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
+                    //        quantity = Convert.ToDecimal(r["Quantity"]),
+                    //        unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
+                    //    }).ToList();
+
                     var requirements = requirementRows
-                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
-                        .Select(r => new
-                        {
-                            leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
-                            offeringId = Convert.ToInt32(r["OfferingId"]),
-                            offeringName = r["OfferingName"]?.ToString(),
-                            remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
-                            quantity = Convert.ToDecimal(r["Quantity"]),
-                            unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
-                        }).ToList();
+                    .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                    .Select(r => new
+                    {
+                        leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
+
+                        categoryId = r["CategoryId"] == DBNull.Value
+                            ? (int?)null
+                            : Convert.ToInt32(r["CategoryId"]),
+
+                        categoryName = r["CategoryName"] == DBNull.Value
+                            ? null
+                            : r["CategoryName"].ToString(),
+
+                        offeringId = r["OfferingId"] == DBNull.Value
+                            ? (int?)null
+                            : Convert.ToInt32(r["OfferingId"]),
+
+                        offeringName = r["OfferingName"] == DBNull.Value
+                            ? null
+                            : r["OfferingName"].ToString(),
+
+                        productId = r["ProductId"] == DBNull.Value
+                            ? (long?)null
+                            : Convert.ToInt64(r["ProductId"]),
+
+                        productName = r["ProductName"] == DBNull.Value
+                            ? null
+                            : r["ProductName"].ToString(),
+
+                        remark = r["Remark"] == DBNull.Value
+                            ? null
+                            : r["Remark"].ToString(),
+
+                        quantity = r["Quantity"] == DBNull.Value
+                            ? (decimal?)null
+                            : Convert.ToDecimal(r["Quantity"]),
+
+                        unit = r["Unit"] == DBNull.Value
+                            ? null
+                            : r["Unit"].ToString()
+                    }).ToList();
 
                     var activities = activityRows
                         .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
@@ -1556,6 +1501,9 @@ namespace CRMWebServices.Repository
                             },
                             expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                             leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
+
+                            leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value? null: leadRow["LeadRequirementRemark"].ToString(), // New Added 100926
+
 
                             // NEW: Attachments directly in lead object
                             attachments = leadAttachments.Any() ? leadAttachments : null,
@@ -2383,6 +2331,199 @@ namespace CRMWebServices.Repository
                     Status = false,
                     Message = $"Error: {ex.Message}"
                 };
+            }
+        }
+
+        #region // Add Lead Requirement
+        public async Task<ApiResponse> AddLeadRequirement(LeadRequirementAddRequest model)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_CRM_LeadManagement",
+                    new SqlParameter("@Status", "ADD_LEAD_REQUIREMENT"),
+                    new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
+                    new SqlParameter("@Ref_ProductCategoryId", (object?)model.Ref_ProductCategoryId ?? DBNull.Value),
+                    new SqlParameter("@Ref_OfferingId", (object?)model.Ref_OfferingId ?? DBNull.Value),
+                    new SqlParameter("@Ref_ProductId", (object?)model.Ref_ProductId ?? DBNull.Value),
+                    new SqlParameter("@Quantity", model.Quantity),
+                    new SqlParameter("@Ref_UnitId", (object?)model.Ref_UnitId ?? DBNull.Value),
+                    new SqlParameter("@RequirementRemark", (object?)model.RequirementRemark ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
+                );
+
+                var response = new ApiResponse();
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    response.Status = false;
+                    response.Message = "No response returned from database.";
+                    return response;
+                }
+
+                var row = dt.Rows[0];
+                bool status = Convert.ToInt32(row["Status"]) == 1;
+
+                response.Status = status;
+                response.Message = row["Message"]?.ToString();
+
+                if (status)
+                {
+                    response.Data = new
+                    {
+                        LeadRequirementId = row["LeadRequirementId"] == DBNull.Value
+                            ? 0
+                            : Convert.ToInt32(row["LeadRequirementId"])
+                    };
+                }
+
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        #region // Update Lead Requirement
+        public async Task<ApiResponse> UpdateLeadRequirement(LeadRequirementUpdateRequest model)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_CRM_LeadManagement",
+                    new SqlParameter("@Status", "UPDATE_LEAD_REQUIREMENT"),
+                    new SqlParameter("@Ref_LeadRequirementId", model.Ref_LeadRequirementId),
+                    new SqlParameter("@Ref_ProductCategoryId", (object?)model.Ref_ProductCategoryId ?? DBNull.Value),
+                    new SqlParameter("@Ref_OfferingId", (object?)model.Ref_OfferingId ?? DBNull.Value),
+                    new SqlParameter("@Ref_ProductId", (object?)model.Ref_ProductId ?? DBNull.Value),
+                    new SqlParameter("@Quantity", model.Quantity),
+                    new SqlParameter("@Ref_UnitId", (object?)model.Ref_UnitId ?? DBNull.Value),
+                    new SqlParameter("@RequirementRemark", (object?)model.RequirementRemark ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
+                );
+
+                var response = new ApiResponse();
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    response.Status = false;
+                    response.Message = "No response returned from database.";
+                    return response;
+                }
+
+                var row = dt.Rows[0];
+
+                response.Status = Convert.ToInt32(row["Status"]) == 1;
+                response.Message = row["Message"]?.ToString();
+
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        #region // Delete Lead Requirement
+        public async Task<ApiResponse> DeleteLeadRequirement(LeadRequirementDeleteRequest model)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_CRM_LeadManagement",
+                    new SqlParameter("@Status", "DELETE_LEAD_REQUIREMENT"),
+                    new SqlParameter("@Ref_LeadRequirementId", model.Ref_LeadRequirementId),
+                    new SqlParameter("@DeleteRemark", (object?)model.DeleteRemark ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
+                );
+
+                var response = new ApiResponse();
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    response.Status = false;
+                    response.Message = "No response returned from database.";
+                    return response;
+                }
+
+                var row = dt.Rows[0];
+
+                response.Status = Convert.ToInt32(row["Status"]) == 1;
+                response.Message = row["Message"]?.ToString();
+
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        public async Task<int?> GetLeadIdByRequirementId(int leadRequirementId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_CRM_LeadManagement",
+                    new SqlParameter("@Status", "GET_LEAD_ID_BY_REQUIREMENT"),
+                    new SqlParameter("@Ref_LeadRequirementId", leadRequirementId)
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return null;
+
+                return dt.Rows[0]["Ref_LeadId"] == DBNull.Value
+                    ? null
+                    : Convert.ToInt32(dt.Rows[0]["Ref_LeadId"]);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error getting LeadId for LeadRequirementId {LeadRequirementId}",
+                    leadRequirementId);
+
+                return null;
             }
         }
     }
