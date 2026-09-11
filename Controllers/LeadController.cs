@@ -472,5 +472,138 @@ namespace CRMWebServices.Controllers
             }
         }
         #endregion
+
+        #region // Add Lead Requirement
+
+        [HttpPost("AddRequirement")]
+        public async Task<IActionResult> AddRequirement([FromBody] LeadRequirementAddRequest request)
+        {
+            try
+            {
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Edit", // Nead to ACtive From Premissions 
+                    request.Ref_LeadId))
+                {
+                    return Forbid();
+                }
+
+                request.CreatedBy = User.EmployeeId();
+
+                var response = await _repository.AddLeadRequirement(request);
+
+                return response.Status
+                    ? Ok(response)
+                    : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
+        #region // Update Lead Requirement
+
+        [HttpPost("UpdateRequirement")]
+        public async Task<IActionResult> UpdateRequirement([FromBody] LeadRequirementUpdateRequest request)
+        {
+            try
+            {
+                int? leadId = await _repository.GetLeadIdByRequirementId(
+                    request.Ref_LeadRequirementId);
+
+                if (!leadId.HasValue)
+                {
+                    return BadRequest(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Lead Requirement not found."
+                    });
+                }
+
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Edit",
+                    leadId.Value))
+                {
+                    return Forbid();
+                }
+
+                request.CreatedBy = User.EmployeeId();
+
+                var response = await _repository.UpdateLeadRequirement(request);
+
+                return response.Status
+                    ? Ok(response)
+                    : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
+        #region // Delete Lead Requirement
+
+        [HttpPost("DeleteRequirement")]
+        public async Task<IActionResult> DeleteRequirement([FromBody] LeadRequirementDeleteRequest request)
+        {
+            try
+            {
+                int? leadId = await _repository.GetLeadIdByRequirementId(
+                    request.Ref_LeadRequirementId);
+
+                if (!leadId.HasValue)
+                {
+                    return BadRequest(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Lead Requirement not found."
+                    });
+                }
+
+                if (!await _authorization.CanPerformAction(
+                    User,
+                    "Lead",
+                    "Edit",
+                    leadId.Value))
+                {
+                    return Forbid();
+                }
+
+                request.CreatedBy = User.EmployeeId();
+
+                var response = await _repository.DeleteLeadRequirement(request);
+
+                return response.Status
+                    ? Ok(response)
+                    : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+
+        #endregion
+
     }
 }

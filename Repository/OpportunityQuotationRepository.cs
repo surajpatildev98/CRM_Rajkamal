@@ -128,18 +128,71 @@ namespace CRMWebServices.Repository
                     OwnerName = row["OwnerName"].ToString()
                 };
 
+                //var items = ds.Tables[1].Rows.Cast<DataRow>()
+                //    .Select(r => new RaiseQuotationItemResponse
+                //    {
+                //        OpportunityRequirementId = Convert.ToInt32(r["OpportunityRequirementId"]),
+                //        //Ref_LeadRequirementId = Convert.ToInt32(r["Ref_LeadRequirementId"]),
+                //        Ref_LeadRequirementId = r["Ref_LeadRequirementId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_LeadRequirementId"]),
+                //        ProductId = Convert.ToInt32(r["Ref_ProductId"]),
+                //        ProductName = r["ProductName"].ToString(),
+                //        Quantity = Convert.ToDecimal(r["Quantity"]),
+                //        UnitId = r["Ref_UnitId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_UnitId"]),
+                //        UnitName = r["UnitName"] == DBNull.Value ? null : r["UnitName"].ToString(),
+                //        RequirementRemark = r["RequirementRemark"] == DBNull.Value ? null : r["RequirementRemark"].ToString()
+                //    }).ToList();
+
                 var items = ds.Tables[1].Rows.Cast<DataRow>()
                     .Select(r => new RaiseQuotationItemResponse
                     {
                         OpportunityRequirementId = Convert.ToInt32(r["OpportunityRequirementId"]),
-                        //Ref_LeadRequirementId = Convert.ToInt32(r["Ref_LeadRequirementId"]),
-                        Ref_LeadRequirementId = r["Ref_LeadRequirementId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_LeadRequirementId"]),
-                        ProductId = Convert.ToInt32(r["Ref_ProductId"]),
-                        ProductName = r["ProductName"].ToString(),
+
+                        Ref_LeadRequirementId = r["Ref_LeadRequirementId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt32(r["Ref_LeadRequirementId"]),
+
+                        Ref_ProductCategoryId = r["Ref_ProductCategoryId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt32(r["Ref_ProductCategoryId"]),
+
+                        CategoryName = r["CategoryName"] == DBNull.Value
+                            ? null
+                            : r["CategoryName"].ToString(),
+
+                        Ref_OfferingId = r["Ref_OfferingId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt32(r["Ref_OfferingId"]),
+
+                        OfferingName = r["OfferingName"] == DBNull.Value
+                            ? null
+                            : r["OfferingName"].ToString(),
+
+                        ProductId = r["Ref_ProductId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt64(r["Ref_ProductId"]),
+
+                        ProductCode = r["ProductCode"] == DBNull.Value
+                            ? null
+                            : r["ProductCode"].ToString(),
+
+                        ProductName = r["ProductName"] == DBNull.Value
+                            ? null
+                            : r["ProductName"].ToString(),
+
                         Quantity = Convert.ToDecimal(r["Quantity"]),
-                        UnitId = r["Ref_UnitId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_UnitId"]),
-                        UnitName = r["UnitName"] == DBNull.Value ? null : r["UnitName"].ToString(),
-                        RequirementRemark = r["RequirementRemark"] == DBNull.Value ? null : r["RequirementRemark"].ToString()
+
+                        UnitId = r["Ref_UnitId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt32(r["Ref_UnitId"]),
+
+                        UnitName = r["UnitName"] == DBNull.Value
+                            ? null
+                            : r["UnitName"].ToString(),
+
+                        RequirementRemark = r["RequirementRemark"] == DBNull.Value
+                            ? null
+                            : r["RequirementRemark"].ToString()
+
                     }).ToList();
 
                 return new ApiResponse
@@ -388,12 +441,35 @@ namespace CRMWebServices.Repository
 
                 };
 
+                //var items = ds.Tables.Count > 1
+                //    ? ds.Tables[1].Rows.Cast<DataRow>().Select(r => new QuotationItemInfo
+                //    {
+                //        OpportunityQuotationItemId = Convert.ToInt32(r["OpportunityQuotationItemId"]),
+                //        Ref_OpportunityRequirementId = Convert.ToInt32(r["Ref_OpportunityRequirementId"]),
+                //        ProductName = r["ProductName"]?.ToString(),
+                //        Unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString(),
+                //        Quantity = Convert.ToDecimal(r["Quantity"]),
+                //        Rate = Convert.ToDecimal(r["Rate"]),
+                //        Amount = Convert.ToDecimal(r["Amount"])
+                //    }).ToList()
+                //    : new List<QuotationItemInfo>();
+
                 var items = ds.Tables.Count > 1
                     ? ds.Tables[1].Rows.Cast<DataRow>().Select(r => new QuotationItemInfo
                     {
                         OpportunityQuotationItemId = Convert.ToInt32(r["OpportunityQuotationItemId"]),
                         Ref_OpportunityRequirementId = Convert.ToInt32(r["Ref_OpportunityRequirementId"]),
-                        ProductName = r["ProductName"]?.ToString(),
+
+                        CategoryId = r["CategoryId"] == DBNull.Value ? null : Convert.ToInt32(r["CategoryId"]),
+                        CategoryName = r["CategoryName"] == DBNull.Value ? null : r["CategoryName"].ToString(),
+
+                        OfferingId = r["OfferingId"] == DBNull.Value ? null : Convert.ToInt32(r["OfferingId"]),
+                        OfferingName = r["OfferingName"] == DBNull.Value ? null : r["OfferingName"].ToString(),
+
+                        ProductId = r["ProductId"] == DBNull.Value ? null : Convert.ToInt64(r["ProductId"]),
+                        ProductCode = r["ProductCode"] == DBNull.Value ? null : r["ProductCode"].ToString(),
+                        ProductName = r["ProductName"] == DBNull.Value ? null : r["ProductName"].ToString(),
+
                         Unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString(),
                         Quantity = Convert.ToDecimal(r["Quantity"]),
                         Rate = Convert.ToDecimal(r["Rate"]),

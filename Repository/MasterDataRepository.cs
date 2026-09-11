@@ -170,11 +170,40 @@ namespace CRMWebServices.Repository
             return MapToDropdown(dt);
         }
 
-        public async Task<List<DropdownItem>> GetOfferings()
+        public async Task<List<DropdownItem>> GetCategories()
         {
             var dt = await _database.ExecuteDataTableAsync(
                 "USP_ORG_EmployeeManagement",
-                new SqlParameter("@Status", "GET_OFFERINGS"));
+                new SqlParameter("@Status", "GET_CATEGORIES"));
+
+            return MapToDropdown(dt);
+        }
+
+        //public async Task<List<DropdownItem>> GetOfferings()
+        //{
+        //    var dt = await _database.ExecuteDataTableAsync(
+        //        "USP_ORG_EmployeeManagement",
+        //        new SqlParameter("@Status", "GET_OFFERINGS"));
+        //    return MapToDropdown(dt);
+        //}
+
+        public async Task<List<DropdownItem>> GetOfferings(int categoryId)
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_EmployeeManagement",
+                new SqlParameter("@Status", "GET_OFFERINGS"),
+                new SqlParameter("@Ref_ProductCategoryId", categoryId));
+
+            return MapToDropdown(dt);
+        }
+
+        public async Task<List<DropdownItem>> GetProducts(int offeringId)
+        {
+            var dt = await _database.ExecuteDataTableAsync(
+                "USP_ORG_EmployeeManagement",
+                new SqlParameter("@Status", "GET_PRODUCTS"),
+                new SqlParameter("@Ref_OfferingId", offeringId));
+
             return MapToDropdown(dt);
         }
 

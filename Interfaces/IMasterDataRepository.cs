@@ -21,7 +21,9 @@ namespace CRMWebServices.Interfaces
 
         //Task<List<DropdownItem>> GetEmployeesForAssignment();
         Task<List<DropdownItem>> GetEmployeesForAssignment(int loggedInEmployeeId);
-        Task<List<DropdownItem>> GetOfferings();
+        Task<List<DropdownItem>> GetCategories();
+        Task<List<DropdownItem>> GetOfferings(int categoryId);
+        Task<List<DropdownItem>> GetProducts(int offeringId);
         Task<List<DropdownItem>> GetUnits();
         Task<List<DropdownItem>> GetActivityTypes();
 

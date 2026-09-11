@@ -586,30 +586,60 @@
         //    public long? UpdatedBy { get; set; }
         //}
 
+        //public class CRMReportRequirementResponse
+        //{
+        //    public string? RequirementType { get; set; }
+        //    public int RequirementId { get; set; }
+        //    public int LeadId { get; set; }
+        //    public int? OpportunityId { get; set; }
+        //    public int? Ref_LeadRequirementId { get; set; }
+        //    public int? Ref_ProductId { get; set; }
+        //    public string? ProductCode { get; set; }
+        //    public string? ProductName { get; set; }
+        //    public int? Ref_ProductCategoryId { get; set; }
+        //    public string? CategoryCode { get; set; }
+        //    public string? CategoryName { get; set; }
+        //    public decimal? Quantity { get; set; }
+        //    public string? RequirementRemark { get; set; }
+        //    public int? Ref_UnitId { get; set; }
+        //    public bool IsActive { get; set; }
+        //    public bool IsDeleted { get; set; }
+        //    public DateTime? CreatedOn { get; set; }
+        //    public long? CreatedBy { get; set; }
+        //    public DateTime? UpdatedOn { get; set; }
+        //    public long? UpdatedBy { get; set; }
+        //}
+
         public class CRMReportRequirementResponse
         {
-            public string? RequirementType { get; set; }
+            public string RequirementType { get; set; }
             public int RequirementId { get; set; }
             public int LeadId { get; set; }
             public int? OpportunityId { get; set; }
             public int? Ref_LeadRequirementId { get; set; }
-            public int? Ref_ProductId { get; set; }
-            public string? ProductCode { get; set; }
-            public string? ProductName { get; set; }
+
+            public long? Ref_ProductId { get; set; }
+            public string ProductCode { get; set; }
+            public string ProductName { get; set; }
+
             public int? Ref_ProductCategoryId { get; set; }
-            public string? CategoryCode { get; set; }
-            public string? CategoryName { get; set; }
+            public string CategoryName { get; set; }
+
+            public int? OfferingId { get; set; }
+            public string OfferingName { get; set; }
+
             public decimal? Quantity { get; set; }
-            public string? RequirementRemark { get; set; }
+            public string RequirementRemark { get; set; }
             public int? Ref_UnitId { get; set; }
+
             public bool IsActive { get; set; }
             public bool IsDeleted { get; set; }
+
             public DateTime? CreatedOn { get; set; }
             public long? CreatedBy { get; set; }
             public DateTime? UpdatedOn { get; set; }
             public long? UpdatedBy { get; set; }
         }
-
         // JOURNEY RESULT SET 7
         // QUOTATIONS
 

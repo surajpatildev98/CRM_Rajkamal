@@ -138,12 +138,21 @@ namespace CRMWebServices.Controllers
 
         #region GET api/PermissionManager/role/{roleId}/permissions
         [HttpGet("role/{roleId}/permissions")]
-        public async Task<IActionResult> GetRolePermissions(int roleId, [FromQuery] int? moduleId)
+        //public async Task<IActionResult> GetRolePermissions(int roleId, [FromQuery] int? moduleId)
+        //{
+        //    if (!IsAdmin())
+        //        return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
+
+        //    var response = await _repository.GetRolePermissions(roleId, moduleId);
+        //    return response.Status ? Ok(response) : BadRequest(response);
+        //}
+
+        public async Task<IActionResult> GetRolePermissions(int roleId, [FromQuery] int? moduleId, [FromQuery] int? superModuleId)
         {
             if (!IsAdmin())
                 return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
 
-            var response = await _repository.GetRolePermissions(roleId, moduleId);
+            var response = await _repository.GetRolePermissions(roleId, moduleId, superModuleId);
             return response.Status ? Ok(response) : BadRequest(response);
         }
         #endregion
@@ -186,6 +195,68 @@ namespace CRMWebServices.Controllers
             var response = await _repository.SaveRoleModuleAccess(request);
 
             // TODO: invalidate cache for every employee holding this role — see cache staleness note
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+        #endregion
+
+        #region GET api/PermissionManager/super-modules
+        [HttpGet("super-modules")]
+        public async Task<IActionResult> GetSuperModules()
+        {
+            if (!IsAdmin())
+                return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
+
+            var response = await _repository.GetSuperModules();
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+        #endregion
+
+        #region GET api/PermissionManager/supermodule/{superModuleId}/modules
+        [HttpGet("supermodule/{superModuleId}/modules")]
+        public async Task<IActionResult> GetSuperModuleModules(int superModuleId)
+        {
+            if (!IsAdmin())
+                return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
+
+            var response = await _repository.GetSuperModuleModules(superModuleId);
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+        #endregion
+
+        #region POST api/PermissionManager/supermodule/mapping/save
+        [HttpPost("supermodule/mapping/save")]
+        public async Task<IActionResult> SaveSuperModuleMapping([FromBody] SaveSuperModuleMappingRequest request)
+        {
+            if (!IsAdmin())
+                return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
+
+            request.CreatedBy = User.EmployeeId();
+            var response = await _repository.SaveSuperModuleMapping(request);
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+        #endregion
+
+        #region GET api/PermissionManager/role/{roleId}/supermodule-access
+        [HttpGet("role/{roleId}/supermodule-access")]
+        public async Task<IActionResult> GetRoleSuperModuleAccess(int roleId)
+        {
+            if (!IsAdmin())
+                return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
+
+            var response = await _repository.GetRoleSuperModuleAccess(roleId);
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+        #endregion
+
+        #region POST api/PermissionManager/role/supermodule-access/save
+        [HttpPost("role/supermodule-access/save")]
+        public async Task<IActionResult> SaveRoleSuperModuleAccess([FromBody] SaveRoleSuperModuleAccessRequest request)
+        {
+            if (!IsAdmin())
+                return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
+
+            request.CreatedBy = User.EmployeeId();
+            var response = await _repository.SaveRoleSuperModuleAccess(request);
             return response.Status ? Ok(response) : BadRequest(response);
         }
         #endregion

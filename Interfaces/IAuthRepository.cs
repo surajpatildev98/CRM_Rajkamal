@@ -10,8 +10,8 @@ namespace CRMWebServices.Interfaces
         //Task<DataRow> GetEmployeeForLogin(string loginId);
 
         // IAuthRepository.cs
-        Task<(DataRow? EmployeeRow, List<ModuleAccessInfo> Modules)> GetEmployeeForLogin(string loginId);
-
+        //Task<(DataRow? EmployeeRow, List<ModuleAccessInfo> Modules)> GetEmployeeForLogin(string loginId);
+        Task<(DataRow? EmployeeRow, List<SuperModuleAccessInfo> SuperModules)> GetEmployeeForLogin(string loginId);
         Task<ApiResponse> RegisterEmployeeDevice(int employeeId,RegisterEmployeeDeviceRequest request);
 
         Task<ActiveDeviceInfo?> CheckActiveDevice(int employeeId,string deviceId);
