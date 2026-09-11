@@ -118,11 +118,44 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
+        #region // GET: api/master/categories
+
+        [HttpGet("categories")]
+        public async Task<IActionResult> Categories()
+            => Ok(new ApiResponse
+            {
+                Status = true,
+                Data = await _repo.GetCategories()
+            });
+
+        #endregion
+
         #region // GET: api/master/offerings
 
         [HttpGet("offerings")]
-        public async Task<IActionResult> Offerings()
-            => Ok(new ApiResponse { Status = true, Data = await _repo.GetOfferings() });
+        //public async Task<IActionResult> Offerings()
+        //    => Ok(new ApiResponse { Status = true, Data = await _repo.GetOfferings() });
+
+        public async Task<IActionResult> Offerings([FromQuery] int categoryId)
+            => Ok(new ApiResponse
+            {
+                Status = true,
+                Data = await _repo.GetOfferings(categoryId)
+            });
+        #endregion
+
+        #region // GET: api/master/products
+
+        [HttpGet("products")]
+        public async Task<IActionResult> Products([FromQuery] int offeringId)
+        {
+            return Ok(new ApiResponse
+            {
+                Status = true,
+                Data = await _repo.GetProducts(offeringId)
+            });
+        }
+
         #endregion
 
         #region // GET: api/master/units

@@ -14,7 +14,7 @@
         public class ConvertLeadRequest
         {
             public int Ref_LeadId { get; set; }
-            public string OpportunityName { get; set; }
+            public string? OpportunityName { get; set; }
             public decimal ExpectedRevenue { get; set; }
             public DateTime ExpectedCloseDate { get; set; }
             public int Probability { get; set; }
@@ -24,7 +24,7 @@
             public int? AssignedToEmployeeId { get; set; }
 
             // Hidden/Auto fields (sent by Android but not in form)
-            public int Ref_OpportunityTypeId { get; set; } = 1; // Default: NEW
+            public int? Ref_OpportunityTypeId { get; set; } = 1; // Default: NEW
 
             //public int Ref_OpportunityStageId { get; set; } = 1; // Default: QUAL
         }
@@ -186,7 +186,9 @@
             public List<OpportunityAttachmentInfo> Files { get; set; }
 
             public List<OpportunityFollowUpInfo> FollowUps { get; set; }
-          
+
+            public List<object> Timeline { get; set; }
+
 
         }
         public class OpportunityInfo
@@ -285,15 +287,39 @@
             public int PriorityLevel { get; set; }
             //public string ColorCode { get; set; }
         }
+        //public class OpportunityRequirementInfo
+        //{
+        //    public int OpportunityRequirementId { get; set; }
+
+        //    public int? LeadRequirementId { get; set; }
+
+        //    public int OfferingId { get; set; }
+
+        //    public string OfferingName { get; set; }
+
+        //    public decimal Quantity { get; set; }
+
+        //    public string Remark { get; set; }
+
+        //    public string Unit { get; set; }
+
+        //    public bool IsOpportunityRequirement { get; set; }
+        //}
+
         public class OpportunityRequirementInfo
         {
             public int OpportunityRequirementId { get; set; }
 
             public int? LeadRequirementId { get; set; }
 
-            public int OfferingId { get; set; }
+            public int? CategoryId { get; set; }
+            public string CategoryName { get; set; }
 
+            public int? OfferingId { get; set; }
             public string OfferingName { get; set; }
+
+            public long? ProductId { get; set; }
+            public string ProductName { get; set; }
 
             public decimal Quantity { get; set; }
 
@@ -331,6 +357,8 @@
 
             public List<object>? Expenses { get; set; }
         }
+
+
         public class OpportunityAttachmentInfo
         {
             public int AttachmentId { get; set; }
@@ -373,22 +401,49 @@
 
             public string CreatedByName { get; set; }
         }
+        //public class AddOpportunityRequirementRequest
+        //{
+        //    public int Ref_OpportunityId { get; set; }
+        //    public int Ref_ProductId { get; set; }
+        //    public decimal Quantity { get; set; }
+        //    public string? RequirementRemark { get; set; }
+        //    public int? Ref_UnitId { get; set; }
+        //    public int CreatedBy { get; set; }
+        //}
         public class AddOpportunityRequirementRequest
         {
             public int Ref_OpportunityId { get; set; }
-            public int Ref_ProductId { get; set; }
+            public int Ref_ProductCategoryId { get; set; }
+            public int Ref_OfferingId { get; set; }
+            public long Ref_ProductId { get; set; }
             public decimal Quantity { get; set; }
             public string? RequirementRemark { get; set; }
             public int? Ref_UnitId { get; set; }
             public int CreatedBy { get; set; }
         }
+        //public class UpdateOpportunityRequirementRequest
+        //{
+        //    public int Ref_OpportunityId { get; set; }
+        //    public int? Ref_OpportunityRequirementId { get; set; }  // set if already has an Opportunity row
+        //    public int? Ref_LeadRequirementId { get; set; }         // set if overriding a Lead item for the first time
+
+        //    public int? Ref_ProductId { get; set; }
+        //    public decimal Quantity { get; set; }
+        //    public string? RequirementRemark { get; set; }
+        //    public int? Ref_UnitId { get; set; }
+        //    public int CreatedBy { get; set; }
+        //}
+
         public class UpdateOpportunityRequirementRequest
         {
             public int Ref_OpportunityId { get; set; }
-            public int? Ref_OpportunityRequirementId { get; set; }  // set if already has an Opportunity row
-            public int? Ref_LeadRequirementId { get; set; }         // set if overriding a Lead item for the first time
+            public int? Ref_OpportunityRequirementId { get; set; }
+            public int? Ref_LeadRequirementId { get; set; }
 
-            public int? Ref_ProductId { get; set; }
+            public int? Ref_ProductCategoryId { get; set; }
+            public int? Ref_OfferingId { get; set; }
+            public long? Ref_ProductId { get; set; }
+
             public decimal Quantity { get; set; }
             public string? RequirementRemark { get; set; }
             public int? Ref_UnitId { get; set; }
