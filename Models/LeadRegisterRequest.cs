@@ -10,25 +10,16 @@
         public int? Ref_CityId { get; set; }
         public string PinCode { get; set; }
         public string Gst { get; set; }
-        public string Pan { get; set; }
-
-        
-        public List<LeadContactRequest> Contacts { get; set; }
-
-       
-        public string Requirement { get; set; }
+        public string Pan { get; set; }        
+        public List<LeadContactRequest> Contacts { get; set; }       
+        public string? Requirement { get; set; }
+        public string? LeadRequirementRemark { get; set; }
         public int Ref_LeadSourceId { get; set; }
-        public string LeadRemark { get; set; }
-
-       
+        public string? LeadRemark { get; set; }       
         public int? AssignedToEmployeeId { get; set; }
         public string? AssignmentRemark { get; set; }
-
-        public int? CreatedBy { get; set; }
-      
-        public List<LeadRequirementItem> Requirements { get; set; }
-
-     
+        public int? CreatedBy { get; set; }      
+        public List<LeadRequirementItem> Requirements { get; set; }    
         public List<LeadAttachmentItem> Attachments { get; set; }
         public int? LeadOrganizationId { get; set; } // added for existing customer, if the lead is for an existing customer, this will be the id of that customer in the LeadOrganization table
     }
@@ -58,12 +49,22 @@
         public string StatusRemark { get; set; }
         public int? CreatedBy { get; set; }
     }
+    //public class LeadRequirementItem
+    //{
+    //    public int Ref_ProductId { get; set; }
+    //    public decimal Quantity { get; set; }
+    //    public int? Ref_UnitId { get; set; }
+    //    public string RequirementRemark { get; set; }
+    //}
+
     public class LeadRequirementItem
     {
-        public int Ref_ProductId { get; set; }
+        public int? Ref_ProductCategoryId { get; set; }
+        public int? Ref_OfferingId { get; set; }
+        public long? Ref_ProductId { get; set; }
         public decimal Quantity { get; set; }
         public int? Ref_UnitId { get; set; }
-        public string RequirementRemark { get; set; }
+        public string? RequirementRemark { get; set; }
     }
     public class LeadActivityRequest
     {
@@ -226,5 +227,35 @@
         public string Base64 { get; set; }
     }
 
+    public class LeadRequirementAddRequest
+    {
+        public int Ref_LeadId { get; set; }
+        public int? Ref_ProductCategoryId { get; set; }
+        public int? Ref_OfferingId { get; set; }
+        public long? Ref_ProductId { get; set; }
+        public decimal Quantity { get; set; }
+        public int? Ref_UnitId { get; set; }
+        public string? RequirementRemark { get; set; }
+        public int? CreatedBy { get; set; }
+    }
+
+    public class LeadRequirementUpdateRequest
+    {
+        public int Ref_LeadRequirementId { get; set; }
+        public int? Ref_ProductCategoryId { get; set; }
+        public int? Ref_OfferingId { get; set; }
+        public long? Ref_ProductId { get; set; }
+        public decimal Quantity { get; set; }
+        public int? Ref_UnitId { get; set; }
+        public string? RequirementRemark { get; set; }
+        public int? CreatedBy { get; set; }
+    }
+
+    public class LeadRequirementDeleteRequest
+    {
+        public int Ref_LeadRequirementId { get; set; }
+        public string DeleteRemark { get; set; }
+        public int? CreatedBy { get; set; }
+    }
 
 }
