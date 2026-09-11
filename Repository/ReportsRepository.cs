@@ -389,30 +389,112 @@ namespace CRMWebServices.Repository
                 //    });
                 //}
 
+                //foreach (DataRow row in ds.Tables[5].Rows)
+                //{
+                //    response.Requirements.Add(new ReportModels.CRMReportRequirementResponse
+                //    {
+                //        RequirementType = row["RequirementType"]?.ToString(),
+                //        RequirementId = Convert.ToInt32(row["RequirementId"]),
+                //        LeadId = Convert.ToInt32(row["LeadId"]),
+                //        OpportunityId = row["OpportunityId"] == DBNull.Value ? null : Convert.ToInt32(row["OpportunityId"]),
+                //        Ref_LeadRequirementId = row["Ref_LeadRequirementId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_LeadRequirementId"]),
+                //        Ref_ProductId = row["ProductId"] == DBNull.Value ? null : Convert.ToInt32(row["ProductId"]),
+                //        ProductCode = row["ProductCode"]?.ToString(),
+                //        ProductName = row["ProductName"]?.ToString(),
+                //        Ref_ProductCategoryId = row["Ref_ProductCategoryId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_ProductCategoryId"]),
+                //        CategoryCode = row["CategoryCode"]?.ToString(),
+                //        CategoryName = row["CategoryName"]?.ToString(),
+                //        Quantity = row["Quantity"] == DBNull.Value ? null : Convert.ToDecimal(row["Quantity"]),
+                //        RequirementRemark = row["RequirementRemark"]?.ToString(),
+                //        Ref_UnitId = row["UnitId"] == DBNull.Value ? null : Convert.ToInt32(row["UnitId"]),
+                //        IsActive = row["IsActive"] != DBNull.Value && Convert.ToBoolean(row["IsActive"]),
+                //        IsDeleted = row["IsDeleted"] != DBNull.Value && Convert.ToBoolean(row["IsDeleted"]),
+                //        CreatedOn = row["CreatedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["CreatedOn"]),
+                //        CreatedBy = row["CreatedBy"] == DBNull.Value ? null : Convert.ToInt64(row["CreatedBy"]),
+                //        UpdatedOn = row["UpdatedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["UpdatedOn"]),
+                //        UpdatedBy = row["UpdatedBy"] == DBNull.Value ? null : Convert.ToInt64(row["UpdatedBy"])
+                //    });
+                //}
+
                 foreach (DataRow row in ds.Tables[5].Rows)
                 {
                     response.Requirements.Add(new ReportModels.CRMReportRequirementResponse
                     {
                         RequirementType = row["RequirementType"]?.ToString(),
+
                         RequirementId = Convert.ToInt32(row["RequirementId"]),
+
                         LeadId = Convert.ToInt32(row["LeadId"]),
-                        OpportunityId = row["OpportunityId"] == DBNull.Value ? null : Convert.ToInt32(row["OpportunityId"]),
-                        Ref_LeadRequirementId = row["Ref_LeadRequirementId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_LeadRequirementId"]),
-                        Ref_ProductId = row["ProductId"] == DBNull.Value ? null : Convert.ToInt32(row["ProductId"]),
-                        ProductCode = row["ProductCode"]?.ToString(),
-                        ProductName = row["ProductName"]?.ToString(),
-                        Ref_ProductCategoryId = row["Ref_ProductCategoryId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_ProductCategoryId"]),
-                        CategoryCode = row["CategoryCode"]?.ToString(),
-                        CategoryName = row["CategoryName"]?.ToString(),
-                        Quantity = row["Quantity"] == DBNull.Value ? null : Convert.ToDecimal(row["Quantity"]),
-                        RequirementRemark = row["RequirementRemark"]?.ToString(),
-                        Ref_UnitId = row["UnitId"] == DBNull.Value ? null : Convert.ToInt32(row["UnitId"]),
-                        IsActive = row["IsActive"] != DBNull.Value && Convert.ToBoolean(row["IsActive"]),
-                        IsDeleted = row["IsDeleted"] != DBNull.Value && Convert.ToBoolean(row["IsDeleted"]),
-                        CreatedOn = row["CreatedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["CreatedOn"]),
-                        CreatedBy = row["CreatedBy"] == DBNull.Value ? null : Convert.ToInt64(row["CreatedBy"]),
-                        UpdatedOn = row["UpdatedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["UpdatedOn"]),
-                        UpdatedBy = row["UpdatedBy"] == DBNull.Value ? null : Convert.ToInt64(row["UpdatedBy"])
+
+                        OpportunityId = row["OpportunityId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt32(row["OpportunityId"]),
+
+                        Ref_LeadRequirementId = row["Ref_LeadRequirementId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt32(row["Ref_LeadRequirementId"]),
+
+                        Ref_ProductId = row["ProductId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt64(row["ProductId"]),
+
+                        ProductCode = row["ProductCode"] == DBNull.Value
+                            ? null
+                            : row["ProductCode"]?.ToString(),
+
+                        ProductName = row["ProductName"] == DBNull.Value
+                            ? null
+                            : row["ProductName"]?.ToString(),
+
+                        Ref_ProductCategoryId = row["Ref_ProductCategoryId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt32(row["Ref_ProductCategoryId"]),
+
+                        CategoryName = row["CategoryName"] == DBNull.Value
+                            ? null
+                            : row["CategoryName"]?.ToString(),
+
+                        OfferingId = row["OfferingId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt32(row["OfferingId"]),
+
+                        OfferingName = row["OfferingName"] == DBNull.Value
+                            ? null
+                            : row["OfferingName"]?.ToString(),
+
+                        Quantity = row["Quantity"] == DBNull.Value
+                            ? null
+                            : Convert.ToDecimal(row["Quantity"]),
+
+                        RequirementRemark = row["RequirementRemark"] == DBNull.Value
+                            ? null
+                            : row["RequirementRemark"]?.ToString(),
+
+                        Ref_UnitId = row["UnitId"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt32(row["UnitId"]),
+
+                        IsActive = row["IsActive"] != DBNull.Value &&
+                                   Convert.ToBoolean(row["IsActive"]),
+
+                        IsDeleted = row["IsDeleted"] != DBNull.Value &&
+                                    Convert.ToBoolean(row["IsDeleted"]),
+
+                        CreatedOn = row["CreatedOn"] == DBNull.Value
+                            ? null
+                            : Convert.ToDateTime(row["CreatedOn"]),
+
+                        CreatedBy = row["CreatedBy"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt64(row["CreatedBy"]),
+
+                        UpdatedOn = row["UpdatedOn"] == DBNull.Value
+                            ? null
+                            : Convert.ToDateTime(row["UpdatedOn"]),
+
+                        UpdatedBy = row["UpdatedBy"] == DBNull.Value
+                            ? null
+                            : Convert.ToInt64(row["UpdatedBy"])
                     });
                 }
 

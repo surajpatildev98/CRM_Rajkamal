@@ -185,15 +185,31 @@ namespace CRMWebServices.Repository
                             email = r["Email"] == DBNull.Value ? null : r["Email"].ToString()
                         }).ToList();
 
+                    //var requirements = requirementRows
+                    //    .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                    //    .Select(r => new
+                    //    {
+                    //        leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
+                    //        offeringId = Convert.ToInt32(r["OfferingId"]),
+                    //        offeringName = r["OfferingName"]?.ToString(),
+                    //        remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
+                    //        quantity = Convert.ToDecimal(r["Quantity"]),
+                    //        unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
+                    //    }).ToList();
+
                     var requirements = requirementRows
                         .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
                         .Select(r => new
                         {
                             leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
-                            offeringId = Convert.ToInt32(r["OfferingId"]),
-                            offeringName = r["OfferingName"]?.ToString(),
+                            categoryId = r["CategoryId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["CategoryId"]),
+                            categoryName = r["CategoryName"] == DBNull.Value ? null : r["CategoryName"].ToString(),
+                            offeringId = r["OfferingId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["OfferingId"]),
+                            offeringName = r["OfferingName"] == DBNull.Value ? null : r["OfferingName"].ToString(),
+                            productId = r["ProductId"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["ProductId"]),
+                            productName = r["ProductName"] == DBNull.Value ? null : r["ProductName"].ToString(),
                             remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
-                            quantity = Convert.ToDecimal(r["Quantity"]),
+                            quantity = r["Quantity"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(r["Quantity"]),
                             unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
                         }).ToList();
 
@@ -254,6 +270,7 @@ namespace CRMWebServices.Repository
                             },
                             expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                             leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
+                            leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value? null: leadRow["LeadRequirementRemark"].ToString(), // New Added 110926
                             attachments = leadAttachments.Any() ? leadAttachments : null,
                             assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
                             assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
@@ -358,6 +375,7 @@ namespace CRMWebServices.Repository
                     },
                     expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                     leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
+                    leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value? null: leadRow["LeadRequirementRemark"].ToString(), // New Added 110926
                     attachments = leadAttachments.Any() ? leadAttachments : null,
                     assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
                     assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
@@ -388,13 +406,27 @@ namespace CRMWebServices.Repository
                 }).ToList();
 
                 // Requirements
+                //var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new
+                //{
+                //    leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
+                //    offeringId = Convert.ToInt32(r["OfferingId"]),
+                //    offeringName = r["OfferingName"]?.ToString(),
+                //    remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
+                //    quantity = Convert.ToDecimal(r["Quantity"]),
+                //    unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
+                //}).ToList();
+
                 var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new
                 {
                     leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
-                    offeringId = Convert.ToInt32(r["OfferingId"]),
-                    offeringName = r["OfferingName"]?.ToString(),
+                    categoryId = r["CategoryId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["CategoryId"]),
+                    categoryName = r["CategoryName"] == DBNull.Value ? null : r["CategoryName"].ToString(),
+                    offeringId = r["OfferingId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["OfferingId"]),
+                    offeringName = r["OfferingName"] == DBNull.Value ? null : r["OfferingName"].ToString(),
+                    productId = r["ProductId"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["ProductId"]),
+                    productName = r["ProductName"] == DBNull.Value ? null : r["ProductName"].ToString(),
                     remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
-                    quantity = Convert.ToDecimal(r["Quantity"]),
+                    quantity = r["Quantity"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(r["Quantity"]),
                     unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
                 }).ToList();
 
@@ -1067,19 +1099,40 @@ namespace CRMWebServices.Repository
                         IsPrimary = Convert.ToBoolean(contactRow["IsPrimary"])
                     }).ToList();
 
+                //var requirements = requirementRows
+                //     .Select(req => new OpportunityRequirementInfo
+                //     {
+                //         LeadRequirementId = req["LeadRequirementId"] == DBNull.Value? (int?)null: Convert.ToInt32(req["LeadRequirementId"]),
+                //         OpportunityRequirementId = Convert.ToInt32(req["OpportunityRequirementId"]),
+                //         OfferingId = Convert.ToInt32(req["OfferingId"]),
+                //         OfferingName = req["OfferingName"]?.ToString(),
+                //         Quantity = Convert.ToDecimal(req["Quantity"]),
+                //         Remark = req["Remark"] == DBNull.Value? null: req["Remark"].ToString(),
+                //         Unit = req["Unit"] == DBNull.Value? null: req["Unit"].ToString(),
+                //         IsOpportunityRequirement = Convert.ToBoolean(req["IsOpportunityRequirement"])
+                //     }).ToList();
+
                 var requirements = requirementRows
-                     .Select(req => new OpportunityRequirementInfo
-                     {
-                         LeadRequirementId = req["LeadRequirementId"] == DBNull.Value? (int?)null: Convert.ToInt32(req["LeadRequirementId"]),
-                         OpportunityRequirementId = Convert.ToInt32(req["OpportunityRequirementId"]),
-                         OfferingId = Convert.ToInt32(req["OfferingId"]),
-                         OfferingName = req["OfferingName"]?.ToString(),
-                         Quantity = Convert.ToDecimal(req["Quantity"]),
-                         Remark = req["Remark"] == DBNull.Value? null: req["Remark"].ToString(),
-                         Unit = req["Unit"] == DBNull.Value? null: req["Unit"].ToString(),
-                         IsOpportunityRequirement = Convert.ToBoolean(req["IsOpportunityRequirement"])
-                     }).ToList();
-                       
+                    .Select(req => new OpportunityRequirementInfo
+                    {
+                        LeadRequirementId = req["LeadRequirementId"] == DBNull.Value ? (int?)null : Convert.ToInt32(req["LeadRequirementId"]),
+                        OpportunityRequirementId = Convert.ToInt32(req["OpportunityRequirementId"]),
+
+                        CategoryId = req["CategoryId"] == DBNull.Value ? (int?)null : Convert.ToInt32(req["CategoryId"]),
+                        CategoryName = req["CategoryName"] == DBNull.Value ? null : req["CategoryName"].ToString(),
+
+                        OfferingId = req["OfferingId"] == DBNull.Value ? (int?)null : Convert.ToInt32(req["OfferingId"]),
+                        OfferingName = req["OfferingName"] == DBNull.Value ? null : req["OfferingName"].ToString(),
+
+                        ProductId = req["ProductId"] == DBNull.Value ? (long?)null : Convert.ToInt64(req["ProductId"]),
+                        ProductName = req["ProductName"] == DBNull.Value ? null : req["ProductName"].ToString(),
+
+                        Quantity = Convert.ToDecimal(req["Quantity"]),
+                        Remark = req["Remark"] == DBNull.Value ? null : req["Remark"].ToString(),
+                        Unit = req["Unit"] == DBNull.Value ? null : req["Unit"].ToString(),
+                        IsOpportunityRequirement = Convert.ToBoolean(req["IsOpportunityRequirement"])
+                    }).ToList();
+
 
                 var activities = activityRows.Select(r =>
                     {                        
@@ -1687,6 +1740,28 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region // ADD OPPORTUNITY REQUIREMENT
+        //public async Task<ApiResponse> AddOpportunityRequirement(AddOpportunityRequirementRequest model)
+        //{
+        //    try
+        //    {
+        //        var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
+        //            new SqlParameter("@Status", "ADD_OPPORTUNITY_REQUIREMENT"),
+        //            new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
+        //            new SqlParameter("@Ref_ProductId", model.Ref_ProductId),
+        //            new SqlParameter("@Quantity", model.Quantity),
+        //            new SqlParameter("@RequirementRemark", (object?)model.RequirementRemark ?? DBNull.Value),
+        //            new SqlParameter("@Ref_UnitId", (object?)model.Ref_UnitId ?? DBNull.Value),
+        //            new SqlParameter("@CreatedBy", model.CreatedBy)
+        //        );
+
+        //        return MapResponse(dt, isCreate: true);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
+        //    }
+        //}
+
         public async Task<ApiResponse> AddOpportunityRequirement(AddOpportunityRequirementRequest model)
         {
             try
@@ -1694,6 +1769,8 @@ namespace CRMWebServices.Repository
                 var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
                     new SqlParameter("@Status", "ADD_OPPORTUNITY_REQUIREMENT"),
                     new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
+                    new SqlParameter("@Ref_ProductCategoryId", model.Ref_ProductCategoryId),
+                    new SqlParameter("@Ref_OfferingId", model.Ref_OfferingId),
                     new SqlParameter("@Ref_ProductId", model.Ref_ProductId),
                     new SqlParameter("@Quantity", model.Quantity),
                     new SqlParameter("@RequirementRemark", (object?)model.RequirementRemark ?? DBNull.Value),
@@ -1711,6 +1788,30 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region // UPDATE OPPORTUNITY REQUIREMENT
+        //public async Task<ApiResponse> UpdateOpportunityRequirement(UpdateOpportunityRequirementRequest model)
+        //{
+        //    try
+        //    {
+        //        var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
+        //            new SqlParameter("@Status", "UPDATE_OPPORTUNITY_REQUIREMENT"),
+        //            new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
+        //            new SqlParameter("@Ref_OpportunityRequirementId", (object?)model.Ref_OpportunityRequirementId ?? DBNull.Value),
+        //            new SqlParameter("@Ref_LeadRequirementId", (object?)model.Ref_LeadRequirementId ?? DBNull.Value),
+        //            new SqlParameter("@Ref_ProductId", (object?)model.Ref_ProductId ?? DBNull.Value),
+        //            new SqlParameter("@Quantity", model.Quantity),
+        //            new SqlParameter("@RequirementRemark", (object?)model.RequirementRemark ?? DBNull.Value),
+        //            new SqlParameter("@Ref_UnitId", (object?)model.Ref_UnitId ?? DBNull.Value),
+        //            new SqlParameter("@CreatedBy", model.CreatedBy)
+        //        );
+
+        //        return MapResponse(dt, isCreate: false);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
+        //    }
+        //}
+
         public async Task<ApiResponse> UpdateOpportunityRequirement(UpdateOpportunityRequirementRequest model)
         {
             try
@@ -1720,6 +1821,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
                     new SqlParameter("@Ref_OpportunityRequirementId", (object?)model.Ref_OpportunityRequirementId ?? DBNull.Value),
                     new SqlParameter("@Ref_LeadRequirementId", (object?)model.Ref_LeadRequirementId ?? DBNull.Value),
+                    new SqlParameter("@Ref_ProductCategoryId", (object?)model.Ref_ProductCategoryId ?? DBNull.Value),
+                    new SqlParameter("@Ref_OfferingId", (object?)model.Ref_OfferingId ?? DBNull.Value),
                     new SqlParameter("@Ref_ProductId", (object?)model.Ref_ProductId ?? DBNull.Value),
                     new SqlParameter("@Quantity", model.Quantity),
                     new SqlParameter("@RequirementRemark", (object?)model.RequirementRemark ?? DBNull.Value),

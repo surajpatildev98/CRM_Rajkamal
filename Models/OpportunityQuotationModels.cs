@@ -99,11 +99,32 @@ namespace CRMWebServices.Models
             public string? RootQuotationNo { get; set; }
             public OwnerInfo? Owner { get; set; }
         }
+        //public class QuotationItemInfo
+        //{
+        //    public int OpportunityQuotationItemId { get; set; }
+        //    public int Ref_OpportunityRequirementId { get; set; }
+        //    public string ProductName { get; set; } = null!;
+        //    public string? Unit { get; set; }
+        //    public decimal Quantity { get; set; }
+        //    public decimal Rate { get; set; }
+        //    public decimal Amount { get; set; }
+        //}
+
         public class QuotationItemInfo
         {
             public int OpportunityQuotationItemId { get; set; }
             public int Ref_OpportunityRequirementId { get; set; }
-            public string ProductName { get; set; } = null!;
+
+            public int? CategoryId { get; set; }
+            public string? CategoryName { get; set; }
+
+            public int? OfferingId { get; set; }
+            public string? OfferingName { get; set; }
+
+            public long? ProductId { get; set; }
+            public string? ProductCode { get; set; }
+            public string? ProductName { get; set; }
+
             public string? Unit { get; set; }
             public decimal Quantity { get; set; }
             public decimal Rate { get; set; }
@@ -142,16 +163,39 @@ namespace CRMWebServices.Models
             public DateTime? ReviewedOn { get; set; }
             public DateTime CreatedOn { get; set; }
         }
-        public class RaiseQuotationItemResponse
-        {           
+        //public class RaiseQuotationItemResponse
+        //{           
 
+        //    public int OpportunityRequirementId { get; set; }
+        //    public int? Ref_LeadRequirementId { get; set; }
+        //    public int ProductId { get; set; }
+        //    public string ProductName { get; set; } = string.Empty;
+        //    public decimal Quantity { get; set; }
+        //    public int? UnitId { get; set; }
+        //    public string? UnitName { get; set; }
+        //    public string? RequirementRemark { get; set; }
+        //}
+
+        public class RaiseQuotationItemResponse
+        {
             public int OpportunityRequirementId { get; set; }
             public int? Ref_LeadRequirementId { get; set; }
-            public int ProductId { get; set; }
-            public string ProductName { get; set; } = string.Empty;
+
+            public int? Ref_ProductCategoryId { get; set; }
+            public string? CategoryName { get; set; }
+
+            public int? Ref_OfferingId { get; set; }
+            public string? OfferingName { get; set; }
+
+            public long? ProductId { get; set; }
+            public string? ProductCode { get; set; }
+            public string? ProductName { get; set; }
+
             public decimal Quantity { get; set; }
+
             public int? UnitId { get; set; }
             public string? UnitName { get; set; }
+
             public string? RequirementRemark { get; set; }
         }
         public class RaiseQuotationPageResponse
