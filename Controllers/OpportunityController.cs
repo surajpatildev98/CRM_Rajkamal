@@ -70,11 +70,43 @@ namespace CRMWebServices.Controllers
         #region API : api/opportunity/details/{opportunityId}
         [HttpGet]
         [Route("details/{opportunityId}")]
+        //public async Task<IActionResult> GetOpportunityDetails(int opportunityId)
+        //{
+        //    try
+        //    {
+        //        // ✅ Use "Opp" for Opportunity resource
+        //        if (!await _authorization.CanPerformAction(
+        //            User,
+        //            "Opp",
+        //            "View",
+        //            opportunityId))
+        //        {
+        //            return StatusCode(StatusCodes.Status403Forbidden,
+        //                new ApiResponse
+        //                {
+        //                    Status = false,
+        //                    Message = "You are not authorized to view this opportunity."
+        //                });
+        //        }
+
+        //        var response = await _repository.GetOpportunityDetails(opportunityId);
+        //        return response.Status ? Ok(response) : NotFound(response);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return BadRequest(new ApiResponse
+        //        {
+        //            Status = false,
+        //            Message = $"Error: {ex.Message}"
+        //        });
+        //    }
+        //}
+
         public async Task<IActionResult> GetOpportunityDetails(int opportunityId)
         {
             try
             {
-                // ✅ Use "Opp" for Opportunity resource
+                // Use "Opp" for Opportunity resource
                 if (!await _authorization.CanPerformAction(
                     User,
                     "Opp",
@@ -89,7 +121,10 @@ namespace CRMWebServices.Controllers
                         });
                 }
 
-                var response = await _repository.GetOpportunityDetails(opportunityId);
+                var employeeId = User.EmployeeId();
+
+                var response = await _repository.GetOpportunityDetails(opportunityId,employeeId);
+
                 return response.Status ? Ok(response) : NotFound(response);
             }
             catch (Exception ex)

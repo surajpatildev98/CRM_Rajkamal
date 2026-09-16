@@ -172,7 +172,81 @@
             public int? OwnerEmployeeId { get; set; }
             public string OwnerEmployee { get; set; }
             public DateTime CreatedOn { get; set; }
-        }   
+        }
+
+        public class OpportunityTicketInfo
+        {
+            public int TicketId { get; set; }
+            public string TicketNo { get; set; }
+            public int OpportunityId { get; set; }
+            public int OpportunityRequirementId { get; set; }
+
+            public long? ProductId { get; set; }
+            public string ProductName { get; set; }
+
+            public string Priority { get; set; }
+            public DateTime? ScheduledOn { get; set; }
+            public string Description { get; set; }
+
+            public int? AssignedEmployeeId { get; set; }
+            public string AssignedEmployeeName { get; set; }
+
+            public int? TicketStatusId { get; set; }
+            public string TicketStatusCode { get; set; }
+            public string TicketStatusName { get; set; }
+
+            public DateTime? CompletedOn { get; set; }
+            public int? CompletedBy { get; set; }
+
+            public DateTime CreatedOn { get; set; }
+            public int? CreatedBy { get; set; }
+            public DateTime? UpdatedOn { get; set; }
+            public int? UpdatedBy { get; set; }
+
+            public long? LastActivityId { get; set; }
+            public string LastActivityType { get; set; }
+            public string LastActivityStatus { get; set; }
+            public DateTime? LastActivityDate { get; set; }
+            public string LastActivitySubject { get; set; }
+            public string LastActivityDescription { get; set; }
+            public string LastActivityOutcome { get; set; }
+
+            public List<TicketWorkHistoryInfo> WorkHistory { get; set; } = new();
+        }
+
+        public class TicketWorkHistoryInfo
+        {
+            public long ActivityId { get; set; }
+            public int TicketId { get; set; }
+            public long ActivityTypeId { get; set; }
+            public string ActivityCode { get; set; }
+            public string ActivityName { get; set; }
+
+            public long EmployeeId { get; set; }
+            public string EmployeeName { get; set; }
+
+            public DateTime ActivityDateTime { get; set; }
+
+            public string Subject { get; set; }
+            public string Description { get; set; }
+            public string Outcome { get; set; }
+
+            public long ActivityStatusId { get; set; }
+            public string ActivityStatusCode { get; set; }
+            public string ActivityStatusName { get; set; }
+
+            public DateTime? NextFollowUpDate { get; set; }
+            public int? DurationInMinutes { get; set; }
+
+            public decimal? Latitude { get; set; }
+            public decimal? Longitude { get; set; }
+            public string LocationAddress { get; set; }
+
+            public DateTime CreatedOn { get; set; }
+            public long CreatedBy { get; set; }
+            public DateTime? UpdatedOn { get; set; }
+            public long? UpdatedBy { get; set; }
+        }
         public class OpportunityDetailResponse
         {
             public OpportunityInfo Opportunity { get; set; }
@@ -188,6 +262,7 @@
             public List<OpportunityFollowUpInfo> FollowUps { get; set; }
 
             public List<object> Timeline { get; set; }
+            public List<OpportunityTicketInfo> Tickets { get; set; }
 
 
         }
@@ -328,6 +403,13 @@
             public string Unit { get; set; }
 
             public bool IsOpportunityRequirement { get; set; }
+
+            // Ticket
+            public int? TicketId { get; set; }
+            public string TicketNo { get; set; }
+            public int? TicketAssignedEmployeeId { get; set; }
+            public string TicketStatusCode { get; set; }
+            public string TicketStatusName { get; set; }
         }
         public class OpportunityActivityInfo
         {

@@ -88,6 +88,7 @@ builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
 builder.Services.AddScoped<ISchedulerRepository, SchedulerRepository>();
 builder.Services.AddScoped<IReportsRepository, ReportsRepository>();
 builder.Services.AddScoped<ILeaveRepository, LeaveRepository>();
+builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 
 builder.Services.AddScoped<IEmailService,EmailService>();
 builder.Services.AddScoped<IEmailConfigurationRepository, EmailConfigurationRepository>();

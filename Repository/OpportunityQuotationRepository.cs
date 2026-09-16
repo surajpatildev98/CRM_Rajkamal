@@ -19,7 +19,6 @@ namespace CRMWebServices.Repository
         private readonly IDatabaseService _database;
         private readonly ILogger<PermissionService> _logger;
         private readonly ISchedulerExecutionService _schedulerExecutionService;
-
         private const string SP_NAME = "USP_CRM_OpportunityQuotationManagement";
 
         public OpportunityQuotationRepository(IDatabaseService database, ILogger<PermissionService> logger,ISchedulerExecutionService schedulerExecutionService)
@@ -126,73 +125,25 @@ namespace CRMWebServices.Repository
                     CompanyName = row["CompanyName"].ToString(),
                     OwnerId = Convert.ToInt32(row["OwnerId"]),
                     OwnerName = row["OwnerName"].ToString()
-                };
-
-                //var items = ds.Tables[1].Rows.Cast<DataRow>()
-                //    .Select(r => new RaiseQuotationItemResponse
-                //    {
-                //        OpportunityRequirementId = Convert.ToInt32(r["OpportunityRequirementId"]),
-                //        //Ref_LeadRequirementId = Convert.ToInt32(r["Ref_LeadRequirementId"]),
-                //        Ref_LeadRequirementId = r["Ref_LeadRequirementId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_LeadRequirementId"]),
-                //        ProductId = Convert.ToInt32(r["Ref_ProductId"]),
-                //        ProductName = r["ProductName"].ToString(),
-                //        Quantity = Convert.ToDecimal(r["Quantity"]),
-                //        UnitId = r["Ref_UnitId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_UnitId"]),
-                //        UnitName = r["UnitName"] == DBNull.Value ? null : r["UnitName"].ToString(),
-                //        RequirementRemark = r["RequirementRemark"] == DBNull.Value ? null : r["RequirementRemark"].ToString()
-                //    }).ToList();
+                };              
 
                 var items = ds.Tables[1].Rows.Cast<DataRow>()
                     .Select(r => new RaiseQuotationItemResponse
                     {
                         OpportunityRequirementId = Convert.ToInt32(r["OpportunityRequirementId"]),
-
-                        Ref_LeadRequirementId = r["Ref_LeadRequirementId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(r["Ref_LeadRequirementId"]),
-
-                        Ref_ProductCategoryId = r["Ref_ProductCategoryId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(r["Ref_ProductCategoryId"]),
-
-                        CategoryName = r["CategoryName"] == DBNull.Value
-                            ? null
-                            : r["CategoryName"].ToString(),
-
-                        Ref_OfferingId = r["Ref_OfferingId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(r["Ref_OfferingId"]),
-
-                        OfferingName = r["OfferingName"] == DBNull.Value
-                            ? null
-                            : r["OfferingName"].ToString(),
-
-                        ProductId = r["Ref_ProductId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt64(r["Ref_ProductId"]),
-
-                        ProductCode = r["ProductCode"] == DBNull.Value
-                            ? null
-                            : r["ProductCode"].ToString(),
-
-                        ProductName = r["ProductName"] == DBNull.Value
-                            ? null
-                            : r["ProductName"].ToString(),
-
+                        Ref_LeadRequirementId = r["Ref_LeadRequirementId"] == DBNull.Value? null: Convert.ToInt32(r["Ref_LeadRequirementId"]),
+                        Ref_ProductCategoryId = r["Ref_ProductCategoryId"] == DBNull.Value? null: Convert.ToInt32(r["Ref_ProductCategoryId"]),
+                        CategoryName = r["CategoryName"] == DBNull.Value? null: r["CategoryName"].ToString(),
+                        Ref_OfferingId = r["Ref_OfferingId"] == DBNull.Value? null: Convert.ToInt32(r["Ref_OfferingId"]),
+                        OfferingName = r["OfferingName"] == DBNull.Value? null: r["OfferingName"].ToString(),
+                        ProductId = r["Ref_ProductId"] == DBNull.Value? null: Convert.ToInt64(r["Ref_ProductId"]),
+                        ProductCode = r["ProductCode"] == DBNull.Value? null: r["ProductCode"].ToString(),
+                        ProductName = r["ProductName"] == DBNull.Value? null: r["ProductName"].ToString(),
+                        CurrentRate = r["CurrentRate"] == DBNull.Value? 0: Convert.ToDecimal(r["CurrentRate"]),
                         Quantity = Convert.ToDecimal(r["Quantity"]),
-
-                        UnitId = r["Ref_UnitId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(r["Ref_UnitId"]),
-
-                        UnitName = r["UnitName"] == DBNull.Value
-                            ? null
-                            : r["UnitName"].ToString(),
-
-                        RequirementRemark = r["RequirementRemark"] == DBNull.Value
-                            ? null
-                            : r["RequirementRemark"].ToString()
-
+                        UnitId = r["Ref_UnitId"] == DBNull.Value? null: Convert.ToInt32(r["Ref_UnitId"]),
+                        UnitName = r["UnitName"] == DBNull.Value? null: r["UnitName"].ToString(),
+                        RequirementRemark = r["RequirementRemark"] == DBNull.Value? null: r["RequirementRemark"].ToString()
                     }).ToList();
 
                 return new ApiResponse
@@ -459,17 +410,13 @@ namespace CRMWebServices.Repository
                     {
                         OpportunityQuotationItemId = Convert.ToInt32(r["OpportunityQuotationItemId"]),
                         Ref_OpportunityRequirementId = Convert.ToInt32(r["Ref_OpportunityRequirementId"]),
-
                         CategoryId = r["CategoryId"] == DBNull.Value ? null : Convert.ToInt32(r["CategoryId"]),
                         CategoryName = r["CategoryName"] == DBNull.Value ? null : r["CategoryName"].ToString(),
-
                         OfferingId = r["OfferingId"] == DBNull.Value ? null : Convert.ToInt32(r["OfferingId"]),
                         OfferingName = r["OfferingName"] == DBNull.Value ? null : r["OfferingName"].ToString(),
-
                         ProductId = r["ProductId"] == DBNull.Value ? null : Convert.ToInt64(r["ProductId"]),
                         ProductCode = r["ProductCode"] == DBNull.Value ? null : r["ProductCode"].ToString(),
                         ProductName = r["ProductName"] == DBNull.Value ? null : r["ProductName"].ToString(),
-
                         Unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString(),
                         Quantity = Convert.ToDecimal(r["Quantity"]),
                         Rate = Convert.ToDecimal(r["Rate"]),
@@ -686,41 +633,15 @@ namespace CRMWebServices.Repository
                     ? ds.Tables[4].Rows.Cast<DataRow>()
                         .Select(r => new ManagementReviewInfo
                         {
-                            ManagementReviewId =
-                                Convert.ToInt32(r["ManagementReviewId"]),
-
-                            Ref_OpportunityQuotationId =
-                                r["Ref_OpportunityQuotationId"] == DBNull.Value
-                                    ? null
-                                    : Convert.ToInt32(r["Ref_OpportunityQuotationId"]),
-
-                            Margin =
-                                r["Margin"] == DBNull.Value
-                                    ? null
-                                    : Convert.ToDecimal(r["Margin"]),
-
-                            Remarks =
-                                r["Remarks"] == DBNull.Value
-                                    ? null
-                                    : r["Remarks"].ToString(),
-
-                            DecisionCode =
-                                r["DecisionCode"]?.ToString(),
-
-                            ReviewedByEmployeeId =
-                                r["ReviewedByEmployeeId"] == DBNull.Value
-                                    ? null
-                                    : Convert.ToInt32(r["ReviewedByEmployeeId"]),
-
-                            ReviewedOn =
-                                r["ReviewedOn"] == DBNull.Value
-                                    ? null
-                                    : Convert.ToDateTime(r["ReviewedOn"]),
-
-                            CreatedOn =
-                                Convert.ToDateTime(r["CreatedOn"])
-                        })
-                        .ToList()
+                            ManagementReviewId =Convert.ToInt32(r["ManagementReviewId"]),
+                            Ref_OpportunityQuotationId =r["Ref_OpportunityQuotationId"] == DBNull.Value? null: Convert.ToInt32(r["Ref_OpportunityQuotationId"]),
+                            Margin =r["Margin"] == DBNull.Value? null: Convert.ToDecimal(r["Margin"]),
+                            Remarks =r["Remarks"] == DBNull.Value? null: r["Remarks"].ToString(),
+                            DecisionCode =r["DecisionCode"]?.ToString(),
+                            ReviewedByEmployeeId =r["ReviewedByEmployeeId"] == DBNull.Value? null: Convert.ToInt32(r["ReviewedByEmployeeId"]),
+                            ReviewedOn =r["ReviewedOn"] == DBNull.Value? null: Convert.ToDateTime(r["ReviewedOn"]),
+                            CreatedOn =Convert.ToDateTime(r["CreatedOn"])
+                        }).ToList()
                     : new List<ManagementReviewInfo>();
 
                 return new ApiResponse
@@ -860,21 +781,10 @@ namespace CRMWebServices.Repository
 
                 if (response.Status && dt.Rows.Count > 0)
                 {
-                    int quotationRaisedByEmployeeId =
-                        Convert.ToInt32(
-                            dt.Rows[0]["QuotationRaisedByEmployeeId"]);
-
-                    int opportunityId =
-                        Convert.ToInt32(
-                            dt.Rows[0]["OpportunityId"]);
-
-                    string quotationNo =
-                        Convert.ToString(
-                            dt.Rows[0]["QuotationNo"]);
-
-                    string decisionCode =
-                        Convert.ToString(
-                            dt.Rows[0]["DecisionCode"]);
+                    int quotationRaisedByEmployeeId =Convert.ToInt32(dt.Rows[0]["QuotationRaisedByEmployeeId"]);
+                    int opportunityId =Convert.ToInt32(dt.Rows[0]["OpportunityId"]);
+                    string quotationNo =Convert.ToString(dt.Rows[0]["QuotationNo"]);
+                    string decisionCode =Convert.ToString(dt.Rows[0]["DecisionCode"]);
 
                     if (quotationRaisedByEmployeeId > 0)
                     {
@@ -886,16 +796,12 @@ namespace CRMWebServices.Repository
                             if (decisionCode == "APPROVED")
                             {
                                 title = "Quotation Approved";
-
-                                message =
-                                    $"Quotation {quotationNo} has been approved by Management.";
+                                message =$"Quotation {quotationNo} has been approved by Management.";
                             }
                             else
                             {
                                 title = "Quotation Rejected";
-
-                                message =
-                                    $"Quotation {quotationNo} has been rejected by Management.";
+                                message =$"Quotation {quotationNo} has been rejected by Management.";
                             }
 
                             await _schedulerExecutionService
