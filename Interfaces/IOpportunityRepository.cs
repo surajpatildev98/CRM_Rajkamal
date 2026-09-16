@@ -18,7 +18,8 @@ namespace CRMWebServices.Repository
 
         #region // Opportunity Management Tasks
         Task<ApiResponse> GetOpportunityList(OpportunityListRequest request);
-        Task<ApiResponse> GetOpportunityDetails(int opportunityId);
+        //Task<ApiResponse> GetOpportunityDetails(int opportunityId);
+        Task<ApiResponse> GetOpportunityDetails(int opportunityId, int loggedInEmployeeId);
         Task<ApiResponse> UpdateOpportunity(UpdateOpportunityRequest request);
         Task<ApiResponse> DeleteOpportunity(DeleteOpportunityRequest request);
         Task<ApiResponse> TransferOpportunity(OpportunityTransferRequest model);

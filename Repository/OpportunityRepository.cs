@@ -22,14 +22,13 @@ namespace CRMWebServices.Repository
         private readonly ISchedulerExecutionService _schedulerExecutionService;
         private readonly ILeadRepository _leadRepository;
 
-        public OpportunityRepository(IDatabaseService database, ILogger<PermissionService> logger,ISchedulerExecutionService schedulerExecutionService,ILeadRepository leadRepository)
+        public OpportunityRepository(IDatabaseService database, ILogger<PermissionService> logger, ISchedulerExecutionService schedulerExecutionService, ILeadRepository leadRepository)
         {
             _database = database;
             _logger = logger;
             _schedulerExecutionService = schedulerExecutionService;
             _leadRepository = leadRepository;
         }
-
 
         #region // COMMON HELPER METHODS
         private string BuildFileUrl(string filePath)
@@ -55,7 +54,7 @@ namespace CRMWebServices.Repository
 
         private string SaveBase64Attachment(string base64Content, string fileName, string subFolder)
         {
-            var base64Data = base64Content.Contains(",")? base64Content.Substring(base64Content.IndexOf(",") + 1): base64Content;
+            var base64Data = base64Content.Contains(",") ? base64Content.Substring(base64Content.IndexOf(",") + 1) : base64Content;
 
             byte[] fileBytes = Convert.FromBase64String(base64Data);
 
@@ -270,7 +269,7 @@ namespace CRMWebServices.Repository
                             },
                             expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                             leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
-                            leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value? null: leadRow["LeadRequirementRemark"].ToString(), // New Added 110926
+                            leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value ? null : leadRow["LeadRequirementRemark"].ToString(), // New Added 110926
                             attachments = leadAttachments.Any() ? leadAttachments : null,
                             assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
                             assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
@@ -375,7 +374,7 @@ namespace CRMWebServices.Repository
                     },
                     expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                     leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
-                    leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value? null: leadRow["LeadRequirementRemark"].ToString(), // New Added 110926
+                    leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value ? null : leadRow["LeadRequirementRemark"].ToString(), // New Added 110926
                     attachments = leadAttachments.Any() ? leadAttachments : null,
                     assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
                     assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
@@ -537,7 +536,7 @@ namespace CRMWebServices.Repository
                 }
 
                 var row = dt.Rows[0];
-                var status = Convert.ToInt32(row["Status"]) ==1;
+                var status = Convert.ToInt32(row["Status"]) == 1;
                 var message = row["Message"]?.ToString();
                 if (!status)
                 {
@@ -732,34 +731,34 @@ namespace CRMWebServices.Repository
                 new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
             );
 
-            var response = new ApiResponse();
-            if (dt == null || dt.Rows.Count == 0)
-            {
-                response.Status = false;
-                response.Message = "No response returned from database.";
-                return response;
-            }
-
-            var row = dt.Rows[0];
-            bool status = Convert.ToInt32(row["Status"]) == 1;
-
-            response.Status = status;
-            response.Message = row["Message"]?.ToString();
-            if (status)
-            {
-                int opportunityId = Convert.ToInt32(row["OpportunityId"]);
-                int assignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"]);
-                string opportunityNo = row["OpportunityNo"]?.ToString() ?? "";
-
-                int creatorId = row["CreatedBy"] == DBNull.Value ? 0 : Convert.ToInt32(row["CreatedBy"]);
-
-                response.Data = new
+                var response = new ApiResponse();
+                if (dt == null || dt.Rows.Count == 0)
                 {
-                    OpportunityId = opportunityId,
-                    OpportunityNo = opportunityNo,
-                    AssignedToEmployeeId = assignedToEmployeeId,
-                    CreatedBy = creatorId
-                };
+                    response.Status = false;
+                    response.Message = "No response returned from database.";
+                    return response;
+                }
+
+                var row = dt.Rows[0];
+                bool status = Convert.ToInt32(row["Status"]) == 1;
+
+                response.Status = status;
+                response.Message = row["Message"]?.ToString();
+                if (status)
+                {
+                    int opportunityId = Convert.ToInt32(row["OpportunityId"]);
+                    int assignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"]);
+                    string opportunityNo = row["OpportunityNo"]?.ToString() ?? "";
+
+                    int creatorId = row["CreatedBy"] == DBNull.Value ? 0 : Convert.ToInt32(row["CreatedBy"]);
+
+                    response.Data = new
+                    {
+                        OpportunityId = opportunityId,
+                        OpportunityNo = opportunityNo,
+                        AssignedToEmployeeId = assignedToEmployeeId,
+                        CreatedBy = creatorId
+                    };
 
                     // Send notification to assigned employee
                     // Send notification to assigned employee
@@ -901,12 +900,12 @@ namespace CRMWebServices.Repository
                         }
                     }
                 }
-            else
-            {
-                response.Data = null;
-            }
+                else
+                {
+                    response.Data = null;
+                }
 
-              return response;
+                return response;
             }
             catch (SqlException ex)
             {
@@ -937,9 +936,9 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@SearchText", (object?)request.SearchText ?? DBNull.Value),
                     new SqlParameter("@FilterStageId", (object?)request.FilterStageId ?? DBNull.Value),
                     new SqlParameter("@FilterOwnerId", (object?)request.FilterOwnerId ?? DBNull.Value),
-                    new SqlParameter("@FilterTypeId", (object?)request.FilterTypeId ?? DBNull.Value),            
-                    new SqlParameter("@LoggedInEmployeeId",(object?)request.LoggedInEmployeeId ?? DBNull.Value));// IMPORTANT
-    
+                    new SqlParameter("@FilterTypeId", (object?)request.FilterTypeId ?? DBNull.Value),
+                    new SqlParameter("@LoggedInEmployeeId", (object?)request.LoggedInEmployeeId ?? DBNull.Value));// IMPORTANT
+
                 if (dt == null || dt.Rows.Count == 0)
                 {
                     return new ApiResponse
@@ -1003,13 +1002,14 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region  // GET OPPORTUNITY DETAILS (SINGLE - READ-ONLY)       
-        public async Task<ApiResponse> GetOpportunityDetails(int opportunityId)
+        public async Task<ApiResponse> GetOpportunityDetails(int opportunityId, int loggedInEmployeeId) // CHANGE 150926
         {
             try
             {
                 var ds = await _database.ExecuteDataSetAsync("USP_CRM_OpportunityManagement",
                     new SqlParameter("@Status", "GET_OPPORTUNITY_DETAILS"),
-                    new SqlParameter("@Ref_OpportunityId", opportunityId)
+                    new SqlParameter("@Ref_OpportunityId", opportunityId),
+                    new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId)
                 );
 
                 if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
@@ -1028,18 +1028,19 @@ namespace CRMWebServices.Repository
                 var followUpRows = ds.Tables.Count > 4 ? ds.Tables[4].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
                 var leadAttachmentRows = ds.Tables.Count > 5 ? ds.Tables[5].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
                 var timelineRows = ds.Tables.Count > 6 ? ds.Tables[6].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
+                var ticketRows = ds.Tables.Count > 7 ? ds.Tables[7].Rows.Cast<DataRow>().ToList() : new List<DataRow>();
 
                 var opportunityInfo = new OpportunityInfo
                 {
                     OpportunityId = Convert.ToInt32(row["OpportunityId"]),
                     OpportunityNo = row["OpportunityNo"]?.ToString(),
-                    Ref_LeadId = row["Ref_LeadId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_LeadId"]),
+                    Ref_LeadId = row["Ref_LeadId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_LeadId"]),
                     OpportunityName = row["OpportunityName"]?.ToString(),
-                    ExpectedRevenue = row["ExpectedRevenue"] == DBNull.Value? null: Convert.ToDecimal(row["ExpectedRevenue"]),
-                    ExpectedCloseDate = row["ExpectedCloseDate"] == DBNull.Value? null: Convert.ToDateTime(row["ExpectedCloseDate"]),
-                    Probability = row["Probability"] == DBNull.Value? null: Convert.ToInt32(row["Probability"]),
-                    CompetitorName = row["CompetitorName"] == DBNull.Value? null: row["CompetitorName"].ToString(),
-                    OpportunityRemark = row["OpportunityRemark"] == DBNull.Value? null: row["OpportunityRemark"].ToString(),
+                    ExpectedRevenue = row["ExpectedRevenue"] == DBNull.Value ? null : Convert.ToDecimal(row["ExpectedRevenue"]),
+                    ExpectedCloseDate = row["ExpectedCloseDate"] == DBNull.Value ? null : Convert.ToDateTime(row["ExpectedCloseDate"]),
+                    Probability = row["Probability"] == DBNull.Value ? null : Convert.ToInt32(row["Probability"]),
+                    CompetitorName = row["CompetitorName"] == DBNull.Value ? null : row["CompetitorName"].ToString(),
+                    OpportunityRemark = row["OpportunityRemark"] == DBNull.Value ? null : row["OpportunityRemark"].ToString(),
                     CreatedOn = Convert.ToDateTime(row["CreatedOn"]),
 
                     Customer = new CustomerInfo
@@ -1057,13 +1058,13 @@ namespace CRMWebServices.Repository
 
                     OpportunityType = new OpportunityTypeInfo
                     {
-                        OpportunityTypeId = row["OpportunityTypeId"] == DBNull.Value? null: Convert.ToInt32(row["OpportunityTypeId"]),
+                        OpportunityTypeId = row["OpportunityTypeId"] == DBNull.Value ? null : Convert.ToInt32(row["OpportunityTypeId"]),
                         OpportunityTypeName = row["OpportunityTypeName"]?.ToString()
                     },
 
                     OpportunityStage = new OpportunityStageInfo
                     {
-                        OpportunityStageId = row["OpportunityStageId"] == DBNull.Value? null: Convert.ToInt32(row["OpportunityStageId"]),
+                        OpportunityStageId = row["OpportunityStageId"] == DBNull.Value ? null : Convert.ToInt32(row["OpportunityStageId"]),
                         OpportunityStage = row["OpportunityStage"]?.ToString(),
                         IsClosed = Convert.ToBoolean(row["IsClosed"]),
                         IsWon = Convert.ToBoolean(row["IsWon"]),
@@ -1072,9 +1073,9 @@ namespace CRMWebServices.Repository
 
                     Priority = new PriorityInfo
                     {
-                        PriorityId = row["PriorityId"] == DBNull.Value? null: Convert.ToInt32(row["PriorityId"]),
+                        PriorityId = row["PriorityId"] == DBNull.Value ? null : Convert.ToInt32(row["PriorityId"]),
                         PriorityName = row["PriorityName"]?.ToString(),
-                        PriorityLevel = row["PriorityLevel"] == DBNull.Value? null: Convert.ToInt32(row["PriorityLevel"])
+                        PriorityLevel = row["PriorityLevel"] == DBNull.Value ? null : Convert.ToInt32(row["PriorityLevel"])
                     },
 
                     Owner = new OwnerInfo
@@ -1085,7 +1086,7 @@ namespace CRMWebServices.Repository
                         OwnerMobileNo = row["OwnerMobileNo"] == DBNull.Value ? null : row["OwnerMobileNo"].ToString(),
                         OwnerRoleId = row["OwnerRoleId"] == DBNull.Value ? null : Convert.ToInt32(row["OwnerRoleId"]),
                         OwnerRoleName = row["OwnerRoleName"]?.ToString()
-                    }                   
+                    }
                 };
 
                 var contacts = contactRows
@@ -1093,9 +1094,9 @@ namespace CRMWebServices.Repository
                     {
                         CustomerContactId = Convert.ToInt32(contactRow["CustomerContactId"]),
                         ContactPerson = contactRow["ContactPerson"]?.ToString(),
-                        DesignationName = contactRow["DesignationName"] == DBNull.Value? null: contactRow["DesignationName"].ToString(),
+                        DesignationName = contactRow["DesignationName"] == DBNull.Value ? null : contactRow["DesignationName"].ToString(),
                         Mobile = contactRow["Mobile"]?.ToString(),
-                        Email = contactRow["Email"] == DBNull.Value? null: contactRow["Email"].ToString(),
+                        Email = contactRow["Email"] == DBNull.Value ? null : contactRow["Email"].ToString(),
                         IsPrimary = Convert.ToBoolean(contactRow["IsPrimary"])
                     }).ToList();
 
@@ -1117,25 +1118,26 @@ namespace CRMWebServices.Repository
                     {
                         LeadRequirementId = req["LeadRequirementId"] == DBNull.Value ? (int?)null : Convert.ToInt32(req["LeadRequirementId"]),
                         OpportunityRequirementId = Convert.ToInt32(req["OpportunityRequirementId"]),
-
                         CategoryId = req["CategoryId"] == DBNull.Value ? (int?)null : Convert.ToInt32(req["CategoryId"]),
                         CategoryName = req["CategoryName"] == DBNull.Value ? null : req["CategoryName"].ToString(),
-
                         OfferingId = req["OfferingId"] == DBNull.Value ? (int?)null : Convert.ToInt32(req["OfferingId"]),
                         OfferingName = req["OfferingName"] == DBNull.Value ? null : req["OfferingName"].ToString(),
-
                         ProductId = req["ProductId"] == DBNull.Value ? (long?)null : Convert.ToInt64(req["ProductId"]),
                         ProductName = req["ProductName"] == DBNull.Value ? null : req["ProductName"].ToString(),
-
                         Quantity = Convert.ToDecimal(req["Quantity"]),
                         Remark = req["Remark"] == DBNull.Value ? null : req["Remark"].ToString(),
                         Unit = req["Unit"] == DBNull.Value ? null : req["Unit"].ToString(),
+                        TicketId = req["TicketId"] == DBNull.Value ? (int?)null : Convert.ToInt32(req["TicketId"]),
+                        TicketNo = req["TicketNo"] == DBNull.Value ? null : req["TicketNo"].ToString(),
+                        TicketAssignedEmployeeId = req["TicketAssignedEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(req["TicketAssignedEmployeeId"]),
+                        TicketStatusCode = req["StatusCode"] == DBNull.Value ? null : req["StatusCode"].ToString(),
+                        TicketStatusName = req["StatusName"] == DBNull.Value ? null : req["StatusName"].ToString(),
                         IsOpportunityRequirement = Convert.ToBoolean(req["IsOpportunityRequirement"])
                     }).ToList();
 
 
                 var activities = activityRows.Select(r =>
-                    {                        
+                    {
                         List<object> attachments = new List<object>();
 
                         if (r["AttachmentsJson"] != DBNull.Value)
@@ -1144,7 +1146,7 @@ namespace CRMWebServices.Repository
 
                             if (!string.IsNullOrWhiteSpace(attachmentJson))
                             {
-                                var attachmentList =JsonConvert.DeserializeObject<List<dynamic>>(attachmentJson);
+                                var attachmentList = JsonConvert.DeserializeObject<List<dynamic>>(attachmentJson);
 
                                 if (attachmentList != null)
                                 {
@@ -1155,15 +1157,15 @@ namespace CRMWebServices.Repository
                                             attachmentId = Convert.ToInt32(a.AttachmentId),
                                             fileName = a.FileName?.ToString(),
                                             fileType = a.FileType?.ToString(),
-                                            fileSize = a.FileSize != null? Convert.ToInt64(a.FileSize): (long?)null,
+                                            fileSize = a.FileSize != null ? Convert.ToInt64(a.FileSize) : (long?)null,
                                             fileUrl = BuildFileUrl(a.FilePath?.ToString()),
-                                            uploadedOn = a.CreatedOn != null? Convert.ToDateTime(a.CreatedOn.ToString()): (DateTime?)null
+                                            uploadedOn = a.CreatedOn != null ? Convert.ToDateTime(a.CreatedOn.ToString()) : (DateTime?)null
                                         });
                                     }
                                 }
                             }
                         }
-       
+
                         List<object> expenses = new List<object>();
 
                         if (r["ExpensesJson"] != DBNull.Value)
@@ -1172,21 +1174,21 @@ namespace CRMWebServices.Repository
 
                             if (!string.IsNullOrWhiteSpace(expenseJson))
                             {
-                                var expenseList =JsonConvert.DeserializeObject<List<dynamic>>(expenseJson);
+                                var expenseList = JsonConvert.DeserializeObject<List<dynamic>>(expenseJson);
 
                                 if (expenseList != null)
                                 {
                                     foreach (var e in expenseList)
-                                    {                        
-                                        List<object> expenseAttachments =new List<object>();
+                                    {
+                                        List<object> expenseAttachments = new List<object>();
 
                                         if (e.AttachmentsJson != null)
                                         {
-                                            var expenseAttachmentJson =e.AttachmentsJson.ToString();
+                                            var expenseAttachmentJson = e.AttachmentsJson.ToString();
 
                                             if (!string.IsNullOrWhiteSpace(expenseAttachmentJson))
                                             {
-                                                var expenseAttachmentList =JsonConvert.DeserializeObject<List<dynamic>>(expenseAttachmentJson);
+                                                var expenseAttachmentList = JsonConvert.DeserializeObject<List<dynamic>>(expenseAttachmentJson);
 
                                                 if (expenseAttachmentList != null)
                                                 {
@@ -1194,58 +1196,58 @@ namespace CRMWebServices.Repository
                                                     {
                                                         expenseAttachments.Add(new
                                                         {
-                                                            attachmentId =Convert.ToInt32(ea.AttachmentId),
-                                                            fileName =ea.FileName?.ToString(),
-                                                            fileType =ea.FileType?.ToString(),
-                                                            fileSize =ea.FileSize != null? Convert.ToInt64(ea.FileSize): (long?)null,
-                                                            fileUrl =BuildFileUrl(ea.FilePath?.ToString()),
-                                                            uploadedOn =ea.CreatedOn != null? Convert.ToDateTime(ea.CreatedOn.ToString()): (DateTime?)null
+                                                            attachmentId = Convert.ToInt32(ea.AttachmentId),
+                                                            fileName = ea.FileName?.ToString(),
+                                                            fileType = ea.FileType?.ToString(),
+                                                            fileSize = ea.FileSize != null ? Convert.ToInt64(ea.FileSize) : (long?)null,
+                                                            fileUrl = BuildFileUrl(ea.FilePath?.ToString()),
+                                                            uploadedOn = ea.CreatedOn != null ? Convert.ToDateTime(ea.CreatedOn.ToString()) : (DateTime?)null
                                                         });
                                                     }
                                                 }
                                             }
                                         }
-                        
+
                                         expenses.Add(new
                                         {
-                                            activityExpenseId =Convert.ToInt32(e.ActivityExpenseId),
-                                            expenseCategoryId =Convert.ToInt32(e.Ref_ExpenseCategoryId),
-                                            categoryCode =e.CategoryCode?.ToString(),
-                                            categoryName =e.CategoryName?.ToString(),
-                                            transportModeId =e.Ref_TransportModeId != null? Convert.ToInt32(e.Ref_TransportModeId): (int?)null,
-                                            modeCode =e.ModeCode?.ToString(),
-                                            modeName =e.ModeName?.ToString(),
-                                            expenseDate =e.ExpenseDate != null? Convert.ToDateTime(e.ExpenseDate.ToString()): (DateTime?)null,
-                                            amount =e.Amount != null? Convert.ToDecimal(e.Amount): 0,
-                                            description =e.Description?.ToString(),
-                                            fromLocation =e.FromLocation?.ToString(),
-                                            toLocation =e.ToLocation?.ToString(),
-                                            createdOn =e.CreatedOn != null? Convert.ToDateTime(e.CreatedOn.ToString()): (DateTime?)null,
-                                            attachments =expenseAttachments
+                                            activityExpenseId = Convert.ToInt32(e.ActivityExpenseId),
+                                            expenseCategoryId = Convert.ToInt32(e.Ref_ExpenseCategoryId),
+                                            categoryCode = e.CategoryCode?.ToString(),
+                                            categoryName = e.CategoryName?.ToString(),
+                                            transportModeId = e.Ref_TransportModeId != null ? Convert.ToInt32(e.Ref_TransportModeId) : (int?)null,
+                                            modeCode = e.ModeCode?.ToString(),
+                                            modeName = e.ModeName?.ToString(),
+                                            expenseDate = e.ExpenseDate != null ? Convert.ToDateTime(e.ExpenseDate.ToString()) : (DateTime?)null,
+                                            amount = e.Amount != null ? Convert.ToDecimal(e.Amount) : 0,
+                                            description = e.Description?.ToString(),
+                                            fromLocation = e.FromLocation?.ToString(),
+                                            toLocation = e.ToLocation?.ToString(),
+                                            createdOn = e.CreatedOn != null ? Convert.ToDateTime(e.CreatedOn.ToString()) : (DateTime?)null,
+                                            attachments = expenseAttachments
                                         });
                                     }
                                 }
                             }
                         }
 
-       
+
                         return new OpportunityActivityInfo
                         {
-                            ActivityId =Convert.ToInt32(r["ActivityId"]),
-                            ActivityType =r["ActivityType"]?.ToString(),
-                            ActivityDate =Convert.ToDateTime(r["ActivityDate"]),
-                            Subject =r["Subject"]?.ToString(),
-                            Description =r["Description"] == DBNull.Value? null: r["Description"].ToString(),
-                            LocationAddress =r["LocationAddress"] == DBNull.Value? null: r["LocationAddress"].ToString(),
-                            Outcome =r["Outcome"] == DBNull.Value? null: r["Outcome"].ToString(),
-                            CreatedBy =r["CreatedBy"]?.ToString(),
-                            ActivityStatusId =r["Ref_ActivityStatusId"] == DBNull.Value? (int?)null: Convert.ToInt32(r["Ref_ActivityStatusId"]),
-                            ActivityStatus =r["ActivityStatus"]?.ToString(),
-                            ActivityStatusColor =r["ActivityStatusColor"]?.ToString(),
-                            Attachments =attachments,
-                            Expenses =expenses
+                            ActivityId = Convert.ToInt32(r["ActivityId"]),
+                            ActivityType = r["ActivityType"]?.ToString(),
+                            ActivityDate = Convert.ToDateTime(r["ActivityDate"]),
+                            Subject = r["Subject"]?.ToString(),
+                            Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                            LocationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
+                            Outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
+                            CreatedBy = r["CreatedBy"]?.ToString(),
+                            ActivityStatusId = r["Ref_ActivityStatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["Ref_ActivityStatusId"]),
+                            ActivityStatus = r["ActivityStatus"]?.ToString(),
+                            ActivityStatusColor = r["ActivityStatusColor"]?.ToString(),
+                            Attachments = attachments,
+                            Expenses = expenses
                         };
-                }).ToList();
+                    }).ToList();
 
                 var followUps = followUpRows
                          .Select(r => new OpportunityFollowUpInfo
@@ -1402,7 +1404,44 @@ namespace CRMWebServices.Repository
                         createdOn = Convert.ToDateTime(r["CreatedOn"]),
                         attachments,
                         expenses
-                    };}).Cast<object>().ToList();
+                    };
+                }).Cast<object>().ToList();
+
+                var tickets = ticketRows.Select(r => new OpportunityTicketInfo
+                {
+                    TicketId = Convert.ToInt32(r["TicketId"]),
+                    TicketNo = r["TicketNo"] == DBNull.Value ? null : r["TicketNo"].ToString(),
+                    OpportunityId = Convert.ToInt32(r["OpportunityId"]),
+                    OpportunityRequirementId = Convert.ToInt32(r["OpportunityRequirementId"]),
+                    ProductId = r["ProductId"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["ProductId"]),
+                    ProductName = r["ProductName"] == DBNull.Value ? null : r["ProductName"].ToString(),
+                    Priority = r["Priority"] == DBNull.Value ? null : r["Priority"].ToString(),
+                    ScheduledOn = r["ScheduledOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(r["ScheduledOn"]),
+                    Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                    AssignedEmployeeId = r["AssignedEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["AssignedEmployeeId"]),
+                    AssignedEmployeeName = r["AssignedEmployeeName"] == DBNull.Value ? null : r["AssignedEmployeeName"].ToString(),
+                    TicketStatusId = r["TicketStatusId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["TicketStatusId"]),
+                    TicketStatusCode = r["StatusCode"] == DBNull.Value ? null : r["StatusCode"].ToString(),
+                    TicketStatusName = r["StatusName"] == DBNull.Value ? null : r["StatusName"].ToString(),
+                    CompletedOn = r["CompletedOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(r["CompletedOn"]),
+                    CompletedBy = r["CompletedBy"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["CompletedBy"]),
+                    CreatedOn = Convert.ToDateTime(r["CreatedOn"]),
+                    CreatedBy = r["CreatedBy"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["CreatedBy"]),
+                    UpdatedOn = r["UpdatedOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(r["UpdatedOn"]),
+                    UpdatedBy = r["UpdatedBy"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["UpdatedBy"]),
+                    LastActivityId = r["LastActivityId"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["LastActivityId"]),
+                    LastActivityType = r["LastActivityType"] == DBNull.Value ? null : r["LastActivityType"].ToString(),
+                    LastActivityStatus = r["LastActivityStatus"] == DBNull.Value ? null : r["LastActivityStatus"].ToString(),
+                    LastActivityDate = r["LastActivityDate"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(r["LastActivityDate"]),
+                    LastActivitySubject = r["LastActivitySubject"] == DBNull.Value ? null : r["LastActivitySubject"].ToString(),
+                    LastActivityDescription = r["LastActivityDescription"] == DBNull.Value ? null : r["LastActivityDescription"].ToString(),
+                    LastActivityOutcome = r["LastActivityOutcome"] == DBNull.Value ? null : r["LastActivityOutcome"].ToString(),
+                    WorkHistory = r["WorkHistory"] == DBNull.Value ||
+                              string.IsNullOrWhiteSpace(r["WorkHistory"].ToString())
+                            ? new List<TicketWorkHistoryInfo>() : Newtonsoft.Json.JsonConvert.DeserializeObject<List<TicketWorkHistoryInfo>>(r["WorkHistory"].ToString()
+                      ) ?? new List<TicketWorkHistoryInfo>()
+                })
+                .ToList();
 
                 var responseData = new OpportunityDetailResponse
                 {
@@ -1412,7 +1451,8 @@ namespace CRMWebServices.Repository
                     Activities = activities,
                     Files = files,
                     FollowUps = followUps,
-                    Timeline = timeline
+                    Timeline = timeline,
+                    Tickets = tickets  // 150926
                 };
 
                 return new ApiResponse
@@ -1700,12 +1740,12 @@ namespace CRMWebServices.Repository
                 new SqlParameter("@Ref_OpportunityId", opportunityId)
             };
 
-            DataTable dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",parameters);
+            DataTable dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement", parameters);
 
             if (dt.Rows.Count == 0)
                 return null;
 
-            return dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value? null: Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
+            return dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
         }
         #endregion
 
@@ -1882,7 +1922,7 @@ namespace CRMWebServices.Repository
                     }
                 }
 
-                string? attachmentsJson = savedAttachments.Count > 0? JsonConvert.SerializeObject(savedAttachments) : null;
+                string? attachmentsJson = savedAttachments.Count > 0 ? JsonConvert.SerializeObject(savedAttachments) : null;
 
                 var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
                     new SqlParameter("@Status", "CREATE_OPPORTUNITY_ACTIVITY"),
@@ -2159,21 +2199,6 @@ namespace CRMWebServices.Repository
                     };
                 }
 
-                /*
-                 * -------------------------------------------------------
-                 * Prepare Expense JSON
-                 * -------------------------------------------------------
-                 *
-                 * Base64 files are first saved physically.
-                 * SQL receives only:
-                 *
-                 * FileName
-                 * FilePath
-                 * FileType
-                 * FileSize
-                 *
-                 */
-
                 var expenseItems = new List<object>();
 
                 foreach (var expense in model.Expenses)
@@ -2199,8 +2224,7 @@ namespace CRMWebServices.Repository
                                 return new ApiResponse
                                 {
                                     Status = false,
-                                    Message =
-                                        $"Attachment content is required for '{attachment.FileName}'."
+                                    Message =$"Attachment content is required for '{attachment.FileName}'."
                                 };
                             }
 
@@ -2253,66 +2277,28 @@ namespace CRMWebServices.Repository
 
                     expenseItems.Add(new
                     {
-                        Ref_ExpenseCategoryId =
-                            expense.Ref_ExpenseCategoryId,
-
-                        Ref_TransportModeId =
-                            expense.Ref_TransportModeId,
-
-                        Amount =
-                            expense.Amount,
-
-                        Description =
-                            expense.Description,
-
-                        FromLocation =
-                            expense.FromLocation,
-
-                        ToLocation =
-                            expense.ToLocation,
-
+                        Ref_ExpenseCategoryId =expense.Ref_ExpenseCategoryId,
+                        Ref_TransportModeId =expense.Ref_TransportModeId,
+                        Amount =expense.Amount,
+                        Description =expense.Description,
+                        FromLocation =expense.FromLocation,
+                        ToLocation =expense.ToLocation,
                         Attachments = attachments
                     });
                 }
 
                 string expensesJson =
                     JsonConvert.SerializeObject(expenseItems);
-       
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_OpportunityManagement",
 
-                    new SqlParameter(
-                        "@Status",
-                        "ADD_ACTIVITY_EXPENSE"
-                    ),
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
 
-                    new SqlParameter(
-                        "@Ref_OpportunityId",
-                        model.Ref_OpportunityId
-                    ),
-
-                    new SqlParameter(
-                        "@Ref_ActivityId",
-                        model.Ref_ActivityId
-                    ),
-
-                    new SqlParameter(
-                        "@ExpenseItems",
-                        expensesJson
-                    ),
-
-                    new SqlParameter(
-                        "@CreatedBy",
-                        (object?)model.CreatedBy ?? DBNull.Value
-                    )
-                );
-
-                /*
-                 * -------------------------------------------------------
-                 * Map SP response
-                 * -------------------------------------------------------
-                 */
+                    new SqlParameter("@Status","ADD_ACTIVITY_EXPENSE"),
+                    new SqlParameter("@Ref_OpportunityId",model.Ref_OpportunityId),
+                    new SqlParameter("@Ref_ActivityId",model.Ref_ActivityId),
+                    new SqlParameter("@ExpenseItems",expensesJson),
+                    new SqlParameter("@CreatedBy",(object?)model.CreatedBy ?? DBNull.Value)
+                );              
 
                 return MapResponse(dt, true);
             }
