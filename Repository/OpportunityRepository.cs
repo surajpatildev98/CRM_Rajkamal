@@ -30,7 +30,7 @@ namespace CRMWebServices.Repository
             _leadRepository = leadRepository;
         }
 
-        #region // COMMON HELPER METHODS
+        #region COMMON HELPER METHODS
         private string BuildFileUrl(string filePath)
         {
             try
@@ -403,18 +403,7 @@ namespace CRMWebServices.Repository
                     mobileNo = r["MobileNo"]?.ToString(),
                     email = r["Email"] == DBNull.Value ? null : r["Email"].ToString()
                 }).ToList();
-
-                // Requirements
-                //var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new
-                //{
-                //    leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
-                //    offeringId = Convert.ToInt32(r["OfferingId"]),
-                //    offeringName = r["OfferingName"]?.ToString(),
-                //    remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
-                //    quantity = Convert.ToDecimal(r["Quantity"]),
-                //    unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
-                //}).ToList();
-
+                            
                 var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new
                 {
                     leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
@@ -504,19 +493,16 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region  // CONVERT LEAD TO OPPORTUNITY
+        #region  CONVERT LEAD TO OPPORTUNITY
         public async Task<ApiResponse> ConvertLeadToOpportunity(ConvertLeadRequest request)
         {
             try
             {
                 var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
                     new SqlParameter("@Status", "CONVERT_LEAD_TO_OPPORTUNITY"),
-                    new SqlParameter("@Ref_LeadId", request.Ref_LeadId),
-                    //new SqlParameter("@OpportunityName", request.OpportunityName),
-                    //new SqlParameter("@Ref_OpportunityTypeId", request.Ref_OpportunityTypeId),
+                    new SqlParameter("@Ref_LeadId", request.Ref_LeadId),                  
                     new SqlParameter("@OpportunityName", (object?)request.OpportunityName ?? DBNull.Value),
-                    new SqlParameter("@Ref_OpportunityTypeId", (object?)request.Ref_OpportunityTypeId ?? DBNull.Value),
-                    //new SqlParameter("@Ref_OpportunityStageId", request.Ref_OpportunityStageId),
+                    new SqlParameter("@Ref_OpportunityTypeId", (object?)request.Ref_OpportunityTypeId ?? DBNull.Value),           
                     new SqlParameter("@ExpectedRevenue", request.ExpectedRevenue),
                     new SqlParameter("@ExpectedCloseDate", request.ExpectedCloseDate),
                     new SqlParameter("@Probability", request.Probability),
@@ -718,7 +704,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region  // OPPORTUNITY TRANSFER
+        #region  OPPORTUNITY TRANSFER
         public async Task<ApiResponse> TransferOpportunity(OpportunityTransferRequest model)
         {
             try
@@ -926,7 +912,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // GET OPPORTUNITY LIST (MULTIPLE - READ-ONLY)
+        #region  GET OPPORTUNITY LIST (MULTIPLE - READ-ONLY)
         public async Task<ApiResponse> GetOpportunityList(OpportunityListRequest request)
         {
             try
@@ -1001,7 +987,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region  // GET OPPORTUNITY DETAILS (SINGLE - READ-ONLY)       
+        #region GET OPPORTUNITY DETAILS (SINGLE - READ-ONLY)       
         public async Task<ApiResponse> GetOpportunityDetails(int opportunityId, int loggedInEmployeeId) // CHANGE 150926
         {
             try
@@ -1098,20 +1084,7 @@ namespace CRMWebServices.Repository
                         Mobile = contactRow["Mobile"]?.ToString(),
                         Email = contactRow["Email"] == DBNull.Value ? null : contactRow["Email"].ToString(),
                         IsPrimary = Convert.ToBoolean(contactRow["IsPrimary"])
-                    }).ToList();
-
-                //var requirements = requirementRows
-                //     .Select(req => new OpportunityRequirementInfo
-                //     {
-                //         LeadRequirementId = req["LeadRequirementId"] == DBNull.Value? (int?)null: Convert.ToInt32(req["LeadRequirementId"]),
-                //         OpportunityRequirementId = Convert.ToInt32(req["OpportunityRequirementId"]),
-                //         OfferingId = Convert.ToInt32(req["OfferingId"]),
-                //         OfferingName = req["OfferingName"]?.ToString(),
-                //         Quantity = Convert.ToDecimal(req["Quantity"]),
-                //         Remark = req["Remark"] == DBNull.Value? null: req["Remark"].ToString(),
-                //         Unit = req["Unit"] == DBNull.Value? null: req["Unit"].ToString(),
-                //         IsOpportunityRequirement = Convert.ToBoolean(req["IsOpportunityRequirement"])
-                //     }).ToList();
+                    }).ToList();            
 
                 var requirements = requirementRows
                     .Select(req => new OpportunityRequirementInfo
@@ -1250,33 +1223,33 @@ namespace CRMWebServices.Repository
                     }).ToList();
 
                 var followUps = followUpRows
-                         .Select(r => new OpportunityFollowUpInfo
-                         {
-                             FollowUpId = Convert.ToInt32(r["FollowUpId"]),
-                             ActivityId = r["ActivityId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["ActivityId"]),
-                             AssignedEmployeeId = r["AssignedEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["AssignedEmployeeId"]),
-                             AssignedTo = r["AssignedTo"]?.ToString(),
-                             FollowUpDate = Convert.ToDateTime(r["FollowUpDate"]),
-                             Priority = Convert.ToInt32(r["Priority"]),
-                             Remarks = r["Remarks"]?.ToString(),
-                             IsCompleted = Convert.ToBoolean(r["IsCompleted"]),
-                             CompletedOn = r["CompletedOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(r["CompletedOn"]),
-                             FollowUpStatus = r["FollowUpStatus"]?.ToString(),
-                             FollowUpStatusColor = r["FollowUpStatusColor"]?.ToString(),
-                             CreatedOn = Convert.ToDateTime(r["CreatedOn"]),
-                             CreatedByName = r["CreatedByName"]?.ToString()
-                         })
-                         .ToList();
+                    .Select(r => new OpportunityFollowUpInfo
+                    {
+                        FollowUpId = Convert.ToInt32(r["FollowUpId"]),
+                        ActivityId = r["ActivityId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["ActivityId"]),
+                        AssignedEmployeeId = r["AssignedEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(r["AssignedEmployeeId"]),
+                        AssignedTo = r["AssignedTo"]?.ToString(),
+                        FollowUpDate = Convert.ToDateTime(r["FollowUpDate"]),
+                        Priority = Convert.ToInt32(r["Priority"]),
+                        Remarks = r["Remarks"]?.ToString(),
+                        IsCompleted = Convert.ToBoolean(r["IsCompleted"]),
+                        CompletedOn = r["CompletedOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(r["CompletedOn"]),
+                        FollowUpStatus = r["FollowUpStatus"]?.ToString(),
+                        FollowUpStatusColor = r["FollowUpStatusColor"]?.ToString(),
+                        CreatedOn = Convert.ToDateTime(r["CreatedOn"]),
+                        CreatedByName = r["CreatedByName"]?.ToString()
+                    }).ToList();
+
                 var files = leadAttachmentRows
-                        .Select(r => new OpportunityAttachmentInfo
-                        {
-                            AttachmentId = Convert.ToInt32(r["AttachmentId"]),
-                            FileName = r["FileName"]?.ToString(),
-                            FileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
-                            FileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
-                            FileUrl = BuildFileUrl(r["FilePath"]?.ToString()),
-                            UploadedOn = Convert.ToDateTime(r["CreatedOn"])
-                        }).ToList();
+                    .Select(r => new OpportunityAttachmentInfo
+                    {
+                        AttachmentId = Convert.ToInt32(r["AttachmentId"]),
+                        FileName = r["FileName"]?.ToString(),
+                        FileType = r["FileType"] == DBNull.Value ? null : r["FileType"].ToString(),
+                        FileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
+                        FileUrl = BuildFileUrl(r["FilePath"]?.ToString()),
+                        UploadedOn = Convert.ToDateTime(r["CreatedOn"])
+                    }).ToList();
 
                 var timeline = timelineRows.Select(r =>
                 {
@@ -1369,24 +1342,7 @@ namespace CRMWebServices.Repository
                         }
                     }
 
-                    //    return new
-                    //    {
-                    //        itemType = r["ItemType"]?.ToString(),
-                    //        itemId = Convert.ToInt32(r["ItemId"]),
-                    //        activityType = r["ActivityType"]?.ToString(),
-                    //        itemDate = Convert.ToDateTime(r["ActivityDate"]),
-                    //        subject = r["Subject"]?.ToString(),
-                    //        description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
-                    //        outcome = r["Outcome"] == DBNull.Value ? null : r["Outcome"].ToString(),
-                    //        locationAddress = r["LocationAddress"] == DBNull.Value ? null : r["LocationAddress"].ToString(),
-                    //        createdBy = r["CreatedBy"] == DBNull.Value ? null : r["CreatedBy"].ToString(),
-                    //        status = r["Status"]?.ToString(),
-                    //        statusColor = r["StatusColor"]?.ToString(),
-                    //        createdOn = Convert.ToDateTime(r["CreatedOn"]),
-                    //        attachments,
-                    //        expenses
-                    //    };
-                    //}).ToList();
+                  
 
                     return new
                     {
@@ -1481,13 +1437,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region  // UPDATE OPPORTUNITY Currently Not in Use
+        #region UPDATE OPPORTUNITY Currently Not in Use
         public async Task<ApiResponse> UpdateOpportunity(UpdateOpportunityRequest request)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_OpportunityManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
                     new SqlParameter("@Status", "UPDATE_OPPORTUNITY"),
                     new SqlParameter("@Ref_OpportunityId", request.Ref_OpportunityId),
                     new SqlParameter("@OpportunityName", (object?)request.OpportunityName ?? DBNull.Value),
@@ -1539,7 +1494,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // DELETE OPPORTUNITY Currently Not in Use
+        #region  DELETE OPPORTUNITY Currently Not in Use
         public async Task<ApiResponse> DeleteOpportunity(DeleteOpportunityRequest request)
         {
             try
@@ -1588,7 +1543,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region  // DROPDOWNS
+        #region  DROPDOWNS
         public async Task<ApiResponse> GetOpportunityTypes()
         {
             try
@@ -1731,7 +1686,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // GET ASSIGNED EMPLOYEE ID FOR OPPORTUNITY
+        #region  GET ASSIGNED EMPLOYEE ID FOR OPPORTUNITY
         public async Task<int?> GetAssignedEmployeeId(int opportunityId)
         {
             var parameters = new[]
@@ -1749,7 +1704,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // GET OPPORTUNITY ACCESS INFO
+        #region GET OPPORTUNITY ACCESS INFO
         public async Task<OpportunityAccessInfo?> GetOpportunityAccessInfo(int opportunityId)
         {
             try
@@ -1766,9 +1721,7 @@ namespace CRMWebServices.Repository
                 {
                     OpportunityId = opportunityId,
                     CreatedBy = row["CreatedBy"] == DBNull.Value ? null : (int?)Convert.ToInt32(row["CreatedBy"]),
-                    AssignedEmployeeId = row["Ref_OwnerEmployeeId"] == DBNull.Value
-                        ? null
-                        : (int?)Convert.ToInt32(row["Ref_OwnerEmployeeId"])
+                    AssignedEmployeeId = row["Ref_OwnerEmployeeId"] == DBNull.Value? null: (int?)Convert.ToInt32(row["Ref_OwnerEmployeeId"])
                 };
             }
             catch (Exception ex)
@@ -1779,29 +1732,8 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // ADD OPPORTUNITY REQUIREMENT
-        //public async Task<ApiResponse> AddOpportunityRequirement(AddOpportunityRequirementRequest model)
-        //{
-        //    try
-        //    {
-        //        var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
-        //            new SqlParameter("@Status", "ADD_OPPORTUNITY_REQUIREMENT"),
-        //            new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
-        //            new SqlParameter("@Ref_ProductId", model.Ref_ProductId),
-        //            new SqlParameter("@Quantity", model.Quantity),
-        //            new SqlParameter("@RequirementRemark", (object?)model.RequirementRemark ?? DBNull.Value),
-        //            new SqlParameter("@Ref_UnitId", (object?)model.Ref_UnitId ?? DBNull.Value),
-        //            new SqlParameter("@CreatedBy", model.CreatedBy)
-        //        );
-
-        //        return MapResponse(dt, isCreate: true);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
-        //    }
-        //}
-
+        #region  ADD OPPORTUNITY REQUIREMENT
+      
         public async Task<ApiResponse> AddOpportunityRequirement(AddOpportunityRequirementRequest model)
         {
             try
@@ -1827,31 +1759,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // UPDATE OPPORTUNITY REQUIREMENT
-        //public async Task<ApiResponse> UpdateOpportunityRequirement(UpdateOpportunityRequirementRequest model)
-        //{
-        //    try
-        //    {
-        //        var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
-        //            new SqlParameter("@Status", "UPDATE_OPPORTUNITY_REQUIREMENT"),
-        //            new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
-        //            new SqlParameter("@Ref_OpportunityRequirementId", (object?)model.Ref_OpportunityRequirementId ?? DBNull.Value),
-        //            new SqlParameter("@Ref_LeadRequirementId", (object?)model.Ref_LeadRequirementId ?? DBNull.Value),
-        //            new SqlParameter("@Ref_ProductId", (object?)model.Ref_ProductId ?? DBNull.Value),
-        //            new SqlParameter("@Quantity", model.Quantity),
-        //            new SqlParameter("@RequirementRemark", (object?)model.RequirementRemark ?? DBNull.Value),
-        //            new SqlParameter("@Ref_UnitId", (object?)model.Ref_UnitId ?? DBNull.Value),
-        //            new SqlParameter("@CreatedBy", model.CreatedBy)
-        //        );
-
-        //        return MapResponse(dt, isCreate: false);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
-        //    }
-        //}
-
+        #region  UPDATE OPPORTUNITY REQUIREMENT        
         public async Task<ApiResponse> UpdateOpportunityRequirement(UpdateOpportunityRequirementRequest model)
         {
             try
@@ -1879,7 +1787,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // CREATE OPPORTUNITY ACTIVITY
+        #region  CREATE OPPORTUNITY ACTIVITY
         public async Task<ApiResponse> CreateOpportunityActivity(CreateOpportunityActivityRequest model)
         {
             try
@@ -1895,20 +1803,13 @@ namespace CRMWebServices.Repository
 
                         try
                         {
-                            string savedPath = SaveBase64Attachment(
-                                att.Base64Content,
-                                att.FileName,
-                                "OpportunityActivityAttachments"
-                            );
-
+                            string savedPath = SaveBase64Attachment(att.Base64Content,att.FileName,"OpportunityActivityAttachments");
                             savedAttachments.Add(new
                             {
                                 FileName = att.FileName,
                                 FilePath = savedPath,
                                 FileType = Path.GetExtension(att.FileName).TrimStart('.').ToLowerInvariant(),
-                                FileSize = Convert.FromBase64String(att.Base64Content.Contains(",")
-                                        ? att.Base64Content.Substring(att.Base64Content.IndexOf(",") + 1)
-                                        : att.Base64Content).Length
+                                FileSize = Convert.FromBase64String(att.Base64Content.Contains(",")? att.Base64Content.Substring(att.Base64Content.IndexOf(",") + 1): att.Base64Content).Length
                             });
                         }
                         catch (Exception ex)
@@ -1956,7 +1857,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // CREATE OPPORTUNITY FOLLOW-UP
+        #region  CREATE OPPORTUNITY FOLLOW-UP
         public async Task<ApiResponse> CreateOpportunityFollowUp(CreateOpportunityFollowUpRequest model)
         {
             try
@@ -1980,31 +1881,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // CLOSE OPPORTUNITY
-        //public async Task<ApiResponse> CloseOpportunity(CloseOpportunityRequest model)
-        //{
-        //    try
-        //    {
-        //        var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
-        //            new SqlParameter("@Status", "CLOSE_OPPORTUNITY"),
-        //            new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
-        //            new SqlParameter("@Ref_OpportunityStageIdClose", model.Ref_OpportunityStageIdClose),
-        //            new SqlParameter("@ClosureRemark", (object?)model.ClosureRemark ?? DBNull.Value),
-        //            new SqlParameter("@CreatedBy", model.CreatedBy)
-        //        );
-
-        //        return MapResponse(dt, isCreate: false);
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" };
-        //    }
-        //}
-
+        #region  CLOSE OPPORTUNITY       
         public async Task<ApiResponse> CloseOpportunity(CloseOpportunityRequest model)
         {
             try
@@ -2054,7 +1931,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // GET OPPORTUNITY CLOSE STAGES
+        #region  GET OPPORTUNITY CLOSE STAGES
         public async Task<ApiResponse> GetOpportunityCloseStages()
         {
             try
@@ -2097,7 +1974,7 @@ namespace CRMWebServices.Repository
 
         #endregion
 
-        #region // UPDATE OPPORTUNITY FOLLOW-UP STATUS
+        #region  UPDATE OPPORTUNITY FOLLOW-UP STATUS
         public async Task<ApiResponse> UpdateOpportunityFollowUpStatus(UpdateOpportunityFollowUpStatusRequest model)
         {
             try
@@ -2125,7 +2002,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // DELETE OPPORTUNITY REQUIREMENT
+        #region  DELETE OPPORTUNITY REQUIREMENT
         public async Task<ApiResponse> DeleteOpportunityRequirement(DeleteOpportunityRequirementRequest model)
         {
             try
@@ -2158,7 +2035,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // ADD EXPENSEE
+        #region  ADD EXPENSEE
         public async Task<ApiResponse> AddOpportunityActivityExpenses(AddOpportunityActivityExpenseRequest model)
         {
             try
@@ -2205,8 +2082,7 @@ namespace CRMWebServices.Repository
                 {
                     var attachments = new List<object>();
 
-                    if (expense.Attachments != null &&
-                        expense.Attachments.Count > 0)
+                    if (expense.Attachments != null && expense.Attachments.Count > 0)
                     {
                         foreach (var attachment in expense.Attachments)
                         {
@@ -2232,38 +2108,20 @@ namespace CRMWebServices.Repository
 
                             try
                             {
-                                var base64Data =
-                                    attachment.Base64.Contains(",")
-                                        ? attachment.Base64.Substring(
-                                            attachment.Base64.IndexOf(",") + 1)
-                                        : attachment.Base64;
-
-                                fileBytes =
-                                    Convert.FromBase64String(base64Data);
+                                var base64Data = attachment.Base64.Contains(",") ? attachment.Base64.Substring(attachment.Base64.IndexOf(",") + 1): attachment.Base64;
+                                fileBytes =Convert.FromBase64String(base64Data);
                             }
                             catch
                             {
                                 return new ApiResponse
                                 {
                                     Status = false,
-                                    Message =
-                                        $"Invalid Base64 content for '{attachment.FileName}'."
+                                    Message =$"Invalid Base64 content for '{attachment.FileName}'."
                                 };
                             }
 
-                            /*
-                             * Save physical file using existing helper
-                             */
-                            string filePath = SaveBase64Attachment(
-                                attachment.Base64,
-                                attachment.FileName,
-                                "OpportunityActivityExpenseAttachments"
-                            );
-
-                            string fileType =
-                                Path.GetExtension(attachment.FileName)
-                                    .TrimStart('.')
-                                    .ToLowerInvariant();
+                            string filePath = SaveBase64Attachment(attachment.Base64,attachment.FileName,"OpportunityActivityExpenseAttachments");
+                            string fileType =Path.GetExtension(attachment.FileName).TrimStart('.').ToLowerInvariant();
 
                             attachments.Add(new
                             {
@@ -2287,9 +2145,7 @@ namespace CRMWebServices.Repository
                     });
                 }
 
-                string expensesJson =
-                    JsonConvert.SerializeObject(expenseItems);
-
+                string expensesJson =JsonConvert.SerializeObject(expenseItems);
 
                 var dt = await _database.ExecuteDataTableAsync("USP_CRM_OpportunityManagement",
 
