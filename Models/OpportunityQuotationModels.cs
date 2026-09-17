@@ -15,8 +15,8 @@ namespace CRMWebServices.Models
             public DateTime? ValidUntil { get; set; }
 
             // Send EITHER the amount OR the percent for each — whichever the user typed in
-            public decimal? FreightAmount { get; set; }
-            public decimal? FreightPercent { get; set; }
+            //public decimal? FreightAmount { get; set; }
+            //public decimal? FreightPercent { get; set; }
             public decimal? TaxAmount { get; set; }
             public decimal? TaxPercent { get; set; }
 
@@ -81,6 +81,14 @@ namespace CRMWebServices.Models
             public DateTime? ValidUntil { get; set; }
             public decimal FreightCharge { get; set; }
             public decimal FreightPercent { get; set; }
+
+            public int? Ref_FreightPolicyId { get; set; }
+            public int? Ref_FreightPolicySlabId { get; set; }
+            public string? FreightPolicyName { get; set; }
+            public int? FreightPolicyVersion { get; set; }
+            public decimal? FreightPolicyMinOrderValue { get; set; }
+            public decimal? FreightPolicyMaxOrderValue { get; set; }
+            public decimal? FreightPolicyAmount { get; set; }
             public decimal TaxAmount { get; set; }
             public decimal TaxPercent { get; set; }
             public decimal SubTotal { get; set; }
@@ -191,6 +199,7 @@ namespace CRMWebServices.Models
         {
             public RaiseQuotationHeader Header { get; set; } = new();
             public List<RaiseQuotationItemResponse> Items { get; set; } = new();
+            public List<FreightPolicySlabQuotationResponse> FreightPolicySlabs { get; set; } = new();
         }
         public class RaiseQuotationHeader
         {
@@ -223,8 +232,13 @@ namespace CRMWebServices.Models
             public DateTime? ValidUntil { get; set; }
             public decimal SubTotal { get; set; }
             public decimal FreightCharge { get; set; }
-
             public decimal FreightPercent { get; set; }
+
+            public int? Ref_FreightPolicyId { get; set; }
+            public int? Ref_FreightPolicySlabId { get; set; }
+            public string? FreightPolicyName { get; set; }
+            public int? FreightPolicyVersion { get; set; }
+
             public decimal TaxAmount { get; set; }
             public decimal TaxPercent { get; set; }
             public decimal TotalAmount { get; set; }
@@ -255,8 +269,8 @@ namespace CRMWebServices.Models
             public DateTime? QuotationDate { get; set; }
             public DateTime? ValidUntil { get; set; }
 
-            public decimal? FreightAmount { get; set; }
-            public decimal? FreightPercent { get; set; }
+            //public decimal? FreightAmount { get; set; }
+            //public decimal? FreightPercent { get; set; }
 
             public decimal? TaxAmount { get; set; }
             public decimal? TaxPercent { get; set; }
@@ -299,6 +313,11 @@ namespace CRMWebServices.Models
 
             public decimal FreightPercent { get; set; }
 
+            public int? Ref_FreightPolicyId { get; set; }
+            public int? Ref_FreightPolicySlabId { get; set; }
+            public string? FreightPolicyName { get; set; }
+            public int? FreightPolicyVersion { get; set; }
+
             public decimal TaxAmount { get; set; }
 
             public decimal TaxPercent { get; set; }
@@ -335,7 +354,16 @@ namespace CRMWebServices.Models
             public List<QuotationAttachmentInfo> Attachments { get; set; } = new();
 
         }
-
+        public class FreightPolicySlabQuotationResponse
+        {
+            public int FreightPolicyId { get; set; }
+            public string PolicyName { get; set; } = string.Empty;
+            public int VersionNo { get; set; }
+            public int FreightPolicySlabId { get; set; }
+            public decimal MinOrderValue { get; set; }
+            public decimal? MaxOrderValue { get; set; }
+            public decimal FreightAmount { get; set; }
+        }
         public class QuotationDetailResponse
         {
             public QuotationInfo Quotation { get; set; } = null!;

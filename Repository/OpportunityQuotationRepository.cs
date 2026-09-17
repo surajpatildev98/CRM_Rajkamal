@@ -127,8 +127,7 @@ namespace CRMWebServices.Repository
                     OwnerName = row["OwnerName"].ToString()
                 };              
 
-                var items = ds.Tables[1].Rows.Cast<DataRow>()
-                    .Select(r => new RaiseQuotationItemResponse
+                var items = ds.Tables[1].Rows.Cast<DataRow>() .Select(r => new RaiseQuotationItemResponse
                     {
                         OpportunityRequirementId = Convert.ToInt32(r["OpportunityRequirementId"]),
                         Ref_LeadRequirementId = r["Ref_LeadRequirementId"] == DBNull.Value? null: Convert.ToInt32(r["Ref_LeadRequirementId"]),
@@ -146,6 +145,17 @@ namespace CRMWebServices.Repository
                         RequirementRemark = r["RequirementRemark"] == DBNull.Value? null: r["RequirementRemark"].ToString()
                     }).ToList();
 
+                var freightPolicySlabs = ds.Tables.Count > 2 ? ds.Tables[2].Rows.Cast<DataRow>().Select(r => new FreightPolicySlabQuotationResponse
+                    {
+                        FreightPolicyId = Convert.ToInt32(r["FreightPolicyId"]),
+                        PolicyName = r["PolicyName"]?.ToString() ?? string.Empty,
+                        VersionNo = Convert.ToInt32(r["VersionNo"]),
+                        FreightPolicySlabId = Convert.ToInt32(r["FreightPolicySlabId"]),
+                        MinOrderValue = Convert.ToDecimal(r["MinOrderValue"]),
+                        MaxOrderValue = r["MaxOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(r["MaxOrderValue"]),
+                        FreightAmount = Convert.ToDecimal(r["FreightAmount"])
+                    }).ToList(): new List<FreightPolicySlabQuotationResponse>();
+
                 return new ApiResponse
                 {
                     Status = true,
@@ -153,7 +163,8 @@ namespace CRMWebServices.Repository
                     Data = new RaiseQuotationPageResponse
                     {
                         Header = header,
-                        Items = items
+                        Items = items,
+                        FreightPolicySlabs = freightPolicySlabs
                     }
                 };
             }
@@ -213,8 +224,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
                     new SqlParameter("@QuotationDate", (object?)model.QuotationDate ?? DBNull.Value),
                     new SqlParameter("@ValidUntil", (object?)model.ValidUntil ?? DBNull.Value),
-                    new SqlParameter("@FreightAmount", (object?)model.FreightAmount ?? DBNull.Value),
-                    new SqlParameter("@FreightPercent", (object?)model.FreightPercent ?? DBNull.Value),
+                    //new SqlParameter("@FreightAmount", (object?)model.FreightAmount ?? DBNull.Value),
+                    //new SqlParameter("@FreightPercent", (object?)model.FreightPercent ?? DBNull.Value),
                     new SqlParameter("@TaxAmount", (object?)model.TaxAmount ?? DBNull.Value),
                     new SqlParameter("@TaxPercent", (object?)model.TaxPercent ?? DBNull.Value),
                     new SqlParameter("@TermsRemark", (object?)model.TermsRemark ?? DBNull.Value),
@@ -367,6 +378,13 @@ namespace CRMWebServices.Repository
                     ValidUntil = qRow["ValidUntil"] == DBNull.Value ? null : Convert.ToDateTime(qRow["ValidUntil"]),
                     FreightCharge = qRow["FreightCharge"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["FreightCharge"]),
                     FreightPercent = qRow["FreightPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["FreightPercent"]),
+                    Ref_FreightPolicyId = qRow["Ref_FreightPolicyId"] == DBNull.Value? null: Convert.ToInt32(qRow["Ref_FreightPolicyId"]),
+                    Ref_FreightPolicySlabId = qRow["Ref_FreightPolicySlabId"] == DBNull.Value? null: Convert.ToInt32(qRow["Ref_FreightPolicySlabId"]),
+                    FreightPolicyName = qRow["FreightPolicyName"] == DBNull.Value? null: qRow["FreightPolicyName"].ToString(),
+                    FreightPolicyVersion = qRow["FreightPolicyVersion"] == DBNull.Value? null: Convert.ToInt32(qRow["FreightPolicyVersion"]),
+                    FreightPolicyMinOrderValue = qRow["FreightPolicyMinOrderValue"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyMinOrderValue"]),
+                    FreightPolicyMaxOrderValue = qRow["FreightPolicyMaxOrderValue"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyMaxOrderValue"]),
+                    FreightPolicyAmount = qRow["FreightPolicyAmount"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyAmount"]),
                     TaxPercent = qRow["TaxPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxPercent"]),
                     TaxAmount = qRow["TaxAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxAmount"]),
                     SubTotal = Convert.ToDecimal(qRow["SubTotal"]),
@@ -389,24 +407,9 @@ namespace CRMWebServices.Repository
                     CustomerResponseByEmployeeId = qRow["CustomerResponseByEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(qRow["CustomerResponseByEmployeeId"]),
                     CustomerResponseOn = qRow["CustomerResponseOn"] == DBNull.Value ? null : Convert.ToDateTime(qRow["CustomerResponseOn"]),
                     CustomerResponseRemark = qRow["CustomerResponseRemark"] == DBNull.Value ? null : qRow["CustomerResponseRemark"].ToString(),
-
                 };
 
-                //var items = ds.Tables.Count > 1
-                //    ? ds.Tables[1].Rows.Cast<DataRow>().Select(r => new QuotationItemInfo
-                //    {
-                //        OpportunityQuotationItemId = Convert.ToInt32(r["OpportunityQuotationItemId"]),
-                //        Ref_OpportunityRequirementId = Convert.ToInt32(r["Ref_OpportunityRequirementId"]),
-                //        ProductName = r["ProductName"]?.ToString(),
-                //        Unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString(),
-                //        Quantity = Convert.ToDecimal(r["Quantity"]),
-                //        Rate = Convert.ToDecimal(r["Rate"]),
-                //        Amount = Convert.ToDecimal(r["Amount"])
-                //    }).ToList()
-                //    : new List<QuotationItemInfo>();
-
-                var items = ds.Tables.Count > 1
-                    ? ds.Tables[1].Rows.Cast<DataRow>().Select(r => new QuotationItemInfo
+                var items = ds.Tables.Count > 1 ? ds.Tables[1].Rows.Cast<DataRow>().Select(r => new QuotationItemInfo
                     {
                         OpportunityQuotationItemId = Convert.ToInt32(r["OpportunityQuotationItemId"]),
                         Ref_OpportunityRequirementId = Convert.ToInt32(r["Ref_OpportunityRequirementId"]),
@@ -421,11 +424,9 @@ namespace CRMWebServices.Repository
                         Quantity = Convert.ToDecimal(r["Quantity"]),
                         Rate = Convert.ToDecimal(r["Rate"]),
                         Amount = Convert.ToDecimal(r["Amount"])
-                    }).ToList()
-                    : new List<QuotationItemInfo>();
+                    }).ToList(): new List<QuotationItemInfo>();
 
-                var attachments = ds.Tables.Count > 2
-                    ? ds.Tables[2].Rows.Cast<DataRow>().Select(r => new QuotationAttachmentInfo
+                var attachments = ds.Tables.Count > 2 ? ds.Tables[2].Rows.Cast<DataRow>().Select(r => new QuotationAttachmentInfo
                     {
                         AttachmentId = Convert.ToInt32(r["AttachmentId"]),
                         FileName = r["FileName"]?.ToString(),
@@ -433,178 +434,57 @@ namespace CRMWebServices.Repository
                         FileSize = r["FileSize"] == DBNull.Value ? (long?)null : Convert.ToInt64(r["FileSize"]),
                         FileUrl = BuildFileUrl(r["FilePath"]?.ToString()),
                         CreatedOn = Convert.ToDateTime(r["CreatedOn"])
-                    }).ToList()
-                    : new List<QuotationAttachmentInfo>();
+                    }).ToList(): new List<QuotationAttachmentInfo>();
 
-                var history = ds.Tables.Count > 3
-                  ? ds.Tables[3].Rows.Cast<DataRow>()
+                var history = ds.Tables.Count > 3 ? ds.Tables[3].Rows.Cast<DataRow>()
                       .Select(r => new QuotationHistoryInfo
                       {
-                          OpportunityQuotationId =
-                              Convert.ToInt32(r["OpportunityQuotationId"]),
+                          OpportunityQuotationId =Convert.ToInt32(r["OpportunityQuotationId"]),
+                          Ref_OpportunityId =Convert.ToInt32(r["Ref_OpportunityId"]),
+                          Ref_PreviousQuotationId =r["Ref_PreviousQuotationId"] == DBNull.Value? null: Convert.ToInt32(r["Ref_PreviousQuotationId"]),
+                          QuotationNo =r["QuotationNo"]?.ToString(),
+                          VersionNumber =Convert.ToInt32(r["VersionNumber"]),
+                          RevisionNumber =Convert.ToInt32(r["RevisionNumber"]),
+                          RootQuotationNo =r["RootQuotationNo"] == DBNull.Value? null: r["RootQuotationNo"].ToString(),
+                          IsCurrent =Convert.ToBoolean(r["IsCurrent"]),
+                          QuotationDate =Convert.ToDateTime(r["QuotationDate"]),
+                          ValidUntil =r["ValidUntil"] == DBNull.Value? null: Convert.ToDateTime(r["ValidUntil"]),
+                          SubTotal =r["SubTotal"] == DBNull.Value? 0: Convert.ToDecimal(r["SubTotal"]),
+                          FreightCharge =r["FreightCharge"] == DBNull.Value? 0: Convert.ToDecimal(r["FreightCharge"]),
+                          FreightPercent =r["FreightPercent"] == DBNull.Value? 0: Convert.ToDecimal(r["FreightPercent"]),
+                          TaxAmount =r["TaxAmount"] == DBNull.Value? 0: Convert.ToDecimal(r["TaxAmount"]),
+                          TaxPercent =r["TaxPercent"] == DBNull.Value? 0: Convert.ToDecimal(r["TaxPercent"]),
+                          TotalAmount =r["TotalAmount"] == DBNull.Value? 0: Convert.ToDecimal(r["TotalAmount"]),
+                          TermsRemark =r["TermsRemark"] == DBNull.Value? null: r["TermsRemark"].ToString(),
+                          SentByEmployeeId =r["SentByEmployeeId"] == DBNull.Value? null: Convert.ToInt32(r["SentByEmployeeId"]),
+                          SentOn =r["SentOn"] == DBNull.Value? null: Convert.ToDateTime(r["SentOn"]),
+                          CustomerResponseCode =r["CustomerResponseCode"]?.ToString(),
+                          CustomerResponseByEmployeeId =r["CustomerResponseByEmployeeId"] == DBNull.Value? null: Convert.ToInt32(r["CustomerResponseByEmployeeId"]),
+                          CustomerResponseOn =r["CustomerResponseOn"] == DBNull.Value? null: Convert.ToDateTime(r["CustomerResponseOn"]),
+                          CustomerResponseRemark =r["CustomerResponseRemark"] == DBNull.Value? null: r["CustomerResponseRemark"].ToString(),
+                          CreatedOn =Convert.ToDateTime(r["CreatedOn"]),
+                          CreatedByName =r["CreatedByName"] == DBNull.Value? null: r["CreatedByName"].ToString(),
+                          OpportunityStageId =r["OpportunityStageId"] == DBNull.Value? null: Convert.ToInt32(r["OpportunityStageId"]),
+                          OpportunityStageCode =r["OpportunityStageCode"] == DBNull.Value? null: r["OpportunityStageCode"].ToString(),
+                          OpportunityStageName =r["OpportunityStageName"] == DBNull.Value? null: r["OpportunityStageName"].ToString()
 
-                          Ref_OpportunityId =
-                              Convert.ToInt32(r["Ref_OpportunityId"]),
+                      }).ToList(): new List<QuotationHistoryInfo>();
 
-                          Ref_PreviousQuotationId =
-                              r["Ref_PreviousQuotationId"] == DBNull.Value
-                                  ? null
-                                  : Convert.ToInt32(r["Ref_PreviousQuotationId"]),
-
-                          QuotationNo =
-                              r["QuotationNo"]?.ToString(),
-
-                          VersionNumber =
-                              Convert.ToInt32(r["VersionNumber"]),
-
-                          RevisionNumber =
-                              Convert.ToInt32(r["RevisionNumber"]),
-
-                          RootQuotationNo =
-                              r["RootQuotationNo"] == DBNull.Value
-                                  ? null
-                                  : r["RootQuotationNo"].ToString(),
-
-                          IsCurrent =
-                              Convert.ToBoolean(r["IsCurrent"]),
-
-                          QuotationDate =
-                              Convert.ToDateTime(r["QuotationDate"]),
-
-                          ValidUntil =
-                              r["ValidUntil"] == DBNull.Value
-                                  ? null
-                                  : Convert.ToDateTime(r["ValidUntil"]),
-
-                          SubTotal =
-                              r["SubTotal"] == DBNull.Value
-                                  ? 0
-                                  : Convert.ToDecimal(r["SubTotal"]),
-
-                          FreightCharge =
-                              r["FreightCharge"] == DBNull.Value
-                                  ? 0
-                                  : Convert.ToDecimal(r["FreightCharge"]),
-
-                          FreightPercent =
-                              r["FreightPercent"] == DBNull.Value
-                                  ? 0
-                                  : Convert.ToDecimal(r["FreightPercent"]),
-
-                          TaxAmount =
-                              r["TaxAmount"] == DBNull.Value
-                                  ? 0
-                                  : Convert.ToDecimal(r["TaxAmount"]),
-
-                          TaxPercent =
-                              r["TaxPercent"] == DBNull.Value
-                                  ? 0
-                                  : Convert.ToDecimal(r["TaxPercent"]),
-
-                          TotalAmount =
-                              r["TotalAmount"] == DBNull.Value
-                                  ? 0
-                                  : Convert.ToDecimal(r["TotalAmount"]),
-
-                          TermsRemark =
-                              r["TermsRemark"] == DBNull.Value
-                                  ? null
-                                  : r["TermsRemark"].ToString(),
-
-                          SentByEmployeeId =
-                              r["SentByEmployeeId"] == DBNull.Value
-                                  ? null
-                                  : Convert.ToInt32(r["SentByEmployeeId"]),
-
-                          SentOn =
-                              r["SentOn"] == DBNull.Value
-                                  ? null
-                                  : Convert.ToDateTime(r["SentOn"]),
-
-                          CustomerResponseCode =
-                              r["CustomerResponseCode"]?.ToString(),
-
-
-                          CustomerResponseByEmployeeId =
-                              r["CustomerResponseByEmployeeId"] == DBNull.Value
-                                  ? null
-                                  : Convert.ToInt32(r["CustomerResponseByEmployeeId"]),
-
-                          CustomerResponseOn =
-                              r["CustomerResponseOn"] == DBNull.Value
-                                  ? null
-                                  : Convert.ToDateTime(r["CustomerResponseOn"]),
-
-                          CustomerResponseRemark =
-                              r["CustomerResponseRemark"] == DBNull.Value
-                                  ? null
-                                  : r["CustomerResponseRemark"].ToString(),
-
-                          CreatedOn =
-                              Convert.ToDateTime(r["CreatedOn"]),
-
-                          CreatedByName =
-                              r["CreatedByName"] == DBNull.Value
-                                  ? null
-                                  : r["CreatedByName"].ToString(),
-
-                          OpportunityStageId =
-                            r["OpportunityStageId"] == DBNull.Value
-                                ? null
-                                : Convert.ToInt32(r["OpportunityStageId"]),
-
-                          OpportunityStageCode =
-                            r["OpportunityStageCode"] == DBNull.Value
-                                ? null
-                                : r["OpportunityStageCode"].ToString(),
-
-                          OpportunityStageName =
-                            r["OpportunityStageName"] == DBNull.Value
-                                ? null
-                                : r["OpportunityStageName"].ToString()
-
-                      }).ToList()
-                  : new List<QuotationHistoryInfo>();
-
-                var historyAttachments = ds.Tables.Count > 5
-                        ? ds.Tables[5].Rows.Cast<DataRow>()
+                var historyAttachments = ds.Tables.Count > 5? ds.Tables[5].Rows.Cast<DataRow>()
                             .Select(r => new
                             {
                                 Attachment = new QuotationAttachmentInfo
                                 {
-                                    AttachmentId =
-                                        Convert.ToInt32(r["AttachmentId"]),
-
-                                    Ref_OpportunityQuotationId =
-                                        Convert.ToInt32(r["Ref_OpportunityQuotationId"]),
-
-                                    FileName =
-                                        r["FileName"]?.ToString()!,
-
-                                    FileType =
-                                        r["FileType"] == DBNull.Value
-                                            ? null
-                                            : r["FileType"].ToString(),
-
-                                    FileSize =
-                                        r["FileSize"] == DBNull.Value
-                                            ? null
-                                            : Convert.ToInt64(r["FileSize"]),
-
-                                    FileUrl =
-                                        r["FilePath"] == DBNull.Value
-                                            ? null
-                                            : BuildFileUrl(r["FilePath"]?.ToString()),
-
-                                    CreatedOn =
-                                        Convert.ToDateTime(r["CreatedOn"])
+                                    AttachmentId =Convert.ToInt32(r["AttachmentId"]),
+                                    Ref_OpportunityQuotationId =Convert.ToInt32(r["Ref_OpportunityQuotationId"]),
+                                    FileName =r["FileName"]?.ToString()!,
+                                    FileType =r["FileType"] == DBNull.Value? null: r["FileType"].ToString(),
+                                    FileSize =r["FileSize"] == DBNull.Value? null: Convert.ToInt64(r["FileSize"]),
+                                    FileUrl =r["FilePath"] == DBNull.Value? null: BuildFileUrl(r["FilePath"]?.ToString()),
+                                    CreatedOn =Convert.ToDateTime(r["CreatedOn"])
                                 },
-
-                                QuotationId =
-                                    Convert.ToInt32(r["Ref_OpportunityQuotationId"])
-                            })
-                            .ToList()
-                        : new();
+                                QuotationId =Convert.ToInt32(r["Ref_OpportunityQuotationId"])
+                            }).ToList(): new();
 
                 foreach (var item in history)
                 {
@@ -614,20 +494,7 @@ namespace CRMWebServices.Repository
                         .ToList();
                 }
 
-                //var reviews = ds.Tables.Count > 4
-                //    ? ds.Tables[4].Rows.Cast<DataRow>().Select(r => new ManagementReviewInfo
-                //    {
-                //        ManagementReviewId = Convert.ToInt32(r["ManagementReviewId"]),
-                //        Ref_OpportunityQuotationId = r["Ref_OpportunityQuotationId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_OpportunityQuotationId"]),
-                //        Ref_OpportunityNegotiationId = r["Ref_OpportunityNegotiationId"] == DBNull.Value ? null : Convert.ToInt32(r["Ref_OpportunityNegotiationId"]),
-                //        Margin = r["Margin"] == DBNull.Value ? null : Convert.ToDecimal(r["Margin"]),
-                //        Remarks = r["Remarks"] == DBNull.Value ? null : r["Remarks"].ToString(),
-                //        DecisionCode = r["DecisionCode"]?.ToString(),
-                //        ReviewedByEmployeeId = r["ReviewedByEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(r["ReviewedByEmployeeId"]),
-                //        ReviewedOn = r["ReviewedOn"] == DBNull.Value ? null : Convert.ToDateTime(r["ReviewedOn"]),
-                //        CreatedOn = Convert.ToDateTime(r["CreatedOn"])
-                //    }).ToList()
-                //    : new List<ManagementReviewInfo>();
+               
 
                 var reviews = ds.Tables.Count > 4
                     ? ds.Tables[4].Rows.Cast<DataRow>()
@@ -648,14 +515,7 @@ namespace CRMWebServices.Repository
                 {
                     Status = true,
                     Message = "Quotation details fetched successfully.",
-                    //Data = new QuotationDetailResponse
-                    //{
-                    //    Quotation = quotation,
-                    //    Items = items,
-                    //    Attachments = attachments,
-                    //    NegotiationRounds = rounds,
-                    //    Reviews = reviews
-                    //}
+                   
                     Data = new QuotationDetailResponse
                     {
                         Quotation = quotation,
@@ -914,8 +774,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Ref_OpportunityQuotationId",model.Ref_OpportunityQuotationId),
                     new SqlParameter("@QuotationDate",(object?)model.QuotationDate ?? DBNull.Value),
                     new SqlParameter("@ValidUntil",(object?)model.ValidUntil ?? DBNull.Value),
-                    new SqlParameter("@FreightAmount",(object?)model.FreightAmount ?? DBNull.Value),
-                    new SqlParameter("@FreightPercent",(object?)model.FreightPercent ?? DBNull.Value),
+                    //new SqlParameter("@FreightAmount",(object?)model.FreightAmount ?? DBNull.Value),
+                    //new SqlParameter("@FreightPercent",(object?)model.FreightPercent ?? DBNull.Value),
                     new SqlParameter("@TaxAmount",(object?)model.TaxAmount ?? DBNull.Value),
                     new SqlParameter("@TaxPercent",(object?)model.TaxPercent ?? DBNull.Value),
                     new SqlParameter("@TermsRemark",(object?)model.TermsRemark ?? DBNull.Value),

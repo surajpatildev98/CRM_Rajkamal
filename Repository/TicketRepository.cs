@@ -24,8 +24,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_TicketManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_TicketManagement",
                     new SqlParameter("@Status", "GET_MY_TICKETS"),
                     new SqlParameter("@EmployeeId", employeeId)
                 );
@@ -103,8 +102,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var ds = await _database.ExecuteDataSetAsync(
-                    "USP_CRM_TicketManagement",
+                var ds = await _database.ExecuteDataSetAsync("USP_CRM_TicketManagement",
                     new SqlParameter("@Status", "GET_TICKET_DETAIL"),
                     new SqlParameter("@TicketId", ticketId)
                 );
@@ -251,8 +249,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_TicketManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_TicketManagement",
                     new SqlParameter("@Status", "UPDATE_TICKET_STATUS"),
                     new SqlParameter("@TicketId", model.TicketId),
                     new SqlParameter("@TicketStatusId", model.TicketStatusId),
@@ -320,8 +317,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_TicketManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_TicketManagement",
                     new SqlParameter("@Status", "UPDATE_ACTIVITY"),
                     new SqlParameter("@TicketId", model.TicketId),
                     new SqlParameter("@ActivityId", model.ActivityId),
@@ -396,8 +392,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_TicketManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_TicketManagement",
                     new SqlParameter("@Status", "CREATE_TICKET"),
                     new SqlParameter("@OpportunityId", model.OpportunityId),
                     new SqlParameter("@OpportunityRequirementId", model.OpportunityRequirementId),

@@ -24,27 +24,16 @@ namespace CRMWebServices.Repository
                 list.Add(new ShiftModel
                 {
                     ShiftId = row["ShiftId"] != DBNull.Value ? Convert.ToInt32(row["ShiftId"]) : 0,
-
                     ShiftCode = row["ShiftCode"]?.ToString() ?? string.Empty,
-
                     ShiftName = row["ShiftName"]?.ToString() ?? string.Empty,
-
                     StartTime = row["StartTime"] != DBNull.Value ? (TimeSpan)row["StartTime"] : TimeSpan.Zero,
-
                     EndTime = row["EndTime"] != DBNull.Value ? (TimeSpan)row["EndTime"] : TimeSpan.Zero,
-
                     BreakStartTime = row["BreakStartTime"] != DBNull.Value ? (TimeSpan)row["BreakStartTime"] : TimeSpan.Zero,
-
                     BreakEndTime = row["BreakEndTime"] != DBNull.Value ? (TimeSpan)row["BreakEndTime"] : TimeSpan.Zero,
-
                     GraceInMinutes = row["GraceInMinutes"] != DBNull.Value ? Convert.ToInt32(row["GraceInMinutes"]) : 0,
-
                     GraceOutMinutes = row["GraceOutMinutes"] != DBNull.Value ? Convert.ToInt32(row["GraceOutMinutes"]) : 0,
-
                     MinimumWorkingHours = row["MinimumWorkingHours"] != DBNull.Value ? Convert.ToDecimal(row["MinimumWorkingHours"]) : 0,
-
                     IsNightShift = row["IsNightShift"] != DBNull.Value && Convert.ToBoolean(row["IsNightShift"]),
-
                     IsActive = row["IsActive"] != DBNull.Value && Convert.ToBoolean(row["IsActive"])
                 });
             }
@@ -54,18 +43,16 @@ namespace CRMWebServices.Repository
 
         public async Task<ShiftResponse> GetShifts(bool activeOnly = true)
         {
-            var ds = await _database.ExecuteDataSetAsync(
-                "USP_ORG_SHIFTMANAGEMENT",
+            var ds = await _database.ExecuteDataSetAsync("USP_ORG_SHIFTMANAGEMENT",
                 new SqlParameter("@Status", "GET_SHIFT"),
                  new SqlParameter("@IsActive", activeOnly)
-                 );
+             );
 
             var response = new ShiftResponse();
 
             if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {
                 var row = ds.Tables[0].Rows[0];
-
                 response.Status = Convert.ToBoolean(row["Status"]);
                 response.Message = row["Message"]?.ToString() ?? "";
             }
@@ -82,9 +69,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_SHIFTMANAGEMENT",
-
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_SHIFTMANAGEMENT",
                     new SqlParameter("@Status", "ADD_SHIFT"),
                     new SqlParameter("@ShiftCode", model.ShiftCode),
                     new SqlParameter("@ShiftName", model.ShiftName),
@@ -115,12 +100,11 @@ namespace CRMWebServices.Repository
                 {
                     Status = Convert.ToBoolean(row["Status"]),
                     Message = row["Message"]?.ToString(),
-                    Data = Convert.ToBoolean(row["Status"])
-                        ? new
-                        {
-                            ShiftId = Convert.ToInt32(row["ShiftId"])
-                        }
-                        : null
+                    Data = Convert.ToBoolean(row["Status"])?
+                    new
+                    {
+                        ShiftId = Convert.ToInt32(row["ShiftId"])
+                    }: null
                 };
             }
             catch (SqlException ex)
@@ -145,27 +129,18 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var ds = await _database.ExecuteDataSetAsync(
-                    "USP_ORG_SHIFTMANAGEMENT",
-
+                var ds = await _database.ExecuteDataSetAsync("USP_ORG_SHIFTMANAGEMENT",
                     new SqlParameter("@Status", "UPDATE_SHIFT"),
-
                     new SqlParameter("@ShiftId", shift.ShiftId),
-
                     new SqlParameter("@ShiftCode", shift.ShiftCode),
                     new SqlParameter("@ShiftName", shift.ShiftName),
-
                     new SqlParameter("@StartTime", shift.StartTime),
                     new SqlParameter("@EndTime", shift.EndTime),
-
                     new SqlParameter("@BreakStartTime", shift.BreakStartTime),
                     new SqlParameter("@BreakEndTime", shift.BreakEndTime),
-
                     new SqlParameter("@GraceInMinutes", shift.GraceInMinutes),
                     new SqlParameter("@GraceOutMinutes", shift.GraceOutMinutes),
-
                     new SqlParameter("@MinimumWorkingHours", shift.MinimumWorkingHours),
-
                     new SqlParameter("@IsNightShift", shift.IsNightShift),
                     new SqlParameter("@IsActive", shift.IsActive)
                 );
@@ -176,13 +151,8 @@ namespace CRMWebServices.Repository
                 if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                 {
                     var row = ds.Tables[0].Rows[0];
-
-                    response.Status =
-                        row["Status"] != DBNull.Value &&
-                        Convert.ToBoolean(row["Status"]);
-
-                    response.Message =
-                        row["Message"]?.ToString() ?? "";
+                    response.Status =row["Status"] != DBNull.Value &&Convert.ToBoolean(row["Status"]);
+                    response.Message =row["Message"]?.ToString() ?? "";
                 }
 
                 // Updated shift data
@@ -208,9 +178,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_SHIFTMANAGEMENT",
-
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_SHIFTMANAGEMENT",
                     new SqlParameter("@Status", "DELETE_SHIFT"),
                     new SqlParameter("@ShiftId", shiftId)
                 );
@@ -228,12 +196,8 @@ namespace CRMWebServices.Repository
 
                 return new ApiResponse
                 {
-                    Status =
-                        row["Status"] != DBNull.Value &&
-                        Convert.ToBoolean(row["Status"]),
-
-                    Message =
-                        row["Message"]?.ToString() ?? ""
+                    Status =row["Status"] != DBNull.Value &&Convert.ToBoolean(row["Status"]),
+                    Message =row["Message"]?.ToString() ?? ""
                 };
             }
             catch (SqlException ex)
