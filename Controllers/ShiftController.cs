@@ -19,6 +19,7 @@ namespace CRMWebServices.Controllers
             _shiftRepository = shiftRepository;
         }
 
+        #region GET : Get shifts
         [HttpGet("GetShifts")]
         public async Task<IActionResult> GetShifts([FromQuery] bool activeOnly = true)
         {
@@ -38,7 +39,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
+        #region POST : Add shift
         [HttpPost("AddShift")]
         public async Task<IActionResult> AddShift([FromBody] ShiftModel model)
         {
@@ -72,7 +75,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
+        #region POST : Update shift
         [HttpPost("UpdateShift")]
         public async Task<IActionResult> UpdateShift([FromBody] ShiftModel shift)
         {
@@ -92,7 +97,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
+        #region POST : Delete shift
         [HttpPost("delete/{shiftId}")]
         public async Task<IActionResult> DeleteShift(int shiftId)
         {
@@ -116,32 +123,6 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
-/*
-        [HttpGet]
-        [Route("Employee/{employeeId}")]
-        public async Task<IActionResult> GetEmployeeShift(int employeeId)
-        {
-            try
-            {
-                if (employeeId <= 0)
-                {
-                    return BadRequest(new ShiftResponse
-                    {
-                        Status = false,
-                        Message = "Valid Employee Id is required.",
-                        Data = new List<ShiftModel>()
-                    });
-                }
-
-                var response = await _shiftRepository.GetEmployeeShift(employeeId);
-
-                return Ok(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
-            }
-        }*/
-
+        #endregion
     }
 }

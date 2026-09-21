@@ -12,7 +12,6 @@ namespace CRMWebServices.Controllers
     public class PermissionManagerController : ControllerBase
     {
         private readonly IPermissionManagerRepository _repository;
-
         public PermissionManagerController(IPermissionManagerRepository repository)
         {
             _repository = repository;
@@ -28,10 +27,7 @@ namespace CRMWebServices.Controllers
             if (string.IsNullOrEmpty(roleIdsClaim))
                 return false;
 
-            return roleIdsClaim
-                .Split(',', StringSplitOptions.RemoveEmptyEntries)
-                .Select(r => r.Trim())
-                .Contains("1");
+            return roleIdsClaim.Split(',', StringSplitOptions.RemoveEmptyEntries).Select(r => r.Trim()).Contains("1");
         }
 
         #region POST api/PermissionManager/module/create
@@ -137,16 +133,7 @@ namespace CRMWebServices.Controllers
         #endregion
 
         #region GET api/PermissionManager/role/{roleId}/permissions
-        [HttpGet("role/{roleId}/permissions")]
-        //public async Task<IActionResult> GetRolePermissions(int roleId, [FromQuery] int? moduleId)
-        //{
-        //    if (!IsAdmin())
-        //        return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
-
-        //    var response = await _repository.GetRolePermissions(roleId, moduleId);
-        //    return response.Status ? Ok(response) : BadRequest(response);
-        //}
-
+        [HttpGet("role/{roleId}/permissions")]      
         public async Task<IActionResult> GetRolePermissions(int roleId, [FromQuery] int? moduleId, [FromQuery] int? superModuleId)
         {
             if (!IsAdmin())

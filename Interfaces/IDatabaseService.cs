@@ -54,9 +54,7 @@ namespace CRMWebServices.Services
                         cmd.Parameters.AddRange(parameters);
 
                     int result = await cmd.ExecuteNonQueryAsync();
-
                     Console.WriteLine("Rows Affected : " + result);
-
                     return result;
                 }
             }

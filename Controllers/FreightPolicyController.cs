@@ -86,9 +86,7 @@ namespace CRMWebServices.Controllers
             {
                 var response = await _repository.GetFreightPolicyList();
 
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -110,9 +108,7 @@ namespace CRMWebServices.Controllers
             {
                 var response = await _repository.GetFreightPolicyDetails(freightPolicyId);
 
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -133,10 +129,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 var response = await _repository.GetApplicableFreight(orderValue);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -157,10 +150,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 var response = await _repository.GetActiveFreightPolicy();
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -171,8 +161,6 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
-        #endregion
-
-      
+        #endregion      
     }
 }

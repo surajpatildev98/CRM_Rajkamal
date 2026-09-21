@@ -12,20 +12,22 @@ namespace CRMWebServices.Controllers
     public class ReportsController : ControllerBase
     {
         private readonly IReportsRepository _reportsRepository;
-
         public ReportsController(IReportsRepository reportsRepository)
         {
             _reportsRepository = reportsRepository;
         }
 
+        #region POST : dashboard
         [HttpPost("dashboard")]
         public async Task<IActionResult> GetDashboard([FromBody] ReportModels.CRMReportFilterRequest request)
         {
             var response = await _reportsRepository.GetDashboard(request);
 
             return Ok(response);
-        }       
+        }
+        #endregion
 
+        #region POST : journey
         [HttpPost("journey")]
         public async Task<IActionResult> GetJourney([FromBody] ReportModels.CRMReportJourneyRequest request)
         {
@@ -33,7 +35,9 @@ namespace CRMWebServices.Controllers
 
             return Ok(response);
         }
+        #endregion
 
+        #region GET : filters
         [HttpGet]
         [Route("filters")]
         public async Task<IActionResult> GetReportFilters()
@@ -54,5 +58,6 @@ namespace CRMWebServices.Controllers
                 );
             }
         }
+        #endregion
     }
 }

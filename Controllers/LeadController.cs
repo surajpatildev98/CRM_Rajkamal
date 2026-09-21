@@ -21,8 +21,7 @@ namespace CRMWebServices.Controllers
             _authorization = authorization;
         }
 
-        #region // API : api/Lead/Register
-
+        #region  API : api/Lead/Register
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] LeadRegisterRequest request)
@@ -30,11 +29,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Check if user can create lead with assignment
-                if (!await _authorization.CanPerformActionWithAssignment(
-                    User,
-                    "Lead",
-                    "Create",
-                    request.AssignedToEmployeeId))
+                if (!await _authorization.CanPerformActionWithAssignment(User,"Lead","Create",request.AssignedToEmployeeId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -54,7 +49,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/Transfer
+        #region  API : api/Lead/Transfer
         [HttpPost]
         [Route("Transfer")]
         public async Task<IActionResult> Transfer([FromBody] LeadTransferRequest request)
@@ -62,11 +57,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Check if user can assign this lead
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "Transfer",
-                    request.Ref_LeadId))
+                if (!await _authorization.CanPerformAction(User,"Lead","Transfer",request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -86,8 +77,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/UpdateStatus
-
+        #region  API : api/Lead/UpdateStatus
         [HttpPost]
         [Route("UpdateStatus")]
         public async Task<IActionResult> UpdateStatus([FromBody] LeadStatusUpdateRequest request)
@@ -95,11 +85,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Check if user can edit this lead
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "Edit",
-                    request.Ref_LeadId))
+                if (!await _authorization.CanPerformAction(User,"Lead","Edit",request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -119,7 +105,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/CreateActivity
+        #region  API : api/Lead/CreateActivity
         [HttpPost]
         [Route("CreateActivity")]
         public async Task<IActionResult> CreateActivity([FromBody] LeadActivityRequest request)
@@ -127,11 +113,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Check if user can manage activity on this lead
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "Activity",
-                    request.Ref_LeadId))
+                if (!await _authorization.CanPerformAction(User,"Lead","Activity",request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -151,7 +133,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/CreateFollowUp
+        #region  API : api/Lead/CreateFollowUp
         [HttpPost]
         [Route("CreateFollowUp")]
         public async Task<IActionResult> CreateFollowUp([FromBody] LeadFollowUpRequest request)
@@ -159,11 +141,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Check if user can manage follow-up on this lead
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "FollowUp",
-                    request.Ref_LeadId))
+                if (!await _authorization.CanPerformAction(User,"Lead","FollowUp",request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -183,7 +161,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/UpdateFollowUpStatus
+        #region  API : api/Lead/UpdateFollowUpStatus
         [HttpPost]
         [Route("UpdateFollowUpStatus")]
         public async Task<IActionResult> UpdateFollowUpStatus([FromBody] FollowUpStatusUpdateRequest request)
@@ -191,11 +169,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Check if user can manage follow-up on this lead
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "FollowUpStatus",
-                    request.Ref_LeadId))
+                if (!await _authorization.CanPerformAction(User,"Lead","FollowUpStatus",request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -215,7 +189,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/Close
+        #region  API : api/Lead/Close
         [HttpPost]
         [Route("CloseLead")]
         public async Task<IActionResult> Close([FromBody] LeadCloseRequest request)
@@ -223,11 +197,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Check if user can close this lead
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "Close",
-                    request.Ref_LeadId))
+                if (!await _authorization.CanPerformAction(User,"Lead","Close",request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -247,7 +217,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/Details
+        #region  API : api/Lead/Details
         [HttpGet]
         [Route("Details")]
         public async Task<IActionResult> Details([FromQuery] int? leadId, [FromQuery] LeadListFilterRequest filter)
@@ -256,37 +226,17 @@ namespace CRMWebServices.Controllers
             {
                 // Case 1: List of leads (no leadId provided)
                 if (leadId == null)
-                {
-                    // Get access filter based on user's permissions
-                    //var accessFilter = await _authorization.GetAccessFilter(User, "Lead");
-
-                    //// Apply filter based on user's access level
-                    //if (!accessFilter.CanViewAll)
-                    //{
-                    //    // For Sales: Show only assigned leads
-                    //    // For PreSales: Show created AND assigned leads
-                    //    filter.LoggedInEmployeeId = accessFilter.EmployeeId;
-                    //    filter.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
-
-                    // If CanViewAll = true (Admin/Manager), no filter applied
-                    //// If CanViewAll = true (Admin/Manager), no filter applied
-                    ///                  
+                {                   
 
                     filter.LoggedInEmployeeId = User.EmployeeId();
-
                     filter.LoggedInEmployeeId = User.EmployeeId();
-
                     var listResponse = await _repository.GetLeadList(filter);
                     return Ok(listResponse);
                 }
 
                 // Case 2: Single lead details (leadId provided)
                 // Check if user can view this specific lead
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "View",
-                    leadId.Value))
+                if (!await _authorization.CanPerformAction(User,"Lead","View",leadId.Value))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -309,7 +259,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/Assign
+        #region  API : api/Lead/Assign
         [HttpPost]
         [Route("Assign")]
         public async Task<IActionResult> Assign([FromBody] LeadAssignRequest request)
@@ -317,11 +267,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Check if user can assign this lead (same permission as Transfer — Lead_Assign)
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "Assign",
-                    request.Ref_LeadId))
+                if (!await _authorization.CanPerformAction(User,"Lead","Assign",request.Ref_LeadId))
                 {
                     return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse
                     {
@@ -341,7 +287,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/CheckCustomerExists
+        #region  API : api/Lead/CheckCustomerExists
         [HttpGet]
         [Route("check-customer-exists")]
         public async Task<IActionResult> CheckCustomer(string? gst, string? customerName, string? pan)
@@ -349,10 +295,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 var response = await _repository.CheckCustomerExists(gst, customerName, pan);
-
-                return response.Status
-                    ? Ok(response)
-                    : NotFound(response);
+                return response.Status? Ok(response): NotFound(response);
             }
             catch (Exception ex)
             {
@@ -365,7 +308,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/SearchCustomer
+        #region  API : api/Lead/SearchCustomer
         [HttpGet]
         [Route("search-customer")]
         public async Task<IActionResult> SearchCustomer(string searchText)
@@ -382,7 +325,6 @@ namespace CRMWebServices.Controllers
                 }
 
                 var response = await _repository.SearchCustomer(searchText);
-
                 return Ok(response);
             }
             catch (Exception ex)
@@ -396,12 +338,11 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/Lead/AddActivityExpenses
+        #region  API : api/Lead/AddActivityExpenses
 
         [HttpPost]
         [Route("AddActivityExpenses")]
-        public async Task<IActionResult> AddActivityExpenses(
-            [FromBody] LeadActivityExpenseRequest request)
+        public async Task<IActionResult> AddActivityExpenses([FromBody] LeadActivityExpenseRequest request)
         {
             try
             {
@@ -415,51 +356,17 @@ namespace CRMWebServices.Controllers
                 }
 
                 // Check whether user can manage activity on this lead
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "Activity",
-                    request.Ref_LeadId))
+                if (!await _authorization.CanPerformAction(User,"Lead","Activity",request.Ref_LeadId))
                 {
-                    return StatusCode(
-                        StatusCodes.Status403Forbidden,
-                        new ApiResponse
+                    return StatusCode(StatusCodes.Status403Forbidden,new ApiResponse
                         {
                             Status = false,
-                            Message =
-                                "You are not authorized to add expense on this lead."
+                            Message ="You are not authorized to add expense on this lead."
                         });
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
-                var response =
-                    await _repository.AddActivityExpenses(request);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new ApiResponse
-                {
-                    Status = false,
-                    Message = ex.Message
-                });
-            }
-        }
-        #endregion
-
-        #region  // API : api/Lead/ActivityExpenseMasters
-        [HttpGet]
-        [Route("ActivityExpenseMasters")]
-        public async Task<IActionResult> GetActivityExpenseMasters()
-        {
-            try
-            {
-                var response =await _repository.GetActivityExpenseMasters();
-
+                var response =await _repository.AddActivityExpenses(request);
                 return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
@@ -473,29 +380,41 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // Add Lead Requirement
+        #region   API : api/Lead/ActivityExpenseMasters
+        [HttpGet]
+        [Route("ActivityExpenseMasters")]
+        public async Task<IActionResult> GetActivityExpenseMasters()
+        {
+            try
+            {
+                var response =await _repository.GetActivityExpenseMasters();
+                return response.Status? Ok(response): BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+        #endregion
 
+        #region  Add Lead Requirement
         [HttpPost("AddRequirement")]
         public async Task<IActionResult> AddRequirement([FromBody] LeadRequirementAddRequest request)
         {
             try
             {
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "Edit", // Nead to ACtive From Premissions 
-                    request.Ref_LeadId))
+                if (!await _authorization.CanPerformAction(User,"Lead","Edit",request.Ref_LeadId))
                 {
                     return Forbid();
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.AddLeadRequirement(request);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -509,15 +428,14 @@ namespace CRMWebServices.Controllers
 
         #endregion
 
-        #region // Update Lead Requirement
+        #region  Update Lead Requirement
 
         [HttpPost("UpdateRequirement")]
         public async Task<IActionResult> UpdateRequirement([FromBody] LeadRequirementUpdateRequest request)
         {
             try
             {
-                int? leadId = await _repository.GetLeadIdByRequirementId(
-                    request.Ref_LeadRequirementId);
+                int? leadId = await _repository.GetLeadIdByRequirementId(request.Ref_LeadRequirementId);
 
                 if (!leadId.HasValue)
                 {
@@ -528,22 +446,14 @@ namespace CRMWebServices.Controllers
                     });
                 }
 
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "Edit",
-                    leadId.Value))
+                if (!await _authorization.CanPerformAction(User,"Lead","Edit",leadId.Value))
                 {
                     return Forbid();
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.UpdateLeadRequirement(request);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -557,16 +467,14 @@ namespace CRMWebServices.Controllers
 
         #endregion
 
-        #region // Delete Lead Requirement
+        #region  Delete Lead Requirement
 
         [HttpPost("DeleteRequirement")]
         public async Task<IActionResult> DeleteRequirement([FromBody] LeadRequirementDeleteRequest request)
         {
             try
             {
-                int? leadId = await _repository.GetLeadIdByRequirementId(
-                    request.Ref_LeadRequirementId);
-
+                int? leadId = await _repository.GetLeadIdByRequirementId(request.Ref_LeadRequirementId);
                 if (!leadId.HasValue)
                 {
                     return BadRequest(new ApiResponse
@@ -576,22 +484,14 @@ namespace CRMWebServices.Controllers
                     });
                 }
 
-                if (!await _authorization.CanPerformAction(
-                    User,
-                    "Lead",
-                    "Edit",
-                    leadId.Value))
+                if (!await _authorization.CanPerformAction(User,"Lead","Edit",leadId.Value))
                 {
                     return Forbid();
                 }
 
                 request.CreatedBy = User.EmployeeId();
-
                 var response = await _repository.DeleteLeadRequirement(request);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -602,7 +502,6 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
-
         #endregion
 
     }

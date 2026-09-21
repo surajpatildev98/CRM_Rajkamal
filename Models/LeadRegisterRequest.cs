@@ -49,14 +49,7 @@
         public string StatusRemark { get; set; }
         public int? CreatedBy { get; set; }
     }
-    //public class LeadRequirementItem
-    //{
-    //    public int Ref_ProductId { get; set; }
-    //    public decimal Quantity { get; set; }
-    //    public int? Ref_UnitId { get; set; }
-    //    public string RequirementRemark { get; set; }
-    //}
-
+   
     public class LeadRequirementItem
     {
         public int? Ref_ProductCategoryId { get; set; }
@@ -75,25 +68,18 @@
         public string? Outcome { get; set; }
         public DateTime ActivityDateTime { get; set; }
         public int? DurationInMinutes { get; set; }
-
         public int? Ref_ActivityStatusId { get; set; }   
-        public int? Ref_NewLeadStatusId { get; set; }    
-
+        public int? Ref_NewLeadStatusId { get; set; } 
         public decimal? Latitude { get; set; }
         public decimal? Longitude { get; set; }
-
         public string? LocationAddress { get; set; }
-
         public List<LeadActivityAttachmentItem> Attachments { get; set; }
-
         public int? CreatedBy { get; set; }
     }
     public class LeadFollowUpRequest
     {
         public int Ref_LeadId { get; set; }
-
         public DateTime NextFollowUpDate { get; set; }
-
         public string FollowUpRemarks { get; set; }
         public int? FollowUpAssignedEmployeeId { get; set; }
         public int? CreatedBy { get; set; }
@@ -107,15 +93,13 @@
     {
         public string? SearchText { get; set; }
         public int? FilterStatusId { get; set; }
-        public int? FilterAssignedToId { get; set; }    
-
+        public int? FilterAssignedToId { get; set; }   
         public int? LoggedInEmployeeId { get; set; }
-        public bool ShowCreatedAndAssigned { get; set; }  // For PreSales
+        public bool ShowCreatedAndAssigned { get; set; } 
     }
     public class FollowUpStatusUpdateRequest
     {
         public int FollowUpId { get; set; }
-
         public int Ref_LeadId { get; set; }
         public int Ref_ActivityStatusId { get; set; }
         public DateTime? NewScheduledOn { get; set; }
@@ -134,10 +118,7 @@
     {
         public int LeadId { get; set; } 
         public int CreatedBy { get; set; }
-        public int? AssignedEmployeeId { get; set; }
-        //public int Ref_LeadStatusId { get; set; }
-
-
+        public int? AssignedEmployeeId { get; set; }    
     }
     public class LeadAssignRequest
     {
@@ -170,15 +151,10 @@
     public class ExistingCustomerContact
     {
         public int LeadContactId { get; set; }
-
         public int Ref_LeadOrganizationId { get; set; }
-
         public string ContactPerson { get; set; }
-
         public string Mobile { get; set; }
-
         public string Email { get; set; }
-
         public int? Ref_DesignationId { get; set; }
     }
     public class CustomerSearchResponse
@@ -187,7 +163,7 @@
         public int Ref_LeadCompanyId { get; set; }
         public string? CustomerName { get; set; }
         public string? CityName { get; set; }
-        public string? DisplayName { get; set; }   // "ABC Company - Pune"
+        public string? DisplayName { get; set; }  
         public string? Address { get; set; }
         public string? Gst { get; set; }
         public string? Pan { get; set; }
@@ -196,28 +172,19 @@
     public class LeadActivityExpenseRequest
     {
         public int Ref_LeadId { get; set; }
-
         public int Ref_ActivityId { get; set; }
-
         public List<LeadActivityExpenseItem> Expenses { get; set; } = new();
-
         public int? CreatedBy { get; set; }
     }
 
     public class LeadActivityExpenseItem
     {
         public int Ref_ExpenseCategoryId { get; set; }
-
         public int? Ref_TransportModeId { get; set; }
-
         public decimal Amount { get; set; }
-
         public string? Description { get; set; }
-
         public string? FromLocation { get; set; }
-
         public string? ToLocation { get; set; }
-
         public List<LeadActivityExpenseAttachmentItem> Attachments { get; set; } = new();
     }
 

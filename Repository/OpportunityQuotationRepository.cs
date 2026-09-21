@@ -377,14 +377,7 @@ namespace CRMWebServices.Repository
                     QuotationDate = Convert.ToDateTime(qRow["QuotationDate"]),
                     ValidUntil = qRow["ValidUntil"] == DBNull.Value ? null : Convert.ToDateTime(qRow["ValidUntil"]),
                     FreightCharge = qRow["FreightCharge"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["FreightCharge"]),
-                    FreightPercent = qRow["FreightPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["FreightPercent"]),
-                    //Ref_FreightPolicyId = qRow["Ref_FreightPolicyId"] == DBNull.Value? null: Convert.ToInt32(qRow["Ref_FreightPolicyId"]),
-                    //Ref_FreightPolicySlabId = qRow["Ref_FreightPolicySlabId"] == DBNull.Value? null: Convert.ToInt32(qRow["Ref_FreightPolicySlabId"]),
-                    //FreightPolicyName = qRow["FreightPolicyName"] == DBNull.Value? null: qRow["FreightPolicyName"].ToString(),
-                    //FreightPolicyVersion = qRow["FreightPolicyVersion"] == DBNull.Value? null: Convert.ToInt32(qRow["FreightPolicyVersion"]),
-                    //FreightPolicyMinOrderValue = qRow["FreightPolicyMinOrderValue"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyMinOrderValue"]),
-                    //FreightPolicyMaxOrderValue = qRow["FreightPolicyMaxOrderValue"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyMaxOrderValue"]),
-                    //FreightPolicyAmount = qRow["FreightPolicyAmount"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyAmount"]),
+                    FreightPercent = qRow["FreightPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["FreightPercent"]),               
                     Ref_FreightPolicyId = qRow["Ref_FreightPolicyId"] == DBNull.Value ? null : Convert.ToInt32(qRow["Ref_FreightPolicyId"]),
                     Ref_FreightPolicySlabId = qRow["Ref_FreightPolicySlabId"] == DBNull.Value ? null : Convert.ToInt32(qRow["Ref_FreightPolicySlabId"]),
                     FreightPolicyName = qRow["FreightPolicyName"] == DBNull.Value ? null : qRow["FreightPolicyName"].ToString(),
@@ -747,26 +740,14 @@ namespace CRMWebServices.Repository
                 {
                     try
                     {
-                        string savedPath = SaveBase64Attachment(
-                            model.QuotationPdfBase64,
-                            model.QuotationPdfFileName,
-                            "OpportunityQuotationAttachments"
-                        );
-
-                        string base64Data = model.QuotationPdfBase64.Contains(",")
-                            ? model.QuotationPdfBase64.Substring(
-                                model.QuotationPdfBase64.IndexOf(",") + 1)
-                            : model.QuotationPdfBase64;
+                        string savedPath = SaveBase64Attachment(model.QuotationPdfBase64,model.QuotationPdfFileName,"OpportunityQuotationAttachments");
+                        string base64Data = model.QuotationPdfBase64.Contains(",")? model.QuotationPdfBase64.Substring(model.QuotationPdfBase64.IndexOf(",") + 1): model.QuotationPdfBase64;
 
                         savedAttachments.Add(new
                         {
                             FileName = model.QuotationPdfFileName,
                             FilePath = savedPath,
-                            FileType = Path.GetExtension(
-                                model.QuotationPdfFileName)
-                                .TrimStart('.')
-                                .ToLowerInvariant(),
-
+                            FileType = Path.GetExtension(model.QuotationPdfFileName).TrimStart('.').ToLowerInvariant(),
                             FileSize = Convert.FromBase64String(base64Data).Length
                         });
                     }
@@ -789,9 +770,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Status","REVISE_QUOTATION"),
                     new SqlParameter("@Ref_OpportunityQuotationId",model.Ref_OpportunityQuotationId),
                     new SqlParameter("@QuotationDate",(object?)model.QuotationDate ?? DBNull.Value),
-                    new SqlParameter("@ValidUntil",(object?)model.ValidUntil ?? DBNull.Value),
-                    //new SqlParameter("@FreightAmount",(object?)model.FreightAmount ?? DBNull.Value),
-                    //new SqlParameter("@FreightPercent",(object?)model.FreightPercent ?? DBNull.Value),
+                    new SqlParameter("@ValidUntil",(object?)model.ValidUntil ?? DBNull.Value),                
                     new SqlParameter("@TaxAmount",(object?)model.TaxAmount ?? DBNull.Value),
                     new SqlParameter("@TaxPercent",(object?)model.TaxPercent ?? DBNull.Value),
                     new SqlParameter("@TermsRemark",(object?)model.TermsRemark ?? DBNull.Value),
@@ -805,17 +784,10 @@ namespace CRMWebServices.Repository
 
                 if (response.Status)
                 {
-                    int opportunityId =
-                        Convert.ToInt32(dt.Rows[0]["OpportunityId"]);
+                    int opportunityId =Convert.ToInt32(dt.Rows[0]["OpportunityId"]);
                     string quotationNo = Convert.ToString(dt.Rows[0]["QuotationNo"]);
-
-                    int managerEmployeeId =
-                        Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
-
-                    // ============================================
-                    // NOTIFY MANAGER - QUOTATION REVISED
-                    // ============================================
-
+                    int managerEmployeeId =Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
+                    
                     if (managerEmployeeId > 0)
                     {
                         try
@@ -832,11 +804,7 @@ namespace CRMWebServices.Repository
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(
-                                ex,
-                                "Failed to send revised quotation notification to Manager. OpportunityId {OpportunityId}, ManagerEmployeeId {ManagerEmployeeId}",
-                                opportunityId,
-                                managerEmployeeId);
+                            _logger.LogError(ex,"Failed to send revised quotation notification to Manager. OpportunityId {OpportunityId}, ManagerEmployeeId {ManagerEmployeeId}",opportunityId,managerEmployeeId);
                         }
                     }
                 }
