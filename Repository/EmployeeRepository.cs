@@ -20,6 +20,7 @@ namespace CRMWebServices.Repository
           
         }
 
+        #region Attachment Handling 
         private static readonly string[] AllowedExtensions = { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png" };
         private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
         private string SaveBase64Attachment(string base64, string originalFileName, string folderName)
@@ -28,8 +29,7 @@ namespace CRMWebServices.Repository
                 return null;
 
             // Remove data URI prefix if Android sends it
-            if (base64.Contains(","))
-                base64 = base64.Substring(base64.IndexOf(",") + 1);
+            if (base64.Contains(","))base64 = base64.Substring(base64.IndexOf(",") + 1);
 
             var extension = Path.GetExtension(originalFileName).ToLowerInvariant();
 
@@ -37,6 +37,7 @@ namespace CRMWebServices.Repository
                 throw new Exception("Unsupported file type.");
 
             byte[] fileBytes;
+
             try
             {
                 fileBytes = Convert.FromBase64String(base64);
@@ -49,10 +50,7 @@ namespace CRMWebServices.Repository
             if (fileBytes.Length > MaxFileSizeBytes)
                 throw new Exception("File exceeds 10MB limit.");
 
-            var uploadsFolder = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "Uploads",
-                folderName);
+            var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(),"Uploads",folderName);
 
             Directory.CreateDirectory(uploadsFolder);
 
@@ -62,11 +60,8 @@ namespace CRMWebServices.Repository
 
             // Generate unique filename
             var uniqueFileName = $"{fileName}_{DateTime.Now:yyyyMMddHHmmssfff}{extension}";
-
             var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
             File.WriteAllBytes(filePath, fileBytes);
-
             return Path.Combine("Uploads", folderName, uniqueFileName).Replace("\\", "/");
         }
         private string? BuildFileUrl(string? filePath)
@@ -76,13 +71,8 @@ namespace CRMWebServices.Repository
                 if (string.IsNullOrWhiteSpace(filePath))
                     return null;
 
-                var relative = filePath
-                    .Replace("Uploads/", "")
-                    .Replace("Uploads\\", "");
-
-                var segments = relative
-                    .Split('/', StringSplitOptions.RemoveEmptyEntries)
-                    .Select(Uri.EscapeDataString);
+                var relative = filePath.Replace("Uploads/", "").Replace("Uploads\\", "");
+                var segments = relative.Split('/', StringSplitOptions.RemoveEmptyEntries).Select(Uri.EscapeDataString);
 
                 return "/Uploads/" + string.Join("/", segments);
             }
@@ -91,8 +81,9 @@ namespace CRMWebServices.Repository
                 throw new Exception("Error while building document URL.", ex);
             }
         }
+        #endregion
 
-        // Employee Registration 
+        #region Employee Registration
         public async Task<ApiResponse> Register(EmployeeRegisterRequest model)
         {
             try
@@ -110,8 +101,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@AlternateMobile", (object?)model.AlternateMobile ?? DBNull.Value),
                     new SqlParameter("@Gender", (object?)model.Gender ?? DBNull.Value),
                     new SqlParameter("@DOB", (object?)model.DOB ?? DBNull.Value),
-                    new SqlParameter("@DOJ", (object?)model.DOJ ?? DBNull.Value),
-                    //new SqlParameter("@LoginId", model.UserName),
+                    new SqlParameter("@DOJ", (object?)model.DOJ ?? DBNull.Value),                  
                     new SqlParameter("@Password", passwordHash),
                     new SqlParameter("@RefDesignationId", (object?)model.RefDesignationId ?? DBNull.Value),
                     new SqlParameter("@ReportingManagerId", (object?)model.ReportingManagerId ?? DBNull.Value),
@@ -135,9 +125,7 @@ namespace CRMWebServices.Repository
 
                 response.Status = status;
                 response.Message = row["Message"]?.ToString();
-                response.Data = status
-                    ? new { EmployeeId = Convert.ToInt32(row["EmployeeId"]), EmployeeCode = row["EmployeeCode"]?.ToString(), LoginId = row["LoginId"]?.ToString() }
-                    : null;
+                response.Data = status? new { EmployeeId = Convert.ToInt32(row["EmployeeId"]), EmployeeCode = row["EmployeeCode"]?.ToString(), LoginId = row["LoginId"]?.ToString() }: null;
 
                 return response;
             }
@@ -158,27 +146,17 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region New Employee Registration with Child Collections [Pratiksha]
         public async Task<ApiResponse> NewRegister(EmployeeRegisterRequest model)
         {
             try
             {
                 // Serialize Child Collections
-                string educationJson = model.EducationDetails != null && model.EducationDetails.Count > 0
-                    ? JsonConvert.SerializeObject(model.EducationDetails)
-                    : null;
-
-                string bankJson = model.BankDetails != null && model.BankDetails.Count > 0
-                    ? JsonConvert.SerializeObject(model.BankDetails)
-                    : null;
-
-                string familyJson = model.FamilyDetails != null && model.FamilyDetails.Count > 0
-                    ? JsonConvert.SerializeObject(model.FamilyDetails)
-                    : null;
-
-                //string documentJson = model.Documents != null && model.Documents.Count > 0
-                //    ? JsonConvert.SerializeObject(model.Documents)
-                //    : null;
+                string educationJson = model.EducationDetails != null && model.EducationDetails.Count > 0 ? JsonConvert.SerializeObject(model.EducationDetails): null;
+                string bankJson = model.BankDetails != null && model.BankDetails.Count > 0 ? JsonConvert.SerializeObject(model.BankDetails): null;
+                string familyJson = model.FamilyDetails != null && model.FamilyDetails.Count > 0 ? JsonConvert.SerializeObject(model.FamilyDetails): null;              
 
                 // Process EMPLOYEE DOCUMENTS - save files, build metadata list
                 List<object> savedDocuments = new List<object>();
@@ -219,8 +197,7 @@ namespace CRMWebServices.Repository
 
                 string passwordHash = BCrypt.Net.BCrypt.HashPassword(model.Password);
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_NewEmployeeManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_NewEmployeeManagement",
                     new SqlParameter("@Status", "REGISTER"),
                     new SqlParameter("@FirstName", model.FirstName),
                     new SqlParameter("@MiddleName", (object?)model.MiddleName ?? DBNull.Value),
@@ -264,9 +241,7 @@ namespace CRMWebServices.Repository
 
                 response.Status = status;
                 response.Message = row["Message"]?.ToString();
-                response.Data = status
-                    ? new { EmployeeId = Convert.ToInt32(row["EmployeeId"]), EmployeeCode = row["EmployeeCode"]?.ToString(), LoginId = row["LoginId"]?.ToString() }
-                    : null;
+                response.Data = status ? new { EmployeeId = Convert.ToInt32(row["EmployeeId"]), EmployeeCode = row["EmployeeCode"]?.ToString(), LoginId = row["LoginId"]?.ToString() }: null;
 
                 return response;
             }
@@ -287,7 +262,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region Get Employee Master List
         public async Task<List<EmployeeMasterModel>> GetEmployeeMaster()
         {
             var employees = new List<EmployeeMasterModel>();
@@ -306,63 +283,33 @@ namespace CRMWebServices.Repository
                     employees.Add(new EmployeeMasterModel
                     {
                         EmployeeId = Convert.ToInt32(row["EmployeeId"]),
-
                         EmployeeCode = row["EmployeeCode"]?.ToString() ?? "",
-
                         FirstName = row["FirstName"]?.ToString() ?? "",
-
                         MiddleName = row["MiddleName"] == DBNull.Value ? null : row["MiddleName"]?.ToString(),
-
                         LastName = row["LastName"] == DBNull.Value ? null : row["LastName"]?.ToString(),
-
                         EmployeeName = row["EmployeeName"]?.ToString() ?? "",
-
                         OfficialEmail = row["OfficialEmail"]?.ToString() ?? "",
-
                         PersonalEmail = row["PersonalEmail"] == DBNull.Value ? null : row["PersonalEmail"]?.ToString(),
-
                         Mobile = row["Mobile"]?.ToString() ?? "",
-
                         AlternateMobile = row["AlternateMobile"] == DBNull.Value ? null : row["AlternateMobile"]?.ToString(),
-
                         Gender = row["Gender"] == DBNull.Value ? null : row["Gender"]?.ToString(),
-
                         DOB = row["DOB"] == DBNull.Value ? null : Convert.ToDateTime(row["DOB"]),
-
                         DOJ = row["DOJ"] == DBNull.Value ? null : Convert.ToDateTime(row["DOJ"]),
-
-                        MaritalStatus = row.Table.Columns.Contains("MaritalStatus") && row["MaritalStatus"] != DBNull.Value
-                            ? row["MaritalStatus"]?.ToString() : null,
-
-                        BloodGroup = row.Table.Columns.Contains("BloodGroup") && row["BloodGroup"] != DBNull.Value
-                            ? row["BloodGroup"]?.ToString() : null,
-
+                        MaritalStatus = row.Table.Columns.Contains("MaritalStatus") && row["MaritalStatus"] != DBNull.Value? row["MaritalStatus"]?.ToString() : null,
+                        BloodGroup = row.Table.Columns.Contains("BloodGroup") && row["BloodGroup"] != DBNull.Value? row["BloodGroup"]?.ToString() : null,
                         LoginId = row["LoginId"] == DBNull.Value ? null : row["LoginId"]?.ToString(),
-
                         IsActive = Convert.ToBoolean(row["IsActive"]),
-
                         RefOfficeId = row["Ref_OfficeId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_OfficeId"]),
-
                         OfficeName = row["OfficeName"] == DBNull.Value ? null : row["OfficeName"]?.ToString(),
-
                         RefDepartmentId = row["Ref_DepartmentId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_DepartmentId"]),
-
                         DepartmentName = row["DepartmentName"] == DBNull.Value ? null : row["DepartmentName"]?.ToString(),
-
                         RefRoleId = row["Ref_RoleId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_RoleId"]),
-
                         RoleName = row["RoleName"] == DBNull.Value ? null : row["RoleName"]?.ToString(),
-
                         RefDesignationId = row["Ref_DesignationId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_DesignationId"]),
-
                         DesignationName = row["DesignationName"] == DBNull.Value ? null : row["DesignationName"]?.ToString(),
-
                         RefShiftId = row["Ref_ShiftId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_ShiftId"]),
-
-                        ShiftName = row["ShiftName"] == DBNull.Value ? null : row["ShiftName"]?.ToString(),
-                      
+                        ShiftName = row["ShiftName"] == DBNull.Value ? null : row["ShiftName"]?.ToString(),                      
                         RefLeavePolicyId = row["RefLeavePolicyId"] == DBNull.Value ? null : Convert.ToInt32(row["RefLeavePolicyId"]),
-
                         LeavePolicyName = row["LeavePolicyName"] == DBNull.Value ? null : row["LeavePolicyName"]?.ToString()
                     });
                 }
@@ -374,12 +321,14 @@ namespace CRMWebServices.Repository
                 throw;
             }
         }
+        #endregion
+
+        #region Get Employee Details by EmployeeId
         public async Task<EmployeeDetailsModel?> GetEmployeeDetails(int employeeId)
         {
             try
             {
-                var ds = await _database.ExecuteDataSetAsync(
-                    "USP_ORG_NewEmployeeManagement",
+                var ds = await _database.ExecuteDataSetAsync("USP_ORG_NewEmployeeManagement",
                     new SqlParameter("@Status", "GET_EMPLOYEE_DETAILS"),
                     new SqlParameter("@EmployeeId", employeeId)
                 );
@@ -400,125 +349,40 @@ namespace CRMWebServices.Repository
                     result.Employee = new EmployeeBasicDetailsModel
                     {
                         EmployeeId = Convert.ToInt32(row["EmployeeId"]),
-
                         EmployeeCode = row["EmployeeCode"]?.ToString() ?? "",
-
                         FirstName = row["FirstName"]?.ToString() ?? "",
-
                         MiddleName = row["MiddleName"] == DBNull.Value ? null : row["MiddleName"]?.ToString(),
-
                         LastName = row["LastName"] == DBNull.Value ? null : row["LastName"]?.ToString(),
-
                         OfficialEmail = row["OfficialEmail"] == DBNull.Value ? null : row["OfficialEmail"]?.ToString(),
-
                         PersonalEmail = row["PersonalEmail"] == DBNull.Value ? null : row["PersonalEmail"]?.ToString(),
-
-                        Mobile = row["Mobile"] == DBNull.Value
-                            ? null
-                            : row["Mobile"]?.ToString(),
-
-                        AlternateMobile = row["AlternateMobile"] == DBNull.Value
-                            ? null
-                            : row["AlternateMobile"]?.ToString(),
-
-                        Gender = row["Gender"] == DBNull.Value
-                            ? null
-                            : row["Gender"]?.ToString(),
-
-                        DOB = row["DOB"] == DBNull.Value
-                            ? null
-                            : Convert.ToDateTime(row["DOB"]),
-
-                        DOJ = row["DOJ"] == DBNull.Value
-                            ? null
-                            : Convert.ToDateTime(row["DOJ"]),
-
-                        MaritalStatus = row.Table.Columns.Contains("MaritalStatus") && row["MaritalStatus"] != DBNull.Value
-                            ? row["MaritalStatus"]?.ToString()
-                            : null,
-
-                        BloodGroup = row.Table.Columns.Contains("BloodGroup") && row["BloodGroup"] != DBNull.Value
-                            ? row["BloodGroup"]?.ToString()
-                            : null,
-
-                        LoginId = row["LoginId"] == DBNull.Value
-                            ? null
-                            : row["LoginId"]?.ToString(),
-
-                        RefDesignationId = row["Ref_DesignationId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(row["Ref_DesignationId"]),
-
-                        DesignationName = row["DesignationName"] == DBNull.Value
-                            ? null
-                            : row["DesignationName"]?.ToString(),
-
-                        RefReportingManagerId = row["Ref_ReportingManagerId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(row["Ref_ReportingManagerId"]),
-
-                        ReportingManagerCode = row["ReportingManagerCode"] == DBNull.Value
-                            ? null
-                            : row["ReportingManagerCode"]?.ToString(),
-
-                        ReportingManagerName = row["ReportingManagerName"] == DBNull.Value
-                            ? null
-                            : row["ReportingManagerName"]?.ToString(),
-
+                        Mobile = row["Mobile"] == DBNull.Value? null: row["Mobile"]?.ToString(),
+                        AlternateMobile = row["AlternateMobile"] == DBNull.Value? null: row["AlternateMobile"]?.ToString(),
+                        Gender = row["Gender"] == DBNull.Value? null: row["Gender"]?.ToString(),
+                        DOB = row["DOB"] == DBNull.Value? null: Convert.ToDateTime(row["DOB"]),
+                        DOJ = row["DOJ"] == DBNull.Value? null: Convert.ToDateTime(row["DOJ"]),
+                        MaritalStatus = row.Table.Columns.Contains("MaritalStatus") && row["MaritalStatus"] != DBNull.Value? row["MaritalStatus"]?.ToString(): null,
+                        BloodGroup = row.Table.Columns.Contains("BloodGroup") && row["BloodGroup"] != DBNull.Value ? row["BloodGroup"]?.ToString(): null,
+                        LoginId = row["LoginId"] == DBNull.Value? null: row["LoginId"]?.ToString(),
+                        RefDesignationId = row["Ref_DesignationId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_DesignationId"]),
+                        DesignationName = row["DesignationName"] == DBNull.Value? null: row["DesignationName"]?.ToString(),
+                        RefReportingManagerId = row["Ref_ReportingManagerId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_ReportingManagerId"]),
+                        ReportingManagerCode = row["ReportingManagerCode"] == DBNull.Value? null: row["ReportingManagerCode"]?.ToString(),
+                        ReportingManagerName = row["ReportingManagerName"] == DBNull.Value? null: row["ReportingManagerName"]?.ToString(),
                         RefCompanyId = row["Ref_CompanyId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_CompanyId"]),
-
                         CompanyName = row["CompanyName"] == DBNull.Value ? null : row["CompanyName"]?.ToString(),
-
-                        RefRegionId = row["Ref_RegionId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(row["Ref_RegionId"]),
-
-                        RegionName = row["RegionName"] == DBNull.Value
-                            ? null
-                            : row["RegionName"]?.ToString(),
-
-                        RefStateId = row["Ref_StateId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(row["Ref_StateId"]),
-
-                        StateName = row["StateName"] == DBNull.Value
-                            ? null
-                            : row["StateName"]?.ToString(),
-
-                        RefOfficeId = row["Ref_OfficeId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(row["Ref_OfficeId"]),
-
-                        OfficeName = row["OfficeName"] == DBNull.Value
-                            ? null
-                            : row["OfficeName"]?.ToString(),
-
-                        RefDepartmentId = row["Ref_DepartmentId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(row["Ref_DepartmentId"]),
-
-                        DepartmentName = row["DepartmentName"] == DBNull.Value
-                            ? null
-                            : row["DepartmentName"]?.ToString(),
-
-                        RefRoleId = row["Ref_RoleId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(row["Ref_RoleId"]),
-
-                        RoleName = row["RoleName"] == DBNull.Value
-                            ? null
-                            : row["RoleName"]?.ToString(),
-
-                        RefShiftId = row["Ref_ShiftId"] == DBNull.Value
-                            ? null
-                            : Convert.ToInt32(row["Ref_ShiftId"]),
-
-                        ShiftName = row["ShiftName"] == DBNull.Value
-                            ? null
-                            : row["ShiftName"]?.ToString(),
-
+                        RefRegionId = row["Ref_RegionId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_RegionId"]),
+                        RegionName = row["RegionName"] == DBNull.Value? null: row["RegionName"]?.ToString(),
+                        RefStateId = row["Ref_StateId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_StateId"]),
+                        StateName = row["StateName"] == DBNull.Value? null: row["StateName"]?.ToString(),
+                        RefOfficeId = row["Ref_OfficeId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_OfficeId"]),
+                        OfficeName = row["OfficeName"] == DBNull.Value? null: row["OfficeName"]?.ToString(),
+                        RefDepartmentId = row["Ref_DepartmentId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_DepartmentId"]),
+                        DepartmentName = row["DepartmentName"] == DBNull.Value? null: row["DepartmentName"]?.ToString(),
+                        RefRoleId = row["Ref_RoleId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_RoleId"]),
+                        RoleName = row["RoleName"] == DBNull.Value? null: row["RoleName"]?.ToString(),
+                        RefShiftId = row["Ref_ShiftId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_ShiftId"]),
+                        ShiftName = row["ShiftName"] == DBNull.Value? null: row["ShiftName"]?.ToString(),
                         RefLeavePolicyId = row["RefLeavePolicyId"] == DBNull.Value  ? null : Convert.ToInt32(row["RefLeavePolicyId"]),
-
                         LeavePolicyName = row["LeavePolicyName"] == DBNull.Value ? null : row["LeavePolicyName"]?.ToString()
                     };
                 }
@@ -533,37 +397,14 @@ namespace CRMWebServices.Repository
                         {
                             EducationId = row["EducationId"] == DBNull.Value ? null : Convert.ToInt32(row["EducationId"]),
                             QualificationId = Convert.ToInt32(row["QualificationId"]),
-
-                            QualificationName = row["QualificationName"] == DBNull.Value
-                                ? null
-                                : row["QualificationName"]?.ToString(),
-
-                            UniversityName = row["UniversityName"] == DBNull.Value
-                                ? null
-                                : row["UniversityName"]?.ToString(),
-
-                            InstituteName = row["InstituteName"] == DBNull.Value
-                                ? null
-                                : row["InstituteName"]?.ToString(),
-
-                            PassingYear = row["PassingYear"] == DBNull.Value
-                                ? null
-                                : Convert.ToInt32(row["PassingYear"]),
-
-                            Percentage = row["Percentage"] == DBNull.Value
-                                ? null
-                                : Convert.ToDecimal(row["Percentage"]),
-
-                            Grade = row["Grade"] == DBNull.Value
-                                ? null
-                                : row["Grade"]?.ToString(),
-                            Specialization = row["Specialization"] == DBNull.Value
-                                ? null
-                                : row["Specialization"]?.ToString(),
-
-                            CertificatePath = row["CertificatePath"] == DBNull.Value
-                                ? null
-                                : row["CertificatePath"]?.ToString()
+                            QualificationName = row["QualificationName"] == DBNull.Value? null: row["QualificationName"]?.ToString(),
+                            UniversityName = row["UniversityName"] == DBNull.Value? null: row["UniversityName"]?.ToString(),
+                            InstituteName = row["InstituteName"] == DBNull.Value? null: row["InstituteName"]?.ToString(),
+                            PassingYear = row["PassingYear"] == DBNull.Value? null: Convert.ToInt32(row["PassingYear"]),
+                            Percentage = row["Percentage"] == DBNull.Value? null: Convert.ToDecimal(row["Percentage"]),
+                            Grade = row["Grade"] == DBNull.Value ? null: row["Grade"]?.ToString(),
+                            Specialization = row["Specialization"] == DBNull.Value? null: row["Specialization"]?.ToString(),
+                            CertificatePath = row["CertificatePath"] == DBNull.Value? null: row["CertificatePath"]?.ToString()
                         });
                     }
                 }
@@ -577,28 +418,12 @@ namespace CRMWebServices.Repository
                         result.BankDetails.Add(new EmployeeBankModel
                         {
                             BankId = Convert.ToInt32(row["BankId"]),
-
-                            BankName = row["BankName"] == DBNull.Value
-                                ? null
-                                : row["BankName"]?.ToString(),
-
+                            BankName = row["BankName"] == DBNull.Value ? null: row["BankName"]?.ToString(),
                             AccountTypeId = Convert.ToInt32(row["AccountTypeId"]),
-
-                            AccountTypeName = row["AccountTypeName"] == DBNull.Value
-                                ? null
-                                : row["AccountTypeName"]?.ToString(),
-
-                            AccountHolderName = row["AccountHolderName"] == DBNull.Value
-                                ? null
-                                : row["AccountHolderName"]?.ToString(),
-
-                            AccountNumber = row["AccountNumber"] == DBNull.Value
-                                ? null
-                                : row["AccountNumber"]?.ToString(),
-
-                            IFSCCode = row["IFSCCode"] == DBNull.Value
-                                ? null
-                                : row["IFSCCode"]?.ToString()
+                            AccountTypeName = row["AccountTypeName"] == DBNull.Value? null: row["AccountTypeName"]?.ToString(),
+                            AccountHolderName = row["AccountHolderName"] == DBNull.Value ? null: row["AccountHolderName"]?.ToString(),
+                            AccountNumber = row["AccountNumber"] == DBNull.Value ? null: row["AccountNumber"]?.ToString(),
+                            IFSCCode = row["IFSCCode"] == DBNull.Value? null: row["IFSCCode"]?.ToString()
                         });
                     }
                 }
@@ -612,34 +437,13 @@ namespace CRMWebServices.Repository
                         result.FamilyDetails.Add(new EmployeeFamilyModel
                         {
                             RelationshipId = Convert.ToInt32(row["RelationshipId"]),
-
-                            RelationshipName = row["RelationshipName"] == DBNull.Value
-                                ? null
-                                : row["RelationshipName"]?.ToString(),
-
-                            FamilyMemberName = row["FamilyMemberName"] == DBNull.Value
-                                ? null
-                                : row["FamilyMemberName"]?.ToString(),
-
-                            Occupation = row["Occupation"] == DBNull.Value
-                                ? null
-                                : row["Occupation"]?.ToString(),
-
-                            ContactNumber = row["ContactNumber"] == DBNull.Value
-                                ? null
-                                : row["ContactNumber"]?.ToString(),
-
-                            IsDependent = row["IsDependent"] == DBNull.Value
-                                ? null
-                                : Convert.ToBoolean(row["IsDependent"]),
-
-                            DOB = row["DOB"] == DBNull.Value
-                                ? null
-                                : Convert.ToDateTime(row["DOB"]),
-
-                            IsEmergencyContact = row["IsEmergencyContact"] == DBNull.Value
-                                ? null
-                                : Convert.ToBoolean(row["IsEmergencyContact"])
+                            RelationshipName = row["RelationshipName"] == DBNull.Value? null: row["RelationshipName"]?.ToString(),
+                            FamilyMemberName = row["FamilyMemberName"] == DBNull.Value? null: row["FamilyMemberName"]?.ToString(),
+                            Occupation = row["Occupation"] == DBNull.Value? null: row["Occupation"]?.ToString(),
+                            ContactNumber = row["ContactNumber"] == DBNull.Value? null: row["ContactNumber"]?.ToString(),
+                            IsDependent = row["IsDependent"] == DBNull.Value? null: Convert.ToBoolean(row["IsDependent"]),
+                            DOB = row["DOB"] == DBNull.Value? null: Convert.ToDateTime(row["DOB"]),
+                            IsEmergencyContact = row["IsEmergencyContact"] == DBNull.Value ? null : Convert.ToBoolean(row["IsEmergencyContact"])
                         });
                     }
                 }
@@ -654,50 +458,18 @@ namespace CRMWebServices.Repository
                         {
                           
                             DocumentTypeId = Convert.ToInt32(row["DocumentTypeId"]),
-
-                            DocumentTypeName = row["DocumentTypeName"] == DBNull.Value
-                                ? null
-                                : row["DocumentTypeName"]?.ToString(),
-
-                            IsMandatory = row["IsMandatory"] != DBNull.Value
-                                && Convert.ToBoolean(row["IsMandatory"]),
-
-                            FieldKind = row.Table.Columns.Contains("FieldKind") && row["FieldKind"] != DBNull.Value
-                                ? row["FieldKind"]?.ToString()
-                                : null,
-
-                            DocumentName = row["DocumentName"] == DBNull.Value
-                                ? null
-                                : row["DocumentName"]?.ToString(),
-
-                            DocumentPath = row["DocumentPath"] == DBNull.Value
-                                ? null
-                                : BuildFileUrl(row["DocumentPath"]?.ToString()),
+                            DocumentTypeName = row["DocumentTypeName"] == DBNull.Value ? null: row["DocumentTypeName"]?.ToString(),
+                            IsMandatory = row["IsMandatory"] != DBNull.Value && Convert.ToBoolean(row["IsMandatory"]),
+                            FieldKind = row.Table.Columns.Contains("FieldKind") && row["FieldKind"] != DBNull.Value? row["FieldKind"]?.ToString(): null,
+                            DocumentName = row["DocumentName"] == DBNull.Value? null: row["DocumentName"]?.ToString(),
+                            DocumentPath = row["DocumentPath"] == DBNull.Value? null: BuildFileUrl(row["DocumentPath"]?.ToString()),
                             IssueDate = row["IssueDate"] == DBNull.Value ? null : Convert.ToDateTime(row["IssueDate"]),
-
-                            DocumentNumber = row.Table.Columns.Contains("DocumentNumber") && row["DocumentNumber"] != DBNull.Value
-                                ? row["DocumentNumber"]?.ToString()
-                                : null,
-
-                            ExpiryDate = row["ExpiryDate"] == DBNull.Value
-                                ? null
-                                : Convert.ToDateTime(row["ExpiryDate"]),
-
-                            Verified = row["Verified"] == DBNull.Value
-                                ? null
-                                : Convert.ToBoolean(row["Verified"]),
-
-                            VerifiedBy = row["VerifiedBy"] == DBNull.Value
-                                ? null
-                                : Convert.ToInt32(row["VerifiedBy"]),
-
-                            VerifiedOn = row["VerifiedOn"] == DBNull.Value
-                                ? null
-                                : Convert.ToDateTime(row["VerifiedOn"]),
-
-                            Remarks = row["Remarks"] == DBNull.Value
-                                ? null
-                                : row["Remarks"]?.ToString()
+                            DocumentNumber = row.Table.Columns.Contains("DocumentNumber") && row["DocumentNumber"] != DBNull.Value? row["DocumentNumber"]?.ToString(): null,
+                            ExpiryDate = row["ExpiryDate"] == DBNull.Value? null: Convert.ToDateTime(row["ExpiryDate"]),
+                            Verified = row["Verified"] == DBNull.Value? null: Convert.ToBoolean(row["Verified"]),
+                            VerifiedBy = row["VerifiedBy"] == DBNull.Value? null: Convert.ToInt32(row["VerifiedBy"]),
+                            VerifiedOn = row["VerifiedOn"] == DBNull.Value? null: Convert.ToDateTime(row["VerifiedOn"]),
+                            Remarks = row["Remarks"] == DBNull.Value? null: row["Remarks"]?.ToString()
                         });
                     }
                 }
@@ -709,50 +481,31 @@ namespace CRMWebServices.Repository
                 throw;
             }
         }
+        #endregion
 
+        #region Update Employee Details
         public async Task<ApiResponse> UpdateEmployee(UpdateEmployeeRequest model)
         {
             try
             {
-                string educationJson =
-                    model.Education != null && model.Education.Count > 0
-                        ? JsonConvert.SerializeObject(model.Education)
-                        : null;
-
-                string bankJson =
-                    model.Bank != null && model.Bank.Count > 0
-                        ? JsonConvert.SerializeObject(model.Bank)
-                        : null;
+                string educationJson =model.Education != null && model.Education.Count > 0 ? JsonConvert.SerializeObject(model.Education): null;
+                string bankJson =model.Bank != null && model.Bank.Count > 0 ? JsonConvert.SerializeObject(model.Bank) : null;
                 Console.WriteLine("BANK JSON:");
                 Console.WriteLine(bankJson);
-                string familyJson =
-                    model.FamilyDetails != null && model.FamilyDetails.Count > 0
-                        ? JsonConvert.SerializeObject(model.FamilyDetails)
-                        : null;
-
-                //string documentJson =
-                //    model.Document != null && model.Document.Count > 0
-                //        ? JsonConvert.SerializeObject(model.Document)
-                //        : null;
+                string familyJson = model.FamilyDetails != null && model.FamilyDetails.Count > 0 ? JsonConvert.SerializeObject(model.FamilyDetails): null;
+            
 
                 List<object> documentList = new List<object>();
 
-                _logger.LogInformation(
-                    "========== UPDATE EMPLOYEE DOCUMENTS START | EmployeeId: {EmployeeId} ==========",
-                    model.EmployeeId
-                );
+                _logger.LogInformation("========== UPDATE EMPLOYEE DOCUMENTS START | EmployeeId: {EmployeeId} ==========",model.EmployeeId);
 
-                _logger.LogInformation(
-                    "Document count received from request: {DocumentCount}",
-                    model.Document?.Count ?? 0
-                );
+                _logger.LogInformation("Document count received from request: {DocumentCount}",model.Document?.Count ?? 0);
 
                 if (model.Document != null)
                 {
                     foreach (var doc in model.Document)
                     {
-                        _logger.LogInformation(
-                            "Document received | TypeId: {DocumentTypeId}, Name: {DocumentName}, HasBase64: {HasBase64}, Path: {DocumentPath}",
+                        _logger.LogInformation("Document received | TypeId: {DocumentTypeId}, Name: {DocumentName}, HasBase64: {HasBase64}, Path: {DocumentPath}",
                             doc.DocumentTypeId,
                             doc.DocumentName,
                             !string.IsNullOrWhiteSpace(doc.Base64Content),
@@ -768,27 +521,15 @@ namespace CRMWebServices.Repository
                         {
                             if (string.IsNullOrWhiteSpace(doc.DocumentName))
                             {
-                                _logger.LogWarning(
-                                    "Skipping document because DocumentName is empty | EmployeeId: {EmployeeId}",
-                                    model.EmployeeId
-                                );
-
+                                _logger.LogWarning("Skipping document because DocumentName is empty | EmployeeId: {EmployeeId}",model.EmployeeId);
                                 continue;
                             }
 
                             try
                             {
-                                documentPath = SaveBase64Attachment(
-                                    doc.Base64Content,
-                                    doc.DocumentName,
-                                    "EmployeeDocuments"
-                                );
+                                documentPath = SaveBase64Attachment(doc.Base64Content,doc.DocumentName,"EmployeeDocuments");
 
-                                _logger.LogInformation(
-                                    "New document saved | TypeId: {DocumentTypeId}, Path: {DocumentPath}",
-                                    doc.DocumentTypeId,
-                                    documentPath
-                                );
+                                _logger.LogInformation("New document saved | TypeId: {DocumentTypeId}, Path: {DocumentPath}",doc.DocumentTypeId,documentPath);
                             }
                             catch (Exception ex)
                             {
@@ -829,101 +570,42 @@ namespace CRMWebServices.Repository
                 // IMPORTANT:
                 // null  = document section was not sent
                 // []    = document section was sent but all documents removed
-                string? documentJson = model.Document != null
-                    ? JsonConvert.SerializeObject(documentList)
-                    : null;
+                string? documentJson = model.Document != null? JsonConvert.SerializeObject(documentList): null;
 
-                _logger.LogInformation(
-                    "Final document JSON: {DocumentJson}",
-                    documentJson
-                );
+                _logger.LogInformation("Final document JSON: {DocumentJson}",documentJson);
 
                 var parameters = new List<SqlParameter>
-        {
-            new SqlParameter("@EmployeeId", model.EmployeeId),
+                {
+                    new SqlParameter("@EmployeeId", model.EmployeeId),
 
-            new SqlParameter("@FirstName",
-                (object?)model.FirstName ?? DBNull.Value),
+                    new SqlParameter("@FirstName",(object?)model.FirstName ?? DBNull.Value),
+                    new SqlParameter("@MiddleName",(object?)model.MiddleName ?? DBNull.Value),
+                    new SqlParameter("@LastName",(object?)model.LastName ?? DBNull.Value),
+                    new SqlParameter("@OfficialEmail",(object?)model.OfficialEmail ?? DBNull.Value),
+                    new SqlParameter("@PersonalEmail",(object?)model.PersonalEmail ?? DBNull.Value),
+                    new SqlParameter("@Mobile",(object?)model.Mobile ?? DBNull.Value),
+                    new SqlParameter("@AlternateMobile",(object?)model.AlternateMobile ?? DBNull.Value),
+                    new SqlParameter("@Gender",(object?)model.Gender ?? DBNull.Value),
+                    new SqlParameter("@DOB",(object?)model.DOB ?? DBNull.Value),
+                    new SqlParameter("@DOJ",(object?)model.DOJ ?? DBNull.Value),
+                    new SqlParameter("@MaritalStatus",(object?)model.MaritalStatus ?? DBNull.Value),
+                    new SqlParameter("@BloodGroup",(object?)model.BloodGroup ?? DBNull.Value),
+                    new SqlParameter("@RefDesignationId",(object?)model.RefDesignationId ?? DBNull.Value),
+                    new SqlParameter("@ReportingManagerId",(object?)model.ReportingManagerId ?? DBNull.Value),
+                    new SqlParameter("@RefOfficeId",(object?)model.RefOfficeId ?? DBNull.Value),
+                    new SqlParameter("@RefDepartmentId",(object?)model.RefDepartmentId ?? DBNull.Value),
+                    new SqlParameter("@RefRoleId",(object?)model.RefRoleId ?? DBNull.Value),
+                    new SqlParameter("@ShiftId",(object?)model.ShiftId ?? DBNull.Value),
+                    new SqlParameter("@LeavePolicyId",(object?)model.RefLeavePolicyId ?? DBNull.Value),
+                    new SqlParameter("@UpdatedBy",(object?)model.UpdatedBy ?? DBNull.Value),
+                    new SqlParameter("@Education",(object?)educationJson ?? DBNull.Value),
+                    new SqlParameter("@Bank",(object?)bankJson ?? DBNull.Value),
+                    new SqlParameter("@FamilyDetails",(object?)familyJson ?? DBNull.Value),
+                    new SqlParameter("@Document",(object?)documentJson ?? DBNull.Value)
+                };
+                _logger.LogInformation("Calling USP_ORG_UpdateEmployee | EmployeeId: {EmployeeId} | Document JSON: {DocumentJson}",model.EmployeeId,documentJson ?? "NULL");
 
-            new SqlParameter("@MiddleName",
-                (object?)model.MiddleName ?? DBNull.Value),
-
-            new SqlParameter("@LastName",
-                (object?)model.LastName ?? DBNull.Value),
-
-            new SqlParameter("@OfficialEmail",
-                (object?)model.OfficialEmail ?? DBNull.Value),
-
-            new SqlParameter("@PersonalEmail",
-                (object?)model.PersonalEmail ?? DBNull.Value),
-
-            new SqlParameter("@Mobile",
-                (object?)model.Mobile ?? DBNull.Value),
-
-            new SqlParameter("@AlternateMobile",
-                (object?)model.AlternateMobile ?? DBNull.Value),
-
-            new SqlParameter("@Gender",
-                (object?)model.Gender ?? DBNull.Value),
-
-            new SqlParameter("@DOB",
-                (object?)model.DOB ?? DBNull.Value),
-
-            new SqlParameter("@DOJ",
-                (object?)model.DOJ ?? DBNull.Value),
-
-            new SqlParameter("@MaritalStatus",
-                (object?)model.MaritalStatus ?? DBNull.Value),
-
-            new SqlParameter("@BloodGroup",
-                (object?)model.BloodGroup ?? DBNull.Value),
-
-            new SqlParameter("@RefDesignationId",
-                (object?)model.RefDesignationId ?? DBNull.Value),
-
-            new SqlParameter("@ReportingManagerId",
-                (object?)model.ReportingManagerId ?? DBNull.Value),
-
-            new SqlParameter("@RefOfficeId",
-                (object?)model.RefOfficeId ?? DBNull.Value),
-
-            new SqlParameter("@RefDepartmentId",
-                (object?)model.RefDepartmentId ?? DBNull.Value),
-
-            new SqlParameter("@RefRoleId",
-                (object?)model.RefRoleId ?? DBNull.Value),
-
-            new SqlParameter("@ShiftId",
-                (object?)model.ShiftId ?? DBNull.Value),
-
-            new SqlParameter("@LeavePolicyId",
-                (object?)model.RefLeavePolicyId ?? DBNull.Value),
-
-            new SqlParameter("@UpdatedBy",
-                (object?)model.UpdatedBy ?? DBNull.Value),
-
-            new SqlParameter("@Education",
-                (object?)educationJson ?? DBNull.Value),
-
-            new SqlParameter("@Bank",
-                (object?)bankJson ?? DBNull.Value),
-
-            new SqlParameter("@FamilyDetails",
-                (object?)familyJson ?? DBNull.Value),
-
-            new SqlParameter("@Document",
-                (object?)documentJson ?? DBNull.Value)
-        };
-                _logger.LogInformation(
-                    "Calling USP_ORG_UpdateEmployee | EmployeeId: {EmployeeId} | Document JSON: {DocumentJson}",
-                    model.EmployeeId,
-                    documentJson ?? "NULL"
-                );
-
-                DataTable dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_UpdateEmployee",
-                    parameters.ToArray()
-                );
+                DataTable dt = await _database.ExecuteDataTableAsync("USP_ORG_UpdateEmployee",parameters.ToArray());
 
 
                 if (dt == null || dt.Rows.Count == 0)
@@ -938,26 +620,18 @@ namespace CRMWebServices.Repository
 
                 DataRow row = dt.Rows[0];
 
-                _logger.LogInformation(
-                    "USP_ORG_UpdateEmployee returned | Columns: {Columns} | RowCount: {RowCount}",
-                    string.Join(", ", dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName)),
+                _logger.LogInformation("USP_ORG_UpdateEmployee returned | Columns: {Columns} | RowCount: {RowCount}",string.Join(", ", dt.Columns.Cast<DataColumn>().Select(c => c.ColumnName)),
                     dt.Rows.Count
                 );
 
                 foreach (DataColumn column in dt.Columns)
                 {
-                    _logger.LogInformation(
-                        "USP Result | {Column} = {Value}",
-                        column.ColumnName,
-                        row[column]
-                    );
+                    _logger.LogInformation("USP Result | {Column} = {Value}",column.ColumnName,row[column]);
                 }
 
                 if (!dt.Columns.Contains("Status"))
                 {
-                    _logger.LogError(
-                        "USP_ORG_UpdateEmployee result does NOT contain Status column."
-                    );
+                    _logger.LogError("USP_ORG_UpdateEmployee result does NOT contain Status column.");
 
                     return new ApiResponse
                     {
@@ -968,10 +642,7 @@ namespace CRMWebServices.Repository
 
                 bool status = Convert.ToInt32(row["Status"]) == 1;
 
-                string message = dt.Columns.Contains("Message")
-                    ? row["Message"]?.ToString()
-                    : "Employee update completed.";
-
+                string message = dt.Columns.Contains("Message")? row["Message"]?.ToString(): "Employee update completed.";
                 object data = null;
 
                 if (status && dt.Columns.Contains("EmployeeId"))
@@ -1006,5 +677,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
     }
 }

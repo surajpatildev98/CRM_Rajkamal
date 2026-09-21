@@ -20,16 +20,11 @@ namespace CRMWebServices.Repository
             {
                 // Create DataTable for HolidayListType
                 var holidayTable = new DataTable();
-
                 holidayTable.Columns.Add("HolidayId",typeof(int));
                 holidayTable.Columns.Add("HolidayName",typeof(string));
-
                 holidayTable.Columns.Add("HolidayDate",typeof(DateTime));
-
                 holidayTable.Columns.Add("IsOptional",typeof(bool));
-
                 holidayTable.Columns.Add("Remarks",typeof(string));
-
                 // Add holidays to DataTable
                 foreach (var holiday in request.Holidays)
                 {
@@ -44,22 +39,14 @@ namespace CRMWebServices.Repository
 
                 // Call stored procedure
                 var dt = await _database.ExecuteDataTableAsync("USP_ORG_HolidayManagement",
-
                     new SqlParameter("@Status", "SAVE_CALENDAR"),
-
                     new SqlParameter("@HolidayCalendarId", request.HolidayCalendarId ?? (object)DBNull.Value),
                     new SqlParameter("@CalendarName",request.CalendarName),
-
                     new SqlParameter("@CalendarYear",request.CalendarYear),
-
                     new SqlParameter("@Ref_CompanyId",request.CompanyId),
-
                     new SqlParameter("@Ref_OfficeId",request.OfficeId.HasValue ? request.OfficeId.Value : DBNull.Value),
-
                     new SqlParameter("@IsActive",request.IsActive),
-
                     new SqlParameter("@CreatedBy",request.CreatedBy),
-
                     new SqlParameter("@Holidays", holidayTable)
                     {
                         SqlDbType = SqlDbType.Structured,
@@ -72,8 +59,7 @@ namespace CRMWebServices.Repository
                     return new ApiResponse
                     {
                         Status = false,
-                        Message =
-                            "No response returned from database."
+                        Message ="No response returned from database."
                     };
                 }
 
@@ -81,15 +67,10 @@ namespace CRMWebServices.Repository
 
                 return new ApiResponse
                 {
-                    Status =
-                        row["Status"] != DBNull.Value &&
-                        Convert.ToBoolean(row["Status"]),
-
-                    Message =
-                        row["Message"]?.ToString() ?? "",
-
-                    Data =
-                        row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]) ? new
+                    Status =row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]),
+                    Message =row["Message"]?.ToString() ?? "",
+                    Data =row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"])
+                           ? new
                             {
                                 HolidayCalendarId = row["HolidayCalendarId"] != DBNull.Value ? Convert.ToInt32(row["HolidayCalendarId"]) : 0
                             }
@@ -128,7 +109,6 @@ namespace CRMWebServices.Repository
                     var row = ds.Tables[0].Rows[0];
 
                     response.Status = row["Status"] != DBNull.Value &&  Convert.ToBoolean(row["Status"]);
-
                     response.Message = row["Message"]?.ToString() ?? "";
                 }
 
@@ -141,19 +121,12 @@ namespace CRMWebServices.Repository
                             new HolidayCalendarModel
                             {
                                 HolidayCalendarId = row["HolidayCalendarId"] != DBNull.Value ? Convert.ToInt32( row["HolidayCalendarId"]) : 0,
-
                                 CalendarName = row["CalendarName"]?.ToString() ?? "",
-
                                 CalendarYear = row["CalendarYear"] != DBNull.Value  ? Convert.ToInt32(row["CalendarYear"]) : 0,
-
                                 CompanyId = row["Ref_CompanyId"] != DBNull.Value ? Convert.ToInt32(row["Ref_CompanyId"]) : 0,
-
                                 OfficeId = row["Ref_OfficeId"] != DBNull.Value ? Convert.ToInt32( row["Ref_OfficeId"]) : null,
-
                                 IsActive = row["IsActive"] != DBNull.Value && Convert.ToBoolean( row["IsActive"]),
-
                                 CreatedOn = row["CreatedOn"] != DBNull.Value ? Convert.ToDateTime( row["CreatedOn"]) : null,
-
                                 CreatedBy = row["CreatedBy"] != DBNull.Value ? Convert.ToInt32(row["CreatedBy"]) : 0
                             }
                         );
@@ -188,11 +161,8 @@ namespace CRMWebServices.Repository
             {
                 var response = new HolidayResponse();
 
-                var ds = await _database.ExecuteDataSetAsync(
-                    "USP_ORG_HolidayManagement",
-
+                var ds = await _database.ExecuteDataSetAsync("USP_ORG_HolidayManagement",
                     new SqlParameter("@Status", "GET_HOLIDAYS"),
-
                     new SqlParameter("@HolidayCalendarId",holidayCalendarId)
                 );
 
@@ -205,7 +175,6 @@ namespace CRMWebServices.Repository
                     var row = ds.Tables[0].Rows[0];
 
                     response.Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]);
-
                     response.Message = row["Message"]?.ToString() ?? "";
                 }
 
@@ -220,22 +189,13 @@ namespace CRMWebServices.Repository
                         response.Data.Add(
                             new HolidayModel
                             {
-                                HolidayId =
-                                    row["HolidayId"] != DBNull.Value ? Convert.ToInt32( row["HolidayId"]) : 0,
-
-                                Ref_HolidayCalendarId =
-                                    row["Ref_HolidayCalendarId"] != DBNull.Value ? Convert.ToInt32( row["Ref_HolidayCalendarId"]) : 0,
-
+                                HolidayId =row["HolidayId"] != DBNull.Value ? Convert.ToInt32( row["HolidayId"]) : 0,
+                                Ref_HolidayCalendarId =row["Ref_HolidayCalendarId"] != DBNull.Value ? Convert.ToInt32( row["Ref_HolidayCalendarId"]) : 0,
                                 HolidayName = row["HolidayName"]?.ToString()?? "",
-
                                 HolidayDate = row["HolidayDate"] != DBNull.Value ? Convert.ToDateTime( row["HolidayDate"]) : DateTime.MinValue,
-
                                 IsOptional = row["IsOptional"] != DBNull.Value && Convert.ToBoolean(row["IsOptional"]),
-
                                 Remarks = row["Remarks"] != DBNull.Value ? row["Remarks"]?.ToString() : null,
-
                                 CreatedOn = row["CreatedOn"] != DBNull.Value ? Convert.ToDateTime(row["CreatedOn"]) : null,
-
                                 CreatedBy = row["CreatedBy"] != DBNull.Value ? Convert.ToInt32(row["CreatedBy"]) : 0
                             }
                         );

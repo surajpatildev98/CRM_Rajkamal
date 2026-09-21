@@ -21,58 +21,7 @@ namespace CRMWebServices.Repository
             _firebaseNotificationService = firebaseNotificationService;
         }
 
-        #region // IAuthRepository Implementation used for authentication and authorization     
-
-        // Repository — was likely ExecuteDataTableAsync returning one row; now needs the second table too
-        //public async Task<(DataRow? EmployeeRow, List<ModuleAccessInfo> Modules)> GetEmployeeForLogin(string loginId)
-        //{
-        //    var ds = await _database.ExecuteDataSetAsync("USP_ORG_Authentication",
-        //        new SqlParameter("@Status", "LOGIN"),
-        //        new SqlParameter("@LoginId", loginId)
-        //    );
-
-        //    if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
-        //        return (null, new List<ModuleAccessInfo>());
-
-        //    var employeeRow = ds.Tables[0].Rows[0];
-
-        //    var modules = new List<ModuleAccessInfo>();
-
-        //    if (ds.Tables.Count > 1)
-        //    {
-        //        foreach (DataRow r in ds.Tables[1].Rows)
-        //        {
-        //            var module = new ModuleAccessInfo
-        //            {
-        //                ModuleId = Convert.ToInt32(r["ModuleId"]),
-        //                ModuleCode = r["ModuleCode"]?.ToString(),
-        //                ModuleName = r["ModuleName"]?.ToString(),
-        //                IconName = r["IconName"] == DBNull.Value ? null : r["IconName"].ToString(),
-        //                IsAllowed = Convert.ToBoolean(r["IsAllowed"])
-        //            };
-
-        //            if (r["PermissionsJson"] != DBNull.Value)
-        //            {
-        //                var json = r["PermissionsJson"]?.ToString();
-        //                if (!string.IsNullOrEmpty(json))
-        //                {
-        //                    var parsed = JsonConvert.DeserializeObject<List<dynamic>>(json);
-        //                    module.Permissions = parsed.Select(p => new PermissionAccessInfo
-        //                    {
-        //                        PermissionId = Convert.ToInt32(p.PermissionId),
-        //                        PermissionCode = p.PermissionCode?.ToString(),
-        //                        PermissionName = p.PermissionName?.ToString(),
-        //                        IsAllowed = Convert.ToBoolean(p.IsAllowed)
-        //                    }).ToList();
-        //                }
-        //            }
-
-        //            modules.Add(module);
-        //        }
-        //    }
-
-        //    return (employeeRow, modules);
-        //}
+        #region Get Employee for Login           
         public async Task<(DataRow? EmployeeRow, List<SuperModuleAccessInfo> SuperModules)> GetEmployeeForLogin(string loginId)
         {
             var ds = await _database.ExecuteDataSetAsync("USP_ORG_Authentication",
@@ -161,105 +110,26 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        /*public async Task<ApiResponse> RegisterEmployeeDevice(int employeeId,RegisterEmployeeDeviceRequest request)
-        {
-            try
-            {
-                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
-
-                    new SqlParameter("@Status","REGISTER_EMPLOYEE_DEVICE"),
-                    new SqlParameter("@EmployeeId",employeeId),
-                    new SqlParameter("@DeviceId",request.DeviceId),
-                    new SqlParameter("@DeviceToken",request.DeviceToken),
-                    new SqlParameter("@DeviceType",(object?)request.DeviceType ?? DBNull.Value),
-                    new SqlParameter("@AppVersion",(object?)request.AppVersion ?? DBNull.Value)
-                );
-
-                if (dt.Rows.Count == 0)
-                {
-                    return new ApiResponse
-                    {
-                        Status = false,
-                        Message = "Device registration failed."
-                    };
-                }
-
-                return new ApiResponse
-                {
-                    Status = Convert.ToBoolean(dt.Rows[0]["Status"]),
-                    Message = dt.Rows[0]["Message"]?.ToString()
-                };
-            }
-            catch (SqlException ex)
-            {
-                return new ApiResponse
-                {
-                    Status = false,
-                    Message = ex.Message
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ApiResponse
-                {
-                    Status = false,
-                    Message = ex.Message
-                };
-            }
-        }*/
-
+        #region Register Employee Device
         public async Task<ApiResponse> RegisterEmployeeDevice(int employeeId,RegisterEmployeeDeviceRequest request)
         {
             try
             {
                 // STEP 2: Check what values are coming from the app
-                _logger.LogInformation(
-                    "REGISTER DEVICE - EmployeeId: {EmployeeId}",
-                    employeeId);
-
-                _logger.LogInformation(
-                    "REGISTER DEVICE - DeviceId: {DeviceId}",
-                    request.DeviceId);
-
-                _logger.LogInformation(
-                    "REGISTER DEVICE - DeviceType: {DeviceType}",
-                    request.DeviceType);
-
-                _logger.LogInformation(
-                    "REGISTER DEVICE - AppVersion: {AppVersion}",
-                    request.AppVersion);
-
-                _logger.LogInformation(
-                    "REGISTER DEVICE - DeviceToken exists: {HasToken}",
-                    !string.IsNullOrWhiteSpace(request.DeviceToken));
+                _logger.LogInformation("REGISTER DEVICE - EmployeeId: {EmployeeId}",employeeId);
+                _logger.LogInformation("REGISTER DEVICE - DeviceId: {DeviceId}",request.DeviceId);
+                _logger.LogInformation("REGISTER DEVICE - DeviceType: {DeviceType}",request.DeviceType);
+                _logger.LogInformation("REGISTER DEVICE - AppVersion: {AppVersion}",request.AppVersion);
+                _logger.LogInformation("REGISTER DEVICE - DeviceToken exists: {HasToken}",!string.IsNullOrWhiteSpace(request.DeviceToken));
 
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_Authentication",
-
-                    new SqlParameter(
-                        "@Status",
-                        "REGISTER_EMPLOYEE_DEVICE"),
-
-                    new SqlParameter(
-                        "@EmployeeId",
-                        employeeId),
-
-                    new SqlParameter(
-                        "@DeviceId",
-                        (object?)request.DeviceId ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@DeviceToken",
-                        (object?)request.DeviceToken ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@DeviceType",
-                        (object?)request.DeviceType ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@AppVersion",
-                        (object?)request.AppVersion ?? DBNull.Value)
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
+                    new SqlParameter("@Status","REGISTER_EMPLOYEE_DEVICE"),
+                    new SqlParameter("@EmployeeId",employeeId),
+                    new SqlParameter("@DeviceId",(object?)request.DeviceId ?? DBNull.Value),
+                    new SqlParameter("@DeviceToken",(object?)request.DeviceToken ?? DBNull.Value),
+                    new SqlParameter("@DeviceType",(object?)request.DeviceType ?? DBNull.Value),
+                    new SqlParameter("@AppVersion",(object?)request.AppVersion ?? DBNull.Value)
                 );
 
 
@@ -283,10 +153,7 @@ namespace CRMWebServices.Repository
             }
             catch (SqlException ex)
             {
-                _logger.LogError(
-                    ex,
-                    "SQL error while registering device for EmployeeId {EmployeeId}",
-                    employeeId);
+                _logger.LogError(ex,"SQL error while registering device for EmployeeId {EmployeeId}",employeeId);
 
                 return new ApiResponse
                 {
@@ -296,10 +163,7 @@ namespace CRMWebServices.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error while registering device for EmployeeId {EmployeeId}",
-                    employeeId);
+                _logger.LogError(ex,"Error while registering device for EmployeeId {EmployeeId}",employeeId);
 
                 return new ApiResponse
                 {
@@ -308,30 +172,19 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region  Force Logout Device 
         public async Task<ApiResponse> ForceLogoutDevice(int employeeId,string deviceId)
         {
             try
             {
-                _logger.LogInformation(
-                    "FORCE LOGOUT - EmployeeId: {EmployeeId}, DeviceId: {DeviceId}",
-                    employeeId,
-                    deviceId);
+                _logger.LogInformation("FORCE LOGOUT - EmployeeId: {EmployeeId}, DeviceId: {DeviceId}",employeeId,deviceId);
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_Authentication",
-
-                    new SqlParameter(
-                        "@Status",
-                        "FORCE_LOGOUT_DEVICE"),
-
-                    new SqlParameter(
-                        "@EmployeeId",
-                        employeeId),
-
-                    new SqlParameter(
-                        "@DeviceId",
-                        deviceId)
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
+                    new SqlParameter("@Status","FORCE_LOGOUT_DEVICE"),
+                    new SqlParameter("@EmployeeId",employeeId),
+                    new SqlParameter("@DeviceId",deviceId)
                 );
 
 
@@ -344,14 +197,8 @@ namespace CRMWebServices.Repository
                     };
                 }
 
-
-                bool status = Convert.ToBoolean(
-                    dt.Rows[0]["Status"]);
-
-                string message =
-                    dt.Rows[0]["Message"]?.ToString()
-                    ?? "Force logout failed.";
-
+                bool status = Convert.ToBoolean(dt.Rows[0]["Status"]);
+                string message =dt.Rows[0]["Message"]?.ToString()?? "Force logout failed.";
 
                 if (!status)
                 {
@@ -361,31 +208,18 @@ namespace CRMWebServices.Repository
                         Message = message
                     };
                 }
-
-
-                // ------------------------------------------
-                // Get OLD DEVICE Firebase token
-                // ------------------------------------------
-
+             
+                // Get OLD DEVICE Firebase token       
                 string? oldDeviceToken = null;
 
-                if (dt.Columns.Contains("DeviceToken") &&
-                    dt.Rows[0]["DeviceToken"] != DBNull.Value)
+                if (dt.Columns.Contains("DeviceToken") && dt.Rows[0]["DeviceToken"] != DBNull.Value)
                 {
-                    oldDeviceToken =
-                        dt.Rows[0]["DeviceToken"]?.ToString();
+                    oldDeviceToken =dt.Rows[0]["DeviceToken"]?.ToString();
                 }
 
+                _logger.LogInformation("FORCE LOGOUT - Old Device Token exists: {HasToken}",!string.IsNullOrWhiteSpace(oldDeviceToken));
 
-                _logger.LogInformation(
-                    "FORCE LOGOUT - Old Device Token exists: {HasToken}",
-                    !string.IsNullOrWhiteSpace(oldDeviceToken));
-
-
-                // ------------------------------------------
-                // Send FORCE_LOGOUT notification
-                // ------------------------------------------
-
+                // Send FORCE_LOGOUT notification             
                 if (!string.IsNullOrWhiteSpace(oldDeviceToken))
                 {
                     var notificationResult =
@@ -402,21 +236,16 @@ namespace CRMWebServices.Repository
 
                     if (notificationResult.Success)
                     {
-                        _logger.LogInformation(
-                            "FORCE LOGOUT notification sent successfully. MessageId: {MessageId}",
-                            notificationResult.MessageId);
+                        _logger.LogInformation("FORCE LOGOUT notification sent successfully. MessageId: {MessageId}",notificationResult.MessageId);
                     }
                     else
                     {
-                        _logger.LogWarning(
-                            "FORCE LOGOUT notification failed. Error: {Error}",
-                            notificationResult.ErrorMessage);
+                        _logger.LogWarning("FORCE LOGOUT notification failed. Error: {Error}",notificationResult.ErrorMessage);
                     }
                 }
                 else
                 {
-                    _logger.LogWarning(
-                        "FORCE LOGOUT - Old device has no Firebase token.");
+                    _logger.LogWarning("FORCE LOGOUT - Old device has no Firebase token.");
                 }
 
 
@@ -428,11 +257,7 @@ namespace CRMWebServices.Repository
             }
             catch (SqlException ex)
             {
-                _logger.LogError(
-                    ex,
-                    "SQL error while force logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",
-                    employeeId,
-                    deviceId);
+                _logger.LogError(ex,"SQL error while force logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",employeeId,deviceId);
 
                 return new ApiResponse
                 {
@@ -442,11 +267,7 @@ namespace CRMWebServices.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error while force logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",
-                    employeeId,
-                    deviceId);
+                _logger.LogError(ex,"Error while force logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",employeeId,deviceId);
 
                 return new ApiResponse
                 {
@@ -455,27 +276,18 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region  Logout - Update IsLoggedIn to false for the device
         public async Task<ApiResponse> Logout(int employeeId,string deviceId)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_Authentication",
-
-                    new SqlParameter(
-                        "@Status",
-                        "LOGOUT_DEVICE"),
-
-                    new SqlParameter(
-                        "@EmployeeId",
-                        employeeId),
-
-                    new SqlParameter(
-                        "@DeviceId",
-                        deviceId)
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
+                    new SqlParameter("@Status","LOGOUT_DEVICE"),
+                    new SqlParameter("@EmployeeId",employeeId),
+                    new SqlParameter("@DeviceId",deviceId)
                 );
-
 
                 if (dt.Rows.Count == 0)
                 {
@@ -486,15 +298,8 @@ namespace CRMWebServices.Repository
                     };
                 }
 
-
-                bool status = Convert.ToBoolean(
-                    dt.Rows[0]["Status"]);
-
-
-                string message =
-                    dt.Rows[0]["Message"]?.ToString()
-                    ?? "Logout failed.";
-
+                bool status = Convert.ToBoolean(dt.Rows[0]["Status"]);
+                string message =dt.Rows[0]["Message"]?.ToString()?? "Logout failed.";
 
                 return new ApiResponse
                 {
@@ -504,11 +309,7 @@ namespace CRMWebServices.Repository
             }
             catch (SqlException ex)
             {
-                _logger.LogError(
-                    ex,
-                    "SQL error while logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",
-                    employeeId,
-                    deviceId);
+                _logger.LogError(ex,"SQL error while logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",employeeId,deviceId);
 
                 return new ApiResponse
                 {
@@ -518,11 +319,7 @@ namespace CRMWebServices.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error while logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",
-                    employeeId,
-                    deviceId);
+                _logger.LogError(ex,"Error while logging out EmployeeId {EmployeeId}, DeviceId {DeviceId}",employeeId,deviceId);
 
                 return new ApiResponse
                 {
@@ -531,25 +328,17 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region For checking active device and force logout if needed
         public async Task<ActiveDeviceInfo?> CheckActiveDevice(int employeeId,string deviceId)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_Authentication",
-
-                    new SqlParameter(
-                        "@Status",
-                        "CHECK_ACTIVE_DEVICE"),
-
-                    new SqlParameter(
-                        "@EmployeeId",
-                        employeeId),
-
-                    new SqlParameter(
-                        "@DeviceId",
-                        deviceId)
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
+                    new SqlParameter("@Status","CHECK_ACTIVE_DEVICE"),
+                    new SqlParameter("@EmployeeId",employeeId),
+                    new SqlParameter("@DeviceId",deviceId)
                 );
 
 
@@ -562,67 +351,36 @@ namespace CRMWebServices.Repository
 
                 DataRow row = dt.Rows[0];
 
-
                 return new ActiveDeviceInfo
                 {
-                    EmployeeDeviceId = Convert.ToInt32(
-                        row["EmployeeDeviceId"]),
-
-                    Ref_EmployeeId = Convert.ToInt32(
-                        row["Ref_EmployeeId"]),
-
+                    EmployeeDeviceId = Convert.ToInt32(row["EmployeeDeviceId"]),
+                    Ref_EmployeeId = Convert.ToInt32(row["Ref_EmployeeId"]),
                     ActiveDeviceId = row["ActiveDeviceId"]?.ToString(),
-
-                    ActiveDeviceToken =
-                        row["ActiveDeviceToken"] == DBNull.Value
-                            ? null
-                            : row["ActiveDeviceToken"]?.ToString(),
-
-                    DeviceType =
-                        row["DeviceType"] == DBNull.Value
-                            ? null
-                            : row["DeviceType"]?.ToString(),
-
-                    AppVersion =
-                        row["AppVersion"] == DBNull.Value
-                            ? null
-                            : row["AppVersion"]?.ToString(),
-
-                    IsActive = Convert.ToBoolean(
-                        row["IsActive"]),
-
+                    ActiveDeviceToken =row["ActiveDeviceToken"] == DBNull.Value? null: row["ActiveDeviceToken"]?.ToString(),
+                    DeviceType =row["DeviceType"] == DBNull.Value? null: row["DeviceType"]?.ToString(),
+                    AppVersion =row["AppVersion"] == DBNull.Value? null: row["AppVersion"]?.ToString(),
+                    IsActive = Convert.ToBoolean(row["IsActive"]),
                     IsLoggedIn = Convert.ToBoolean(row["IsLoggedIn"]),
-
-                    LastSeenOn =
-                        row["LastSeenOn"] == DBNull.Value
-                            ? null
-                            : Convert.ToDateTime(row["LastSeenOn"]),
-
-                    IsSameDevice = Convert.ToBoolean(
-                        row["IsSameDevice"])
+                    LastSeenOn =row["LastSeenOn"] == DBNull.Value? null: Convert.ToDateTime(row["LastSeenOn"]),
+                    IsSameDevice = Convert.ToBoolean(row["IsSameDevice"])
                 };
             }
             catch (SqlException ex)
             {
-                _logger.LogError(
-                    ex,
-                    "SQL error while checking active device for EmployeeId {EmployeeId}",
-                    employeeId);
+                _logger.LogError(ex,"SQL error while checking active device for EmployeeId {EmployeeId}",employeeId);
 
                 throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error while checking active device for EmployeeId {EmployeeId}",
-                    employeeId);
+                _logger.LogError(ex,"Error while checking active device for EmployeeId {EmployeeId}",employeeId);
 
                 throw;
             }
         }
+        #endregion
 
-        #region // Password Reset - Generate OTP
+        #region  Password Reset - Generate OTP
         public async Task<ApiResponse> GenerateResetOtp(int employeeId, string otpHash)
         {
             try
@@ -670,7 +428,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Password Reset - Get OTP
+        #region  Password Reset - Get OTP
         public async Task<DataRow?> GetResetOtp(int employeeId)
         {
             try
@@ -693,13 +451,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Password Reset - Increment OTP Attempt
+        #region  Password Reset - Increment OTP Attempt
         public async Task<ApiResponse> IncrementOtpAttempt(int employeeId)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_Authentication",
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
                     new SqlParameter("@Status", "INCREMENT_OTP_ATTEMPT"),
                     new SqlParameter("@EmployeeId", employeeId)
                 );
@@ -740,13 +497,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Password Reset - Verify OTP
+        #region  Password Reset - Verify OTP
         public async Task<ApiResponse> VerifyResetOtp(int employeeId)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_Authentication",
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
                     new SqlParameter("@Status", "VERIFY_RESET_OTP"),
                     new SqlParameter("@EmployeeId", employeeId)
                 );
@@ -773,9 +529,7 @@ namespace CRMWebServices.Repository
                     Data = status
                         ? new
                         {
-                            ResetToken = row["ResetToken"] != DBNull.Value
-                                ? Guid.Parse(row["ResetToken"].ToString()!)
-                                : Guid.Empty
+                            ResetToken = row["ResetToken"] != DBNull.Value? Guid.Parse(row["ResetToken"].ToString()!): Guid.Empty
                         }
                         : null
                 };
@@ -799,7 +553,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Password Reset - Reset Password
+        #region  Password Reset - Reset Password
         public async Task<ApiResponse> ResetPassword(int employeeId, Guid resetToken, string newPasswordHash)
         {
             try
@@ -847,13 +601,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Password Reset - Get Employee By Reset Token
+        #region  Password Reset - Get Employee By Reset Token
         public async Task<int?> GetResetEmployeeByToken(Guid resetToken)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_Authentication",
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Authentication",
                     new SqlParameter("@Status", "GET_RESET_EMPLOYEE"),
                     new SqlParameter("@ResetToken", resetToken)
                 );
