@@ -378,13 +378,20 @@ namespace CRMWebServices.Repository
                     ValidUntil = qRow["ValidUntil"] == DBNull.Value ? null : Convert.ToDateTime(qRow["ValidUntil"]),
                     FreightCharge = qRow["FreightCharge"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["FreightCharge"]),
                     FreightPercent = qRow["FreightPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["FreightPercent"]),
-                    Ref_FreightPolicyId = qRow["Ref_FreightPolicyId"] == DBNull.Value? null: Convert.ToInt32(qRow["Ref_FreightPolicyId"]),
-                    Ref_FreightPolicySlabId = qRow["Ref_FreightPolicySlabId"] == DBNull.Value? null: Convert.ToInt32(qRow["Ref_FreightPolicySlabId"]),
-                    FreightPolicyName = qRow["FreightPolicyName"] == DBNull.Value? null: qRow["FreightPolicyName"].ToString(),
-                    FreightPolicyVersion = qRow["FreightPolicyVersion"] == DBNull.Value? null: Convert.ToInt32(qRow["FreightPolicyVersion"]),
-                    FreightPolicyMinOrderValue = qRow["FreightPolicyMinOrderValue"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyMinOrderValue"]),
-                    FreightPolicyMaxOrderValue = qRow["FreightPolicyMaxOrderValue"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyMaxOrderValue"]),
-                    FreightPolicyAmount = qRow["FreightPolicyAmount"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyAmount"]),
+                    //Ref_FreightPolicyId = qRow["Ref_FreightPolicyId"] == DBNull.Value? null: Convert.ToInt32(qRow["Ref_FreightPolicyId"]),
+                    //Ref_FreightPolicySlabId = qRow["Ref_FreightPolicySlabId"] == DBNull.Value? null: Convert.ToInt32(qRow["Ref_FreightPolicySlabId"]),
+                    //FreightPolicyName = qRow["FreightPolicyName"] == DBNull.Value? null: qRow["FreightPolicyName"].ToString(),
+                    //FreightPolicyVersion = qRow["FreightPolicyVersion"] == DBNull.Value? null: Convert.ToInt32(qRow["FreightPolicyVersion"]),
+                    //FreightPolicyMinOrderValue = qRow["FreightPolicyMinOrderValue"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyMinOrderValue"]),
+                    //FreightPolicyMaxOrderValue = qRow["FreightPolicyMaxOrderValue"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyMaxOrderValue"]),
+                    //FreightPolicyAmount = qRow["FreightPolicyAmount"] == DBNull.Value? null: Convert.ToDecimal(qRow["FreightPolicyAmount"]),
+                    Ref_FreightPolicyId = qRow["Ref_FreightPolicyId"] == DBNull.Value ? null : Convert.ToInt32(qRow["Ref_FreightPolicyId"]),
+                    Ref_FreightPolicySlabId = qRow["Ref_FreightPolicySlabId"] == DBNull.Value ? null : Convert.ToInt32(qRow["Ref_FreightPolicySlabId"]),
+                    FreightPolicyName = qRow["FreightPolicyName"] == DBNull.Value ? null : qRow["FreightPolicyName"].ToString(),
+                    FreightPolicyVersion = qRow["FreightPolicyVersion"] == DBNull.Value ? null : Convert.ToInt32(qRow["FreightPolicyVersion"]),
+                    FreightPolicyMinOrderValue = qRow["FreightSlabMinOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(qRow["FreightSlabMinOrderValue"]),
+                    FreightPolicyMaxOrderValue = qRow["FreightSlabMaxOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(qRow["FreightSlabMaxOrderValue"]),
+                    FreightPolicyAmount = qRow["FreightPolicyAmount"] == DBNull.Value ? null : Convert.ToDecimal(qRow["FreightPolicyAmount"]),
                     TaxPercent = qRow["TaxPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxPercent"]),
                     TaxAmount = qRow["TaxAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxAmount"]),
                     SubTotal = Convert.ToDecimal(qRow["SubTotal"]),
@@ -492,9 +499,7 @@ namespace CRMWebServices.Repository
                         .Where(x => x.QuotationId == item.OpportunityQuotationId)
                         .Select(x => x.Attachment)
                         .ToList();
-                }
-
-               
+                }              
 
                 var reviews = ds.Tables.Count > 4
                     ? ds.Tables[4].Rows.Cast<DataRow>()
@@ -508,8 +513,18 @@ namespace CRMWebServices.Repository
                             ReviewedByEmployeeId =r["ReviewedByEmployeeId"] == DBNull.Value? null: Convert.ToInt32(r["ReviewedByEmployeeId"]),
                             ReviewedOn =r["ReviewedOn"] == DBNull.Value? null: Convert.ToDateTime(r["ReviewedOn"]),
                             CreatedOn =Convert.ToDateTime(r["CreatedOn"])
-                        }).ToList()
-                    : new List<ManagementReviewInfo>();
+                        }).ToList(): new List<ManagementReviewInfo>();
+
+                var freightPolicySlabs = ds.Tables.Count > 6 ? ds.Tables[6].Rows.Cast<DataRow>().Select(r => new FreightPolicySlabQuotationResponse
+                {
+                    FreightPolicyId = Convert.ToInt32(r["FreightPolicyId"]),
+                    PolicyName = r["PolicyName"]?.ToString() ?? string.Empty,
+                    VersionNo = Convert.ToInt32(r["VersionNo"]),
+                    FreightPolicySlabId = Convert.ToInt32(r["FreightPolicySlabId"]),
+                    MinOrderValue = Convert.ToDecimal(r["MinOrderValue"]),
+                    MaxOrderValue = r["MaxOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(r["MaxOrderValue"]),
+                    FreightAmount = Convert.ToDecimal(r["FreightAmount"])
+                }).ToList() : new List<FreightPolicySlabQuotationResponse>();
 
                 return new ApiResponse
                 {
@@ -522,7 +537,8 @@ namespace CRMWebServices.Repository
                         Items = items,
                         Attachments = attachments,
                         History = history,
-                        Reviews = reviews
+                        Reviews = reviews,
+                        FreightPolicySlabs = freightPolicySlabs
                     }
                 };
             }

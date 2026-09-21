@@ -14,7 +14,7 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
-        #region // GetDashboardFull used for both Admin and Employee dashboards
+        #region  GetDashboardFull used for both Admin and Employee dashboards
         public async Task<ApiResponse> GetDashboardFull(int? employeeId, DateTime? fromDate, DateTime? toDate)
         {
             try
@@ -67,7 +67,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // GetEmployeePerformance used for Admin dashboard only
+        #region  GetEmployeePerformance used for Admin dashboard only
         public async Task<ApiResponse> GetEmployeePerformance()
         {
             try
@@ -95,7 +95,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // GetDashboardFull helper method to convert DataRow to Dictionary
+        #region  GetDashboardFull helper method to convert DataRow to Dictionary
         private Dictionary<string, object> RowToDict(DataRow row)
         {
             var dict = new Dictionary<string, object>();

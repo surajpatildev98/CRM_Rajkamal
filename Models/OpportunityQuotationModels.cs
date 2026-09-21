@@ -375,6 +375,8 @@ namespace CRMWebServices.Models
             public List<QuotationHistoryInfo> History { get; set; } = new();
 
             public List<ManagementReviewInfo> Reviews { get; set; } = new();
+
+            public List<FreightPolicySlabQuotationResponse> FreightPolicySlabs { get; set; } = new();
         }
     }
 }

@@ -25,11 +25,10 @@ namespace CRMWebServices.Repository
             _schedulerExecutionService = schedulerExecutionService;
         }
 
-        #region // Attachment Handling and File Saving & Map Response
+        #region  Attachment Handling and File Saving & Map Response
 
         private static readonly string[] AllowedExtensions = { ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".jpg", ".jpeg", ".png" };
         private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
-
         private string SaveBase64Attachment(string base64, string originalFileName, string folderName)
         {
             if (string.IsNullOrWhiteSpace(base64) || string.IsNullOrWhiteSpace(originalFileName))
@@ -74,7 +73,6 @@ namespace CRMWebServices.Repository
 
             return Path.Combine("Uploads", folderName, uniqueFileName).Replace("\\", "/");
         }
-
         private string BuildFileUrl(string filePath)
         {
             try
@@ -96,7 +94,6 @@ namespace CRMWebServices.Repository
             }
 
         }
-
         private ApiResponse MapResponse(System.Data.DataTable dt, bool isCreate)
         {
             try
@@ -157,8 +154,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-
-
         public async Task<int?> GetEmployeeManagerIdAsync(int employeeId)
         {
             try
@@ -189,7 +184,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Create Lead 
+        #region  Create Lead 
         public async Task<ApiResponse> CreateLead(LeadRegisterRequest model)
         {
             try
@@ -413,7 +408,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Transfer Lead
+        #region  Transfer Lead
         public async Task<ApiResponse> TransferLead(LeadTransferRequest model)
         {
             try
@@ -431,35 +426,7 @@ namespace CRMWebServices.Repository
                 );
 
                 // return MapResponse(dt, isCreate: false);
-                var response = MapResponse(dt, isCreate: false);
-                /*if (response.Status && dt.Rows.Count > 0)
-                {
-                    int leadId = Convert.ToInt32(dt.Rows[0]["LeadId"]);
-
-                    string leadNo =dt.Rows[0]["LeadNo"]?.ToString() ?? "";
-
-                    try
-                    {
-                        await _schedulerExecutionService.SendEmployeeNotificationAsync(
-                            schedulerJobItemId: null,
-                            employeeId: model.AssignedToEmployeeId,
-                            entityId: leadId,
-                            title: "Lead Transfer",
-                            message: $"Lead {leadNo} has been assigned to you.",
-                            entityType: "LEAD",
-                            recipientType: "TRANSFER"
-                        );
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(
-                            ex,
-                            "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
-                            leadId,
-                            model.AssignedToEmployeeId);
-                    }
-                }
-                return response;*/
+                var response = MapResponse(dt, isCreate: false);                
 
                 if (!response.Status || dt == null || dt.Rows.Count == 0)
                 {
@@ -469,31 +436,17 @@ namespace CRMWebServices.Repository
                 var row = dt.Rows[0];
 
                 int leadId = Convert.ToInt32(row["LeadId"]);
-
-                string leadNo =
-                    row["LeadNo"]?.ToString() ?? $"Lead #{leadId}";
-
-                int assignedToEmployeeId =
-                    Convert.ToInt32(row["AssignedToEmployeeId"]);
-
-                int leadCreatedBy =
-                    Convert.ToInt32(row["LeadCreatedBy"]);
-
+                string leadNo =row["LeadNo"]?.ToString() ?? $"Lead #{leadId}";
+                int assignedToEmployeeId =Convert.ToInt32(row["AssignedToEmployeeId"]);
+                int leadCreatedBy =Convert.ToInt32(row["LeadCreatedBy"]);
                 int? managerEmployeeId = null;
-
                 if (row["ManagerEmployeeId"] != DBNull.Value)
                 {
-                    managerEmployeeId =
-                        Convert.ToInt32(row["ManagerEmployeeId"]);
+                    managerEmployeeId =Convert.ToInt32(row["ManagerEmployeeId"]);
                 }
 
-                string assignedEmployeeName =
-                    row["AssignedEmployeeName"]?.ToString()
-                    ?? "the assigned employee";
-
-                string managerEmployeeName =
-                    row["ManagerEmployeeName"]?.ToString()
-                    ?? "Manager";
+                string assignedEmployeeName =row["AssignedEmployeeName"]?.ToString()?? "the assigned employee";
+                string managerEmployeeName =row["ManagerEmployeeName"]?.ToString()?? "Manager";
 
                 // 1. Notification to NEW ASSIGNED EMPLOYEE
 
@@ -561,8 +514,7 @@ namespace CRMWebServices.Repository
                     catch (Exception ex)
                     {
                         _logger.LogError(
-                            ex,
-                            "Failed to send transfer notification to lead creator. " +
+                            ex,"Failed to send transfer notification to lead creator. " + 
                             "LeadId {LeadId}, CreatorEmployeeId {CreatorEmployeeId}",
                             leadId,
                             leadCreatedBy
@@ -625,16 +577,14 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Update Lead Status
+        #region  Update Lead Status
         public async Task<ApiResponse> UpdateLeadStatus(LeadStatusUpdateRequest model)
         {
             try
             {
 
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_LeadManagement",
-
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "UPDATE_LEAD_STATUS"),
                     new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
                     new SqlParameter("@Ref_LeadStatusId", model.Ref_LeadStatusId),
@@ -661,8 +611,7 @@ namespace CRMWebServices.Repository
                     {
                         LeadId = Convert.ToInt32(row["LeadId"]),
                         LeadStatusId = Convert.ToInt32(row["LeadStatusId"])
-                    }
-                    : null;
+                    }: null;
 
                 return response;
             }
@@ -685,7 +634,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Create Activity
+        #region  Create Activity
         public async Task<ApiResponse> CreateActivity(LeadActivityRequest model)
         {
             try
@@ -704,7 +653,6 @@ namespace CRMWebServices.Repository
                         try
                         {
                             var relativePath = SaveBase64Attachment(att.Base64, att.FileName, "LeadActivityAttachments");
-
                             savedAttachments.Add(new
                             {
                                 FileName = att.FileName,
@@ -722,9 +670,7 @@ namespace CRMWebServices.Repository
 
                 string attachmentsMetaJson = savedAttachments.Count > 0 ? JsonConvert.SerializeObject(savedAttachments) : null;
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_LeadManagement",
-
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "CREATE_ACTIVITY"),
                     new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
                     new SqlParameter("@Ref_ActivityTypeId", model.Ref_ActivityTypeId),
@@ -739,7 +685,6 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Longitude", (object?)model.Longitude ?? DBNull.Value),
                      new SqlParameter("@LocationAddress", (object?)model.LocationAddress ?? DBNull.Value),
                     new SqlParameter("@AttachmentsMeta", (object?)attachmentsMetaJson ?? DBNull.Value),
-
                     new SqlParameter("@CreatedBy", (object?)model.CreatedBy ?? DBNull.Value)
                 );
 
@@ -781,14 +726,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Create Follow-Up
+        #region  Create Follow-Up   
         public async Task<ApiResponse> CreateFollowUp(LeadFollowUpRequest model)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                        "USP_CRM_LeadManagement",
-
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                         new SqlParameter("@Status", "CREATE_FOLLOWUP"),
                         new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
                         new SqlParameter("@NextFollowUpDate", model.NextFollowUpDate),
@@ -841,11 +784,10 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Update Follow-Up Status
+        #region  Update Follow-Up Status
         public async Task<ApiResponse> UpdateFollowUpStatus(FollowUpStatusUpdateRequest model)
         {
-            var dt = await _database.ExecuteDataTableAsync(
-                "USP_CRM_LeadManagement",
+            var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                 new SqlParameter("@Status", "UPDATE_FOLLOWUP_STATUS"),
                 new SqlParameter("@FollowUpId", model.FollowUpId),
                 new SqlParameter("@Ref_ActivityStatusId", model.Ref_ActivityStatusId),
@@ -869,13 +811,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Get Lead Full Details
+        #region  Get Lead Full Details
         public async Task<ApiResponse> GetLeadFullDetails(int leadId)
         {
             try
             {
-                var ds = await _database.ExecuteDataSetAsync(
-                    "USP_CRM_LeadManagement",
+                var ds = await _database.ExecuteDataSetAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "GET_LEAD_FULL_DETAILS"),
                     new SqlParameter("@Ref_LeadId", leadId)
                 );
@@ -919,10 +860,8 @@ namespace CRMWebServices.Repository
                     expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                     leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
                     leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value? null:leadRow["LeadRequirementRemark"].ToString(),         //New Added 100926
-
                     // NEW: Attachments directly in lead object (as array)
                     attachments = leadAttachments.Any() ? leadAttachments : null,
-
                     assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
                     assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
                     leadSource = leadRow["LeadSource"] == DBNull.Value ? null : leadRow["LeadSource"].ToString(),
@@ -951,56 +890,20 @@ namespace CRMWebServices.Repository
                     email = r["Email"] == DBNull.Value ? null : r["Email"].ToString()
                 }).ToList();
 
-                //var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new
-                //{
-                //    leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
-                //    offeringId = Convert.ToInt32(r["OfferingId"]),
-                //    offeringName = r["OfferingName"]?.ToString(),
-                //    remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
-                //    quantity = Convert.ToDecimal(r["Quantity"]),
-                //    unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
-                //}).ToList();
-
+               
                 var requirements = ds.Tables[2].Rows.Cast<System.Data.DataRow>().Select(r => new   //New Added 100926
                 {
                     leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
-
-                    categoryId = r["CategoryId"] == DBNull.Value
-                    ? (int?)null
-                    : Convert.ToInt32(r["CategoryId"]),
-
-                                categoryName = r["CategoryName"] == DBNull.Value
-                    ? null
-                    : r["CategoryName"].ToString(),
-
-                                offeringId = r["OfferingId"] == DBNull.Value
-                    ? (int?)null
-                    : Convert.ToInt32(r["OfferingId"]),
-
-                                offeringName = r["OfferingName"] == DBNull.Value
-                    ? null
-                    : r["OfferingName"].ToString(),
-
-                                productId = r["ProductId"] == DBNull.Value
-                    ? (long?)null
-                    : Convert.ToInt64(r["ProductId"]),
-
-                                productName = r["ProductName"] == DBNull.Value
-                    ? null
-                    : r["ProductName"].ToString(),
-
-                                remark = r["Remark"] == DBNull.Value
-                    ? null
-                    : r["Remark"].ToString(),
-
-                                quantity = r["Quantity"] == DBNull.Value
-                    ? (decimal?)null
-                    : Convert.ToDecimal(r["Quantity"]),
-
-                                unit = r["Unit"] == DBNull.Value
-                    ? null
-                    : r["Unit"].ToString()
-                            }).ToList();
+                    categoryId = r["CategoryId"] == DBNull.Value? (int?)null: Convert.ToInt32(r["CategoryId"]),
+                    categoryName = r["CategoryName"] == DBNull.Value? null: r["CategoryName"].ToString(),
+                    offeringId = r["OfferingId"] == DBNull.Value? (int?)null: Convert.ToInt32(r["OfferingId"]),
+                    offeringName = r["OfferingName"] == DBNull.Value? null: r["OfferingName"].ToString(),
+                    productId = r["ProductId"] == DBNull.Value? (long?)null: Convert.ToInt64(r["ProductId"]),
+                    productName = r["ProductName"] == DBNull.Value? null: r["ProductName"].ToString(),
+                    remark = r["Remark"] == DBNull.Value? null: r["Remark"].ToString(),
+                    quantity = r["Quantity"] == DBNull.Value? (decimal?)null: Convert.ToDecimal(r["Quantity"]),
+                    unit = r["Unit"] == DBNull.Value? null: r["Unit"].ToString()
+                }).ToList();
 
                 var activities = ds.Tables[3].Rows.Cast<System.Data.DataRow>().Select(r => new
                 {
@@ -1069,41 +972,7 @@ namespace CRMWebServices.Repository
                                     }).Cast<object>().ToList();
                             }
                         }
-                    }
-
-                    // Activity Expenses
-
-                    //List<object> expenses = new List<object>();
-                    //if (r["ExpensesJson"] != DBNull.Value)
-                    //{
-                    //    var json = r["ExpensesJson"]?.ToString();
-
-                    //    if (!string.IsNullOrWhiteSpace(json))
-                    //    {
-                    //        var expenseList =JsonConvert.DeserializeObject<List<dynamic>>(json);
-
-                    //        if (expenseList != null)
-                    //        {
-                    //            expenses = expenseList
-                    //                .Select(e => new
-                    //                {
-                    //                    activityExpenseId =Convert.ToInt32(e.ActivityExpenseId),
-                    //                    expenseCategoryId =Convert.ToInt32(e.Ref_ExpenseCategoryId),
-                    //                    categoryCode =e.CategoryCode?.ToString(),
-                    //                    categoryName =e.CategoryName?.ToString(),
-                    //                    transportModeId =e.Ref_TransportModeId != null? Convert.ToInt32(e.Ref_TransportModeId): (int?)null,
-                    //                    modeCode =e.ModeCode?.ToString(),
-                    //                    modeName =e.ModeName?.ToString(),
-                    //                    amount =e.Amount != null? Convert.ToDecimal(e.Amount): 0,
-                    //                    description =e.Description?.ToString(),
-                    //                    fromLocation =e.FromLocation?.ToString(),
-                    //                    toLocation =e.ToLocation?.ToString(),
-                    //                    expenseDate =e.ExpenseDate != null? Convert.ToDateTime(e.ExpenseDate.ToString()): (DateTime?)null,
-                    //                    createdOn =e.CreatedOn != null? Convert.ToDateTime(e.CreatedOn.ToString()): (DateTime?)null
-                    //                }).Cast<object>().ToList();
-                    //        }
-                    //    }
-                    //}                    
+                    }                                   
 
                     // Activity Expenses
                     List<object> expenses = new List<object>();
@@ -1114,30 +983,21 @@ namespace CRMWebServices.Repository
 
                         if (!string.IsNullOrWhiteSpace(json))
                         {
-                            var expenseList =
-                                JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(json);
+                            var expenseList =JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(json);
 
                             if (expenseList != null)
                             {
                                 foreach (var e in expenseList)
-                                {
-                                    // -------------------------------------------------
-                                    // Expense Attachments
-                                    // -------------------------------------------------
+                                {                                   
+                                    // Expense Attachments                                    
                                     List<object> expenseAttachments = new List<object>();
 
-                                    if (e.ContainsKey("AttachmentsJson") &&
-                                        e["AttachmentsJson"] != null)
+                                    if (e.ContainsKey("AttachmentsJson") && e["AttachmentsJson"] != null)
                                     {
-                                        var attachmentJson =
-                                            e["AttachmentsJson"]?.ToString();
-
+                                        var attachmentJson =e["AttachmentsJson"]?.ToString();
                                         if (!string.IsNullOrWhiteSpace(attachmentJson))
                                         {
-                                            var expenseAttachmentList =
-                                                JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(
-                                                    attachmentJson
-                                                );
+                                            var expenseAttachmentList =JsonConvert.DeserializeObject<List<Dictionary<string, object>>>(attachmentJson);
 
                                             if (expenseAttachmentList != null)
                                             {
@@ -1145,122 +1005,34 @@ namespace CRMWebServices.Repository
                                                 {
                                                     expenseAttachments.Add(new
                                                     {
-                                                        attachmentId =
-                                                            a.ContainsKey("AttachmentId") &&
-                                                            a["AttachmentId"] != null
-                                                                ? Convert.ToInt32(a["AttachmentId"])
-                                                                : 0,
-
-                                                        fileName =
-                                                            a.ContainsKey("FileName")
-                                                                ? a["FileName"]?.ToString()
-                                                                : null,
-
-                                                        fileType =
-                                                            a.ContainsKey("FileType")
-                                                                ? a["FileType"]?.ToString()
-                                                                : null,
-
-                                                        fileSize =
-                                                            a.ContainsKey("FileSize") &&
-                                                            a["FileSize"] != null
-                                                                ? Convert.ToInt64(a["FileSize"])
-                                                                : (long?)null,
-
-                                                        fileUrl =
-                                                            a.ContainsKey("FilePath")
-                                                                ? BuildFileUrl(
-                                                                    a["FilePath"]?.ToString()
-                                                                  )
-                                                                : null,
-
-                                                        uploadedOn =
-                                                            a.ContainsKey("CreatedOn") &&
-                                                            a["CreatedOn"] != null
-                                                                ? Convert.ToDateTime(a["CreatedOn"])
-                                                                : (DateTime?)null
+                                                        attachmentId =a.ContainsKey("AttachmentId") && a["AttachmentId"] != null ? Convert.ToInt32(a["AttachmentId"]): 0,
+                                                        fileName =a.ContainsKey("FileName")? a["FileName"]?.ToString(): null,
+                                                        fileType =a.ContainsKey("FileType")? a["FileType"]?.ToString(): null,
+                                                        fileSize =a.ContainsKey("FileSize") && a["FileSize"] != null? Convert.ToInt64(a["FileSize"]): (long?)null,
+                                                        fileUrl =a.ContainsKey("FilePath")? BuildFileUrl(a["FilePath"]?.ToString()): null,
+                                                        uploadedOn =a.ContainsKey("CreatedOn") && a["CreatedOn"] != null? Convert.ToDateTime(a["CreatedOn"]): (DateTime?)null
                                                     });
                                                 }
                                             }
                                         }
                                     }
-
-                                    // -------------------------------------------------
-                                    // Expense
-                                    // -------------------------------------------------
+                                    
+                                    // Expense                
                                     expenses.Add(new
                                     {
-                                        activityExpenseId =
-                                            e.ContainsKey("ActivityExpenseId") &&
-                                            e["ActivityExpenseId"] != null
-                                                ? Convert.ToInt32(e["ActivityExpenseId"])
-                                                : 0,
-
-                                        expenseCategoryId =
-                                            e.ContainsKey("Ref_ExpenseCategoryId") &&
-                                            e["Ref_ExpenseCategoryId"] != null
-                                                ? Convert.ToInt32(e["Ref_ExpenseCategoryId"])
-                                                : 0,
-
-                                        categoryCode =
-                                            e.ContainsKey("CategoryCode")
-                                                ? e["CategoryCode"]?.ToString()
-                                                : null,
-
-                                        categoryName =
-                                            e.ContainsKey("CategoryName")
-                                                ? e["CategoryName"]?.ToString()
-                                                : null,
-
-                                        transportModeId =
-                                            e.ContainsKey("Ref_TransportModeId") &&
-                                            e["Ref_TransportModeId"] != null
-                                                ? Convert.ToInt32(e["Ref_TransportModeId"])
-                                                : (int?)null,
-
-                                        modeCode =
-                                            e.ContainsKey("ModeCode")
-                                                ? e["ModeCode"]?.ToString()
-                                                : null,
-
-                                        modeName =
-                                            e.ContainsKey("ModeName")
-                                                ? e["ModeName"]?.ToString()
-                                                : null,
-
-                                        amount =
-                                            e.ContainsKey("Amount") &&
-                                            e["Amount"] != null
-                                                ? Convert.ToDecimal(e["Amount"])
-                                                : 0,
-
-                                        description =
-                                            e.ContainsKey("Description")
-                                                ? e["Description"]?.ToString()
-                                                : null,
-
-                                        fromLocation =
-                                            e.ContainsKey("FromLocation")
-                                                ? e["FromLocation"]?.ToString()
-                                                : null,
-
-                                        toLocation =
-                                            e.ContainsKey("ToLocation")
-                                                ? e["ToLocation"]?.ToString()
-                                                : null,
-
-                                        expenseDate =
-                                            e.ContainsKey("ExpenseDate") &&
-                                            e["ExpenseDate"] != null
-                                                ? Convert.ToDateTime(e["ExpenseDate"])
-                                                : (DateTime?)null,
-
-                                        createdOn =
-                                            e.ContainsKey("CreatedOn") &&
-                                            e["CreatedOn"] != null
-                                                ? Convert.ToDateTime(e["CreatedOn"])
-                                                : (DateTime?)null,
-
+                                        activityExpenseId =e.ContainsKey("ActivityExpenseId") && e["ActivityExpenseId"] != null? Convert.ToInt32(e["ActivityExpenseId"]) : 0,
+                                        expenseCategoryId =e.ContainsKey("Ref_ExpenseCategoryId") && e["Ref_ExpenseCategoryId"] != null ? Convert.ToInt32(e["Ref_ExpenseCategoryId"]): 0,
+                                        categoryCode =e.ContainsKey("CategoryCode") ? e["CategoryCode"]?.ToString() : null,
+                                        categoryName =e.ContainsKey("CategoryName")? e["CategoryName"]?.ToString(): null,
+                                        transportModeId =e.ContainsKey("Ref_TransportModeId") && e["Ref_TransportModeId"] != null ? Convert.ToInt32(e["Ref_TransportModeId"]): (int?)null,
+                                        modeCode =e.ContainsKey("ModeCode")? e["ModeCode"]?.ToString(): null,
+                                        modeName =e.ContainsKey("ModeName")? e["ModeName"]?.ToString(): null,
+                                        amount =e.ContainsKey("Amount") && e["Amount"] != null? Convert.ToDecimal(e["Amount"]): 0,
+                                        description =e.ContainsKey("Description") ? e["Description"]?.ToString(): null,
+                                        fromLocation =e.ContainsKey("FromLocation")? e["FromLocation"]?.ToString(): null,
+                                        toLocation =e.ContainsKey("ToLocation")? e["ToLocation"]?.ToString(): null,
+                                        expenseDate =e.ContainsKey("ExpenseDate") && e["ExpenseDate"] != null? Convert.ToDateTime(e["ExpenseDate"]): (DateTime?)null,
+                                        createdOn =e.ContainsKey("CreatedOn") && e["CreatedOn"] != null ? Convert.ToDateTime(e["CreatedOn"]): (DateTime?)null,
                                         // Expense-specific receipts
                                         attachments = expenseAttachments
                                     });
@@ -1282,14 +1054,11 @@ namespace CRMWebServices.Repository
                         createdBy =r["CreatedBy"] == DBNull.Value? null: r["CreatedBy"].ToString(),
                         status =r["Status"]?.ToString(),
                         statusColor =r["StatusColor"]?.ToString(),
-                        createdOn =Convert.ToDateTime(r["CreatedOn"]),
-                        // NEW
-                        attachments,
-                        // NEW
+                        createdOn =Convert.ToDateTime(r["CreatedOn"]),                  
+                        attachments,                    
                         expenses
                     };
-                })
-                .ToList();
+                }).ToList();
 
                 return new ApiResponse
                 {
@@ -1326,13 +1095,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Get Lead List
+        #region  Get Lead List
         public async Task<ApiResponse> GetLeadList(LeadListFilterRequest filter)
         {
             try
             {
-                var ds = await _database.ExecuteDataSetAsync(
-                    "USP_CRM_LeadManagement",
+                var ds = await _database.ExecuteDataSetAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "GET_LEAD_LIST_FULL"),
                     new SqlParameter("@SearchText", (object?)filter?.SearchText ?? DBNull.Value),
                     new SqlParameter("@FilterStatusId", (object?)filter?.FilterStatusId ?? DBNull.Value),
@@ -1378,8 +1146,7 @@ namespace CRMWebServices.Repository
                         }
                     }
 
-                    var contacts = contactRows
-                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                    var contacts = contactRows .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
                         .Select(r => new
                         {
                             contactId = Convert.ToInt32(r["LeadContactId"]),
@@ -1389,63 +1156,23 @@ namespace CRMWebServices.Repository
                             email = r["Email"] == DBNull.Value ? null : r["Email"].ToString()
                         }).ToList();
 
-                    //var requirements = requirementRows
-                    //    .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
-                    //    .Select(r => new
-                    //    {
-                    //        leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
-                    //        offeringId = Convert.ToInt32(r["OfferingId"]),
-                    //        offeringName = r["OfferingName"]?.ToString(),
-                    //        remark = r["Remark"] == DBNull.Value ? null : r["Remark"].ToString(),
-                    //        quantity = Convert.ToDecimal(r["Quantity"]),
-                    //        unit = r["Unit"] == DBNull.Value ? null : r["Unit"].ToString()
-                    //    }).ToList();
+                   
+                    var requirements = requirementRows.Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                        .Select(r => new
+                        {
+                            leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
+                            categoryId = r["CategoryId"] == DBNull.Value? (int?)null: Convert.ToInt32(r["CategoryId"]),
+                            categoryName = r["CategoryName"] == DBNull.Value? null: r["CategoryName"].ToString(),
+                            offeringId = r["OfferingId"] == DBNull.Value? (int?)null: Convert.ToInt32(r["OfferingId"]),
+                            offeringName = r["OfferingName"] == DBNull.Value? null: r["OfferingName"].ToString(),
+                            productId = r["ProductId"] == DBNull.Value? (long?)null: Convert.ToInt64(r["ProductId"]),
+                            productName = r["ProductName"] == DBNull.Value? null: r["ProductName"].ToString(),
+                            remark = r["Remark"] == DBNull.Value? null: r["Remark"].ToString(),
+                            quantity = r["Quantity"] == DBNull.Value? (decimal?)null: Convert.ToDecimal(r["Quantity"]),
+                            unit = r["Unit"] == DBNull.Value? null: r["Unit"].ToString()
+                        }).ToList();
 
-                    var requirements = requirementRows
-                    .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
-                    .Select(r => new
-                    {
-                        leadRequirementId = Convert.ToInt32(r["LeadRequirementId"]),
-
-                        categoryId = r["CategoryId"] == DBNull.Value
-                            ? (int?)null
-                            : Convert.ToInt32(r["CategoryId"]),
-
-                        categoryName = r["CategoryName"] == DBNull.Value
-                            ? null
-                            : r["CategoryName"].ToString(),
-
-                        offeringId = r["OfferingId"] == DBNull.Value
-                            ? (int?)null
-                            : Convert.ToInt32(r["OfferingId"]),
-
-                        offeringName = r["OfferingName"] == DBNull.Value
-                            ? null
-                            : r["OfferingName"].ToString(),
-
-                        productId = r["ProductId"] == DBNull.Value
-                            ? (long?)null
-                            : Convert.ToInt64(r["ProductId"]),
-
-                        productName = r["ProductName"] == DBNull.Value
-                            ? null
-                            : r["ProductName"].ToString(),
-
-                        remark = r["Remark"] == DBNull.Value
-                            ? null
-                            : r["Remark"].ToString(),
-
-                        quantity = r["Quantity"] == DBNull.Value
-                            ? (decimal?)null
-                            : Convert.ToDecimal(r["Quantity"]),
-
-                        unit = r["Unit"] == DBNull.Value
-                            ? null
-                            : r["Unit"].ToString()
-                    }).ToList();
-
-                    var activities = activityRows
-                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                    var activities = activityRows.Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
                         .Select(r => new
                         {
                             activityId = Convert.ToInt32(r["ActivityId"]),
@@ -1458,8 +1185,7 @@ namespace CRMWebServices.Repository
                             activityStatusColor = r["ActivityStatusColor"] == DBNull.Value ? null : r["ActivityStatusColor"].ToString()
                         }).ToList();
 
-                    var files = fileRows
-                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                    var files = fileRows.Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
                         .Select(r => new
                         {
                             attachmentId = Convert.ToInt32(r["AttachmentId"]),
@@ -1469,8 +1195,7 @@ namespace CRMWebServices.Repository
                             fileUrl = BuildFileUrl(r["FilePath"]?.ToString())
                         }).ToList();
 
-                    var followUps = followUpRows
-                        .Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
+                    var followUps = followUpRows.Where(r => Convert.ToInt32(r["LeadId"]) == leadId)
                         .Select(r => new
                         {
                             followUpId = Convert.ToInt32(r["FollowUpId"]),
@@ -1501,13 +1226,9 @@ namespace CRMWebServices.Repository
                             },
                             expectedValue = leadRow["ExpectedValue"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(leadRow["ExpectedValue"]),
                             leadRemark = leadRow["LeadRemark"] == DBNull.Value ? null : leadRow["LeadRemark"].ToString(),
-
                             leadRequirementRemark = leadRow["LeadRequirementRemark"] == DBNull.Value? null: leadRow["LeadRequirementRemark"].ToString(), // New Added 100926
-
-
                             // NEW: Attachments directly in lead object
                             attachments = leadAttachments.Any() ? leadAttachments : null,
-
                             assignedToEmployeeId = leadRow["AssignedToEmployeeId"] == DBNull.Value ? (int?)null : Convert.ToInt32(leadRow["AssignedToEmployeeId"]),
                             assignedToEmployee = leadRow["AssignedToEmployee"] == DBNull.Value ? null : leadRow["AssignedToEmployee"].ToString(),
                             leadSource = leadRow["LeadSource"] == DBNull.Value ? null : leadRow["LeadSource"].ToString(),
@@ -1559,7 +1280,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Close Lead
+        #region  Close Lead
         public async Task<ApiResponse> CloseLead(LeadCloseRequest model)
         {
             var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
@@ -1590,39 +1311,24 @@ namespace CRMWebServices.Repository
             // GET LEAD INFORMATION
 
             int leadId = Convert.ToInt32(row["LeadId"]);
-
             string leadNo = row.Table.Columns.Contains("LeadNo") ? row["LeadNo"]?.ToString() ?? "" : "";
-
-            string statusName = row.Table.Columns.Contains("StatusName")
-                    ? row["StatusName"]?.ToString() ?? ""  : "";
+            string statusName = row.Table.Columns.Contains("StatusName") ? row["StatusName"]?.ToString() ?? ""  : "";
 
             // GET CREATOR + ASSIGNED EMPLOYEE
 
-            var leadInfo = await _database.ExecuteDataTableAsync(
-                "USP_CRM_LeadManagement",
-
-                new SqlParameter(
-                    "@Status",
-                    "GET_LEAD_NOTIFICATION_INFO"),
-
-                new SqlParameter(
-                    "@Ref_LeadId",
-                    leadId)
+            var leadInfo = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
+                new SqlParameter("@Status","GET_LEAD_NOTIFICATION_INFO"),
+                new SqlParameter("@Ref_LeadId",leadId)
             );
 
             if (leadInfo == null || leadInfo.Rows.Count == 0)
             {
-                _logger.LogWarning(
-                    "Lead closed but notification information not found. LeadId {LeadId}",
-                    leadId);
-
+                _logger.LogWarning("Lead closed but notification information not found. LeadId {LeadId}",leadId);
                 return response;
             }
 
             var leadRow = leadInfo.Rows[0];
-
             int? creatorEmployeeId = leadRow["CreatedBy"] == DBNull.Value ? null : Convert.ToInt32(leadRow["CreatedBy"]);
-
             int? assignedEmployeeId = leadRow["AssignedEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(leadRow["AssignedEmployeeId"]);
 
             // 1. NOTIFY LEAD CREATOR
@@ -1664,11 +1370,9 @@ namespace CRMWebServices.Repository
             {
                 try
                 {
-                    int? managerEmployeeId = await GetEmployeeManagerIdAsync(
-                            assignedEmployeeId.Value);
+                    int? managerEmployeeId = await GetEmployeeManagerIdAsync(assignedEmployeeId.Value);
 
-                    if (managerEmployeeId.HasValue &&
-                        managerEmployeeId.Value != model.CreatedBy)
+                    if (managerEmployeeId.HasValue && managerEmployeeId.Value != model.CreatedBy)
                     {
                         // 3. NOTIFY MANAGER
 
@@ -1718,7 +1422,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Get Assigned Employee Id
+        #region  Get Assigned Employee Id
         public async Task<int?> GetAssignedEmployeeId(int leadId)
         {
             var parameters = new[]
@@ -1727,26 +1431,21 @@ namespace CRMWebServices.Repository
                 new SqlParameter("@Ref_LeadId", leadId)
             };
 
-            DataTable dt = await _database.ExecuteDataTableAsync(
-                "USP_CRM_LeadManagement",
-                parameters);
+            DataTable dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",parameters);
 
             if (dt.Rows.Count == 0)
                 return null;
 
-            return dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value
-                ? null
-                : Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
+            return dt.Rows[0]["Ref_CurrentAssignedEmployeeId"] == DBNull.Value? null: Convert.ToInt32(dt.Rows[0]["Ref_CurrentAssignedEmployeeId"]);
         }
         #endregion
 
-        #region // Get Lead Access Info
+        #region  Get Lead Access Info
         public async Task<LeadAccessInfo?> GetLeadAccessInfo(int leadId)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_LeadManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "GET_LEAD_ACCESS_INFO"),
                     new SqlParameter("@Ref_LeadId", leadId));
 
@@ -1758,9 +1457,7 @@ namespace CRMWebServices.Repository
                 {
                     LeadId = leadId,
                     CreatedBy = row["CreatedBy"] == DBNull.Value ? 0 : Convert.ToInt32(row["CreatedBy"]),
-                    AssignedEmployeeId = row["Ref_CurrentAssignedEmployeeId"] == DBNull.Value
-                        ? 0
-                        : Convert.ToInt32(row["Ref_CurrentAssignedEmployeeId"])
+                    AssignedEmployeeId = row["Ref_CurrentAssignedEmployeeId"] == DBNull.Value? 0: Convert.ToInt32(row["Ref_CurrentAssignedEmployeeId"])
                 };
             }
             catch (Exception ex)
@@ -1772,11 +1469,10 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Assign Lead
+        #region  Assign Lead
         public async Task<ApiResponse> AssignLead(LeadAssignRequest model)
         {
-            var dt = await _database.ExecuteDataTableAsync(
-                "USP_CRM_LeadManagement",
+            var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                 new SqlParameter("@Status", "ASSIGN_LEAD"),
                 new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
                 new SqlParameter("@AssignedToEmployeeId", model.AssignedToEmployeeId),
@@ -1796,56 +1492,7 @@ namespace CRMWebServices.Repository
             bool status = Convert.ToInt32(row["Status"]) == 1;
 
             response.Status = status;
-            response.Message = row["Message"]?.ToString();
-            /* response.Data = status
-                 ? new
-                 {
-                     LeadId = Convert.ToInt32(row["LeadId"]),
-                     AssignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"])
-                 }
-                 : null;
-
-             return response;*/
-
-            /*if (status)
-            {
-                int leadId = Convert.ToInt32(row["LeadId"]);
-                int assignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"]);
-
-                response.Data = new
-                {
-                    LeadId = leadId,
-                    AssignedToEmployeeId = assignedToEmployeeId
-                };
-
-                // Send notification to assigned employee
-                try
-                {
-                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
-                        schedulerJobItemId: null,
-                        employeeId: assignedToEmployeeId,
-                        entityId: leadId,
-                        title: "Lead Assigned",
-                        message: $"Lead has been assigned to you.",
-                        entityType: "LEAD",
-                        recipientType: "ASSIGN"
-                    );
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(
-                        ex,
-                        "Failed to send assigned Lead notification. LeadId {LeadId}, EmployeeId {EmployeeId}",
-                        leadId,
-                        assignedToEmployeeId);
-                }
-            }
-            else
-            {
-                response.Data = null;
-            }
-
-            return response;*/
+            response.Message = row["Message"]?.ToString();           
 
             if (!status)
             {
@@ -1857,7 +1504,6 @@ namespace CRMWebServices.Repository
             int assignedToEmployeeId = Convert.ToInt32(row["AssignedToEmployeeId"]);
             int leadCreatedBy = Convert.ToInt32(row["LeadCreatedBy"]);
             string leadNo = row["LeadNo"]?.ToString() ?? $"Lead #{leadId}";
-
             string assignedEmployeeName = row["AssignedEmployeeName"]?.ToString() ?? "an employee";
 
             response.Data = new
@@ -1940,13 +1586,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Check Customer Exists
+        #region  Check Customer Exists
         public async Task<ApiResponse> CheckCustomerExists(string? gst, string? customerName, string? pan)
         {
             try
             {
-                var ds = await _database.ExecuteDataSetAsync(
-                    "USP_CRM_LeadManagement",
+                var ds = await _database.ExecuteDataSetAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "CHECK_CUSTOMER_EXISTS"),
                     new SqlParameter("@Gst", string.IsNullOrWhiteSpace(gst) ? (object)DBNull.Value : gst),
                     new SqlParameter("@CustomerName", string.IsNullOrWhiteSpace(customerName) ? (object)DBNull.Value : customerName),
@@ -2017,9 +1662,7 @@ namespace CRMWebServices.Repository
                                 ContactPerson = row["ContactPerson"]?.ToString(),
                                 Mobile = row["Mobile"]?.ToString(),
                                 Email = row["Email"]?.ToString(),
-                                Ref_DesignationId = row["Ref_DesignationId"] == DBNull.Value
-                                    ? null
-                                    : Convert.ToInt32(row["Ref_DesignationId"])
+                                Ref_DesignationId = row["Ref_DesignationId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_DesignationId"])
                             });
                         }
                     }
@@ -2039,13 +1682,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Search Customer
+        #region  Search Customer
         public async Task<ApiResponse> SearchCustomer(string searchText)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_LeadManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "SEARCH_CUSTOMER"),
                     new SqlParameter("@SearchText", searchText)
                 );
@@ -2081,8 +1723,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Add Activity Expenses     
-
+        #region  Add Activity Expenses   
         public async Task<ApiResponse> AddActivityExpenses(LeadActivityExpenseRequest model)
         {
             try
@@ -2159,36 +1800,22 @@ namespace CRMWebServices.Repository
 
                             try
                             {
-                                // Use the SAME existing attachment method
-                                // already used by CreateActivity.
-                                string relativePath = SaveBase64Attachment(
-                                    attachment.Base64,
-                                    attachment.FileName,
-                                    "LeadActivityAttachments"
-                                );
-
+                               
+                                string relativePath = SaveBase64Attachment(attachment.Base64,attachment.FileName,"LeadActivityAttachments");
                                 string base64Content = attachment.Base64;
-
                                 // Remove data URI prefix if present
                                 if (base64Content.Contains(","))
                                 {
-                                    base64Content =
-                                        base64Content.Substring(
-                                            base64Content.IndexOf(",") + 1
-                                        );
+                                    base64Content =base64Content.Substring(base64Content.IndexOf(",") + 1);
                                 }
 
-                                int fileSize =
-                                    Convert.FromBase64String(base64Content).Length;
+                                int fileSize =Convert.FromBase64String(base64Content).Length;
 
                                 savedExpenseAttachments.Add(new
                                 {
                                     FileName = attachment.FileName,
                                     FilePath = relativePath,
-                                    FileType = Path
-                                        .GetExtension(attachment.FileName)
-                                        .TrimStart('.')
-                                        .ToLowerInvariant(),
+                                    FileType = Path.GetExtension(attachment.FileName).TrimStart('.').ToLowerInvariant(),
                                     FileSize = fileSize
                                 });
                             }
@@ -2197,8 +1824,7 @@ namespace CRMWebServices.Repository
                                 return new ApiResponse
                                 {
                                     Status = false,
-                                    Message =
-                                        $"Error processing expense attachment '{attachment.FileName}': {ex.Message}"
+                                    Message =$"Error processing expense attachment '{attachment.FileName}': {ex.Message}"
                                 };
                             }
                         }
@@ -2225,8 +1851,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Ref_LeadId",model.Ref_LeadId),
                     new SqlParameter("@Ref_ActivityId",model.Ref_ActivityId),
                     new SqlParameter("@ExpenseItems",(object?)expensesJson ?? DBNull.Value),
-                    new SqlParameter("@CreatedBy",(object?)model.CreatedBy ?? DBNull.Value
-                    )
+                    new SqlParameter("@CreatedBy",(object?)model.CreatedBy ?? DBNull.Value)
                 );
 
                 var response = new ApiResponse();
@@ -2275,9 +1900,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-
         #endregion
 
+        #region Get Activity Expense Masters
         public async Task<ApiResponse> GetActivityExpenseMasters()
         {
             try
@@ -2333,14 +1958,14 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
-        #region // Add Lead Requirement
+        #region  Add Lead Requirement
         public async Task<ApiResponse> AddLeadRequirement(LeadRequirementAddRequest model)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_LeadManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "ADD_LEAD_REQUIREMENT"),
                     new SqlParameter("@Ref_LeadId", model.Ref_LeadId),
                     new SqlParameter("@Ref_ProductCategoryId", (object?)model.Ref_ProductCategoryId ?? DBNull.Value),
@@ -2371,9 +1996,7 @@ namespace CRMWebServices.Repository
                 {
                     response.Data = new
                     {
-                        LeadRequirementId = row["LeadRequirementId"] == DBNull.Value
-                            ? 0
-                            : Convert.ToInt32(row["LeadRequirementId"])
+                        LeadRequirementId = row["LeadRequirementId"] == DBNull.Value ? 0 : Convert.ToInt32(row["LeadRequirementId"])
                     };
                 }
 
@@ -2398,13 +2021,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region // Update Lead Requirement
+        #region  Update Lead Requirement
         public async Task<ApiResponse> UpdateLeadRequirement(LeadRequirementUpdateRequest model)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_LeadManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "UPDATE_LEAD_REQUIREMENT"),
                     new SqlParameter("@Ref_LeadRequirementId", model.Ref_LeadRequirementId),
                     new SqlParameter("@Ref_ProductCategoryId", (object?)model.Ref_ProductCategoryId ?? DBNull.Value),
@@ -2451,13 +2073,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region  // Delete Lead Requirement
+        #region   Delete Lead Requirement
         public async Task<ApiResponse> DeleteLeadRequirement(LeadRequirementDeleteRequest model)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_LeadManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "DELETE_LEAD_REQUIREMENT"),
                     new SqlParameter("@Ref_LeadRequirementId", model.Ref_LeadRequirementId),
                     new SqlParameter("@DeleteRemark", (object?)model.DeleteRemark ?? DBNull.Value),
@@ -2499,12 +2120,12 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
+        #region Get Lead Id by Requirement Id
         public async Task<int?> GetLeadIdByRequirementId(int leadRequirementId)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_LeadManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "GET_LEAD_ID_BY_REQUIREMENT"),
                     new SqlParameter("@Ref_LeadRequirementId", leadRequirementId)
                 );
@@ -2512,19 +2133,15 @@ namespace CRMWebServices.Repository
                 if (dt == null || dt.Rows.Count == 0)
                     return null;
 
-                return dt.Rows[0]["Ref_LeadId"] == DBNull.Value
-                    ? null
-                    : Convert.ToInt32(dt.Rows[0]["Ref_LeadId"]);
+                return dt.Rows[0]["Ref_LeadId"] == DBNull.Value? null: Convert.ToInt32(dt.Rows[0]["Ref_LeadId"]);
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error getting LeadId for LeadRequirementId {LeadRequirementId}",
-                    leadRequirementId);
+                _logger.LogError(ex,"Error getting LeadId for LeadRequirementId {LeadRequirementId}",leadRequirementId);
 
                 return null;
             }
         }
+        #endregion
     }
 }
