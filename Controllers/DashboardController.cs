@@ -21,7 +21,7 @@ namespace CRMWebServices.Controllers
             _authorization = authorization;
         }
 
-        #region // API : api/dashboard/details
+        #region  API : api/dashboard/details
         [HttpGet]
         [Route("Details")]
         public async Task<IActionResult> Details([FromQuery] int? employeeId,[FromQuery] DateTime? fromDate,[FromQuery] DateTime? toDate)
@@ -46,7 +46,7 @@ namespace CRMWebServices.Controllers
                     {
                         employeeId = null; // Show ALL data
                     }
-                    // Otherwise, show data for the specified employee
+                   
                 }
 
                 var response = await _repository.GetDashboardFull(employeeId, fromDate, toDate);
@@ -70,7 +70,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/dashboard/my-dashboard
+        #region  API : api/dashboard/my-dashboard
         [HttpGet]
         [Route("my-dashboard")]
         public async Task<IActionResult> MyDashboard([FromQuery] DateTime? fromDate,[FromQuery] DateTime? toDate)
@@ -94,7 +94,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // API : api/dashboard/employee-performance
+        #region  API : api/dashboard/employee-performance
         [HttpGet]
         [Route("employee-performance")]
         public async Task<IActionResult> Performance()

@@ -11,7 +11,6 @@ namespace CRMWebServices.Services
         private readonly IDatabaseService _database;
         private readonly IFirebaseNotificationService _firebase;
         private readonly IEmailService _email;
-
         private readonly IConfiguration _config;
         private readonly ILogger<SchedulerExecutionService> _logger;
 
@@ -77,19 +76,13 @@ namespace CRMWebServices.Services
                 switch (entityType.ToUpperInvariant())
                 {
                     case "LEAD":
-
                         await ProcessLeadAsync(schedulerJobItemId, entityId);
                         break;
 
                     default:
 
-                        _logger.LogWarning(
-                            "Unsupported scheduler EntityType {EntityType} for JobItem {JobItemId}.",
-                            entityType,
-                            schedulerJobItemId);
-
+                        _logger.LogWarning("Unsupported scheduler EntityType {EntityType} for JobItem {JobItemId}.",entityType,schedulerJobItemId);
                         await ExpireJobItemAsync(schedulerJobItemId);
-
                         break;
                 }
             }
@@ -211,12 +204,7 @@ namespace CRMWebServices.Services
 
             try
             {
-                long notificationId = 0;
-
-                // ============================================
-                // CREATE SCHEDULER NOTIFICATION
-                // ONLY FOR SCHEDULER EXECUTION
-                // ============================================
+                long notificationId = 0;                
 
                 if (schedulerJobItemId.HasValue)
                 {
@@ -231,21 +219,14 @@ namespace CRMWebServices.Services
                     if (notification == null ||
                         notification.Rows.Count == 0)
                     {
-                        _logger.LogWarning(
-                            "Could not create notification record for EmployeeId {EmployeeId}.",
-                            employeeId);
-
+                        _logger.LogWarning("Could not create notification record for EmployeeId {EmployeeId}.",employeeId);
                         return;
                     }
-
-                    notificationId = Convert.ToInt64(
-                        notification.Rows[0]["SchedulerNotificationId"]);
+                    notificationId = Convert.ToInt64(notification.Rows[0]["SchedulerNotificationId"]);
                 }
-
-                // ============================================
+                
                 // SEND FIREBASE NOTIFICATION
-                // ============================================
-
+               
                 var result = await _firebase.SendNotificationAsync(
                     deviceToken,
                     title,
@@ -256,46 +237,31 @@ namespace CRMWebServices.Services
                         ["EntityId"] = entityId.ToString(),
                         ["RecipientType"] = recipientType
                     });
-
-                // ============================================
+                              
                 // UPDATE SCHEDULER NOTIFICATION
                 // ONLY IF IT WAS CREATED
-                // ============================================
-
                 if (result.Success)
                 {
                     if (schedulerJobItemId.HasValue && notificationId > 0)
                     {
-                        await MarkNotificationSentAsync(
-                            notificationId,
-                            result.MessageId);
+                        await MarkNotificationSentAsync(notificationId,result.MessageId);
                     }
 
-                    _logger.LogInformation(
-                        "Firebase notification sent successfully to EmployeeId {EmployeeId}.",
-                        employeeId);
+                    _logger.LogInformation("Firebase notification sent successfully to EmployeeId {EmployeeId}.",employeeId);
                 }
                 else
                 {
                     if (schedulerJobItemId.HasValue && notificationId > 0)
                     {
-                        await MarkNotificationFailedAsync(
-                            notificationId,
-                            result.ErrorMessage);
+                        await MarkNotificationFailedAsync(notificationId,result.ErrorMessage);
                     }
 
-                    _logger.LogWarning(
-                        "Firebase notification failed for EmployeeId {EmployeeId}. Error: {Error}",
-                        employeeId,
-                        result.ErrorMessage);
+                    _logger.LogWarning("Firebase notification failed for EmployeeId {EmployeeId}. Error: {Error}",employeeId,result.ErrorMessage);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Notification failed for EmployeeId {EmployeeId}.",
-                    employeeId);
+                _logger.LogError(ex,"Notification failed for EmployeeId {EmployeeId}.",employeeId);
 
                 throw;
             }
@@ -373,122 +339,7 @@ namespace CRMWebServices.Services
                 }
             }
         }
-
-        //public async Task NotifyUnassignedLeadAsync(int leadId)
-        //{
-        //    _logger.LogInformation("Starting unassigned lead notification. LeadId: {LeadId}",leadId);
-
-        //    var recipients = await _database.ExecuteDataTableAsync(
-        //        SP_NAME,
-        //        new SqlParameter("@Status", "GET_LEAD_RECIPIENTS"),
-        //        new SqlParameter("@EntityId", leadId)
-        //    );
-
-        //    if (recipients == null || recipients.Rows.Count == 0)
-        //    {
-
-        //        _logger.LogWarning("No recipients found for Lead {LeadId}.",leadId);
-
-        //        _logger.LogWarning(
-        //            "No recipients found for Lead {LeadId}.",
-        //            leadId);
-
-
-        //        return;
-        //    }
-
-
-
-        //    _logger.LogInformation("Found {Count} recipient(s) for Lead {LeadId}.",recipients.Rows.Count,leadId);
-
-        //    _logger.LogInformation(
-        //        "Found {Count} recipient(s) for Lead {LeadId}.",
-        //        recipients.Rows.Count,
-        //        leadId);
-
-
-        //    foreach (DataRow recipient in recipients.Rows)
-        //    {
-        //        int employeeId = Convert.ToInt32(recipient["EmployeeId"]);
-
-        //        string recipientType = recipient["RecipientType"]?.ToString() ?? "";
-
-        //        if (!string.Equals(recipientType, "CREATOR", StringComparison.OrdinalIgnoreCase) &&
-        //            !string.Equals(recipientType, "MANAGER", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            continue;
-        //        }
-
-        //        string title;
-        //        string message;
-
-        //        if (string.Equals(recipientType, "CREATOR", StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            title = "Lead Created";
-        //            message = $"Your lead #{leadId} is currently unassigned.";
-        //        }
-        //        else
-        //        {
-        //            title = "Unassigned Lead";
-        //            message = $"Lead #{leadId} created by your team is currently unassigned.";
-        //        }
-
-
-
-        //            //string recipientType =recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
-
-        //        // ============================================
-        //        // IMPORTANT:
-        //        // For an unassigned lead, notify ONLY MANAGER
-        //        // ============================================
-
-        //        if (!string.Equals(
-        //                recipientType,
-        //                "MANAGER",
-        //                StringComparison.OrdinalIgnoreCase))
-        //        {
-        //            _logger.LogInformation("Skipping non-manager recipient for Lead {LeadId}. RecipientType: {RecipientType}",
-        //                leadId,
-        //                recipientType);
-
-        //            continue;
-        //        }
-
-        //        try
-        //        {
-        //            await SendEmployeeNotificationAsync(schedulerJobItemId: null, employeeId: employeeId, entityId: leadId, title: "Unassigned Lead", message: $"Lead #{leadId} is still unassigned.", entityType: "LEAD", recipientType: "MANAGER");
-
-        //            // Added By Suraj on 01-09-2026: Send Email Notification for Unassigned Lead
-        //            await SendEmployeeEmailNotificationAsync(
-        //                schedulerJobItemId: null,
-        //                employeeId: employeeId,
-        //                entityId: leadId,
-        //                title: "Unassigned Lead",
-        //                message: $"Lead #{leadId} is still unassigned.",
-        //                entityType: "LEAD",
-        //                recipientType: "MANAGER", 
-        //                actionType: "UNASSIGNED"
-
-
-        //            );
-        //        }
-        //        catch (Exception ex)
-        //        {
-
-        //            _logger.LogError(ex,"Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",employeeId,leadId);
-
-        //            _logger.LogError(
-        //                ex,
-        //                "Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",
-        //                employeeId,
-        //                leadId);
-
-        //        }
-        //    }
-        //}
-
-
-
+       
         private async Task<DataTable> ClaimJobItemAsync(long schedulerJobItemId)
         {
             return await _database.ExecuteDataTableAsync(SP_NAME,
@@ -498,7 +349,6 @@ namespace CRMWebServices.Services
                 new SqlParameter("@UpdatedBy", DBNull.Value)
             );
         }
-
 
         private async Task MarkNotificationSentAsync(long notificationId, string? firebaseMessageId)
         {
@@ -529,7 +379,6 @@ namespace CRMWebServices.Services
                 new SqlParameter("@UpdatedBy", DBNull.Value)
             );
         }
-
         private async Task RescheduleJobItemAsync(long schedulerJobItemId)
         {
             await _database.ExecuteDataTableAsync(SP_NAME,
@@ -538,7 +387,6 @@ namespace CRMWebServices.Services
                 new SqlParameter("@UpdatedBy", DBNull.Value)
             );
         }
-
         private async Task ExpireJobItemAsync(long schedulerJobItemId)
         {
             await _database.ExecuteDataTableAsync(SP_NAME,
@@ -547,7 +395,6 @@ namespace CRMWebServices.Services
                 new SqlParameter("@UpdatedBy", DBNull.Value)
             );
         }
-
         private async Task<DataTable?> GetEmployeeEmailAsync(int employeeId)
         {
             return await _database.ExecuteDataTableAsync(SP_NAME,
@@ -646,10 +493,7 @@ namespace CRMWebServices.Services
             }
         }
 
-        public async Task SendEmployeeEmailNotificationAsync(
-    long? schedulerJobItemId, int employeeId, int entityId,
-    string title, string message, string entityType,
-    string recipientType, string actionType)
+        public async Task SendEmployeeEmailNotificationAsync(long? schedulerJobItemId, int employeeId, int entityId,string title, string message, string entityType,string recipientType, string actionType)
         {
             var employeeTable = await GetEmployeeEmailAsync(employeeId);
 

@@ -22,11 +22,9 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> AddActivityExpenses(LeadActivityExpenseRequest model);
         Task<ApiResponse> GetActivityExpenseMasters();
         Task<int?> GetEmployeeManagerIdAsync(int employeeId);
-
         Task<ApiResponse> AddLeadRequirement(LeadRequirementAddRequest model);
         Task<ApiResponse> UpdateLeadRequirement(LeadRequirementUpdateRequest model);
         Task<ApiResponse> DeleteLeadRequirement(LeadRequirementDeleteRequest model);
-
         Task<int?> GetLeadIdByRequirementId(int leadRequirementId);
 
     }

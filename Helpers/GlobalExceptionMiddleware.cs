@@ -24,11 +24,7 @@ namespace CRMWebServices.Helpers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex,
-                    "Unhandled exception on {Method} {Path}",
-                    context.Request.Method,
-                    context.Request.Path);
-
+                _logger.LogError(ex,"Unhandled exception on {Method} {Path}",context.Request.Method,context.Request.Path);
                 context.Response.ContentType = "application/json";
                 context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 

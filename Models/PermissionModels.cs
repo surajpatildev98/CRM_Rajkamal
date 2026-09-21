@@ -71,8 +71,7 @@
             public int? Ref_OpportunityStageId { get; set; }
         }
 
-        //================== NEW: PERMISSION MANAGER==================
-
+    
         // ----- MODULE -----
         public class CreateModuleRequest
         {
@@ -145,64 +144,22 @@
             public bool IsActive { get; set; }
         }
 
-        // ----- ROLE -> PERMISSION ASSIGNMENT -----
-        //public class RolePermissionItem
-        //{
-        //    public int ModuleId { get; set; }
-        //    public string ModuleName { get; set; }
-        //    public int PermissionId { get; set; }
-        //    public string PermissionCode { get; set; }
-        //    public string PermissionName { get; set; }
-        //    public string? Description { get; set; }
-        //    public bool IsAllowed { get; set; }
-        //}
-
         public class RolePermissionItem
         {
             public int ModuleId { get; set; }
-
-            public string? ModuleName { get; set; }
-
-            // Module-level access
-            public bool ModuleIsAllowed { get; set; }
-
-            // Permission-level data
+            public string? ModuleName { get; set; }  
+            public bool ModuleIsAllowed { get; set; }         
             public int PermissionId { get; set; }
-
             public string? PermissionCode { get; set; }
-
             public string? PermissionName { get; set; }
-
             public string? Description { get; set; }
-
             public bool IsAllowed { get; set; }
         }
         public class SaveRolePermissionItem
         {
             public int PermissionId { get; set; }
             public bool IsAllowed { get; set; }
-        }
-
-        //public class SaveRolePermissionsRequest
-        //{
-        //    public int Ref_RoleId { get; set; }
-        //    public List<SaveRolePermissionItem> Permissions { get; set; } = new();
-        //    public int? CreatedBy { get; set; }
-        //}
-
-        //public class SaveRolePermissionsRequest
-        //{
-        //    public int Ref_RoleId { get; set; }
-
-        //    // Module-level access
-        //    public List<SaveRoleModuleAccessItem> Modules { get; set; } = new();
-
-        //    // Permission-level access
-        //    public List<SaveRolePermissionItem> Permissions { get; set; } = new();
-
-        //    public int? CreatedBy { get; set; }
-        //}
-
+        }       
         public class SaveRolePermissionsRequest
         {
             public int Ref_RoleId { get; set; }

@@ -6,11 +6,11 @@
         public class WonLeadsRequest
         {
             public string? SearchText { get; set; }
-        }        
+        }
         public class WonLeadDetailsRequest
         {
             public int LeadId { get; set; }
-        }       
+        }
         public class ConvertLeadRequest
         {
             public int Ref_LeadId { get; set; }
@@ -34,12 +34,10 @@
             public int? FilterStageId { get; set; }
             public int? FilterOwnerId { get; set; }
             public int? FilterTypeId { get; set; }
-
-            public int? FilterAssignedToId { get; set; }   // NEW
-
+            public int? FilterAssignedToId { get; set; }
             public int? LoggedInEmployeeId { get; set; }
-            public bool ShowCreatedAndAssigned { get; set; }  // For PreSales
-        }       
+            public bool ShowCreatedAndAssigned { get; set; }
+        }
         public class UpdateOpportunityRequest
         {
             public int Ref_OpportunityId { get; set; }
@@ -52,12 +50,12 @@
             public int? Ref_PriorityId { get; set; }
             public string? OpportunityRemark { get; set; }
             public int? CreatedBy { get; set; }
-        }      
+        }
         public class DeleteOpportunityRequest
         {
             public int Ref_OpportunityId { get; set; }
             public int? CreatedBy { get; set; }
-        }       
+        }
         public class WonLeadResponse
         {
             public int LeadId { get; set; }
@@ -70,10 +68,9 @@
             public string AssignedToEmployee { get; set; }
             public string LeadStatus { get; set; }
             public bool IsConverted { get; set; }
-        }       
+        }
         public class WonLeadDetailResponse
         {
-            // Lead Info (READ-ONLY)
             public LeadInfo Lead { get; set; }
             public List<LeadContactInfo> Contacts { get; set; }
             public List<LeadRequirementInfo> Requirements { get; set; }
@@ -93,8 +90,6 @@
             public string LeadStatus { get; set; }
             public string LeadSource { get; set; }
             public bool IsConverted { get; set; }
-
-            // Organization (will become Customer)
             public LeadOrganizationInfo Organization { get; set; }
         }
         public class LeadOrganizationInfo
@@ -145,13 +140,13 @@
             public string CreatedBy { get; set; }
             public string ActivityStatus { get; set; }
             public string ActivityStatusColor { get; set; }
-        }       
+        }
         public class ConvertLeadResponse
         {
             public int OpportunityId { get; set; }
             public int? CustomerId { get; set; }
             public string OpportunityNo { get; set; }
-        }        
+        }
         public class OpportunityListResponse
         {
             public int OpportunityId { get; set; }
@@ -168,7 +163,6 @@
             public DateTime? ExpectedCloseDate { get; set; }
             public int? Probability { get; set; }
             public string PriorityName { get; set; }
-            //public string PriorityColor { get; set; }
             public int? OwnerEmployeeId { get; set; }
             public string OwnerEmployee { get; set; }
             public DateTime CreatedOn { get; set; }
@@ -180,29 +174,22 @@
             public string TicketNo { get; set; }
             public int OpportunityId { get; set; }
             public int OpportunityRequirementId { get; set; }
-
             public long? ProductId { get; set; }
             public string ProductName { get; set; }
-
             public string Priority { get; set; }
             public DateTime? ScheduledOn { get; set; }
             public string Description { get; set; }
-
             public int? AssignedEmployeeId { get; set; }
             public string AssignedEmployeeName { get; set; }
-
             public int? TicketStatusId { get; set; }
             public string TicketStatusCode { get; set; }
             public string TicketStatusName { get; set; }
-
             public DateTime? CompletedOn { get; set; }
             public int? CompletedBy { get; set; }
-
             public DateTime CreatedOn { get; set; }
             public int? CreatedBy { get; set; }
             public DateTime? UpdatedOn { get; set; }
             public int? UpdatedBy { get; set; }
-
             public long? LastActivityId { get; set; }
             public string LastActivityType { get; set; }
             public string LastActivityStatus { get; set; }
@@ -210,7 +197,6 @@
             public string LastActivitySubject { get; set; }
             public string LastActivityDescription { get; set; }
             public string LastActivityOutcome { get; set; }
-
             public List<TicketWorkHistoryInfo> WorkHistory { get; set; } = new();
         }
 
@@ -221,27 +207,20 @@
             public long ActivityTypeId { get; set; }
             public string ActivityCode { get; set; }
             public string ActivityName { get; set; }
-
             public long EmployeeId { get; set; }
             public string EmployeeName { get; set; }
-
             public DateTime ActivityDateTime { get; set; }
-
             public string Subject { get; set; }
             public string Description { get; set; }
             public string Outcome { get; set; }
-
             public long ActivityStatusId { get; set; }
             public string ActivityStatusCode { get; set; }
             public string ActivityStatusName { get; set; }
-
             public DateTime? NextFollowUpDate { get; set; }
             public int? DurationInMinutes { get; set; }
-
             public decimal? Latitude { get; set; }
             public decimal? Longitude { get; set; }
             public string LocationAddress { get; set; }
-
             public DateTime CreatedOn { get; set; }
             public long CreatedBy { get; set; }
             public DateTime? UpdatedOn { get; set; }
@@ -250,17 +229,11 @@
         public class OpportunityDetailResponse
         {
             public OpportunityInfo Opportunity { get; set; }
-
             public List<CustomerContactInfo> Contacts { get; set; }
-
             public List<OpportunityRequirementInfo> Requirements { get; set; }
-
             public List<OpportunityActivityInfo> Activities { get; set; }
-
             public List<OpportunityAttachmentInfo> Files { get; set; }
-
             public List<OpportunityFollowUpInfo> FollowUps { get; set; }
-
             public List<object> Timeline { get; set; }
             public List<OpportunityTicketInfo> Tickets { get; set; }
 
@@ -278,7 +251,6 @@
             public string CompetitorName { get; set; }
             public string OpportunityRemark { get; set; }
             public DateTime CreatedOn { get; set; }
-
             public CustomerInfo Customer { get; set; }
             public OpportunityTypeInfo OpportunityType { get; set; }
             public OpportunityStageInfo OpportunityStage { get; set; }
@@ -322,7 +294,6 @@
             public int? PriorityId { get; set; }
             public string PriorityName { get; set; }
             public int? PriorityLevel { get; set; }
-            //public string ColorCode { get; set; }
         }
         public class OwnerInfo
         {
@@ -341,7 +312,7 @@
             public string Mobile { get; set; }
             public string Email { get; set; }
             public bool IsPrimary { get; set; }
-        }       
+        }
         public class OpportunityTypeDropdown
         {
             public int Id { get; set; }
@@ -360,51 +331,23 @@
             public int Id { get; set; }
             public string Name { get; set; }
             public int PriorityLevel { get; set; }
-            //public string ColorCode { get; set; }
+
         }
-        //public class OpportunityRequirementInfo
-        //{
-        //    public int OpportunityRequirementId { get; set; }
-
-        //    public int? LeadRequirementId { get; set; }
-
-        //    public int OfferingId { get; set; }
-
-        //    public string OfferingName { get; set; }
-
-        //    public decimal Quantity { get; set; }
-
-        //    public string Remark { get; set; }
-
-        //    public string Unit { get; set; }
-
-        //    public bool IsOpportunityRequirement { get; set; }
-        //}
 
         public class OpportunityRequirementInfo
         {
             public int OpportunityRequirementId { get; set; }
-
             public int? LeadRequirementId { get; set; }
-
             public int? CategoryId { get; set; }
             public string CategoryName { get; set; }
-
             public int? OfferingId { get; set; }
             public string OfferingName { get; set; }
-
             public long? ProductId { get; set; }
             public string ProductName { get; set; }
-
             public decimal Quantity { get; set; }
-
             public string Remark { get; set; }
-
             public string Unit { get; set; }
-
             public bool IsOpportunityRequirement { get; set; }
-
-            // Ticket
             public int? TicketId { get; set; }
             public string TicketNo { get; set; }
             public int? TicketAssignedEmployeeId { get; set; }
@@ -414,29 +357,17 @@
         public class OpportunityActivityInfo
         {
             public int ActivityId { get; set; }
-
             public string ActivityType { get; set; }
-
             public DateTime ActivityDate { get; set; }
-
             public string Subject { get; set; }
-
             public string Description { get; set; }
-
             public string Outcome { get; set; }
-
             public string? LocationAddress { get; set; }
-
             public string CreatedBy { get; set; }
-
             public int? ActivityStatusId { get; set; }
-
             public string ActivityStatus { get; set; }
-
             public string ActivityStatusColor { get; set; }
-
-            public List<object>? Attachments { get; set; }   // NEW
-
+            public List<object>? Attachments { get; set; }
             public List<object>? Expenses { get; set; }
         }
 
@@ -444,54 +375,29 @@
         public class OpportunityAttachmentInfo
         {
             public int AttachmentId { get; set; }
-
             public string FileName { get; set; }
-
             public string FileType { get; set; }
-
             public long? FileSize { get; set; }
-
             public string FileUrl { get; set; }
-
             public DateTime UploadedOn { get; set; }
         }
         public class OpportunityFollowUpInfo
         {
             public int FollowUpId { get; set; }
-
             public int? ActivityId { get; set; }
-
             public int? AssignedEmployeeId { get; set; }
-
             public string AssignedTo { get; set; }
-
             public DateTime FollowUpDate { get; set; }
-
             public int Priority { get; set; }
-
             public string Remarks { get; set; }
-
             public bool IsCompleted { get; set; }
-
             public DateTime? CompletedOn { get; set; }
-
             public string FollowUpStatus { get; set; }
-
             public string FollowUpStatusColor { get; set; }
-
             public DateTime CreatedOn { get; set; }
-
             public string CreatedByName { get; set; }
         }
-        //public class AddOpportunityRequirementRequest
-        //{
-        //    public int Ref_OpportunityId { get; set; }
-        //    public int Ref_ProductId { get; set; }
-        //    public decimal Quantity { get; set; }
-        //    public string? RequirementRemark { get; set; }
-        //    public int? Ref_UnitId { get; set; }
-        //    public int CreatedBy { get; set; }
-        //}
+
         public class AddOpportunityRequirementRequest
         {
             public int Ref_OpportunityId { get; set; }
@@ -503,29 +409,15 @@
             public int? Ref_UnitId { get; set; }
             public int CreatedBy { get; set; }
         }
-        //public class UpdateOpportunityRequirementRequest
-        //{
-        //    public int Ref_OpportunityId { get; set; }
-        //    public int? Ref_OpportunityRequirementId { get; set; }  // set if already has an Opportunity row
-        //    public int? Ref_LeadRequirementId { get; set; }         // set if overriding a Lead item for the first time
-
-        //    public int? Ref_ProductId { get; set; }
-        //    public decimal Quantity { get; set; }
-        //    public string? RequirementRemark { get; set; }
-        //    public int? Ref_UnitId { get; set; }
-        //    public int CreatedBy { get; set; }
-        //}
 
         public class UpdateOpportunityRequirementRequest
         {
             public int Ref_OpportunityId { get; set; }
             public int? Ref_OpportunityRequirementId { get; set; }
             public int? Ref_LeadRequirementId { get; set; }
-
             public int? Ref_ProductCategoryId { get; set; }
             public int? Ref_OfferingId { get; set; }
             public long? Ref_ProductId { get; set; }
-
             public decimal Quantity { get; set; }
             public string? RequirementRemark { get; set; }
             public int? Ref_UnitId { get; set; }
@@ -542,7 +434,6 @@
             public int? DurationInMinutes { get; set; }
             public decimal? Latitude { get; set; }
             public decimal? Longitude { get; set; }
-
             public string? LocationAddress { get; set; }
             public int? Ref_ActivityStatusId { get; set; }
             public int? Ref_NewOpportunityStageId { get; set; }
@@ -591,7 +482,6 @@
         {
             public int Ref_OpportunityId { get; set; }
             public int Ref_OpportunityRequirementId { get; set; }
-
             public string DeleteRemark { get; set; }
             public int? CreatedBy { get; set; }
         }
@@ -599,35 +489,25 @@
         public class AddOpportunityActivityExpenseRequest
         {
             public int Ref_OpportunityId { get; set; }
-
             public int Ref_ActivityId { get; set; }
-
             public List<OpportunityActivityExpenseItem> Expenses { get; set; } = new();
-
             public int? CreatedBy { get; set; }
         }
 
         public class OpportunityActivityExpenseItem
         {
             public int Ref_ExpenseCategoryId { get; set; }
-
             public int? Ref_TransportModeId { get; set; }
-
             public decimal Amount { get; set; }
-
             public string? Description { get; set; }
-
             public string? FromLocation { get; set; }
-
             public string? ToLocation { get; set; }
-
             public List<OpportunityActivityExpenseAttachmentItem> Attachments { get; set; } = new();
         }
 
         public class OpportunityActivityExpenseAttachmentItem
         {
             public string FileName { get; set; } = null!;
-
             public string Base64 { get; set; } = null!;
         }
     }
