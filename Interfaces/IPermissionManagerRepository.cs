@@ -11,7 +11,6 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> DeactivateModule(DeactivateModuleRequest request);
         Task<ApiResponse> GetModules();
         Task<ApiResponse> GetSuperModules();
-
         Task<ApiResponse> GetRoleSuperModuleAccess(int roleId);
         Task<ApiResponse> SaveRoleSuperModuleAccess(SaveRoleSuperModuleAccessRequest request);
 

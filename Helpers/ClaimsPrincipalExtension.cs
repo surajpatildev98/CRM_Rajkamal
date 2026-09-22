@@ -16,10 +16,7 @@ namespace CRMWebServices.Helpers
             if (string.IsNullOrWhiteSpace(roleClaim))
                 return false;
 
-            var userRoles = roleClaim
-                .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                .Select(int.Parse);
-
+            var userRoles = roleClaim.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(int.Parse);
             return userRoles.Any(r => roles.Contains(r));
 
         }

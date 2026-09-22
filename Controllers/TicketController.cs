@@ -19,7 +19,7 @@ namespace CRMWebServices.Controllers
             _repository = repository;
         }
 
-        #region API : api/ticket/create
+        #region POST : api/ticket/create
         [HttpPost]
         [Route("create")]
         public async Task<IActionResult> CreateTicket([FromBody] CreateTicketRequest request)
@@ -54,7 +54,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region API : api/ticket/my-tickets
+        #region GET : api/ticket/my-tickets
         [HttpGet]
         [Route("my-tickets")]
         public async Task<IActionResult> GetMyTickets()
@@ -80,7 +80,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region API : api/ticket/detail/{ticketId}
+        #region GET : api/ticket/detail/{ticketId}
         [HttpGet]
         [Route("detail/{ticketId}")]
         public async Task<IActionResult> GetTicketDetail(int ticketId)
@@ -104,7 +104,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region API : api/ticket/UpdateStatus
+        #region POST : api/ticket/UpdateStatus
         [HttpPost]
         [Route("UpdateStatus")]
         public async Task<IActionResult> UpdateTicketStatus([FromBody] UpdateTicketStatusRequest request)
@@ -139,7 +139,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region API : api/ticket/UpdateActivity
+        #region POST : api/ticket/UpdateActivity
         [HttpPost]
         [Route("UpdateActivity")]
         public async Task<IActionResult> UpdateActivity([FromBody] UpdateTicketActivityRequest request)
@@ -174,7 +174,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region API : api/ticket/activities/{ticketId}
+        #region GET : api/ticket/activities/{ticketId}
         [HttpGet("statuses")]
         public async Task<IActionResult> GetTicketStatuses()
         {

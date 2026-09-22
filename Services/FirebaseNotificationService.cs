@@ -19,49 +19,33 @@ namespace CRMWebServices.Services
         {
             if (FirebaseApp.DefaultInstance != null)
             {
-                _logger.LogInformation(
-                    "Firebase Admin SDK already initialized.");
+                _logger.LogInformation("Firebase Admin SDK already initialized.");
                 return;
             }
 
-            var credentialPath = Path.Combine(
-                Directory.GetCurrentDirectory(),
-                "Firebase",
-                "firebase-service-account.json");
-
-            _logger.LogInformation(
-                "Firebase credential path: {CredentialPath}",
-                credentialPath);
-
-            _logger.LogInformation(
-                "Firebase credential file exists: {Exists}",
-                File.Exists(credentialPath));
+            var credentialPath = Path.Combine(Directory.GetCurrentDirectory(),"Firebase","firebase-service-account.json");
+            _logger.LogInformation("Firebase credential path: {CredentialPath}",credentialPath);
+            _logger.LogInformation("Firebase credential file exists: {Exists}",File.Exists(credentialPath));
 
             if (!File.Exists(credentialPath))
             {
-                throw new FileNotFoundException(
-                    "Firebase service account file was not found.",
-                    credentialPath);
+                throw new FileNotFoundException("Firebase service account file was not found.",credentialPath);
             }
 
             try
             {
-                var credential =
-                    GoogleCredential.FromFile(credentialPath);
+                var credential =GoogleCredential.FromFile(credentialPath);
 
                 FirebaseApp.Create(new AppOptions
                 {
                     Credential = credential
                 });
 
-                _logger.LogInformation(
-                    "Firebase Admin SDK initialized successfully.");
+                _logger.LogInformation("Firebase Admin SDK initialized successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Firebase Admin SDK initialization failed.");
+                _logger.LogError(ex,"Firebase Admin SDK initialization failed.");
 
                 throw;
             }

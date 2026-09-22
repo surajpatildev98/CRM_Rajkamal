@@ -13,8 +13,7 @@ namespace CRMWebServices.Controllers
     {
         private readonly IAttendanceRepository _attendanceRepository;
 
-        public AttendanceController(
-            IAttendanceRepository attendanceRepository)
+        public AttendanceController(IAttendanceRepository attendanceRepository)
         {
             _attendanceRepository = attendanceRepository;
         }
@@ -25,7 +24,6 @@ namespace CRMWebServices.Controllers
             try
             {
                 var response = await _attendanceRepository.GetAttendance(request);
-
                 return Ok(response);
             }
             catch (Exception ex)
@@ -43,9 +41,7 @@ namespace CRMWebServices.Controllers
         {
             try
             {
-                var response =
-                    await _attendanceRepository.GetPunches(request);
-
+                var response =await _attendanceRepository.GetPunches(request);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -59,13 +55,11 @@ namespace CRMWebServices.Controllers
         }
 
         [HttpPost("ManualPunch")]
-        public async Task<IActionResult> ManualPunch(
-    [FromBody] ManualPunchRequest request)
+        public async Task<IActionResult> ManualPunch([FromBody] ManualPunchRequest request)
         {
             try
             {
                 var response = await _attendanceRepository.ManualPunch(request);
-
                 return Ok(response);
             }
             catch (Exception ex)
@@ -83,9 +77,7 @@ namespace CRMWebServices.Controllers
         {
             try
             {
-                var response =
-                    await _attendanceRepository.GetDashboardCount(request);
-
+                var response =await _attendanceRepository.GetDashboardCount(request);
                 return Ok(response);
             }
             catch (Exception ex)
