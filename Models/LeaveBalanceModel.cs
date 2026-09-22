@@ -69,4 +69,32 @@
         public string Message { get; set; } = string.Empty;
         public T? Data { get; set; }
     }
+
+    public class ApplyLeaveRequest
+    {
+        public int EmployeeId { get; set; }
+        public int LeaveTypeId { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+        public decimal TotalDays { get; set; }
+        public string DayType { get; set; } = "FULL";
+        public string Reason { get; set; } = string.Empty;
+    }
+
+    public class ApplyLeaveTypeModel
+    {
+        public int LeaveTypeId { get; set; }
+        public string LeaveCode { get; set; }
+        public string LeaveName { get; set; }
+        public bool IsPaid { get; set; }
+        public decimal Balance { get; set; }
+        public decimal? MaxDaysPerApplication { get; set; }
+        public int NoticeDays { get; set; }
+        public bool IsHalfDayAllowed { get; set; }
+        public bool IsHourlyAllowed { get; set; }
+        public bool IncludeWeekends { get; set; }
+        public bool IncludeHolidays { get; set; }
+        public bool SandwichRule { get; set; }
+        public bool RequiresDocument { get; set; }
+    }
 }
