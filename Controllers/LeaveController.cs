@@ -17,10 +17,9 @@ namespace CRMWebServices.Controllers
             _leaveRepository = leaveRepository;
         }
 
-        // GET: api/Leave/GetLeaveBalance?employeeId=3034
+        #region GetLeaveBalance
         [HttpGet("GetLeaveBalance")]
-        public async Task<IActionResult> GetLeaveBalance(
-            [FromQuery] int employeeId)
+        public async Task<IActionResult> GetLeaveBalance([FromQuery] int employeeId)
         {
             if (employeeId <= 0)
             {
@@ -31,16 +30,14 @@ namespace CRMWebServices.Controllers
                 });
             }
 
-            var response =
-                await _leaveRepository.GetLeaveBalance(employeeId);
-
+            var response =await _leaveRepository.GetLeaveBalance(employeeId);
             return Ok(response);
         }
+        #endregion
 
-        // GET: api/Leave/GetMyLeaves?employeeId=3034
+        #region GetMyLeaves
         [HttpGet("GetMyLeaves")]
-        public async Task<IActionResult> GetMyLeaves(
-            [FromQuery] int employeeId)
+        public async Task<IActionResult> GetMyLeaves([FromQuery] int employeeId)
         {
             if (employeeId <= 0)
             {
@@ -51,8 +48,7 @@ namespace CRMWebServices.Controllers
                 });
             }
 
-            var response =
-                await _leaveRepository.GetMyLeaves(employeeId);
+            var response =await _leaveRepository.GetMyLeaves(employeeId);
 
             return Ok(response);
         }

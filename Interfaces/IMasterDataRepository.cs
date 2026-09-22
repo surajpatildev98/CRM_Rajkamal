@@ -17,21 +17,16 @@ namespace CRMWebServices.Interfaces
         Task<List<DropdownItem>> GetCountries();
         Task<List<DropdownItem>> GetStatesByCountry(int countryId);
         Task<List<DropdownItem>> GetCitiesByState(int stateId);
-        Task<List<DropdownItem>> GetLeadSources();
-
-        //Task<List<DropdownItem>> GetEmployeesForAssignment();
+        Task<List<DropdownItem>> GetLeadSources();     
         Task<List<DropdownItem>> GetEmployeesForAssignment(int loggedInEmployeeId);
         Task<List<DropdownItem>> GetCategories();
         Task<List<DropdownItem>> GetOfferings(int categoryId);
         Task<List<DropdownItem>> GetProducts(int offeringId);
         Task<List<DropdownItem>> GetUnits();
-        Task<List<DropdownItem>> GetActivityTypes();
-
-        /// Gets the close status dropdown for leads
+        Task<List<DropdownItem>> GetActivityTypes(); 
         Task<List<DropdownItem>> GetLeadCloseStatuses();
         Task<List<DropdownItem>> GetFollowUpStatuses();
         Task<List<DropdownItem>> GetStatusesForDashbord();
-
         Task<List<DropdownItem>> GetQualifications();
         Task<List<DropdownItem>> GetBanks();
         Task<List<DropdownItem>> GetAccountTypes();

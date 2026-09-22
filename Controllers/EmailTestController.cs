@@ -19,15 +19,12 @@ namespace CRMWebServices.Controllers
         }
 
         [HttpPost("send")]
-        public async Task<IActionResult> Send(
-            [FromBody] EmailMessage request)
+        public async Task<IActionResult> Send([FromBody] EmailMessage request)
         {
             var result =await _emailService.SendAsync(request);
-
             if (!result)
             {
-                return BadRequest(
-                    new ApiResponse
+                return BadRequest(new ApiResponse
                     {
                         Status = false,
                         Message = "Email could not be sent."

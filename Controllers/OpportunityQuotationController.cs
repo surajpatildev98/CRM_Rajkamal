@@ -54,39 +54,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region GET api/OpportunityQuotation/list
-        //[HttpGet]
-        //[Route("list")]
-        //public async Task<IActionResult> GetQuotationList([FromQuery] QuotationListRequest request)
-        //{
-        //    try
-        //    {
-        //        var accessFilter = await _authorization.GetAccessFilter(User, "Opp");
-
-        //        if (!accessFilter.CanViewAll)
-        //        {
-        //            request.FilterOwnerId = accessFilter.EmployeeId;
-        //            request.ShowCreatedAndAssigned = accessFilter.ShowCreatedAndAssigned;
-        //        }
-
-        //        var response = await _repository.GetQuotationList(request);
-
-        //        if (response.Status &&
-        //            !accessFilter.CanViewAll &&
-        //            response.Data is List<QuotationListResponse> list &&
-        //            list.Count == 0)
-        //        {
-        //            response.Message = "No quotations found for opportunities assigned to you.";
-        //        }
-
-        //        return response.Status ? Ok(response) : BadRequest(response);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return BadRequest(new ApiResponse { Status = false, Message = $"Error: {ex.Message}" });
-        //    }
-        //}
-
+        #region GET api/OpportunityQuotation/list     
         [HttpGet]
         [Route("list")]
         public async Task<IActionResult> GetQuotationList([FromQuery] QuotationListRequest request)
@@ -230,7 +198,6 @@ namespace CRMWebServices.Controllers
         // uses a resource-level permission check rather than CanPerformAction's
         // per-opportunity ownership check. Wire this to your role/permission
         // model in the next pass (e.g. "Opp","DecideReview" as a role-only check).
-
         [HttpPost]
         [Route("review-decision")]
         public async Task<IActionResult> DecideManagementReview([FromBody] DecideManagementReviewRequest request)
@@ -251,7 +218,6 @@ namespace CRMWebServices.Controllers
         #endregion
 
         #region POST api/OpportunityQuotation/revise
-
         [HttpPost]
         [Route("revise")]
         public async Task<IActionResult> ReviseQuotation([FromBody] ReviseQuotationRequest request)
@@ -260,8 +226,7 @@ namespace CRMWebServices.Controllers
             {
                 if (!await _authorization.CanPerformAction(User,"Opp","ReviseQuotation",request.Ref_OpportunityId))
                 {
-                    return StatusCode(
-                        StatusCodes.Status403Forbidden,
+                    return StatusCode(StatusCodes.Status403Forbidden,
                         new ApiResponse
                         {
                             Status = false,
@@ -271,7 +236,6 @@ namespace CRMWebServices.Controllers
 
                 request.CreatedBy = User.EmployeeId();
                 var response =await _repository.ReviseQuotation(request);
-
                 return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)

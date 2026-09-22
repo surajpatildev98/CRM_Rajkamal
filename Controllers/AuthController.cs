@@ -27,7 +27,7 @@ namespace CRMWebServices.Controllers
             _emailService = emailService;
         }
 
-        #region // POST: api/auth/login
+        #region POST: api/auth/login
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
@@ -95,9 +95,7 @@ namespace CRMWebServices.Controllers
 
                     if (!string.IsNullOrWhiteSpace(request.DeviceToken))
                     {
-                        var registerResponse =
-                            await _authRepo.RegisterEmployeeDevice(
-                                employeeId,
+                        var registerResponse =await _authRepo.RegisterEmployeeDevice(employeeId,
                                 new RegisterEmployeeDeviceRequest
                                 {
                                     DeviceId = request.DeviceId,
@@ -126,9 +124,7 @@ namespace CRMWebServices.Controllers
 
                     if (!string.IsNullOrWhiteSpace(request.DeviceToken))
                     {
-                        var registerResponse =
-                            await _authRepo.RegisterEmployeeDevice(
-                                employeeId,
+                        var registerResponse =await _authRepo.RegisterEmployeeDevice(employeeId,
                                 new RegisterEmployeeDeviceRequest
                                 {
                                     DeviceId = request.DeviceId,
@@ -152,36 +148,17 @@ namespace CRMWebServices.Controllers
                     return Ok(new ApiResponse
                     {
                         Status = false,
-                        Message =
-                            "You are already logged in on another device. " +
-                            "Do you want to logout from that device and continue?",
+                        Message ="You are already logged in on another device. " +"Do you want to logout from that device and continue?",
 
                         Data = new
                         {
                             Code = "ALREADY_LOGGED_IN",
-
                             EmployeeId = employeeId,
-
                             OldDeviceId = activeDevice.ActiveDeviceId
                         }
                     });
                 }
-            }
-
-            // Register / Update Firebase device           
-
-            //if (!string.IsNullOrWhiteSpace(request.DeviceId) &&!string.IsNullOrWhiteSpace(request.DeviceToken))
-            //{
-            //    await _authRepo.RegisterEmployeeDevice(employeeId,
-            //        new RegisterEmployeeDeviceRequest
-            //        {
-            //            DeviceId = request.DeviceId,
-            //            DeviceToken = request.DeviceToken,
-            //            DeviceType = request.DeviceType,
-            //            AppVersion = request.AppVersion
-            //        });
-            //}
-
+            }           
 
             string token = _jwt.GenerateToken(employeeId, request.LoginId, employeeCode, roleIds);
 
@@ -206,6 +183,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
+        #region  POST: api/auth/force-logout
         [HttpPost("ForceLogout")]
         public async Task<IActionResult> ForceLogout([FromBody] ForceLogoutRequest model)
         {
@@ -215,18 +193,18 @@ namespace CRMWebServices.Controllers
 
             return Ok(response);
         }
+        #endregion
 
+        #region POST: api/auth/logout
         [HttpPost("Logout")]
         public async Task<IActionResult> Logout([FromBody] LogoutRequest model)
         {
-            var response = await _authRepo.Logout(
-                model.EmployeeId,
-                model.DeviceId);
-
+            var response = await _authRepo.Logout(model.EmployeeId,model.DeviceId);
             return Ok(response);
         }
+        #endregion
 
-        #region // POST: api/auth/forgot-password
+        #region  POST: api/auth/forgot-password
         [HttpPost("forgot_password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
@@ -242,33 +220,19 @@ namespace CRMWebServices.Controllers
                 }
 
                 string loginId = request.LoginId.Trim();
-
                 var (employeeRow, _) = await _authRepo.GetEmployeeForLogin(loginId);
 
                 if (employeeRow == null)
                 {
                     return Ok(new ApiResponse
                     {
-                        Status = true,
-                        //Message = "If the account exists, an OTP has been sent to the registered email address."
+                        Status = true,                       
                         Message = "Login Id not found. Please enter a valid Login Id."
                     });
                 }
 
-                bool isActive = employeeRow["IsActive"] != DBNull.Value &&
-                                Convert.ToBoolean(employeeRow["IsActive"]);
-
-                bool isLocked = employeeRow["IsLocked"] != DBNull.Value &&
-                                Convert.ToBoolean(employeeRow["IsLocked"]);
-
-                //if (!isActive || isLocked)
-                //{
-                //    return Ok(new ApiResponse
-                //    {
-                //        Status = true,
-                //        Message = "If the account exists, an OTP has been sent to the registered email address."
-                //    });
-                //}
+                bool isActive = employeeRow["IsActive"] != DBNull.Value && Convert.ToBoolean(employeeRow["IsActive"]);
+                bool isLocked = employeeRow["IsLocked"] != DBNull.Value && Convert.ToBoolean(employeeRow["IsLocked"]);                
 
                 if (!isActive)
                 {
@@ -294,8 +258,7 @@ namespace CRMWebServices.Controllers
                 {
                     return Ok(new ApiResponse
                     {
-                        Status = true,
-                        //Message = "If the account exists, an OTP has been sent to the registered email address."
+                        Status = true,                       
                         Message = "No registered email address is associated with this account. Please contact the administrator."
                     });
                 }
@@ -306,10 +269,8 @@ namespace CRMWebServices.Controllers
 
                 // Generate 6 digit OTP
                 string otp = RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
-
                 // Hash OTP before saving
                 string otpHash = BCrypt.Net.BCrypt.HashPassword(otp);
-
                 // Save OTP hash in database
                 var saveResponse = await _authRepo.GenerateResetOtp(employeeId,otpHash);
 
@@ -382,10 +343,7 @@ namespace CRMWebServices.Controllers
                     </body>
                     </html>";
 
-                var emailResult = await _emailService.SendEmailAsync(
-                    email,
-                    subject,
-                    body);
+                var emailResult = await _emailService.SendEmailAsync(email,subject,body);
 
                 if (!emailResult.Success)
                 {
@@ -413,10 +371,9 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // POST: api/auth/verify-reset-otp
+        #region  POST: api/auth/verify-reset-otp
         [HttpPost("verify_otp")]
-        public async Task<IActionResult> VerifyResetOtp(
-            [FromBody] VerifyResetOtpRequest request)
+        public async Task<IActionResult> VerifyResetOtp([FromBody] VerifyResetOtpRequest request)
         {
             try
             {
@@ -516,10 +473,7 @@ namespace CRMWebServices.Controllers
                     });
                 }
 
-                bool isOtpValid = BCrypt.Net.BCrypt.Verify(
-                    request.OTP.Trim(),
-                    otpHash);
-
+                bool isOtpValid = BCrypt.Net.BCrypt.Verify(request.OTP.Trim(),otpHash);
                 if (!isOtpValid)
                 {
                     await _authRepo.IncrementOtpAttempt(employeeId);
@@ -529,18 +483,12 @@ namespace CRMWebServices.Controllers
                     return BadRequest(new ApiResponse
                     {
                         Status = false,
-                        Message = remainingAttempts > 0
-                            ? $"Invalid OTP. {remainingAttempts} attempt(s) remaining."
-                            : "Invalid OTP. Maximum attempts exceeded."
+                        Message = remainingAttempts > 0? $"Invalid OTP. {remainingAttempts} attempt(s) remaining.": "Invalid OTP. Maximum attempts exceeded."
                     });
                 }
 
-                var verifyResponse =
-                    await _authRepo.VerifyResetOtp(employeeId);
-
-                return verifyResponse.Status
-                    ? Ok(verifyResponse)
-                    : BadRequest(verifyResponse);
+                var verifyResponse =await _authRepo.VerifyResetOtp(employeeId);
+                return verifyResponse.Status? Ok(verifyResponse): BadRequest(verifyResponse);
             }
             catch (Exception ex)
             {
@@ -553,10 +501,9 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region // POST: api/auth/reset-password
+        #region  POST: api/auth/reset-password
         [HttpPost("Reset_password")]
-        public async Task<IActionResult> ResetPassword(
-            [FromBody] ResetPasswordRequest request)
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
         {
             try
             {
@@ -666,13 +613,9 @@ namespace CRMWebServices.Controllers
                 }
 
                 int employeeId = employeeIdResponse.Value;
-
                 // Hash new password using BCrypt
                 string newPasswordHash =BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
-
-                var response = await _authRepo.ResetPassword(
-                    employeeId,request.ResetToken,newPasswordHash);
-
+                var response = await _authRepo.ResetPassword(employeeId,request.ResetToken,newPasswordHash);
                 return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)

@@ -13,10 +13,7 @@ namespace CRMWebServices.Services
         private readonly ILogger<EmailService> _logger;
         private readonly IConfiguration _config;
 
-        public EmailService(
-            IEmailConfigurationRepository configurationRepository,
-            ILogger<EmailService> logger,
-            IConfiguration config)
+        public EmailService(IEmailConfigurationRepository configurationRepository,ILogger<EmailService> logger,IConfiguration config)
         {
             _configurationRepository = configurationRepository;
             _logger = logger;
@@ -52,11 +49,6 @@ namespace CRMWebServices.Services
                 email.From.Add(new MailboxAddress(config.FromName,config.FromEmail));
                 email.To.Add(MailboxAddress.Parse(message.ToEmail));
                 email.Subject = message.Subject;
-
-                //email.Body = new BodyBuilder
-                //{
-                //    HtmlBody = message.HtmlBody
-                //}.ToMessageBody();
 
                 var builder = new BodyBuilder { HtmlBody = message.HtmlBody };
 

@@ -7,18 +7,11 @@ namespace CRMWebServices.Repository
 {
     public interface IOpportunityRepository
     {
-        #region // Get Leads Details
+
         Task<ApiResponse> GetWonLeads(string searchText = null, int? assignedEmployeeId = null,int? loggedInEmployeeId = null);
-        Task<ApiResponse> GetWonLeadDetails(int leadId);
-        #endregion  
-
-        #region // ConvertLeadToOpportunity used to convert a lead to an opportunity
-        Task<ApiResponse> ConvertLeadToOpportunity(ConvertLeadRequest request);
-        #endregion
-
-        #region // Opportunity Management Tasks
-        Task<ApiResponse> GetOpportunityList(OpportunityListRequest request);
-        //Task<ApiResponse> GetOpportunityDetails(int opportunityId);
+        Task<ApiResponse> GetWonLeadDetails(int leadId);          
+        Task<ApiResponse> ConvertLeadToOpportunity(ConvertLeadRequest request);           
+        Task<ApiResponse> GetOpportunityList(OpportunityListRequest request);     
         Task<ApiResponse> GetOpportunityDetails(int opportunityId, int loggedInEmployeeId);
         Task<ApiResponse> UpdateOpportunity(UpdateOpportunityRequest request);
         Task<ApiResponse> DeleteOpportunity(DeleteOpportunityRequest request);
@@ -31,15 +24,11 @@ namespace CRMWebServices.Repository
         Task<ApiResponse> CloseOpportunity(CloseOpportunityRequest model);
         Task<ApiResponse> UpdateOpportunityFollowUpStatus(UpdateOpportunityFollowUpStatusRequest model);
         Task<ApiResponse> DeleteOpportunityRequirement(DeleteOpportunityRequirementRequest model);
-        Task<ApiResponse> AddOpportunityActivityExpenses(AddOpportunityActivityExpenseRequest model);
-        #endregion
-
-        #region // Opportunity Permissions
+        Task<ApiResponse> AddOpportunityActivityExpenses(AddOpportunityActivityExpenseRequest model);           
         Task<ApiResponse> GetOpportunityTypes();
         Task<ApiResponse> GetOpportunityStages();
         Task<ApiResponse> GetPriorities();
         Task<ApiResponse> GetOpportunityCloseStages();
         Task<int?> GetAssignedEmployeeId(int leadId);
-        #endregion
     }
 }

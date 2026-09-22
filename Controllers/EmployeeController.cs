@@ -18,7 +18,7 @@ namespace CRMWebServices.Controllers
             _repository = repository;
         }
 
-        #region // API : api/Employee/Register
+        #region  API : api/Employee/Register
         [HttpPost]
         [Route("Register")]
         public async Task<IActionResult> Register([FromBody] EmployeeRegisterRequest request)
@@ -37,7 +37,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
+        #region API : api/Employee/NewRegister
         [HttpPost]
         [Route("NewRegister")]
         public async Task<IActionResult> NewRegister([FromBody] EmployeeRegisterRequest request)
@@ -56,9 +58,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
-
         #endregion
 
+        #region API : api/Employee/GetEmployeeMaster
         [HttpGet]
         [Route("GetEmployeeMaster")]
         public async Task<IActionResult> GetEmployeeMaster()
@@ -83,7 +85,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/Employee/GetEmployeeDetails/{employeeId}
         [HttpGet]
         [Route("GetEmployeeDetails/{employeeId}")]
         public async Task<IActionResult> GetEmployeeDetails(int employeeId)
@@ -117,28 +121,22 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/Employee/UpdateEmployee
         [HttpPost]
         [Route("UpdateEmployee")]
-        public async Task<IActionResult> UpdateEmployee(
-    [FromBody] UpdateEmployeeRequest request)
+        public async Task<IActionResult> UpdateEmployee([FromBody] UpdateEmployeeRequest request)
         {
             try
             {
                 // Get UpdatedBy from logged-in user's token
-                var employeeIdClaim =
-                    User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-
-                request.UpdatedBy =
-                    employeeIdClaim != null
-                        ? int.Parse(employeeIdClaim)
-                        : null;
+                var employeeIdClaim =User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+                request.UpdatedBy =employeeIdClaim != null? int.Parse(employeeIdClaim): null;
 
                 var response = await _repository.UpdateEmployee(request);
 
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -149,5 +147,6 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
     }
 }

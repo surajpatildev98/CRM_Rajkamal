@@ -12,16 +12,14 @@ namespace CRMWebServices.Controllers
     public class HolidayController : ControllerBase
     {
         private readonly IHolidayRepository _holidayRepository;
-
-        public HolidayController(
-            IHolidayRepository holidayRepository)
+        public HolidayController(IHolidayRepository holidayRepository)
         {
             _holidayRepository = holidayRepository;
         }
 
+        #region Holiday Calendar
         [HttpPost("SaveCalendar")]
-        public async Task<IActionResult> SaveCalendar(
-           [FromBody] HolidayCalendarSaveRequest request)
+        public async Task<IActionResult> SaveCalendar([FromBody] HolidayCalendarSaveRequest request)
         {
             try
             {
@@ -61,7 +59,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
+        #region Get Holiday Calendars
         [HttpGet("GetCalendars")]
         public async Task<IActionResult> GetCalendars()
         {
@@ -76,7 +76,9 @@ namespace CRMWebServices.Controllers
                 return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
             }
         }
+        #endregion
 
+        #region Get Holidays by Calendar ID
         [HttpGet("GetHolidays/{holidayCalendarId}")]
         public async Task<IActionResult> GetHolidays(int holidayCalendarId)
         {
@@ -91,9 +93,7 @@ namespace CRMWebServices.Controllers
                     });
                 }
 
-                var response =
-                    await _holidayRepository.GetHolidays(holidayCalendarId);
-
+                var response =await _holidayRepository.GetHolidays(holidayCalendarId);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -106,5 +106,6 @@ namespace CRMWebServices.Controllers
                     });
             }
         }
+        #endregion
     }
 }
