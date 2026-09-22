@@ -1,6 +1,7 @@
 using CRMWebServices.Data;
 using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
+using CRMWebServices.Repositories;
 using CRMWebServices.Repository;
 using CRMWebServices.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -83,6 +84,7 @@ builder.Services.AddScoped<IReportsRepository, ReportsRepository>();
 builder.Services.AddScoped<ILeaveRepository, LeaveRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IFreightPolicyRepository, FreightPolicyRepository>();
+builder.Services.AddScoped<ICallLogRepository, CallLogRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailConfigurationRepository, EmailConfigurationRepository>();
