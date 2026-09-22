@@ -2,6 +2,7 @@
 using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
 using CRMWebServices.Services;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using static CRMWebServices.Models.TicketModels;
@@ -12,11 +13,15 @@ namespace CRMWebServices.Repository
     {
         private readonly IDatabaseService _database;
         private readonly ILogger<TicketRepository> _logger;
+        private readonly ISchedulerExecutionService _schedulerExecutionService;
+        private readonly ILeadRepository _leadRepository;
 
-        public TicketRepository(IDatabaseService database, ILogger<TicketRepository> logger)
+        public TicketRepository(IDatabaseService database, ILogger<TicketRepository> logger, ISchedulerExecutionService schedulerExecutionService, ILeadRepository leadRepository)
         {
             _database = database;
             _logger = logger;
+            _schedulerExecutionService = schedulerExecutionService;
+            _leadRepository = leadRepository;
         }
 
         #region  Get My Tickets
@@ -249,7 +254,8 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync("USP_CRM_TicketManagement",
+                var dt = await _database.ExecuteDataTableAsync(
+                    "USP_CRM_TicketManagement",
                     new SqlParameter("@Status", "UPDATE_TICKET_STATUS"),
                     new SqlParameter("@TicketId", model.TicketId),
                     new SqlParameter("@TicketStatusId", model.TicketStatusId),
@@ -268,30 +274,260 @@ namespace CRMWebServices.Repository
 
                 var row = dt.Rows[0];
 
-                return new ApiResponse
+                // ============================================================
+                // GET UPDATED TICKET INFORMATION FROM DATABASE RESPONSE
+                // ============================================================
+
+                int ticketId = Convert.ToInt32(row["TicketId"]);
+
+                string ticketNo = row["TicketNo"] == DBNull.Value
+                    ? ""
+                    : row["TicketNo"]?.ToString() ?? "";
+
+                int assignedEmployeeId = row["AssignedEmployeeId"] == DBNull.Value
+                    ? 0
+                    : Convert.ToInt32(row["AssignedEmployeeId"]);
+
+                int ticketStatusId = row["TicketStatusId"] == DBNull.Value
+                    ? 0
+                    : Convert.ToInt32(row["TicketStatusId"]);
+
+                string ticketStatusCode = row["TicketStatusCode"] == DBNull.Value
+                    ? null
+                    : row["TicketStatusCode"]?.ToString();
+
+                string ticketStatusName = row["TicketStatusName"] == DBNull.Value
+                    ? null
+                    : row["TicketStatusName"]?.ToString();
+
+                long? createdBy = row["CreatedBy"] == DBNull.Value
+                    ? (long?)null
+                    : Convert.ToInt64(row["CreatedBy"]);
+
+                // ============================================================
+                // API RESPONSE
+                // ============================================================
+
+                var response = new ApiResponse
                 {
                     Status = true,
                     Message = "Ticket status updated successfully.",
                     Data = new
                     {
-                        TicketId = Convert.ToInt32(row["TicketId"]),
-                        TicketNo = row["TicketNo"]?.ToString(),
+                        TicketId = ticketId,
+                        TicketNo = ticketNo,
                         OpportunityId = Convert.ToInt32(row["OpportunityId"]),
                         OpportunityRequirementId = Convert.ToInt32(row["OpportunityRequirementId"]),
-                        AssignedEmployeeId = Convert.ToInt32(row["AssignedEmployeeId"]),
-                        TicketStatusId = Convert.ToInt32(row["TicketStatusId"]),
-                        TicketStatusCode = row["TicketStatusCode"]?.ToString(),
-                        TicketStatusName = row["TicketStatusName"]?.ToString(),
-                        CompletedOn = row["CompletedOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(row["CompletedOn"]),
-                        CompletedBy = row["CompletedBy"] == DBNull.Value ? (int?)null : Convert.ToInt32(row["CompletedBy"]),
-                        UpdatedOn = row["UpdatedOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(row["UpdatedOn"]),
-                        UpdatedBy = row["UpdatedBy"] == DBNull.Value ? (long?)null : Convert.ToInt64(row["UpdatedBy"])
+                        AssignedEmployeeId = assignedEmployeeId,
+                        TicketStatusId = ticketStatusId,
+                        TicketStatusCode = ticketStatusCode,
+                        TicketStatusName = ticketStatusName,
+                        CompletedOn = row["CompletedOn"] == DBNull.Value
+                            ? (DateTime?)null
+                            : Convert.ToDateTime(row["CompletedOn"]),
+                        CompletedBy = row["CompletedBy"] == DBNull.Value
+                            ? (int?)null
+                            : Convert.ToInt32(row["CompletedBy"]),
+                        UpdatedOn = row["UpdatedOn"] == DBNull.Value
+                            ? (DateTime?)null
+                            : Convert.ToDateTime(row["UpdatedOn"]),
+                        UpdatedBy = row["UpdatedBy"] == DBNull.Value
+                            ? (long?)null
+                            : Convert.ToInt64(row["UpdatedBy"])
                     }
                 };
+
+                // SEND NOTIFICATION + EMAIL AFTER SUCCESSFUL STATUS UPDATE
+
+                if (response.Status)
+                {
+                    // 1. ASSIGNED EMPLOYEE
+
+                    if (assignedEmployeeId > 0)
+                    {
+                        // 2. ASSIGNED EMPLOYEE'S MANAGER
+
+                        try
+                        {
+                            int? assignedEmployeeManagerId =
+                                await _leadRepository.GetEmployeeManagerIdAsync(assignedEmployeeId);
+
+                            if (assignedEmployeeManagerId.HasValue &&
+                                assignedEmployeeManagerId.Value != assignedEmployeeId)
+                            {
+                                try
+                                {
+                                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                        schedulerJobItemId: null,
+                                        employeeId: assignedEmployeeManagerId.Value,
+                                        entityId: ticketId,
+                                        title: "Ticket Status Updated",
+                                        message: $"Ticket {ticketNo} status has been updated to {ticketStatusName} for your team member.",
+                                        entityType: "TICKET",
+                                        recipientType: "MANAGER"
+                                    );
+
+                                    await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                                        schedulerJobItemId: null,
+                                        employeeId: assignedEmployeeManagerId.Value,
+                                        entityId: ticketId,
+                                        title: "Ticket Status Updated",
+                                        message: $"Ticket {ticketNo} status has been updated to {ticketStatusName} for your team member.",
+                                        entityType: "TICKET",
+                                        recipientType: "MANAGER",
+                                        actionType: "STATUS_UPDATED"
+                                    );
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError(
+                                        ex,
+                                        "Failed to send Ticket status notification to assigned employee manager. TicketId {TicketId}, ManagerId {ManagerId}",
+                                        ticketId,
+                                        assignedEmployeeManagerId.Value);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to get manager of assigned employee. TicketId {TicketId}, EmployeeId {EmployeeId}",
+                                ticketId,
+                                assignedEmployeeId);
+                        }
+                    }
+
+                    // 3. TICKET CREATOR
+
+                    if (createdBy.HasValue && createdBy.Value > 0)
+                    {
+                        int creatorEmployeeId = Convert.ToInt32(createdBy.Value);
+
+                        // Do not notify creator if creator is the assigned employee
+                        bool creatorIsAssignedEmployee =
+                            assignedEmployeeId > 0 &&
+                            creatorEmployeeId == assignedEmployeeId;
+
+                        if (!creatorIsAssignedEmployee)
+                        {
+                            try
+                            {
+                                await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                    schedulerJobItemId: null,
+                                    employeeId: creatorEmployeeId,
+                                    entityId: ticketId,
+                                    title: "Ticket Status Updated",
+                                    message: $"Ticket {ticketNo} status has been updated to {ticketStatusName}.",
+                                    entityType: "TICKET",
+                                    recipientType: "CREATOR"
+                                );
+
+                                await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                                    schedulerJobItemId: null,
+                                    employeeId: creatorEmployeeId,
+                                    entityId: ticketId,
+                                    title: "Ticket Status Updated",
+                                    message: $"Ticket {ticketNo} status has been updated to {ticketStatusName}.",
+                                    entityType: "TICKET",
+                                    recipientType: "CREATOR",
+                                    actionType: "STATUS_UPDATED"
+                                );
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(
+                                    ex,
+                                    "Failed to send Ticket status notification to creator. TicketId {TicketId}, CreatedBy {CreatedBy}",
+                                    ticketId,
+                                    creatorEmployeeId);
+                            }
+                        }
+
+                        // 4. TICKET CREATOR'S MANAGER
+
+                        try
+                        {
+                            int? creatorManagerId =
+                                await _leadRepository.GetEmployeeManagerIdAsync(creatorEmployeeId);
+
+                            if (creatorManagerId.HasValue &&
+                                creatorManagerId.Value != creatorEmployeeId)
+                            {
+                                // Get assigned employee's manager
+                                int? assignedManagerId = null;
+
+                                if (assignedEmployeeId > 0)
+                                {
+                                    assignedManagerId =
+                                        await _leadRepository.GetEmployeeManagerIdAsync(assignedEmployeeId);
+                                }
+
+                                // Avoid duplicate notification
+                                bool sameAsAssignedEmployee =
+                                    assignedEmployeeId > 0 &&
+                                    creatorManagerId.Value == assignedEmployeeId;
+
+                                bool sameAsAssignedManager =
+                                    assignedManagerId.HasValue &&
+                                    creatorManagerId.Value == assignedManagerId.Value;
+
+                                if (!sameAsAssignedEmployee &&
+                                    !sameAsAssignedManager)
+                                {
+                                    try
+                                    {
+                                        await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                            schedulerJobItemId: null,
+                                            employeeId: creatorManagerId.Value,
+                                            entityId: ticketId,
+                                            title: "Ticket Status Updated",
+                                            message: $"Ticket {ticketNo} status has been updated to {ticketStatusName} by your team member.",
+                                            entityType: "TICKET",
+                                            recipientType: "CREATOR_MANAGER"
+                                        );
+
+                                        await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                                            schedulerJobItemId: null,
+                                            employeeId: creatorManagerId.Value,
+                                            entityId: ticketId,
+                                            title: "Ticket Status Updated",
+                                            message: $"Ticket {ticketNo} status has been updated to {ticketStatusName} by your team member.",
+                                            entityType: "TICKET",
+                                            recipientType: "CREATOR_MANAGER",
+                                            actionType: "STATUS_UPDATED"
+                                        );
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _logger.LogError(
+                                            ex,
+                                            "Failed to send Ticket status notification to creator manager. TicketId {TicketId}, ManagerId {ManagerId}",
+                                            ticketId,
+                                            creatorManagerId.Value);
+                                    }
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to get manager of ticket creator. TicketId {TicketId}, CreatedBy {CreatedBy}",
+                                ticketId,
+                                creatorEmployeeId);
+                        }
+                    }
+                }
+
+                return response;
             }
             catch (SqlException ex)
             {
-                _logger.LogError(ex, "Error updating ticket status for TicketId: {TicketId}", model.TicketId);
+                _logger.LogError(
+                    ex,
+                    "Error updating ticket status for TicketId: {TicketId}",
+                    model.TicketId);
 
                 return new ApiResponse
                 {
@@ -301,7 +537,10 @@ namespace CRMWebServices.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating ticket status for TicketId: {TicketId}", model.TicketId);
+                _logger.LogError(
+                    ex,
+                    "Error updating ticket status for TicketId: {TicketId}",
+                    model.TicketId);
 
                 return new ApiResponse
                 {
@@ -414,29 +653,201 @@ namespace CRMWebServices.Repository
                 }
 
                 var r = dt.Rows[0];
-
+                              
                 var ticket = new CreateTicketResponse
                 {
                     TicketId = Convert.ToInt32(r["TicketId"]),
                     TicketNo = r["TicketNo"] == DBNull.Value ? null : r["TicketNo"].ToString(),
                     OpportunityId = Convert.ToInt32(r["Ref_OpportunityId"]),
-                    OpportunityRequirementId =Convert.ToInt32(r["Ref_OpportunityRequirementId"]),
-                    AssignedEmployeeId =Convert.ToInt64(r["Ref_AssignedEmployeeId"]),
-                    TicketStatusId =Convert.ToInt32(r["Ref_TicketStatusId"]),
-                    TicketStatusCode =r["TicketStatusCode"] == DBNull.Value? null: r["TicketStatusCode"].ToString(),
-                    TicketStatusName =r["TicketStatusName"] == DBNull.Value? null: r["TicketStatusName"].ToString(),
-                    Priority =r["Priority"] == DBNull.Value? null: r["Priority"].ToString(),
-                    ScheduledOn =r["ScheduledOn"] == DBNull.Value? (DateTime?)null: Convert.ToDateTime(r["ScheduledOn"]),
-                    Description =r["Description"] == DBNull.Value? null: r["Description"].ToString(),
-                    ActivityId =r["ActivityId"] == DBNull.Value? 0: Convert.ToInt64(r["ActivityId"])
+                    OpportunityRequirementId = Convert.ToInt32(r["Ref_OpportunityRequirementId"]),
+                    AssignedEmployeeId = Convert.ToInt64(r["Ref_AssignedEmployeeId"]),
+                    TicketStatusId = Convert.ToInt32(r["Ref_TicketStatusId"]),
+                    TicketStatusCode = r["TicketStatusCode"] == DBNull.Value ? null : r["TicketStatusCode"].ToString(),
+                    TicketStatusName = r["TicketStatusName"] == DBNull.Value ? null : r["TicketStatusName"].ToString(),
+                    Priority = r["Priority"] == DBNull.Value ? null : r["Priority"].ToString(),
+                    ScheduledOn = r["ScheduledOn"] == DBNull.Value ? (DateTime?)null : Convert.ToDateTime(r["ScheduledOn"]),
+                    Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                    ActivityId = r["ActivityId"] == DBNull.Value ? 0 : Convert.ToInt64(r["ActivityId"])
                 };
 
-                return new ApiResponse
+                var response = new ApiResponse
                 {
                     Status = true,
                     Message = "Ticket created successfully.",
                     Data = ticket
                 };
+
+                // SEND NOTIFICATIONS AFTER SUCCESSFUL CREATION
+
+                if (response.Status)
+                {
+                    int ticketId = Convert.ToInt32(r["TicketId"]);
+                    string ticketNo = r["TicketNo"] == DBNull.Value ? "" : r["TicketNo"].ToString();
+                    int creatorEmployeeId = Convert.ToInt32(createdBy);
+                    int? assignedEmployeeId = model.AssignedEmployeeId.HasValue
+                        ? Convert.ToInt32(model.AssignedEmployeeId.Value)
+                        : (int?)null;
+
+                    // This variable is intentionally kept outside the
+                    // assigned employee block because we also need it
+                    // when checking the creator's manager.
+                    int? assignedManagerId = null;
+
+                    // 1. ASSIGNED EMPLOYEE
+
+                    if (assignedEmployeeId.HasValue)
+                    {
+                        try
+                        {
+                            await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                schedulerJobItemId: null,
+                                employeeId: assignedEmployeeId.Value,
+                                entityId: ticketId,
+                                title: "New Ticket Assigned",
+                                message: $"Ticket {ticketNo} has been assigned to you.",
+                                entityType: "TICKET",
+                                recipientType: "ASSIGNEE"
+                            );
+
+                            await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                                schedulerJobItemId: null,
+                                employeeId: assignedEmployeeId.Value,
+                                entityId: ticketId,
+                                title: "New Ticket Assigned",
+                                message: $"Ticket {ticketNo} has been assigned to you.",
+                                entityType: "TICKET",
+                                recipientType: "ASSIGNEE",
+                                actionType: "ASSIGNED"
+                            );
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to send assigned Ticket notification. TicketId {TicketId}, EmployeeId {EmployeeId}",
+                                ticketId,
+                                assignedEmployeeId.Value);
+                        }
+
+                        // ====================================================
+                        // 2. ASSIGNED EMPLOYEE'S MANAGER
+                        // ====================================================
+
+                        try
+                        {
+                            assignedManagerId = await _leadRepository.GetEmployeeManagerIdAsync(assignedEmployeeId.Value);
+
+                            if (assignedManagerId.HasValue && assignedManagerId.Value != assignedEmployeeId.Value)
+                            {
+                                try
+                                {
+                                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                        schedulerJobItemId: null,
+                                        employeeId: assignedManagerId.Value,
+                                        entityId: ticketId,
+                                        title: "Ticket Assigned",
+                                        message: $"Ticket {ticketNo} has been assigned to your team member.",
+                                        entityType: "TICKET",
+                                        recipientType: "MANAGER"
+                                    );
+
+                                    await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                                        schedulerJobItemId: null,
+                                        employeeId: assignedManagerId.Value,
+                                        entityId: ticketId,
+                                        title: "Ticket Assigned",
+                                        message: $"Ticket {ticketNo} has been assigned to your team member.",
+                                        entityType: "TICKET",
+                                        recipientType: "MANAGER",
+                                        actionType: "ASSIGNED"
+                                    );
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError(
+                                        ex,
+                                        "Failed to send Manager Ticket notification. TicketId {TicketId}, ManagerId {ManagerId}",
+                                        ticketId,
+                                        assignedManagerId.Value);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(
+                                ex,
+                                "Failed to get manager for assigned Employee. TicketId {TicketId}, EmployeeId {EmployeeId}",
+                                ticketId,
+                                assignedEmployeeId.Value);
+                        }
+                    }
+
+                    // ========================================================
+                    // 3. TICKET CREATOR'S MANAGER
+                    // ========================================================
+
+                    try
+                    {
+                        int? creatorManagerId = await _leadRepository.GetEmployeeManagerIdAsync(creatorEmployeeId);
+
+                        if (creatorManagerId.HasValue && creatorManagerId.Value != creatorEmployeeId)
+                        {
+                            // =============================================
+                            // IMPORTANT:
+                            // If creator's manager and assigned employee's
+                            // manager are the same employee, do NOT send
+                            // another notification.
+                            // =============================================
+
+                            bool isSameAsAssignedManager = assignedManagerId.HasValue && creatorManagerId.Value == assignedManagerId.Value;
+
+                            if (!isSameAsAssignedManager)
+                            {
+                                try
+                                {
+                                    await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                        schedulerJobItemId: null,
+                                        employeeId: creatorManagerId.Value,
+                                        entityId: ticketId,
+                                        title: "Ticket Created",
+                                        message: $"Ticket {ticketNo} has been created by your team member.",
+                                        entityType: "TICKET",
+                                        recipientType: "CREATOR_MANAGER"
+                                    );
+
+                                    await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
+                                        schedulerJobItemId: null,
+                                        employeeId: creatorManagerId.Value,
+                                        entityId: ticketId,
+                                        title: "Ticket Created",
+                                        message: $"Ticket {ticketNo} has been created by your team member.",
+                                        entityType: "TICKET",
+                                        recipientType: "CREATOR_MANAGER",
+                                        actionType: "CREATED"
+                                    );
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError(
+                                        ex,
+                                        "Failed to send Ticket Creator Manager notification. TicketId {TicketId}, ManagerId {ManagerId}",
+                                        ticketId,
+                                        creatorManagerId.Value);
+                                }
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(
+                            ex,
+                            "Failed to get manager of Ticket Creator. TicketId {TicketId}, CreatedBy {CreatedBy}",
+                            ticketId,
+                            createdBy);
+                    }
+                }
+
+                return response;
             }
             catch (Exception ex)
             {
