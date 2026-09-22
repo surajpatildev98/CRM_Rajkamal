@@ -121,7 +121,7 @@
         {
             public int OpportunityId { get; set; }
             public int OpportunityRequirementId { get; set; }
-            public long AssignedEmployeeId { get; set; }
+            public long? AssignedEmployeeId { get; set; }
             public long ActivityTypeId { get; set; }
             public DateTime ScheduledOn { get; set; }
             public string Description { get; set; }

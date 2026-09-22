@@ -52,6 +52,7 @@ namespace CRMWebServices.Controllers
 
             return Ok(response);
         }
+        #endregion
 
         [HttpGet("GetApplyLeaveTypes")]
         public async Task<IActionResult> GetApplyLeaveTypes(int employeeId)
