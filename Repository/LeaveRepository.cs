@@ -8,10 +8,12 @@ namespace CRMWebServices.Repository
     public class LeaveRepository : ILeaveRepository
     {
         private readonly IDatabaseService _database;
+        private readonly ILogger<LeaveRepository> _logger;
 
-        public LeaveRepository(IDatabaseService database)
+        public LeaveRepository(IDatabaseService database,ILogger<LeaveRepository> logger)
         {
             _database = database;
+            _logger  = logger;
         }
 
         #region GET LEAVE BALANCE
@@ -201,5 +203,171 @@ namespace CRMWebServices.Repository
             return list;
         }
         #endregion
+
+        public async Task<LeaveResponse<List<ApplyLeaveTypeModel>>> GetApplyLeaveTypes(int employeeId)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync(
+                    "USP_ORG_LeaveManagement",
+                    new SqlParameter("@Status", "GET_APPLY_LEAVE_TYPES"),
+                    new SqlParameter("@EmployeeId", employeeId)
+                );
+
+                var response = new LeaveResponse<List<ApplyLeaveTypeModel>>
+                {
+                    Status = false,
+                    Message = "Failed to fetch leave types.",
+                    Data = new List<ApplyLeaveTypeModel>()
+                };
+
+                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    response.Status = Convert.ToBoolean(
+                        ds.Tables[0].Rows[0]["Status"]);
+
+                    response.Message =
+                        ds.Tables[0].Rows[0]["Message"]?.ToString();
+                }
+
+                if (ds.Tables.Count > 1)
+                {
+                    response.Data = ds.Tables[1].AsEnumerable()
+                        .Select(row => new ApplyLeaveTypeModel
+                        {
+                            LeaveTypeId = Convert.ToInt32(row["LeaveTypeId"]),
+                            LeaveCode = row["LeaveCode"]?.ToString(),
+                            LeaveName = row["LeaveName"]?.ToString(),
+
+                            IsPaid = row["IsPaid"] != DBNull.Value &&
+                                     Convert.ToBoolean(row["IsPaid"]),
+
+                            Balance = row["Balance"] == DBNull.Value
+                                ? 0
+                                : Convert.ToDecimal(row["Balance"]),
+
+                            MaxDaysPerApplication =
+                                row["MaxDaysPerApplication"] == DBNull.Value
+                                    ? null
+                                    : Convert.ToDecimal(
+                                        row["MaxDaysPerApplication"]),
+
+                            NoticeDays = row["NoticeDays"] == DBNull.Value
+                                ? 0
+                                : Convert.ToInt32(row["NoticeDays"]),
+
+                            IsHalfDayAllowed =
+                                row["IsHalfDayAllowed"] != DBNull.Value &&
+                                Convert.ToBoolean(row["IsHalfDayAllowed"]),
+
+                            IsHourlyAllowed =
+                                row["IsHourlyAllowed"] != DBNull.Value &&
+                                Convert.ToBoolean(row["IsHourlyAllowed"]),
+
+                            IncludeWeekends =
+                                row["IncludeWeekends"] != DBNull.Value &&
+                                Convert.ToBoolean(row["IncludeWeekends"]),
+
+                            IncludeHolidays =
+                                row["IncludeHolidays"] != DBNull.Value &&
+                                Convert.ToBoolean(row["IncludeHolidays"]),
+
+                            SandwichRule =
+                                row["SandwichRule"] != DBNull.Value &&
+                                Convert.ToBoolean(row["SandwichRule"]),
+
+                            RequiresDocument =
+                                row["RequiresDocument"] != DBNull.Value &&
+                                Convert.ToBoolean(row["RequiresDocument"])
+                        })
+                        .ToList();
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while fetching apply leave types for EmployeeId: {EmployeeId}",
+                    employeeId);
+
+                return new LeaveResponse<List<ApplyLeaveTypeModel>>
+                {
+                    Status = false,
+                    Message = ex.Message,
+                    Data = new List<ApplyLeaveTypeModel>()
+                };
+            }
+        }
+
+        public async Task<LeaveResponse<object>> ApplyLeave(ApplyLeaveRequest model)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync(
+                    "USP_ORG_LeaveManagement",
+
+                    new SqlParameter("@Status", "APPLY_LEAVE"),
+                    new SqlParameter("@EmployeeId", model.EmployeeId),
+                    new SqlParameter("@LeaveTypeId", model.LeaveTypeId),
+                    new SqlParameter("@FromDate", model.FromDate.Date),
+                    new SqlParameter("@ToDate", model.ToDate.Date),
+                    new SqlParameter("@TotalDays", model.TotalDays),
+                    new SqlParameter("@Reason", model.Reason),
+                    new SqlParameter("@DayType", model.DayType)
+                );
+
+                var response = new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = "Failed to apply leave.",
+                    Data = null
+                };
+
+                if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
+                {
+                    response.Status = Convert.ToBoolean(
+                        ds.Tables[0].Rows[0]["Status"]);
+
+                    response.Message =
+                        ds.Tables[0].Rows[0]["Message"]?.ToString();
+                }
+
+                if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
+                {
+                    response.Data = new
+                    {
+                        EmployeeLeaveId =
+                            Convert.ToInt32(
+                                ds.Tables[1].Rows[0]["EmployeeLeaveId"]),
+
+                        LeaveApplicationNo =
+                            ds.Tables[1].Rows[0]["LeaveApplicationNo"]?.ToString(),
+
+                        TotalDays =
+                            Convert.ToDecimal(
+                                ds.Tables[1].Rows[0]["TotalDays"])
+                    };
+                }
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while applying leave for EmployeeId: {EmployeeId}, LeaveTypeId: {LeaveTypeId}",
+                    model.EmployeeId,
+                    model.LeaveTypeId);
+
+                return new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = ex.Message,
+                    Data = null
+                };
+            }
+        }
     }
 }

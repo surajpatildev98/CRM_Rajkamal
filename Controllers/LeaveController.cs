@@ -1,4 +1,5 @@
 ﻿using CRMWebServices.Interfaces;
+using CRMWebServices.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -54,6 +55,46 @@ namespace CRMWebServices.Controllers
                 await _leaveRepository.GetMyLeaves(employeeId);
 
             return Ok(response);
+        }
+
+        [HttpGet("GetApplyLeaveTypes")]
+        public async Task<IActionResult> GetApplyLeaveTypes(int employeeId)
+        {
+            try
+            {
+                var result = await _leaveRepository.GetApplyLeaveTypes(employeeId);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = ex.Message,
+                    data = (object)null
+                });
+            }
+        }
+
+        [HttpPost("ApplyLeave")]
+        public async Task<IActionResult> ApplyLeave([FromBody] ApplyLeaveRequest model)
+        {
+            try
+            {
+                var result = await _leaveRepository.ApplyLeave(model);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    status = false,
+                    message = ex.Message,
+                    data = (object)null
+                });
+            }
         }
     }
 }
