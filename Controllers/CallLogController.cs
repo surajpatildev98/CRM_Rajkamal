@@ -13,15 +13,13 @@ namespace CRMWebServices.Controllers
     public class CallLogController : ControllerBase
     {
         private readonly ICallLogRepository _callLogRepository;
-
         public CallLogController(ICallLogRepository callLogRepository)
         {
             _callLogRepository = callLogRepository;
         }
 
         [HttpPost("Create")]
-        public async Task<IActionResult> CreateCallLog(
-            [FromBody] CallLogCreateRequest model)
+        public async Task<IActionResult> CreateCallLog([FromBody] CallLogCreateRequest model)
         {
             try
             {
@@ -69,8 +67,7 @@ namespace CRMWebServices.Controllers
                     });
                 }
 
-                var response = await _callLogRepository
-                    .GetLeadCallLogs(leadId);
+                var response = await _callLogRepository.GetLeadCallLogs(leadId);
 
                 if (!response.Status)
                 {
@@ -90,8 +87,7 @@ namespace CRMWebServices.Controllers
         }
 
         [HttpGet("Opportunity/{opportunityId}")]
-        public async Task<IActionResult> GetOpportunityCallLogs(
-            int opportunityId)
+        public async Task<IActionResult> GetOpportunityCallLogs(int opportunityId)
         {
             try
             {
@@ -104,8 +100,7 @@ namespace CRMWebServices.Controllers
                     });
                 }
 
-                var response = await _callLogRepository
-                    .GetOpportunityCallLogs(opportunityId);
+                var response = await _callLogRepository.GetOpportunityCallLogs(opportunityId);
 
                 if (!response.Status)
                 {
