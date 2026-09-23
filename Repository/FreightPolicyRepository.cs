@@ -68,6 +68,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Status", "CREATE_FREIGHT_POLICY"),
                     new SqlParameter("@PolicyName", model.PolicyName.Trim()),
                     new SqlParameter("@SlabsJson", slabsJson),
+                    new SqlParameter("@ODACharge", (object?)model.ODACharge ?? DBNull.Value),
+                    new SqlParameter("@ODAMinOrderValue", (object?)model.ODAMinOrderValue ?? DBNull.Value),
                     new SqlParameter("@CreatedBy", employeeId)
                 );
 
@@ -86,12 +88,32 @@ namespace CRMWebServices.Repository
                 {
                     Status = Convert.ToInt32(row["Status"]) == 1,
                     Message = row["Message"]?.ToString(),
+                    //Data = dt.Columns.Contains("FreightPolicyId")
+                    //    ? new
+                    //    {
+                    //        FreightPolicyId = Convert.ToInt32(row["FreightPolicyId"]),
+                    //        PolicyName = row["PolicyName"]?.ToString(),
+                    //        VersionNo = Convert.ToInt32(row["VersionNo"]),
+
+                    //        IsActive = Convert.ToBoolean(row["IsActive"])
+                    //    }
+                    //    : null
+
                     Data = dt.Columns.Contains("FreightPolicyId")
                         ? new
                         {
                             FreightPolicyId = Convert.ToInt32(row["FreightPolicyId"]),
                             PolicyName = row["PolicyName"]?.ToString(),
                             VersionNo = Convert.ToInt32(row["VersionNo"]),
+
+                            ODACharge = row["ODACharge"] == DBNull.Value
+                                ? (decimal?)null
+                                : Convert.ToDecimal(row["ODACharge"]),
+
+                            ODAMinOrderValue = row["ODAMinOrderValue"] == DBNull.Value
+                                ? (decimal?)null
+                                : Convert.ToDecimal(row["ODAMinOrderValue"]),
+
                             IsActive = Convert.ToBoolean(row["IsActive"])
                         }
                         : null
@@ -134,6 +156,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Status", "UPDATE_FREIGHT_POLICY"),
                     new SqlParameter("@FreightPolicyId", model.FreightPolicyId),
                     new SqlParameter("@SlabsJson", slabsJson),
+                    new SqlParameter("@ODACharge", (object?)model.ODACharge ?? DBNull.Value),
+                    new SqlParameter("@ODAMinOrderValue", (object?)model.ODAMinOrderValue ?? DBNull.Value),
                     new SqlParameter("@UpdatedBy", employeeId)
                 );
 
@@ -165,8 +189,7 @@ namespace CRMWebServices.Repository
                         MinOrderValue = Convert.ToDecimal(r["MinOrderValue"]),
                         MaxOrderValue = r["MaxOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(r["MaxOrderValue"]),
                         FreightAmount = Convert.ToDecimal(r["FreightAmount"])
-                    }).ToList()
-                    : new List<FreightPolicySlabResponse>();
+                    }).ToList(): new List<FreightPolicySlabResponse>();
 
                 return new ApiResponse
                 {
@@ -178,6 +201,8 @@ namespace CRMWebServices.Repository
                         PolicyName = row["PolicyName"]?.ToString() ?? string.Empty,
                         VersionNo = Convert.ToInt32(row["VersionNo"]),
                         IsActive = Convert.ToBoolean(row["IsActive"]),
+                        ODACharge = row["ODACharge"] == DBNull.Value ? null : Convert.ToDecimal(row["ODACharge"]),
+                        ODAMinOrderValue = row["ODAMinOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(row["ODAMinOrderValue"]),
                         Slabs = slabs
                     }
                 };
@@ -199,6 +224,61 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
+
+        #region Get Freight Delivery Partners
+        public async Task<ApiResponse> GetFreightDeliveryPartners()
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    SP_NAME,
+                    new SqlParameter("@Status", "GET_FREIGHT_DELIVERY_PARTNERS")
+                );
+
+                var partners = dt.Rows.Cast<DataRow>()
+                    .Select(row => new FreightDeliveryPartnerResponse
+                    {
+                        DeliveryPartnerId = Convert.ToInt32(row["DeliveryPartnerId"]),
+                        PartnerName = row["PartnerName"]?.ToString() ?? string.Empty
+                    })
+                    .ToList();
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = "Freight delivery partners fetched successfully.",
+                    Data = partners
+                };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error fetching freight delivery partners."
+                );
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error fetching freight delivery partners."
+                );
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+
         #endregion
 
         #region Deactivate Freight Policy
@@ -270,6 +350,13 @@ namespace CRMWebServices.Repository
                         PolicyName = r["PolicyName"]?.ToString(),
                         VersionNo = Convert.ToInt32(r["VersionNo"]),
                         IsActive = Convert.ToBoolean(r["IsActive"]),
+                        ODACharge = r["ODACharge"] == DBNull.Value
+                        ? null
+                        : Convert.ToDecimal(r["ODACharge"]),
+
+                                            ODAMinOrderValue = r["ODAMinOrderValue"] == DBNull.Value
+                        ? null
+                        : Convert.ToDecimal(r["ODAMinOrderValue"]),
                         CreatedOn = Convert.ToDateTime(r["CreatedOn"]),
                         CreatedBy = r["CreatedBy"] == DBNull.Value? null: Convert.ToInt64(r["CreatedBy"]),
                         SlabCount = Convert.ToInt32(r["SlabCount"])
@@ -345,6 +432,13 @@ namespace CRMWebServices.Repository
                         PolicyName = row["PolicyName"]?.ToString(),
                         VersionNo = Convert.ToInt32(row["VersionNo"]),
                         IsActive = Convert.ToBoolean(row["IsActive"]),
+                        ODACharge = row["ODACharge"] == DBNull.Value
+                            ? null
+                            : Convert.ToDecimal(row["ODACharge"]),
+
+                                                ODAMinOrderValue = row["ODAMinOrderValue"] == DBNull.Value
+                            ? null
+                            : Convert.ToDecimal(row["ODAMinOrderValue"]),
                         CreatedOn = Convert.ToDateTime(row["CreatedOn"]),
                         CreatedBy = row["CreatedBy"] == DBNull.Value? null: Convert.ToInt64(row["CreatedBy"]),
                         UpdatedOn = row["UpdatedOn"] == DBNull.Value? null: Convert.ToDateTime(row["UpdatedOn"]),

@@ -8,15 +8,9 @@ namespace CRMWebServices.Models
     {        
         public class RaiseQuotationRequest
         {
-            public int Ref_OpportunityId { get; set; }
-
-            //public int Ref_OpportunityQuotationId { get; set; }
+            public int Ref_OpportunityId { get; set; }      
             public DateTime? QuotationDate { get; set; }
             public DateTime? ValidUntil { get; set; }
-
-            // Send EITHER the amount OR the percent for each — whichever the user typed in
-            //public decimal? FreightAmount { get; set; }
-            //public decimal? FreightPercent { get; set; }
             public decimal? TaxAmount { get; set; }
             public decimal? TaxPercent { get; set; }
             public string? TermsRemark { get; set; }
@@ -24,6 +18,8 @@ namespace CRMWebServices.Models
             public string? QuotationPdfFileName { get; set; }
             public string? QuotationPdfBase64 { get; set; }
             public int CreatedBy { get; set; }
+            public int? DeliveryPartnerId { get; set; }
+            public string? DeliveryPinCode { get; set; }
         }
         public class QuotationItemInput
         {
@@ -55,6 +51,8 @@ namespace CRMWebServices.Models
             //public int Ref_ManagementReviewId { get; set; }
             //public decimal? Margin { get; set; }
             public string DecisionCode { get; set; } = null!; // APPROVED | REJECTED
+
+            public bool? IncludeODAFreight { get; set; }
             public string? Remarks { get; set; }
             public int? ReviewedByEmployeeId { get; set; }
             public int CreatedBy { get; set; }
@@ -172,6 +170,8 @@ namespace CRMWebServices.Models
             public int OpportunityId { get; set; }
             public string OpportunityNo { get; set; } = string.Empty;
             public string CompanyName { get; set; } = string.Empty;
+            public string? DeliveryPinCode { get; set; }
+            public string? DeliveryAddress { get; set; }
             public int OwnerId { get; set; }
             public string OwnerName { get; set; } = string.Empty;
         }
@@ -232,6 +232,8 @@ namespace CRMWebServices.Models
             public string? QuotationPdfFileName { get; set; }
             public string? QuotationPdfBase64 { get; set; }
             public int CreatedBy { get; set; }
+            public int? DeliveryPartnerId { get; set; }
+            public string? DeliveryPinCode { get; set; }
         }
 
         public class QuotationHistoryInfo
@@ -277,6 +279,8 @@ namespace CRMWebServices.Models
             public int FreightPolicyId { get; set; }
             public string PolicyName { get; set; } = string.Empty;
             public int VersionNo { get; set; }
+            public decimal? ODACharge { get; set; }
+            public decimal? ODAMinOrderValue { get; set; }
             public int FreightPolicySlabId { get; set; }
             public decimal MinOrderValue { get; set; }
             public decimal? MaxOrderValue { get; set; }

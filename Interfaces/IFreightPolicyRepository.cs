@@ -12,5 +12,6 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> GetFreightPolicyDetails(int freightPolicyId);
         Task<ApiResponse> GetApplicableFreight(decimal orderValue);
         Task<ApiResponse> GetActiveFreightPolicy();
+        Task<ApiResponse> GetFreightDeliveryPartners();
     }
 }
