@@ -209,6 +209,11 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Gender", (object?)model.Gender ?? DBNull.Value),
                     new SqlParameter("@DOB", (object?)model.DOB ?? DBNull.Value),
                     new SqlParameter("@DOJ", (object?)model.DOJ ?? DBNull.Value),
+                    // Added BY suraj 240926
+                    new SqlParameter("@ProbationRequired", model.ProbationRequired),
+                    new SqlParameter("@ProbationPeriodValue", (object?)model.ProbationPeriodValue ?? DBNull.Value),
+                    new SqlParameter("@ProbationPeriodUnit", (object?)model.ProbationPeriodUnit ?? DBNull.Value),
+
                     new SqlParameter("@MaritalStatus", (object?)model.MaritalStatus ?? DBNull.Value),
                     new SqlParameter("@BloodGroup", (object?)model.BloodGroup ?? DBNull.Value),
                     //new SqlParameter("@LoginId", model.UserName),
@@ -362,6 +367,20 @@ namespace CRMWebServices.Repository
                         DOJ = row["DOJ"] == DBNull.Value? null: Convert.ToDateTime(row["DOJ"]),
                         MaritalStatus = row.Table.Columns.Contains("MaritalStatus") && row["MaritalStatus"] != DBNull.Value? row["MaritalStatus"]?.ToString(): null,
                         BloodGroup = row.Table.Columns.Contains("BloodGroup") && row["BloodGroup"] != DBNull.Value ? row["BloodGroup"]?.ToString(): null,
+
+
+                        ProbationRequired = row["ProbationRequired"] != DBNull.Value&& Convert.ToBoolean(row["ProbationRequired"]),
+                        RefProbationStatusId = row["Ref_ProbationStatusId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_ProbationStatusId"]),
+                        EmployeeProbationId = row["EmployeeProbationId"] == DBNull.Value? null: Convert.ToInt32(row["EmployeeProbationId"]),
+                        ProbationPeriodValue = row["ProbationPeriodValue"] == DBNull.Value? null: Convert.ToInt32(row["ProbationPeriodValue"]),
+                        ProbationPeriodUnit = row["ProbationPeriodUnit"] == DBNull.Value? null: row["ProbationPeriodUnit"]?.ToString(),
+                        ProbationStartDate = row["ProbationStartDate"] == DBNull.Value? null: Convert.ToDateTime(row["ProbationStartDate"]),
+                        ProbationEndDate = row["ProbationEndDate"] == DBNull.Value? null: Convert.ToDateTime(row["ProbationEndDate"]),
+                        ProbationStatusName = row["ProbationStatusName"] == DBNull.Value? null: row["ProbationStatusName"]?.ToString(),
+                        ConfirmationDate = row["ConfirmationDate"] == DBNull.Value? null: Convert.ToDateTime(row["ConfirmationDate"]),
+                        ConfirmedBy = row["ConfirmedBy"] == DBNull.Value? null: Convert.ToInt32(row["ConfirmedBy"]),
+                        ConfirmationRemark = row["ConfirmationRemark"] == DBNull.Value? null: row["ConfirmationRemark"]?.ToString(),
+
                         LoginId = row["LoginId"] == DBNull.Value? null: row["LoginId"]?.ToString(),
                         RefDesignationId = row["Ref_DesignationId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_DesignationId"]),
                         DesignationName = row["DesignationName"] == DBNull.Value? null: row["DesignationName"]?.ToString(),
@@ -590,6 +609,15 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@DOJ",(object?)model.DOJ ?? DBNull.Value),
                     new SqlParameter("@MaritalStatus",(object?)model.MaritalStatus ?? DBNull.Value),
                     new SqlParameter("@BloodGroup",(object?)model.BloodGroup ?? DBNull.Value),
+
+                    new SqlParameter("@ProbationRequired",
+                    (object?)model.ProbationRequired ?? DBNull.Value),
+
+                    new SqlParameter("@ProbationPeriodValue",
+                    (object?)model.ProbationPeriodValue ?? DBNull.Value),
+
+                    new SqlParameter("@ProbationPeriodUnit",
+                    (object?)model.ProbationPeriodUnit ?? DBNull.Value),
                     new SqlParameter("@RefDesignationId",(object?)model.RefDesignationId ?? DBNull.Value),
                     new SqlParameter("@ReportingManagerId",(object?)model.ReportingManagerId ?? DBNull.Value),
                     new SqlParameter("@RefOfficeId",(object?)model.RefOfficeId ?? DBNull.Value),
@@ -678,5 +706,13 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
+
+        public async Task<DataTable> GetProbationStatus()
+        {
+            return await _database.ExecuteDataTableAsync(
+                "USP_ORG_NewEmployeeManagement",
+                new SqlParameter("@Status", "GET_PROBATION_STATUS")
+            );
+        }
     }
 }

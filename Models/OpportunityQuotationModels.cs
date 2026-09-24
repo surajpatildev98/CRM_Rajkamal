@@ -92,6 +92,15 @@ namespace CRMWebServices.Models
             public int RevisionNumber { get; set; }
             public string? RootQuotationNo { get; set; }
             public OwnerInfo? Owner { get; set; }
+
+            public bool IsODA { get; set; }
+            public decimal ODACharge { get; set; }
+            public decimal ODAMinOrderValue { get; set; }
+            public bool ODAIncluded { get; set; }
+
+            public bool ODAApprovalRequired { get; set; }
+            public bool ODAIncludedAutomatically { get; set; }
+            public bool IsODAManagementReviewPending { get; set; }
         }     
         public class QuotationItemInfo
         {
@@ -294,6 +303,15 @@ namespace CRMWebServices.Models
             public List<QuotationHistoryInfo> History { get; set; } = new();
             public List<ManagementReviewInfo> Reviews { get; set; } = new();
             public List<FreightPolicySlabQuotationResponse> FreightPolicySlabs { get; set; } = new();
+        }
+
+        public class CheckODAResponse
+        {
+            public int DeliveryPartnerId { get; set; }
+            public string PinCode { get; set; } = string.Empty;
+            public bool IsODA { get; set; }
+            public decimal ODACharge { get; set; }
+            public decimal ODAMinOrderValue { get; set; }
         }
     }
 }

@@ -3,6 +3,7 @@ using CRMWebServices.Models;
 using CRMWebServices.Repository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace CRMWebServices.Controllers
 {
@@ -148,5 +149,50 @@ namespace CRMWebServices.Controllers
             }
         }
         #endregion
+
+        [HttpGet("probation-status")]
+        public async Task<IActionResult> GetProbationStatus()
+        {
+            try
+            {
+                var dt = await _repository.GetProbationStatus();
+
+                if (dt == null || dt.Rows.Count == 0)
+                {
+                    return Ok(new ApiResponse
+                    {
+                        Status = false,
+                        Message = "No probation status found.",
+                        Data = null
+                    });
+                }
+
+                var data = new List<object>();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    data.Add(new
+                    {
+                        ProbationStatusId = Convert.ToInt32(row["ProbationStatusId"]),
+                        StatusName = row["StatusName"]?.ToString()
+                    });
+                }
+
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Message = "Probation status loaded successfully.",
+                    Data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
     }
 }
