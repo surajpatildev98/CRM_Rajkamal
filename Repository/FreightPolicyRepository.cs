@@ -13,7 +13,6 @@ namespace CRMWebServices.Repository
     {
         private readonly IDatabaseService _database;
         private readonly ILogger<FreightPolicyRepository> _logger;
-
         private const string SP_NAME = "USP_CRM_FreightPolicyManagement";
 
         public FreightPolicyRepository(IDatabaseService database, ILogger<FreightPolicyRepository> logger)
