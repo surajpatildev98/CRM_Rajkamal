@@ -265,14 +265,15 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region Get Employee Master List
-        public async Task<List<EmployeeMasterModel>> GetEmployeeMaster()
+        public async Task<List<EmployeeMasterModel>> GetEmployeeMaster(int loggedInEmployeeId)
         {
             var employees = new List<EmployeeMasterModel>();
 
             try
             {
                 var dt = await _database.ExecuteDataTableAsync("USP_ORG_NewEmployeeManagement",
-                    new SqlParameter("@Status", "GET_EMPLOYEE_MASTER")
+                    new SqlParameter("@Status", "GET_EMPLOYEE_MASTER"),
+                    new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId)
                 );
 
                 if (dt == null || dt.Rows.Count == 0)

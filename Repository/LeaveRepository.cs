@@ -1,5 +1,6 @@
 ﻿using CRMWebServices.Interfaces;
 using CRMWebServices.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -184,7 +185,7 @@ namespace CRMWebServices.Repository
                     ToDate =row["ToDate"] != DBNull.Value? Convert.ToDateTime(row["ToDate"]): null,
                     TotalDays =row["TotalDays"] != DBNull.Value ? Convert.ToDecimal(row["TotalDays"]): 0,
                     Reason =row["Reason"]?.ToString() ?? "",
-                    Status =row["Status"] != DBNull.Value ? Convert.ToInt32(row["Status"]) : null,
+                    Status = row["Status"] != DBNull.Value ? row["Status"]?.ToString(): null,
                     LeaveApplicationNo =row["LeaveApplicationNo"]?.ToString() ?? "",
                     AppliedOn =row["AppliedOn"] != DBNull.Value ? Convert.ToDateTime(row["AppliedOn"]): null,
                     ApprovedBy =row["ApprovedBy"] != DBNull.Value ? Convert.ToInt32(row["ApprovedBy"]): null,
@@ -204,6 +205,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
+        #region Get Leave Type
         public async Task<LeaveResponse<List<ApplyLeaveTypeModel>>> GetApplyLeaveTypes(int employeeId)
         {
             try
@@ -300,7 +302,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+#endregion
 
+        #region Apply leave
         public async Task<LeaveResponse<object>> ApplyLeave(ApplyLeaveRequest model)
         {
             try
@@ -369,5 +373,495 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+#endregion
+
+        #region CANCEL LEAVE
+
+        public async Task<LeaveResponse<object>> CancelLeave(
+            CancelLeaveRequest model)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync("USP_ORG_LeaveManagement",
+
+                    new SqlParameter("@Status", "CANCEL_LEAVE"),
+
+                    new SqlParameter("@EmployeeId", model.EmployeeId),
+
+                    new SqlParameter("@EmployeeLeaveId", model.EmployeeLeaveId),
+
+                    new SqlParameter("@Reason", string.IsNullOrWhiteSpace(model.Reason) ? DBNull.Value : model.Reason.Trim())
+                );
+
+                var response = new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = "Failed to cancel leave.",
+                    Data = null
+                };
+
+
+                // TABLE 0 = RESPONSE
+
+                if (ds.Tables.Count > 0 &&
+                    ds.Tables[0].Rows.Count > 0)
+                {
+                    var row = ds.Tables[0].Rows[0];
+
+                    response.Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]);
+
+                    response.Message = row["Message"]?.ToString() ?? "";
+                }
+
+
+                // TABLE 1 = CANCELLED LEAVE
+
+                if (ds.Tables.Count > 1 &&
+                    ds.Tables[1].Rows.Count > 0)
+                {
+                    var row = ds.Tables[1].Rows[0];
+
+                    response.Data = new
+                    {
+                        EmployeeLeaveId =row["EmployeeLeaveId"] != DBNull.Value ? Convert.ToInt32(row["EmployeeLeaveId"]) : 0,
+
+                        EmployeeId = row["EmployeeId"] != DBNull.Value ? Convert.ToInt32(row["EmployeeId"]) : 0,
+
+                        LeaveTypeId = row["LeaveTypeId"] != DBNull.Value ? Convert.ToInt32(row["LeaveTypeId"]) : 0,
+
+                        LeaveCode = row["LeaveCode"]?.ToString(),
+
+                        LeaveName = row["LeaveName"]?.ToString(),
+
+                        FromDate = row["FromDate"] != DBNull.Value ? Convert.ToDateTime(row["FromDate"]) : (DateTime?)null,
+
+                        ToDate = row["ToDate"] != DBNull.Value ? Convert.ToDateTime(row["ToDate"]) : (DateTime?)null,
+
+                        TotalDays = row["TotalDays"] != DBNull.Value ? Convert.ToDecimal(row["TotalDays"]) : 0,
+
+                        Reason = row["Reason"]?.ToString(),
+
+                        Status = row["Status"]?.ToString(),
+
+                        LeaveApplicationNo =row["LeaveApplicationNo"]?.ToString(),
+
+                        AppliedOn =  row["AppliedOn"] != DBNull.Value  ? Convert.ToDateTime(row["AppliedOn"]) : (DateTime?)null,
+
+                        CancelledOn = row["CancelledOn"] != DBNull.Value ? Convert.ToDateTime(row["CancelledOn"]) : (DateTime?)null,
+
+                        CancelledReason = row["CancelledReason"]?.ToString(),
+
+                        CancelledBy = row["CancelledBy"] != DBNull.Value ? Convert.ToInt32(row["CancelledBy"]) : (int?)null,
+
+                        LeaveYearId = row["LeaveYearId"] != DBNull.Value ? Convert.ToInt32(row["LeaveYearId"]): 0,
+
+                        YearName = row["YearName"]?.ToString()
+                    };
+                }
+
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Database error while cancelling leave. EmployeeId: {EmployeeId}, EmployeeLeaveId: {EmployeeLeaveId}",
+                    model.EmployeeId,
+                    model.EmployeeLeaveId);
+
+                return new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}",
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while cancelling leave. EmployeeId: {EmployeeId}, EmployeeLeaveId: {EmployeeLeaveId}",
+                    model.EmployeeId,
+                    model.EmployeeLeaveId);
+
+                return new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        #endregion
+
+        #region GET TEAM LEAVES
+
+public async Task<LeaveResponse<List<TeamLeaveModel>>> GetTeamLeaves(
+    int employeeId)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync("USP_ORG_LeaveManagement",
+
+                    new SqlParameter("@Status","GET_TEAM_LEAVES"),
+
+                    new SqlParameter("@EmployeeId",employeeId)
+                );
+
+                var response = new LeaveResponse<List<TeamLeaveModel>>
+                {
+                    Status = false,
+                    Message = "No team leaves found.",
+                    Data = new List<TeamLeaveModel>()
+                };
+
+                if (ds.Tables.Count == 0)
+                {
+                    return response;
+                }
+
+                // TABLE 0 = TEAM LEAVES
+                var dt = ds.Tables[0];
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    response.Data.Add(new TeamLeaveModel
+                    {
+                        EmployeeLeaveId = row["EmployeeLeaveId"] != DBNull.Value ? Convert.ToInt32(row["EmployeeLeaveId"]) : 0,
+
+                        EmployeeId = row["EmployeeId"] != DBNull.Value ? Convert.ToInt32(row["EmployeeId"]) : 0,
+
+                        EmployeeCode = row["EmployeeCode"] != DBNull.Value ? row["EmployeeCode"]?.ToString() : null,
+
+                        FirstName = row["FirstName"] != DBNull.Value ? row["FirstName"]?.ToString() : null,
+
+                        MiddleName = row["MiddleName"] != DBNull.Value ? row["MiddleName"]?.ToString() : null,
+
+                        LastName = row["LastName"] != DBNull.Value ? row["LastName"]?.ToString() : null,
+
+                        EmployeeName = row["EmployeeName"] != DBNull.Value ? row["EmployeeName"]?.ToString() : null,
+
+                        LeaveTypeId = row["LeaveTypeId"] != DBNull.Value ? Convert.ToInt32(row["LeaveTypeId"]) : 0,
+
+                        LeaveCode = row["LeaveCode"] != DBNull.Value ? row["LeaveCode"]?.ToString() : null,
+
+                        LeaveName = row["LeaveName"] != DBNull.Value ? row["LeaveName"]?.ToString() : null,
+
+                        IsPaid = row["IsPaid"] != DBNull.Value ? Convert.ToBoolean(row["IsPaid"]) : null,
+
+                        FromDate = row["FromDate"] != DBNull.Value ? Convert.ToDateTime(row["FromDate"]) : null,
+
+                        ToDate =row["ToDate"] != DBNull.Value ? Convert.ToDateTime(row["ToDate"]) : null,
+
+                        TotalDays = row["TotalDays"] != DBNull.Value ? Convert.ToDecimal(row["TotalDays"]) : 0,
+
+                        Reason = row["Reason"] != DBNull.Value ? row["Reason"]?.ToString() : null,
+
+                        Status = row["Status"] != DBNull.Value ? row["Status"]?.ToString() : null,
+
+                        LeaveApplicationNo = row["LeaveApplicationNo"] != DBNull.Value  ? row["LeaveApplicationNo"]?.ToString() : null,
+
+                        AppliedOn = row["AppliedOn"] != DBNull.Value ? Convert.ToDateTime(row["AppliedOn"]) : null,
+
+                        ApprovedBy = row["ApprovedBy"] != DBNull.Value ? Convert.ToInt32(row["ApprovedBy"]) : null,
+
+                        ApprovedOn = row["ApprovedOn"] != DBNull.Value ? Convert.ToDateTime(row["ApprovedOn"])  : null,
+
+                        RejectedBy = row["RejectedBy"] != DBNull.Value ? Convert.ToInt32(row["RejectedBy"]) : null,
+
+                        RejectedOn = row["RejectedOn"] != DBNull.Value ? Convert.ToDateTime(row["RejectedOn"]) : null,
+
+                        RejectedReason = row["RejectedReason"] != DBNull.Value  ? row["RejectedReason"]?.ToString() : null,
+
+                        CancelledBy =  row["CancelledBy"] != DBNull.Value  ? Convert.ToInt32(row["CancelledBy"]) : null,
+
+                        CancelledOn = row["CancelledOn"] != DBNull.Value ? Convert.ToDateTime(row["CancelledOn"]) : null,
+
+                        CancelledReason = row["CancelledReason"] != DBNull.Value ? row["CancelledReason"]?.ToString() : null,
+
+                        LeaveYearId = row["LeaveYearId"] != DBNull.Value ? Convert.ToInt32(row["LeaveYearId"]) : 0,
+
+                        YearName =  row["YearName"] != DBNull.Value ? row["YearName"]?.ToString() : null
+                    });
+                }
+
+                response.Status = true;
+                response.Message = "Team leaves fetched successfully.";
+
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Database error while getting team leaves. EmployeeId: {EmployeeId}",
+                    employeeId);
+
+                return new LeaveResponse<List<TeamLeaveModel>>
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}",
+                    Data = new List<TeamLeaveModel>()
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while getting team leaves. EmployeeId: {EmployeeId}",
+                    employeeId);
+
+                return new LeaveResponse<List<TeamLeaveModel>>
+                {
+                    Status = false,
+                    Message = ex.Message,
+                    Data = new List<TeamLeaveModel>()
+                };
+            }
+        }
+
+#endregion
+
+        #region APPROVE LEAVE
+
+public async Task<LeaveResponse<object>> ApproveLeave(
+    ApproveLeaveRequest model)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync(
+                    "USP_ORG_LeaveManagement",
+
+                    new SqlParameter("@Status", "APPROVE_LEAVE"),
+
+                    new SqlParameter("@EmployeeId", model.EmployeeId),
+
+                    new SqlParameter("@EmployeeLeaveId",model.EmployeeLeaveId)
+                );
+
+                var response = new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = "Failed to approve leave.",
+                    Data = null
+                };
+
+                // TABLE 0 = RESPONSE
+                if (ds.Tables.Count > 0 &&
+                    ds.Tables[0].Rows.Count > 0)
+                {
+                    var row = ds.Tables[0].Rows[0];
+
+                    response.Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]);
+
+                    response.Message = row["Message"]?.ToString() ?? "";
+                }
+
+                // TABLE 1 = UPDATED LEAVE
+                if (ds.Tables.Count > 1 &&
+                    ds.Tables[1].Rows.Count > 0)
+                {
+                    var row = ds.Tables[1].Rows[0];
+
+                    response.Data = new
+                    {
+                        EmployeeLeaveId = row["EmployeeLeaveId"] != DBNull.Value ? Convert.ToInt32(row["EmployeeLeaveId"]) : 0,
+
+                        EmployeeId = row["EmployeeId"] != DBNull.Value  ? Convert.ToInt32(row["EmployeeId"]) : 0,
+
+                        EmployeeCode = row["EmployeeCode"]?.ToString(),
+
+                        EmployeeName = row["EmployeeName"]?.ToString(),
+
+                        LeaveTypeId = row["LeaveTypeId"] != DBNull.Value ? Convert.ToInt32(row["LeaveTypeId"]) : 0,
+
+                        LeaveCode = row["LeaveCode"]?.ToString(),
+
+                        LeaveName =row["LeaveName"]?.ToString(),
+
+                        FromDate = row["FromDate"] != DBNull.Value ? Convert.ToDateTime(row["FromDate"]) : (DateTime?)null,
+
+                        ToDate = row["ToDate"] != DBNull.Value ? Convert.ToDateTime(row["ToDate"]) : (DateTime?)null,
+
+                        TotalDays = row["TotalDays"] != DBNull.Value ? Convert.ToDecimal(row["TotalDays"]): 0,
+
+                        Reason = row["Reason"]?.ToString(),
+
+                        Status = row["Status"]?.ToString(),
+
+                        LeaveApplicationNo =row["LeaveApplicationNo"]?.ToString(),
+
+                        AppliedOn = row["AppliedOn"] != DBNull.Value ? Convert.ToDateTime(row["AppliedOn"]) : (DateTime?)null,
+
+                        ApprovedBy = row["ApprovedBy"] != DBNull.Value ? Convert.ToInt32(row["ApprovedBy"]) : (int?)null,
+
+                        ApprovedOn = row["ApprovedOn"] != DBNull.Value ? Convert.ToDateTime(row["ApprovedOn"]) : (DateTime?)null,
+
+                        LeaveYearId =row["LeaveYearId"] != DBNull.Value ? Convert.ToInt32(row["LeaveYearId"]) : 0,
+
+                        YearName =row["YearName"]?.ToString()
+                    };
+                }
+
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Database error while approving leave. ManagerId: {ManagerId}, EmployeeLeaveId: {EmployeeLeaveId}",
+                    model.EmployeeId,
+                    model.EmployeeLeaveId);
+
+                return new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}",
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while approving leave. ManagerId: {ManagerId}, EmployeeLeaveId: {EmployeeLeaveId}",
+                    model.EmployeeId,
+                    model.EmployeeLeaveId);
+
+                return new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+        #endregion
+
+        #region REJECT LEAVE
+
+public async Task<LeaveResponse<object>> RejectLeave(RejectLeaveRequest model)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync(
+                    "USP_ORG_LeaveManagement",
+
+                    new SqlParameter("@Status","REJECT_LEAVE"),
+
+                    new SqlParameter("@EmployeeId", model.EmployeeId),
+
+                    new SqlParameter("@EmployeeLeaveId",model.EmployeeLeaveId),
+
+                    new SqlParameter("@Reason", string.IsNullOrWhiteSpace(model.Reason) ? DBNull.Value: model.Reason.Trim())
+                );
+
+                var response = new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = "Failed to reject leave.",
+                    Data = null
+                };
+
+                // TABLE 0 = RESPONSE
+                if (ds.Tables.Count > 0 &&
+                    ds.Tables[0].Rows.Count > 0)
+                {
+                    var row = ds.Tables[0].Rows[0];
+
+                    response.Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]);
+
+                    response.Message = row["Message"]?.ToString() ?? "";
+                }
+
+                // TABLE 1 = UPDATED LEAVE
+                if (ds.Tables.Count > 1 &&
+                    ds.Tables[1].Rows.Count > 0)
+                {
+                    var row = ds.Tables[1].Rows[0];
+
+                    response.Data = new
+                    {
+                        EmployeeLeaveId =  row["EmployeeLeaveId"] != DBNull.Value ? Convert.ToInt32(row["EmployeeLeaveId"]) : 0,
+
+                        EmployeeId = row["EmployeeId"] != DBNull.Value ? Convert.ToInt32(row["EmployeeId"]) : 0,
+
+                        EmployeeCode = row["EmployeeCode"]?.ToString(),
+
+                        EmployeeName = row["EmployeeName"]?.ToString(),
+
+                        LeaveTypeId = row["LeaveTypeId"] != DBNull.Value  ? Convert.ToInt32(row["LeaveTypeId"]) : 0,
+
+                        LeaveCode = row["LeaveCode"]?.ToString(),
+
+                        LeaveName = row["LeaveName"]?.ToString(),
+
+                        FromDate = row["FromDate"] != DBNull.Value ? Convert.ToDateTime(row["FromDate"]) : (DateTime?)null,
+
+                        ToDate = row["ToDate"] != DBNull.Value ? Convert.ToDateTime(row["ToDate"]) : (DateTime?)null,
+
+                        TotalDays = row["TotalDays"] != DBNull.Value ? Convert.ToDecimal(row["TotalDays"]) : 0,
+
+                        Reason = row["Reason"]?.ToString(),
+
+                        Status = row["Status"]?.ToString(),
+
+                        LeaveApplicationNo =  row["LeaveApplicationNo"]?.ToString(),
+
+                        AppliedOn =row["AppliedOn"] != DBNull.Value ? Convert.ToDateTime(row["AppliedOn"]) : (DateTime?)null,
+
+                        RejectedBy = row["RejectedBy"] != DBNull.Value ? Convert.ToInt32(row["RejectedBy"]) : (int?)null,
+
+                        RejectedOn = row["RejectedOn"] != DBNull.Value ? Convert.ToDateTime(row["RejectedOn"]) : (DateTime?)null,
+
+                        RejectedReason = row["RejectedReason"]?.ToString(),
+
+                        LeaveYearId = row["LeaveYearId"] != DBNull.Value ? Convert.ToInt32(row["LeaveYearId"]) : 0,
+
+                        YearName = row["YearName"]?.ToString()
+                    };
+                }
+
+                return response;
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Database error while rejecting leave. ManagerId: {ManagerId}, EmployeeLeaveId: {EmployeeLeaveId}",
+                    model.EmployeeId,
+                    model.EmployeeLeaveId);
+
+                return new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}",
+                    Data = null
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Error while rejecting leave. ManagerId: {ManagerId}, EmployeeLeaveId: {EmployeeLeaveId}",
+                    model.EmployeeId,
+                    model.EmployeeLeaveId);
+
+                return new LeaveResponse<object>
+                {
+                    Status = false,
+                    Message = ex.Message,
+                    Data = null
+                };
+            }
+        }
+
+#endregion
+
+
+
+
     }
 }

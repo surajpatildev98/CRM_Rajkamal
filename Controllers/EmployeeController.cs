@@ -67,7 +67,8 @@ namespace CRMWebServices.Controllers
         {
             try
             {
-                var employees = await _repository.GetEmployeeMaster();
+                var loggedInEmployeeId = User.EmployeeId();
+                var employees = await _repository.GetEmployeeMaster(loggedInEmployeeId);
 
                 return Ok(new ApiResponse
                 {
