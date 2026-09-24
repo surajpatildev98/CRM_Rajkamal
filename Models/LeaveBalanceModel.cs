@@ -33,7 +33,7 @@
         public DateTime? ToDate { get; set; }
         public decimal? TotalDays { get; set; }
         public string? Reason { get; set; }
-        public int? Status { get; set; }
+        public string? Status { get; set; }
         public string? LeaveApplicationNo { get; set; }
         public DateTime? AppliedOn { get; set; }
         public int? ApprovedBy { get; set; }
@@ -83,4 +83,87 @@
         public bool SandwichRule { get; set; }
         public bool RequiresDocument { get; set; }
     }
+
+    public class CancelLeaveRequest
+    {
+        public int EmployeeId { get; set; }
+        public int EmployeeLeaveId { get; set; }
+        public string? Reason { get; set; }
+    }
+
+  
+    public class TeamLeaveModel
+    {
+        public int EmployeeLeaveId { get; set; }
+
+        public int EmployeeId { get; set; }
+
+        public string? EmployeeCode { get; set; }
+
+        public string? FirstName { get; set; }
+
+        public string? MiddleName { get; set; }
+
+        public string? LastName { get; set; }
+
+        public string? EmployeeName { get; set; }
+
+        public int LeaveTypeId { get; set; }
+
+        public string? LeaveCode { get; set; }
+
+        public string? LeaveName { get; set; }
+
+        public bool? IsPaid { get; set; }
+
+        public DateTime? FromDate { get; set; }
+
+        public DateTime? ToDate { get; set; }
+
+        public decimal TotalDays { get; set; }
+
+        public string? Reason { get; set; }
+
+        public string? Status { get; set; }
+
+        public string? LeaveApplicationNo { get; set; }
+
+        public DateTime? AppliedOn { get; set; }
+
+        public int? ApprovedBy { get; set; }
+
+        public DateTime? ApprovedOn { get; set; }
+
+        public int? RejectedBy { get; set; }
+
+        public DateTime? RejectedOn { get; set; }
+
+        public string? RejectedReason { get; set; }
+
+        public int? CancelledBy { get; set; }
+
+        public DateTime? CancelledOn { get; set; }
+
+        public string? CancelledReason { get; set; }
+
+        public int LeaveYearId { get; set; }
+
+        public string? YearName { get; set; }
+    }
+
+    public class ApproveLeaveRequest 
+    { 
+        public int EmployeeId { get; set; } 
+        public int EmployeeLeaveId { get; set; }
+    }
+    
+    public class RejectLeaveRequest
+    {
+        public int EmployeeId { get; set; }
+
+        public int EmployeeLeaveId { get; set; }
+
+        public string? Reason { get; set; }
+    }
+
 }
