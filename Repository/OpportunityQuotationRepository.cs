@@ -564,8 +564,7 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-        #endregion
-        
+        #endregion        
 
         #region // GET_QUOTATION_LIST
         public async Task<ApiResponse> GetQuotationList(QuotationListRequest request)
@@ -671,6 +670,35 @@ namespace CRMWebServices.Repository
                     FreightPolicyMinOrderValue = qRow["FreightSlabMinOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(qRow["FreightSlabMinOrderValue"]),
                     FreightPolicyMaxOrderValue = qRow["FreightSlabMaxOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(qRow["FreightSlabMaxOrderValue"]),
                     FreightPolicyAmount = qRow["FreightPolicyAmount"] == DBNull.Value ? null : Convert.ToDecimal(qRow["FreightPolicyAmount"]),
+
+                    IsODA = qRow["IsODA"] == DBNull.Value
+                    ? false
+                    : Convert.ToBoolean(qRow["IsODA"]),
+
+                    ODACharge = qRow["ODACharge"] == DBNull.Value
+                    ? 0
+                    : Convert.ToDecimal(qRow["ODACharge"]),
+
+                    ODAIncluded = qRow["ODAIncluded"] == DBNull.Value
+                    ? false
+                    : Convert.ToBoolean(qRow["ODAIncluded"]),
+
+                    ODAMinOrderValue = qRow["ODAMinOrderValue"] == DBNull.Value
+                    ? 0
+                    : Convert.ToDecimal(qRow["ODAMinOrderValue"]),
+
+                    ODAApprovalRequired = qRow["ODAApprovalRequired"] == DBNull.Value
+                    ? false
+                    : Convert.ToBoolean(qRow["ODAApprovalRequired"]),
+
+                    ODAIncludedAutomatically = qRow["ODAIncludedAutomatically"] == DBNull.Value
+                    ? false
+                    : Convert.ToBoolean(qRow["ODAIncludedAutomatically"]),
+
+                    IsODAManagementReviewPending = qRow["IsODAManagementReviewPending"] == DBNull.Value
+                    ? false
+                    : Convert.ToBoolean(qRow["IsODAManagementReviewPending"]),
+
                     TaxPercent = qRow["TaxPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxPercent"]),
                     TaxAmount = qRow["TaxAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxAmount"]),
                     SubTotal = Convert.ToDecimal(qRow["SubTotal"]),
@@ -1276,6 +1304,94 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
+
+        #region // CHECK ODA
+
+        public async Task<ApiResponse> CheckODA(int deliveryPartnerId, string pinCode)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(
+                    SP_NAME,
+                    new SqlParameter("@Status", "CHECK_ODA"),
+                    new SqlParameter("@DeliveryPartnerId", deliveryPartnerId),
+                    new SqlParameter("@PinCode", pinCode)
+                );
+
+                if (dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Unable to fetch ODA details."
+                    };
+                }
+
+                var row = dt.Rows[0];
+
+                if (Convert.ToInt32(row["Status"]) == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = row["Message"]?.ToString()
+                            ?? "Unable to fetch ODA details."
+                    };
+                }
+
+                var data = new CheckODAResponse
+                {
+                    DeliveryPartnerId =
+                        Convert.ToInt32(row["DeliveryPartnerId"]),
+
+                    PinCode =
+                        row["PinCode"]?.ToString() ?? string.Empty,
+
+                    IsODA =
+                        Convert.ToBoolean(row["IsODA"]),
+
+                    ODACharge =
+                        row["ODACharge"] == DBNull.Value
+                            ? 0
+                            : Convert.ToDecimal(row["ODACharge"]),
+
+                    ODAMinOrderValue =
+                        row["ODAMinOrderValue"] == DBNull.Value
+                            ? 0
+                            : Convert.ToDecimal(row["ODAMinOrderValue"])
+                };
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = row["Message"]?.ToString()
+                        ?? "ODA details fetched successfully.",
+                    Data = data
+                };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error checking ODA details.");
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking ODA details.");
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+
         #endregion
     }
 }

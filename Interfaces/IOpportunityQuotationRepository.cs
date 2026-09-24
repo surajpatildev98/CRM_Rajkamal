@@ -14,5 +14,6 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> DecideManagementReview(DecideManagementReviewRequest model);
         Task<ApiResponse> GetQuotationList(QuotationListRequest request);
         Task<ApiResponse> ReviseQuotation(ReviseQuotationRequest model);
+        Task<ApiResponse> CheckODA(int deliveryPartnerId, string pinCode);
     }
 }

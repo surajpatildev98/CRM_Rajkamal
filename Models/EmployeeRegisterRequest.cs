@@ -12,6 +12,11 @@
         public string? Gender { get; set; }
         public DateTime? DOB { get; set; }
         public DateTime? DOJ { get; set; }
+
+        public bool ProbationRequired { get; set; } = true;
+        public int? ProbationPeriodValue { get; set; }
+        public string? ProbationPeriodUnit { get; set; }
+
         public string? MaritalStatus { get; set; }
         public string? BloodGroup { get; set; }
         public string Password { get; set; }
@@ -134,6 +139,20 @@
         public DateTime? DOJ { get; set; }
         public string? MaritalStatus { get; set; }
         public string? BloodGroup { get; set; }
+
+        // PROBATION
+        public bool ProbationRequired { get; set; }
+        public int? RefProbationStatusId { get; set; }
+        public int? EmployeeProbationId { get; set; }
+        public int? ProbationPeriodValue { get; set; }
+        public string? ProbationPeriodUnit { get; set; }
+        public DateTime? ProbationStartDate { get; set; }
+        public DateTime? ProbationEndDate { get; set; }
+        public string? ProbationStatusName { get; set; }
+        public DateTime? ConfirmationDate { get; set; }
+        public int? ConfirmedBy { get; set; }
+        public string? ConfirmationRemark { get; set; }
+
         public string? LoginId { get; set; }
         public int? RefDesignationId { get; set; }
         public string? DesignationName { get; set; }

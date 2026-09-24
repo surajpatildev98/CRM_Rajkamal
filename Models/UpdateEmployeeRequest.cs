@@ -16,6 +16,9 @@
         public DateTime? DOJ { get; set; }
         public string? MaritalStatus { get; set; }
         public string? BloodGroup { get; set; }
+        public bool? ProbationRequired { get; set; }
+        public int? ProbationPeriodValue { get; set; }
+        public string? ProbationPeriodUnit { get; set; }
         public int? RefDesignationId { get; set; }
         public int? ReportingManagerId { get; set; }
         public int? RefOfficeId { get; set; }
