@@ -173,9 +173,7 @@ namespace CRMWebServices.Controllers
             {
                 var response = await _repository.GetFreightDeliveryPartners();
 
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {

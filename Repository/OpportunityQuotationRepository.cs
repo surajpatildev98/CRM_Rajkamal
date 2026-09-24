@@ -478,14 +478,8 @@ namespace CRMWebServices.Repository
                         {
                             FileName = model.QuotationPdfFileName,
                             FilePath = savedPath,
-                            FileType = Path.GetExtension(model.QuotationPdfFileName)
-                                .TrimStart('.')
-                                .ToLowerInvariant(),
-                            FileSize = Convert.FromBase64String(
-                                model.QuotationPdfBase64.Contains(",")
-                                    ? model.QuotationPdfBase64.Substring(
-                                        model.QuotationPdfBase64.IndexOf(",") + 1)
-                                    : model.QuotationPdfBase64).Length
+                            FileType = Path.GetExtension(model.QuotationPdfFileName).TrimStart('.').ToLowerInvariant(),
+                            FileSize = Convert.FromBase64String(model.QuotationPdfBase64.Contains(",")? model.QuotationPdfBase64.Substring(model.QuotationPdfBase64.IndexOf(",") + 1): model.QuotationPdfBase64).Length
                         });
                     }
                     catch (Exception ex)
@@ -498,54 +492,22 @@ namespace CRMWebServices.Repository
                     }
                 }
 
-                string? attachmentsJson =
-                    savedAttachments.Count > 0
-                        ? JsonConvert.SerializeObject(savedAttachments)
-                        : null;
+                string? attachmentsJson =savedAttachments.Count > 0 ? JsonConvert.SerializeObject(savedAttachments): null;
 
                 string itemsJson = JsonConvert.SerializeObject(model.Items);
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    SP_NAME,
-
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
                     new SqlParameter("@Status", "RAISE_QUOTATION"),
-
                     new SqlParameter("@Ref_OpportunityId", model.Ref_OpportunityId),
-
-                    new SqlParameter(
-                        "@DeliveryPartnerId",
-                        (object?)model.DeliveryPartnerId ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@DeliveryPinCode",
-                        (object?)model.DeliveryPinCode ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@QuotationDate",
-                        (object?)model.QuotationDate ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@ValidUntil",
-                        (object?)model.ValidUntil ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@TaxAmount",
-                        (object?)model.TaxAmount ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@TaxPercent",
-                        (object?)model.TaxPercent ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@TermsRemark",
-                        (object?)model.TermsRemark ?? DBNull.Value),
-
+                    new SqlParameter("@DeliveryPartnerId",(object?)model.DeliveryPartnerId ?? DBNull.Value),
+                    new SqlParameter("@DeliveryPinCode",(object?)model.DeliveryPinCode ?? DBNull.Value),
+                    new SqlParameter("@QuotationDate",(object?)model.QuotationDate ?? DBNull.Value),
+                    new SqlParameter("@ValidUntil",(object?)model.ValidUntil ?? DBNull.Value),
+                    new SqlParameter("@TaxAmount",(object?)model.TaxAmount ?? DBNull.Value),
+                    new SqlParameter("@TaxPercent",(object?)model.TaxPercent ?? DBNull.Value),
+                    new SqlParameter("@TermsRemark",(object?)model.TermsRemark ?? DBNull.Value),
                     new SqlParameter("@ItemsJson", itemsJson),
-
-                    new SqlParameter(
-                        "@AttachmentsMeta",
-                        (object?)attachmentsJson ?? DBNull.Value),
-
+                    new SqlParameter("@AttachmentsMeta",(object?)attachmentsJson ?? DBNull.Value),
                     new SqlParameter("@CreatedBy", model.CreatedBy)
                 );
 
@@ -555,11 +517,8 @@ namespace CRMWebServices.Repository
                 {
                     int opportunityId = model.Ref_OpportunityId;
 
-                    string quotationNo =
-                        Convert.ToString(dt.Rows[0]["QuotationNo"]);
-
-                    int managerEmployeeId =
-                        Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
+                    string quotationNo =Convert.ToString(dt.Rows[0]["QuotationNo"]);
+                    int managerEmployeeId =Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
 
                     if (managerEmployeeId > 0)
                     {
@@ -605,7 +564,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-
         #endregion
         
 
@@ -959,7 +917,6 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region // DECIDE_MANAGEMENT_REVIEW
-
         public async Task<ApiResponse> DecideManagementReview(DecideManagementReviewRequest model)
         {
             try
@@ -1050,7 +1007,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-
         #endregion
 
         #region // REVISE_QUOTATION OLD
