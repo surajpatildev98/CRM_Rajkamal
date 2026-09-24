@@ -5,6 +5,8 @@
         public class CreateFreightPolicyRequest
         {
             public string PolicyName { get; set; }
+            public decimal? ODACharge { get; set; }
+            public decimal? ODAMinOrderValue { get; set; }
             public List<FreightPolicySlabRequest> Slabs { get; set; }
         }
 
@@ -21,6 +23,8 @@
             public string PolicyName { get; set; }
             public int VersionNo { get; set; }
             public bool IsActive { get; set; }
+            public decimal? ODACharge { get; set; }
+            public decimal? ODAMinOrderValue { get; set; }
             public DateTime CreatedOn { get; set; }
             public long? CreatedBy { get; set; }
             public int SlabCount { get; set; }
@@ -32,6 +36,8 @@
             public string PolicyName { get; set; }
             public int VersionNo { get; set; }
             public bool IsActive { get; set; }
+            public decimal? ODACharge { get; set; }
+            public decimal? ODAMinOrderValue { get; set; }
             public DateTime CreatedOn { get; set; }
             public long? CreatedBy { get; set; }
             public DateTime? UpdatedOn { get; set; }
@@ -53,6 +59,8 @@
             public int FreightPolicyId { get; set; }
             public string PolicyName { get; set; }
             public int VersionNo { get; set; }
+            public decimal? ODACharge { get; set; }
+            public decimal? ODAMinOrderValue { get; set; }
             public int FreightPolicySlabId { get; set; }
             public decimal MinOrderValue { get; set; }
             public decimal? MaxOrderValue { get; set; }
@@ -61,6 +69,8 @@
         public class UpdateFreightPolicyRequest
         {
             public int FreightPolicyId { get; set; }
+            public decimal? ODACharge { get; set; }
+            public decimal? ODAMinOrderValue { get; set; }
             public List<FreightPolicySlabRequest> Slabs { get; set; } = new();
         }
 
@@ -70,12 +80,20 @@
             public string PolicyName { get; set; } = string.Empty;
             public int VersionNo { get; set; }
             public bool IsActive { get; set; }
+            public decimal? ODACharge { get; set; }
+            public decimal? ODAMinOrderValue { get; set; }
             public List<FreightPolicySlabResponse> Slabs { get; set; } = new();
         }
 
         public class DeactivateFreightPolicyRequest
         {
             public int FreightPolicyId { get; set; }
+        }
+
+        public class FreightDeliveryPartnerResponse
+        {
+            public int DeliveryPartnerId { get; set; }
+            public string PartnerName { get; set; } = string.Empty;
         }
 
     }

@@ -161,6 +161,30 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
-        #endregion      
+        #endregion
+
+        #region GET Freight Delivery Partners
+
+        [HttpGet]
+        [Route("delivery-partners")]
+        public async Task<IActionResult> GetFreightDeliveryPartners()
+        {
+            try
+            {
+                var response = await _repository.GetFreightDeliveryPartners();
+
+                return response.Status? Ok(response): BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        #endregion
     }
 }

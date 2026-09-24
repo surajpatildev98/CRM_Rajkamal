@@ -274,39 +274,18 @@ namespace CRMWebServices.Repository
 
                 var row = dt.Rows[0];
 
-                // ============================================================
-                // GET UPDATED TICKET INFORMATION FROM DATABASE RESPONSE
-                // ============================================================
+                // GET UPDATED TICKET INFORMATION FROM DATABASE RESPONSE               
 
                 int ticketId = Convert.ToInt32(row["TicketId"]);
 
-                string ticketNo = row["TicketNo"] == DBNull.Value
-                    ? ""
-                    : row["TicketNo"]?.ToString() ?? "";
-
-                int assignedEmployeeId = row["AssignedEmployeeId"] == DBNull.Value
-                    ? 0
-                    : Convert.ToInt32(row["AssignedEmployeeId"]);
-
-                int ticketStatusId = row["TicketStatusId"] == DBNull.Value
-                    ? 0
-                    : Convert.ToInt32(row["TicketStatusId"]);
-
-                string ticketStatusCode = row["TicketStatusCode"] == DBNull.Value
-                    ? null
-                    : row["TicketStatusCode"]?.ToString();
-
-                string ticketStatusName = row["TicketStatusName"] == DBNull.Value
-                    ? null
-                    : row["TicketStatusName"]?.ToString();
-
-                long? createdBy = row["CreatedBy"] == DBNull.Value
-                    ? (long?)null
-                    : Convert.ToInt64(row["CreatedBy"]);
-
-                // ============================================================
-                // API RESPONSE
-                // ============================================================
+                string ticketNo = row["TicketNo"] == DBNull.Value? "": row["TicketNo"]?.ToString() ?? "";
+                int assignedEmployeeId = row["AssignedEmployeeId"] == DBNull.Value? 0: Convert.ToInt32(row["AssignedEmployeeId"]);
+                int ticketStatusId = row["TicketStatusId"] == DBNull.Value? 0: Convert.ToInt32(row["TicketStatusId"]);
+                string ticketStatusCode = row["TicketStatusCode"] == DBNull.Value? null: row["TicketStatusCode"]?.ToString();
+                string ticketStatusName = row["TicketStatusName"] == DBNull.Value? null: row["TicketStatusName"]?.ToString();
+                long? createdBy = row["CreatedBy"] == DBNull.Value? (long?)null: Convert.ToInt64(row["CreatedBy"]);
+                
+                // API RESPONSE           
 
                 var response = new ApiResponse
                 {
@@ -322,31 +301,20 @@ namespace CRMWebServices.Repository
                         TicketStatusId = ticketStatusId,
                         TicketStatusCode = ticketStatusCode,
                         TicketStatusName = ticketStatusName,
-                        CompletedOn = row["CompletedOn"] == DBNull.Value
-                            ? (DateTime?)null
-                            : Convert.ToDateTime(row["CompletedOn"]),
-                        CompletedBy = row["CompletedBy"] == DBNull.Value
-                            ? (int?)null
-                            : Convert.ToInt32(row["CompletedBy"]),
-                        UpdatedOn = row["UpdatedOn"] == DBNull.Value
-                            ? (DateTime?)null
-                            : Convert.ToDateTime(row["UpdatedOn"]),
-                        UpdatedBy = row["UpdatedBy"] == DBNull.Value
-                            ? (long?)null
-                            : Convert.ToInt64(row["UpdatedBy"])
+                        CompletedOn = row["CompletedOn"] == DBNull.Value? (DateTime?)null: Convert.ToDateTime(row["CompletedOn"]),
+                        CompletedBy = row["CompletedBy"] == DBNull.Value? (int?)null: Convert.ToInt32(row["CompletedBy"]),
+                        UpdatedOn = row["UpdatedOn"] == DBNull.Value? (DateTime?)null: Convert.ToDateTime(row["UpdatedOn"]),
+                        UpdatedBy = row["UpdatedBy"] == DBNull.Value? (long?)null: Convert.ToInt64(row["UpdatedBy"])
                     }
                 };
 
                 // SEND NOTIFICATION + EMAIL AFTER SUCCESSFUL STATUS UPDATE
-
                 if (response.Status)
                 {
                     // 1. ASSIGNED EMPLOYEE
-
                     if (assignedEmployeeId > 0)
                     {
                         // 2. ASSIGNED EMPLOYEE'S MANAGER
-
                         try
                         {
                             int? assignedEmployeeManagerId =
@@ -390,11 +358,7 @@ namespace CRMWebServices.Repository
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(
-                                ex,
-                                "Failed to get manager of assigned employee. TicketId {TicketId}, EmployeeId {EmployeeId}",
-                                ticketId,
-                                assignedEmployeeId);
+                            _logger.LogError(ex,"Failed to get manager of assigned employee. TicketId {TicketId}, EmployeeId {EmployeeId}",ticketId,assignedEmployeeId);
                         }
                     }
 
@@ -405,10 +369,7 @@ namespace CRMWebServices.Repository
                         int creatorEmployeeId = Convert.ToInt32(createdBy.Value);
 
                         // Do not notify creator if creator is the assigned employee
-                        bool creatorIsAssignedEmployee =
-                            assignedEmployeeId > 0 &&
-                            creatorEmployeeId == assignedEmployeeId;
-
+                        bool creatorIsAssignedEmployee =assignedEmployeeId > 0 && creatorEmployeeId == assignedEmployeeId;
                         if (!creatorIsAssignedEmployee)
                         {
                             try
@@ -436,11 +397,7 @@ namespace CRMWebServices.Repository
                             }
                             catch (Exception ex)
                             {
-                                _logger.LogError(
-                                    ex,
-                                    "Failed to send Ticket status notification to creator. TicketId {TicketId}, CreatedBy {CreatedBy}",
-                                    ticketId,
-                                    creatorEmployeeId);
+                                _logger.LogError(ex,"Failed to send Ticket status notification to creator. TicketId {TicketId}, CreatedBy {CreatedBy}",ticketId,creatorEmployeeId);
                             }
                         }
 
@@ -448,32 +405,22 @@ namespace CRMWebServices.Repository
 
                         try
                         {
-                            int? creatorManagerId =
-                                await _leadRepository.GetEmployeeManagerIdAsync(creatorEmployeeId);
-
-                            if (creatorManagerId.HasValue &&
-                                creatorManagerId.Value != creatorEmployeeId)
+                            int? creatorManagerId =await _leadRepository.GetEmployeeManagerIdAsync(creatorEmployeeId);
+                            if (creatorManagerId.HasValue && creatorManagerId.Value != creatorEmployeeId)
                             {
                                 // Get assigned employee's manager
                                 int? assignedManagerId = null;
 
                                 if (assignedEmployeeId > 0)
                                 {
-                                    assignedManagerId =
-                                        await _leadRepository.GetEmployeeManagerIdAsync(assignedEmployeeId);
+                                    assignedManagerId =await _leadRepository.GetEmployeeManagerIdAsync(assignedEmployeeId);
                                 }
 
                                 // Avoid duplicate notification
-                                bool sameAsAssignedEmployee =
-                                    assignedEmployeeId > 0 &&
-                                    creatorManagerId.Value == assignedEmployeeId;
+                                bool sameAsAssignedEmployee = assignedEmployeeId > 0 && creatorManagerId.Value == assignedEmployeeId;
+                                bool sameAsAssignedManager =assignedManagerId.HasValue && creatorManagerId.Value == assignedManagerId.Value;
 
-                                bool sameAsAssignedManager =
-                                    assignedManagerId.HasValue &&
-                                    creatorManagerId.Value == assignedManagerId.Value;
-
-                                if (!sameAsAssignedEmployee &&
-                                    !sameAsAssignedManager)
+                                if (!sameAsAssignedEmployee && !sameAsAssignedManager)
                                 {
                                     try
                                     {
@@ -511,11 +458,7 @@ namespace CRMWebServices.Repository
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(
-                                ex,
-                                "Failed to get manager of ticket creator. TicketId {TicketId}, CreatedBy {CreatedBy}",
-                                ticketId,
-                                creatorEmployeeId);
+                            _logger.LogError(ex,"Failed to get manager of ticket creator. TicketId {TicketId}, CreatedBy {CreatedBy}",ticketId,creatorEmployeeId);
                         }
                     }
                 }
@@ -524,10 +467,7 @@ namespace CRMWebServices.Repository
             }
             catch (SqlException ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error updating ticket status for TicketId: {TicketId}",
-                    model.TicketId);
+                _logger.LogError(ex,"Error updating ticket status for TicketId: {TicketId}",model.TicketId);
 
                 return new ApiResponse
                 {
@@ -537,10 +477,7 @@ namespace CRMWebServices.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error updating ticket status for TicketId: {TicketId}",
-                    model.TicketId);
+                _logger.LogError(ex,"Error updating ticket status for TicketId: {TicketId}",model.TicketId);
 
                 return new ApiResponse
                 {
@@ -684,15 +621,12 @@ namespace CRMWebServices.Repository
                     int ticketId = Convert.ToInt32(r["TicketId"]);
                     string ticketNo = r["TicketNo"] == DBNull.Value ? "" : r["TicketNo"].ToString();
                     int creatorEmployeeId = Convert.ToInt32(createdBy);
-                    int? assignedEmployeeId = model.AssignedEmployeeId.HasValue
-                        ? Convert.ToInt32(model.AssignedEmployeeId.Value)
-                        : (int?)null;
+                    int? assignedEmployeeId = model.AssignedEmployeeId.HasValue? Convert.ToInt32(model.AssignedEmployeeId.Value): (int?)null;
 
                     // This variable is intentionally kept outside the
                     // assigned employee block because we also need it
                     // when checking the creator's manager.
                     int? assignedManagerId = null;
-
                     // 1. ASSIGNED EMPLOYEE
 
                     if (assignedEmployeeId.HasValue)
@@ -722,11 +656,7 @@ namespace CRMWebServices.Repository
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(
-                                ex,
-                                "Failed to send assigned Ticket notification. TicketId {TicketId}, EmployeeId {EmployeeId}",
-                                ticketId,
-                                assignedEmployeeId.Value);
+                            _logger.LogError(ex,"Failed to send assigned Ticket notification. TicketId {TicketId}, EmployeeId {EmployeeId}",ticketId,assignedEmployeeId.Value);
                         }
 
                         // ====================================================
@@ -764,27 +694,17 @@ namespace CRMWebServices.Repository
                                 }
                                 catch (Exception ex)
                                 {
-                                    _logger.LogError(
-                                        ex,
-                                        "Failed to send Manager Ticket notification. TicketId {TicketId}, ManagerId {ManagerId}",
-                                        ticketId,
-                                        assignedManagerId.Value);
+                                    _logger.LogError(ex,"Failed to send Manager Ticket notification. TicketId {TicketId}, ManagerId {ManagerId}",ticketId,assignedManagerId.Value);
                                 }
                             }
                         }
                         catch (Exception ex)
                         {
-                            _logger.LogError(
-                                ex,
-                                "Failed to get manager for assigned Employee. TicketId {TicketId}, EmployeeId {EmployeeId}",
-                                ticketId,
-                                assignedEmployeeId.Value);
+                            _logger.LogError(ex,"Failed to get manager for assigned Employee. TicketId {TicketId}, EmployeeId {EmployeeId}",ticketId,assignedEmployeeId.Value);
                         }
-                    }
-
-                    // ========================================================
-                    // 3. TICKET CREATOR'S MANAGER
-                    // ========================================================
+                    }   
+                    
+                    // 3. TICKET CREATOR'S MANAGER                
 
                     try
                     {
@@ -792,13 +712,6 @@ namespace CRMWebServices.Repository
 
                         if (creatorManagerId.HasValue && creatorManagerId.Value != creatorEmployeeId)
                         {
-                            // =============================================
-                            // IMPORTANT:
-                            // If creator's manager and assigned employee's
-                            // manager are the same employee, do NOT send
-                            // another notification.
-                            // =============================================
-
                             bool isSameAsAssignedManager = assignedManagerId.HasValue && creatorManagerId.Value == assignedManagerId.Value;
 
                             if (!isSameAsAssignedManager)
