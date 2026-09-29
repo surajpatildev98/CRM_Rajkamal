@@ -158,8 +158,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_NewEmployeeManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_NewEmployeeManagement",
                     new SqlParameter("@Status", "GET_EMPLOYEE_MANAGER"),
                     new SqlParameter("@EmployeeId", employeeId)
                 );
@@ -214,11 +213,7 @@ namespace CRMWebServices.Repository
                                 FileName = att.FileName,
                                 FilePath = savedPath,
                                 FileType = Path.GetExtension(att.FileName).TrimStart('.').ToLowerInvariant(),
-                                FileSize = Convert.FromBase64String(
-                                    att.Base64Content.Contains(",")
-                                        ? att.Base64Content.Substring(att.Base64Content.IndexOf(",") + 1)
-                                        : att.Base64Content
-                                ).Length
+                                FileSize = Convert.FromBase64String(att.Base64Content.Contains(",")? att.Base64Content.Substring(att.Base64Content.IndexOf(",") + 1): att.Base64Content).Length
                             });
                         }
                         catch (Exception ex)
@@ -234,8 +229,7 @@ namespace CRMWebServices.Repository
 
                 string attachmentsJson = savedAttachments.Count > 0 ? JsonConvert.SerializeObject(savedAttachments) : null;
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_CRM_LeadManagement",
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_LeadManagement",
                     new SqlParameter("@Status", "CREATE_LEAD"),
                     //new SqlParameter("@CustomerName", model.CustomerName),
                     new SqlParameter("@CustomerName", (object?)model.CustomerName?.Trim() ?? DBNull.Value),

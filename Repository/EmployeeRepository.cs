@@ -610,15 +610,9 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@DOJ",(object?)model.DOJ ?? DBNull.Value),
                     new SqlParameter("@MaritalStatus",(object?)model.MaritalStatus ?? DBNull.Value),
                     new SqlParameter("@BloodGroup",(object?)model.BloodGroup ?? DBNull.Value),
-
-                    new SqlParameter("@ProbationRequired",
-                    (object?)model.ProbationRequired ?? DBNull.Value),
-
-                    new SqlParameter("@ProbationPeriodValue",
-                    (object?)model.ProbationPeriodValue ?? DBNull.Value),
-
-                    new SqlParameter("@ProbationPeriodUnit",
-                    (object?)model.ProbationPeriodUnit ?? DBNull.Value),
+                    new SqlParameter("@ProbationRequired",(object?)model.ProbationRequired ?? DBNull.Value),
+                    new SqlParameter("@ProbationPeriodValue",(object?)model.ProbationPeriodValue ?? DBNull.Value),
+                    new SqlParameter("@ProbationPeriodUnit",(object?)model.ProbationPeriodUnit ?? DBNull.Value),
                     new SqlParameter("@RefDesignationId",(object?)model.RefDesignationId ?? DBNull.Value),
                     new SqlParameter("@ReportingManagerId",(object?)model.ReportingManagerId ?? DBNull.Value),
                     new SqlParameter("@RefOfficeId",(object?)model.RefOfficeId ?? DBNull.Value),
@@ -710,10 +704,11 @@ namespace CRMWebServices.Repository
 
         public async Task<DataTable> GetProbationStatus()
         {
-            return await _database.ExecuteDataTableAsync(
-                "USP_ORG_NewEmployeeManagement",
+            return await _database.ExecuteDataTableAsync("USP_ORG_NewEmployeeManagement",
                 new SqlParameter("@Status", "GET_PROBATION_STATUS")
             );
         }
+
+
     }
 }
