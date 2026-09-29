@@ -250,5 +250,35 @@ namespace CRMWebServices.Controllers
         }
 
         #endregion
+
+        #region // CHECK ODA
+
+        [HttpGet]
+        [Route("check-oda")]
+        public async Task<IActionResult> CheckODA(
+            [FromQuery] int deliveryPartnerId,
+            [FromQuery] string pinCode)
+        {
+            try
+            {
+                var response = await _repository.CheckODA(
+                    deliveryPartnerId,
+                    pinCode);
+
+                return response.Status
+                    ? Ok(response)
+                    : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+
+        #endregion
     }
 }
