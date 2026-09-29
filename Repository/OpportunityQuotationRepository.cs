@@ -564,8 +564,7 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-        #endregion
-        
+        #endregion        
 
         #region // GET_QUOTATION_LIST
         public async Task<ApiResponse> GetQuotationList(QuotationListRequest request)
@@ -671,6 +670,15 @@ namespace CRMWebServices.Repository
                     FreightPolicyMinOrderValue = qRow["FreightSlabMinOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(qRow["FreightSlabMinOrderValue"]),
                     FreightPolicyMaxOrderValue = qRow["FreightSlabMaxOrderValue"] == DBNull.Value ? null : Convert.ToDecimal(qRow["FreightSlabMaxOrderValue"]),
                     FreightPolicyAmount = qRow["FreightPolicyAmount"] == DBNull.Value ? null : Convert.ToDecimal(qRow["FreightPolicyAmount"]),
+
+                    IsODA = qRow["IsODA"] == DBNull.Value? false: Convert.ToBoolean(qRow["IsODA"]),
+                    ODACharge = qRow["ODACharge"] == DBNull.Value? 0: Convert.ToDecimal(qRow["ODACharge"]),
+                    ODAIncluded = qRow["ODAIncluded"] == DBNull.Value? false: Convert.ToBoolean(qRow["ODAIncluded"]),
+                    ODAMinOrderValue = qRow["ODAMinOrderValue"] == DBNull.Value? 0: Convert.ToDecimal(qRow["ODAMinOrderValue"]),
+                    ODAApprovalRequired = qRow["ODAApprovalRequired"] == DBNull.Value? false: Convert.ToBoolean(qRow["ODAApprovalRequired"]),
+                    ODAIncludedAutomatically = qRow["ODAIncludedAutomatically"] == DBNull.Value? false: Convert.ToBoolean(qRow["ODAIncludedAutomatically"]),
+                    IsODAManagementReviewPending = qRow["IsODAManagementReviewPending"] == DBNull.Value? false: Convert.ToBoolean(qRow["IsODAManagementReviewPending"]),
+
                     TaxPercent = qRow["TaxPercent"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxPercent"]),
                     TaxAmount = qRow["TaxAmount"] == DBNull.Value ? 0 : Convert.ToDecimal(qRow["TaxAmount"]),
                     SubTotal = Convert.ToDecimal(qRow["SubTotal"]),
@@ -1114,7 +1122,7 @@ namespace CRMWebServices.Repository
         //}
         #endregion
 
-        #region // REVISE_QUOTATION //NEW 230926
+        #region  REVISE_QUOTATION //NEW 230926
         public async Task<ApiResponse> ReviseQuotation(ReviseQuotationRequest model)
         {
             try
@@ -1126,25 +1134,15 @@ namespace CRMWebServices.Repository
                 {
                     try
                     {
-                        string savedPath = SaveBase64Attachment(
-                            model.QuotationPdfBase64,
-                            model.QuotationPdfFileName,
-                            "OpportunityQuotationAttachments");
+                        string savedPath = SaveBase64Attachment(model.QuotationPdfBase64,model.QuotationPdfFileName,"OpportunityQuotationAttachments");
 
-                        string base64Data =
-                            model.QuotationPdfBase64.Contains(",")
-                                ? model.QuotationPdfBase64.Substring(
-                                    model.QuotationPdfBase64.IndexOf(",") + 1)
-                                : model.QuotationPdfBase64;
+                        string base64Data =model.QuotationPdfBase64.Contains(",")? model.QuotationPdfBase64.Substring(model.QuotationPdfBase64.IndexOf(",") + 1): model.QuotationPdfBase64;
 
                         savedAttachments.Add(new
                         {
                             FileName = model.QuotationPdfFileName,
                             FilePath = savedPath,
-                            FileType = Path.GetExtension(
-                                model.QuotationPdfFileName)
-                                .TrimStart('.')
-                                .ToLowerInvariant(),
+                            FileType = Path.GetExtension(model.QuotationPdfFileName).TrimStart('.').ToLowerInvariant(),
                             FileSize = Convert.FromBase64String(base64Data).Length
                         });
                     }
@@ -1158,78 +1156,31 @@ namespace CRMWebServices.Repository
                     }
                 }
 
-                string? attachmentsJson =
-                    savedAttachments.Count > 0
-                        ? JsonConvert.SerializeObject(savedAttachments)
-                        : null;
+                string? attachmentsJson =savedAttachments.Count > 0? JsonConvert.SerializeObject(savedAttachments): null;
+                string itemsJson =JsonConvert.SerializeObject(model.Items);
 
-                string itemsJson =
-                    JsonConvert.SerializeObject(model.Items);
-
-                var dt = await _database.ExecuteDataTableAsync(
-                    SP_NAME,
-
-                    new SqlParameter(
-                        "@Status",
-                        "REVISE_QUOTATION"),
-
-                    new SqlParameter(
-                        "@Ref_OpportunityQuotationId",
-                        model.Ref_OpportunityQuotationId),
-
-                    new SqlParameter(
-                        "@DeliveryPartnerId",
-                        (object?)model.DeliveryPartnerId ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@DeliveryPinCode",
-                        (object?)model.DeliveryPinCode ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@QuotationDate",
-                        (object?)model.QuotationDate ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@ValidUntil",
-                        (object?)model.ValidUntil ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@TaxAmount",
-                        (object?)model.TaxAmount ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@TaxPercent",
-                        (object?)model.TaxPercent ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@TermsRemark",
-                        (object?)model.TermsRemark ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@ItemsJson",
-                        itemsJson),
-
-                    new SqlParameter(
-                        "@AttachmentsMeta",
-                        (object?)attachmentsJson ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@CreatedBy",
-                        model.CreatedBy)
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status","REVISE_QUOTATION"),
+                    new SqlParameter("@Ref_OpportunityQuotationId",model.Ref_OpportunityQuotationId),
+                    new SqlParameter("@DeliveryPartnerId",(object?)model.DeliveryPartnerId ?? DBNull.Value),
+                    new SqlParameter("@DeliveryPinCode",(object?)model.DeliveryPinCode ?? DBNull.Value),
+                    new SqlParameter("@QuotationDate",(object?)model.QuotationDate ?? DBNull.Value),
+                    new SqlParameter("@ValidUntil",(object?)model.ValidUntil ?? DBNull.Value),
+                    new SqlParameter("@TaxAmount",(object?)model.TaxAmount ?? DBNull.Value),
+                    new SqlParameter("@TaxPercent",(object?)model.TaxPercent ?? DBNull.Value),
+                    new SqlParameter("@TermsRemark",(object?)model.TermsRemark ?? DBNull.Value),
+                    new SqlParameter("@ItemsJson",itemsJson),
+                    new SqlParameter("@AttachmentsMeta",(object?)attachmentsJson ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy",model.CreatedBy)
                 );
 
                 var response = MapResponse(dt);
 
                 if (response.Status && dt.Rows.Count > 0)
                 {
-                    int opportunityId =
-                        Convert.ToInt32(dt.Rows[0]["OpportunityId"]);
-
-                    string quotationNo =
-                        Convert.ToString(dt.Rows[0]["QuotationNo"]);
-
-                    int managerEmployeeId =
-                        Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
+                    int opportunityId =Convert.ToInt32(dt.Rows[0]["OpportunityId"]);
+                    string quotationNo =Convert.ToString(dt.Rows[0]["QuotationNo"]);
+                    int managerEmployeeId =Convert.ToInt32(dt.Rows[0]["ManagerEmployeeId"]);
 
                     if (managerEmployeeId > 0)
                     {
@@ -1269,6 +1220,77 @@ namespace CRMWebServices.Repository
             }
             catch (Exception ex)
             {
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                };
+            }
+        }
+        #endregion
+
+        #region // CHECK ODA
+
+        public async Task<ApiResponse> CheckODA(int deliveryPartnerId, string pinCode)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "CHECK_ODA"),
+                    new SqlParameter("@DeliveryPartnerId", deliveryPartnerId),
+                    new SqlParameter("@PinCode", pinCode)
+                );
+
+                if (dt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Unable to fetch ODA details."
+                    };
+                }
+
+                var row = dt.Rows[0];
+
+                if (Convert.ToInt32(row["Status"]) == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = row["Message"]?.ToString()?? "Unable to fetch ODA details."
+                    };
+                }
+
+                var data = new CheckODAResponse
+                {
+                    DeliveryPartnerId =Convert.ToInt32(row["DeliveryPartnerId"]),
+                    PinCode =row["PinCode"]?.ToString() ?? string.Empty,
+                    IsODA =Convert.ToBoolean(row["IsODA"]),
+                    ODACharge =row["ODACharge"] == DBNull.Value? 0: Convert.ToDecimal(row["ODACharge"]),
+                    ODAMinOrderValue =row["ODAMinOrderValue"] == DBNull.Value? 0: Convert.ToDecimal(row["ODAMinOrderValue"])
+                };
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = row["Message"]?.ToString()?? "ODA details fetched successfully.",
+                    Data = data
+                };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error checking ODA details.");
+
+                return new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Database Error: {ex.Message}"
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error checking ODA details.");
+
                 return new ApiResponse
                 {
                     Status = false,
