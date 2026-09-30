@@ -40,7 +40,6 @@ namespace CRMWebServices.Services
                 await ProcessItemAsync(schedulerJobItemId);
             }
         }
-
         private async Task<DataTable> GetDueItemsAsync()
         {
             return await _database.ExecuteDataTableAsync(SP_NAME,
@@ -48,7 +47,6 @@ namespace CRMWebServices.Services
                 new SqlParameter("@Status", "GET_DUE_ITEMS")
             );
         }
-
         private async Task ProcessItemAsync(long schedulerJobItemId)
         {
             try
@@ -96,11 +94,7 @@ namespace CRMWebServices.Services
                         break;
 
                     default:
-                        _logger.LogWarning(
-                            "Unsupported scheduler EntityType {EntityType} for JobItem {JobItemId}.",
-                            entityType,
-                            schedulerJobItemId);
-
+                        _logger.LogWarning("Unsupported scheduler EntityType {EntityType} for JobItem {JobItemId}.",entityType,schedulerJobItemId);
                         await ExpireJobItemAsync(schedulerJobItemId);
                         break;
                 }
@@ -200,13 +194,13 @@ namespace CRMWebServices.Services
         //}
         #endregion
 
+        #region Process Lead 
         private async Task ProcessLeadAsync(long schedulerJobItemId, int leadId)
         {
             try
             {
                 // 1. Check current Lead status
-                var statusTable = await _database.ExecuteDataTableAsync(
-                    SP_NAME,
+                var statusTable = await _database.ExecuteDataTableAsync(SP_NAME,
                     new SqlParameter("@Status", "CHECK_LEAD_STATUS"),
                     new SqlParameter("@EntityId", leadId)
                 );
@@ -222,23 +216,13 @@ namespace CRMWebServices.Services
                 // 2. Lead is assigned -> COMPLETE
                 if (!isUnassigned)
                 {
-                    _logger.LogInformation(
-                        "Lead {LeadId} is assigned. Completing scheduler item {JobItemId}.",
-                        leadId,
-                        schedulerJobItemId
-                    );
-
+                    _logger.LogInformation("Lead {LeadId} is assigned. Completing scheduler item {JobItemId}.",leadId,schedulerJobItemId);
                     await CompleteJobItemAsync(schedulerJobItemId);
                     return;
                 }
 
                 // 3. Lead is still unassigned -> send notification
-                _logger.LogInformation(
-                    "Lead {LeadId} is still unassigned. Sending notification for JobItem {JobItemId}.",
-                    leadId,
-                    schedulerJobItemId
-                );
-
+                _logger.LogInformation("Lead {LeadId} is still unassigned. Sending notification for JobItem {JobItemId}.",leadId,schedulerJobItemId);
                 await NotifyUnassignedLeadAsync(leadId);
 
                 // 4. IMPORTANT:
@@ -246,32 +230,24 @@ namespace CRMWebServices.Services
                 // Lead is still unassigned, so schedule the next attempt.
                 await RescheduleJobItemAsync(schedulerJobItemId);
 
-                _logger.LogInformation(
-                    "Lead {LeadId} is still unassigned. Scheduler item {JobItemId} rescheduled.",
-                    leadId,
-                    schedulerJobItemId
-                );
+                _logger.LogInformation("Lead {LeadId} is still unassigned. Scheduler item {JobItemId} rescheduled.",leadId,schedulerJobItemId);
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error processing unassigned Lead {LeadId}, JobItem {JobItemId}.",
-                    leadId,
-                    schedulerJobItemId
-                );
-
+                _logger.LogError(ex,"Error processing unassigned Lead {LeadId}, JobItem {JobItemId}.",leadId,schedulerJobItemId);
                 // Even if notification fails, retry according to scheduler configuration.
                 await RescheduleJobItemAsync(schedulerJobItemId);
             }
         }
+        #endregion
 
+        #region Send Employee Notification [Firebase]
         public async Task SendEmployeeNotificationAsync(long? schedulerJobItemId, int employeeId, int entityId, string title, string message, string entityType, string recipientType)
         {
             var devices = await _database.ExecuteDataTableAsync("USP_CRM_SchedulerManagement",
                 new SqlParameter("@Status", "GET_EMPLOYEE_DEVICES"),
                 new SqlParameter("@EmployeeId", employeeId)
-     );
+             );
 
             if (devices == null || devices.Rows.Count == 0)
             {
@@ -295,13 +271,7 @@ namespace CRMWebServices.Services
 
                 if (schedulerJobItemId.HasValue)
                 {
-                    var notification = await CreateNotificationAsync(
-                        schedulerJobItemId,
-                        employeeId,
-                        deviceToken,
-                        "PUSH",
-                        title,
-                        message);
+                    var notification = await CreateNotificationAsync(schedulerJobItemId,employeeId,deviceToken,"PUSH",title,message);
 
                     if (notification == null ||
                         notification.Rows.Count == 0)
@@ -314,10 +284,7 @@ namespace CRMWebServices.Services
                 
                 // SEND FIREBASE NOTIFICATION
                
-                var result = await _firebase.SendNotificationAsync(
-                    deviceToken,
-                    title,
-                    message,
+                var result = await _firebase.SendNotificationAsync(deviceToken,title,message,
                     new Dictionary<string, string>
                     {
                         ["EntityType"] = entityType,
@@ -354,12 +321,14 @@ namespace CRMWebServices.Services
             }
 
         }
+        #endregion
+
+        #region Notify Unassigned Lead at the time of Lead Creation
         public async Task NotifyUnassignedLeadAsync(int leadId)
         {
             _logger.LogInformation("Starting unassigned lead notification. LeadId: {LeadId}", leadId);
 
-            var recipients = await _database.ExecuteDataTableAsync(
-                SP_NAME,
+            var recipients = await _database.ExecuteDataTableAsync(SP_NAME,
                 new SqlParameter("@Status", "GET_LEAD_RECIPIENTS"),
                 new SqlParameter("@EntityId", leadId)
             );
@@ -367,7 +336,6 @@ namespace CRMWebServices.Services
             if (recipients == null || recipients.Rows.Count == 0)
             {
                 _logger.LogWarning("No recipients found for Lead {LeadId}.", leadId);
-
                 return;
             }
 
@@ -426,22 +394,17 @@ namespace CRMWebServices.Services
                 //}
                 catch (Exception ex)
                 {
-                    _logger.LogError(
-                        ex,
-                        "Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",
-                        employeeId,
-                        leadId
-                    );
-
+                    _logger.LogError(ex,"Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",employeeId,leadId);
                     throw;
                 }
             }
         }
-       
+        #endregion
+
+        #region Database Operations For Scheduler
         private async Task<DataTable> ClaimJobItemAsync(long schedulerJobItemId)
         {
             return await _database.ExecuteDataTableAsync(SP_NAME,
-
                 new SqlParameter("@Status", "CLAIM_JOB_ITEM"),
                 new SqlParameter("@SchedulerJobItemId", schedulerJobItemId),
                 new SqlParameter("@UpdatedBy", DBNull.Value)
@@ -500,6 +463,9 @@ namespace CRMWebServices.Services
                 new SqlParameter("@EmployeeId", employeeId)
             );
         }
+        #endregion
+
+        #region Email Notification for Unassigned Lead [NOT IN USE]
         private async Task SendEmailNotificationAsync(long schedulerJobItemId, int leadId, int employeeId, string recipientType)
         {
             var employeeTable = await GetEmployeeEmailAsync(employeeId);
@@ -590,7 +556,9 @@ namespace CRMWebServices.Services
                 throw;
             }
         }
+        #endregion
 
+        #region Email Notification for Employee Probation Reminder
         public async Task SendEmployeeEmailNotificationAsync(long? schedulerJobItemId, int employeeId, int entityId,string title, string message, string entityType,string recipientType, string actionType)
         {
             var employeeTable = await GetEmployeeEmailAsync(employeeId);
@@ -613,8 +581,7 @@ namespace CRMWebServices.Services
             string logoUrl = $"{_config["EmailSettings:PublicBaseUrl"]}/assets/companylogo.jpg";
             string body = BuildEmailBody(title, color, message, logoUrl);
 
-            var notificationTable = await CreateNotificationAsync(
-                    schedulerJobItemId, employeeId, null, "EMAIL", title, message);
+            var notificationTable = await CreateNotificationAsync(schedulerJobItemId, employeeId, null, "EMAIL", title, message);
 
             if (notificationTable == null || notificationTable.Rows.Count == 0)
             {
@@ -645,6 +612,8 @@ namespace CRMWebServices.Services
                 throw;
             }
         }
+        #endregion
+
         private async Task<DataTable?> CreateNotificationAsync(long? schedulerJobItemId, int employeeId, string? deviceToken, string notificationType, string title, string message)
         {
             var dt = await _database.ExecuteDataTableAsync(SP_NAME,
@@ -661,7 +630,6 @@ namespace CRMWebServices.Services
 
             return dt != null && dt.Rows.Count > 0 ? dt : null;
         }
-
         private static readonly Dictionary<string, string> ActionColors = new()
         {
             ["CREATED"] = "#6A1B9A",
@@ -670,28 +638,20 @@ namespace CRMWebServices.Services
             ["UNASSIGNED"] = "#C8161D",
             ["PROBATION_EXPIRY"] = "#C8161D",
         };
-
         private async Task ProcessEmployeeProbationAsync(long schedulerJobItemId,int employeeProbationId)
         {
             try
             {
-                _logger.LogInformation(
-                    "Processing employee probation reminder. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",
-                    employeeProbationId,
-                    schedulerJobItemId);
+                _logger.LogInformation("Processing employee probation reminder. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",employeeProbationId,schedulerJobItemId);
 
-                var recipients = await _database.ExecuteDataTableAsync(
-                    SP_NAME,
+                var recipients = await _database.ExecuteDataTableAsync(SP_NAME,
                     new SqlParameter("@Status", "GET_EMPLOYEE_PROBATION_RECIPIENTS"),
                     new SqlParameter("@EntityId", employeeProbationId)
                 );
 
                 if (recipients == null || recipients.Rows.Count == 0)
                 {
-                    _logger.LogWarning(
-                        "No recipients found for EmployeeProbationId {EmployeeProbationId}.",
-                        employeeProbationId);
-
+                    _logger.LogWarning("No recipients found for EmployeeProbationId {EmployeeProbationId}.",employeeProbationId);
                     await RescheduleJobItemAsync(schedulerJobItemId);
                     return;
                 }
@@ -699,24 +659,11 @@ namespace CRMWebServices.Services
                 foreach (DataRow recipient in recipients.Rows)
                 {
                     int employeeId = Convert.ToInt32(recipient["EmployeeId"]);
-
-                    string recipientType =
-                        recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
-
-                    string employeeName =
-                        recipient["EmployeeName"]?.ToString() ?? "Employee";
-
-                    string probationEndDate =
-                        recipient["ProbationEndDate"] == DBNull.Value
-                            ? ""
-                            : Convert.ToDateTime(
-                                recipient["ProbationEndDate"])
-                                .ToString("dd-MM-yyyy");
-
+                    string recipientType =recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
+                    string employeeName =recipient["EmployeeName"]?.ToString() ?? "Employee";
+                    string probationEndDate =recipient["ProbationEndDate"] == DBNull.Value? "": Convert.ToDateTime(recipient["ProbationEndDate"]).ToString("dd-MM-yyyy");
                     string title = "Probation Period Ending";
-
-                    string message =
-                        $"Probation period of {employeeName} is ending on {probationEndDate}.";
+                    string message =$"Probation period of {employeeName} is ending on {probationEndDate}.";
 
                     // Firebase notification
                     await SendEmployeeNotificationAsync(
@@ -744,23 +691,14 @@ namespace CRMWebServices.Services
 
                 await CompleteJobItemAsync(schedulerJobItemId);
 
-                _logger.LogInformation(
-                    "Employee probation reminder completed successfully. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",
-                    employeeProbationId,
-                    schedulerJobItemId);
+                _logger.LogInformation("Employee probation reminder completed successfully. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",employeeProbationId,schedulerJobItemId);
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error processing employee probation. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",
-                    employeeProbationId,
-                    schedulerJobItemId);
-
+                _logger.LogError(ex,"Error processing employee probation. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",employeeProbationId,schedulerJobItemId);
                 throw;
             }
         }
-
         private string BuildEmailBody(string headerText, string color, string message, string logoUrl)
         {
             return $@"
