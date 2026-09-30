@@ -91,6 +91,7 @@ builder.Services.AddScoped<IEmailConfigurationRepository, EmailConfigurationRepo
 builder.Services.AddSingleton<IFirebaseNotificationService, FirebaseNotificationService>();
 builder.Services.AddScoped<ISchedulerExecutionService, SchedulerExecutionService>();
 builder.Services.AddHostedService<SchedulerWorker>();
+builder.Services.AddSingleton<IEmailTemplateRenderer, EmailTemplateRenderer>();
 
 builder.Services.AddMemoryCache();
 

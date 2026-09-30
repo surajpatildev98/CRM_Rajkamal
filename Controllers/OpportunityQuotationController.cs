@@ -23,7 +23,7 @@ namespace CRMWebServices.Controllers
             _authorization = authorization;
         }
 
-        #region GET api/OpportunityQuotation/raise-data/{opportunityId}
+        #region GET Raise Quotation Data 
         [HttpGet]
         [Route("raise-data/{opportunityId}")]
         public async Task<IActionResult> GetRaiseQuotationData(int opportunityId)
@@ -39,7 +39,7 @@ namespace CRMWebServices.Controllers
                     });
                 }
 
-                var response = await _repository.GetRaiseQuotationData(opportunityId);
+                var response = await _repository.GetRaiseQuotationData(opportunityId, User.EmployeeId());
 
                 return response.Status ? Ok(response) : BadRequest(response);
             }
@@ -54,7 +54,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region GET api/OpportunityQuotation/list     
+        #region GET Quotation List     
         [HttpGet]
         [Route("list")]
         public async Task<IActionResult> GetQuotationList([FromQuery] QuotationListRequest request)
@@ -90,7 +90,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region GET api/OpportunityQuotation/details/{opportunityQuotationId}       
+        #region GET Quotation Details   
         [HttpGet]
         [Route("details/{opportunityQuotationId}")]
         public async Task<IActionResult> GetQuotationDetails(int opportunityQuotationId)
@@ -110,7 +110,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region POST api/OpportunityQuotation/raise
+        #region POST Raise Quotation
         [HttpPost]
         [Route("raise")]
         public async Task<IActionResult> RaiseQuotation([FromBody] RaiseQuotationRequest request)
@@ -137,7 +137,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region POST api/OpportunityQuotation/customer-response
+        #region POST Log Customer Response
         [HttpPost]
         [Route("customer-response")]
         public async Task<IActionResult> LogCustomerResponse([FromBody] LogCustomerResponseRequest request)
@@ -164,7 +164,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region POST api/OpportunityQuotation/negotiation-round
+        #region POST Log Negotiation Round
         [HttpPost]
         [Route("negotiation-round")]
         public async Task<IActionResult> LogNegotiationRound([FromBody] LogNegotiationRoundRequest request)
@@ -191,7 +191,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region POST api/OpportunityQuotation/review-decision
+        #region POST Log Management Review   
         // POST api/OpportunityQuotation/review-decision
         // NOTE: this action is NOT scoped to a single Opportunity (it's an
         // internal manager action against a ManagementReview record), so it
@@ -217,7 +217,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
-        #region POST api/OpportunityQuotation/revise
+        #region POST Revise Quotation
         [HttpPost]
         [Route("revise")]
         public async Task<IActionResult> ReviseQuotation([FromBody] ReviseQuotationRequest request)
@@ -251,23 +251,15 @@ namespace CRMWebServices.Controllers
 
         #endregion
 
-        #region // CHECK ODA
-
+        #region GET CHECK ODA
         [HttpGet]
         [Route("check-oda")]
-        public async Task<IActionResult> CheckODA(
-            [FromQuery] int deliveryPartnerId,
-            [FromQuery] string pinCode)
+        public async Task<IActionResult> CheckODA([FromQuery] int deliveryPartnerId,[FromQuery] string pinCode)
         {
             try
             {
-                var response = await _repository.CheckODA(
-                    deliveryPartnerId,
-                    pinCode);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                var response = await _repository.CheckODA(deliveryPartnerId,pinCode);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -279,6 +271,91 @@ namespace CRMWebServices.Controllers
             }
         }
 
+        #endregion
+
+        #region GET ODA Approval List
+        [HttpGet]
+        [Route("oda-approvals")]
+        public async Task<IActionResult> GetODAApprovalList([FromQuery] ODAApprovalListRequest request)
+        {
+            try
+            {
+                var employeeId = User.EmployeeId();
+
+                var response = await _repository.GetODAApprovalList(request,employeeId);
+                return response.Status? Ok(response): BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new ApiResponse
+                    {
+                        Status = false,
+                        Message = $"Error: {ex.Message}"
+                    });
+            }
+        }
+        #endregion
+
+        #region GET ODA Approval Details
+        [HttpGet]
+        [Route("oda-approval/{quotationId}")]
+        public async Task<IActionResult> GetODAApprovalDetails(int quotationId)
+        {
+            try
+            {
+                int employeeId = User.EmployeeId();
+
+                var response = await _repository.GetODAApprovalDetails(quotationId,employeeId);
+
+                return response.Status? Ok(response): NotFound(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = $"Error: {ex.Message}"
+                });
+            }
+        }
+        #endregion
+
+        #region POST ODA Approval Decision
+        [HttpPost]
+        [Route("oda-approval/decision")]
+        public async Task<IActionResult> DecideODAApproval([FromBody] DecideODAApprovalRequest request)
+        {
+            try
+            {
+                request.CreatedBy = User.EmployeeId();
+                request.ReviewedByEmployeeId = User.EmployeeId();
+
+                if (request.DecisionCode != "APPROVED" &&
+                    request.DecisionCode != "REJECTED")
+                {
+                    return BadRequest(
+                        new ApiResponse
+                        {
+                            Status = false,
+                            Message ="DecisionCode must be APPROVED or REJECTED."
+                        });
+                }
+
+                var response =await _repository.DecideODAApproval(request);
+
+                return response.Status? Ok(response): BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(
+                    new ApiResponse
+                    {
+                        Status = false,
+                        Message = $"Error: {ex.Message}"
+                    });
+            }
+        }
         #endregion
     }
 }
