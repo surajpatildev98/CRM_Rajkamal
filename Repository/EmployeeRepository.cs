@@ -105,6 +105,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Password", passwordHash),
                     new SqlParameter("@RefDesignationId", (object?)model.RefDesignationId ?? DBNull.Value),
                     new SqlParameter("@ReportingManagerId", (object?)model.ReportingManagerId ?? DBNull.Value),
+                    new SqlParameter("@ReportingHRManagerId", (object?)model.ReportingHRManagerId ?? DBNull.Value),
                     new SqlParameter("@RefOfficeId", model.RefOfficeId),
                     new SqlParameter("@RefDepartmentId", model.RefDepartmentId),
                     new SqlParameter("@RefRoleId", model.RefRoleId),
@@ -220,6 +221,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Password", passwordHash),
                     new SqlParameter("@RefDesignationId", (object?)model.RefDesignationId ?? DBNull.Value),
                     new SqlParameter("@ReportingManagerId", (object?)model.ReportingManagerId ?? DBNull.Value),
+                    new SqlParameter("@ReportingHRManagerId", (object?)model.ReportingHRManagerId ?? DBNull.Value),
                     new SqlParameter("@RefOfficeId", model.RefOfficeId),
                     new SqlParameter("@RefDepartmentId", model.RefDepartmentId),
                     new SqlParameter("@RefRoleId", model.RefRoleId),
@@ -316,7 +318,11 @@ namespace CRMWebServices.Repository
                         RefShiftId = row["Ref_ShiftId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_ShiftId"]),
                         ShiftName = row["ShiftName"] == DBNull.Value ? null : row["ShiftName"]?.ToString(),                      
                         RefLeavePolicyId = row["RefLeavePolicyId"] == DBNull.Value ? null : Convert.ToInt32(row["RefLeavePolicyId"]),
-                        LeavePolicyName = row["LeavePolicyName"] == DBNull.Value ? null : row["LeavePolicyName"]?.ToString()
+                        LeavePolicyName = row["LeavePolicyName"] == DBNull.Value ? null : row["LeavePolicyName"]?.ToString(),
+                        RefReportingHRManagerId = row["Ref_ReportingHRManagerId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_ReportingHRManagerId"]),
+                        ReportingManagerID = row["Ref_ReportingManagerId"] == DBNull.Value ? null : row["Ref_ReportingManagerId"]?.ToString()
+
+
                     });
                 }
 
@@ -388,6 +394,11 @@ namespace CRMWebServices.Repository
                         RefReportingManagerId = row["Ref_ReportingManagerId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_ReportingManagerId"]),
                         ReportingManagerCode = row["ReportingManagerCode"] == DBNull.Value? null: row["ReportingManagerCode"]?.ToString(),
                         ReportingManagerName = row["ReportingManagerName"] == DBNull.Value? null: row["ReportingManagerName"]?.ToString(),
+
+                        RefReportingHRManagerId = row["Ref_ReportingHRManagerId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_ReportingHRManagerId"]),
+                        ReportingHRManagerCode = row["ReportingHRManagerCode"] == DBNull.Value ? null : row["ReportingHRManagerCode"]?.ToString(),
+                        ReportingHRManagerName = row["ReportingHRManagerName"] == DBNull.Value ? null : row["ReportingHRManagerName"]?.ToString(),
+
                         RefCompanyId = row["Ref_CompanyId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_CompanyId"]),
                         CompanyName = row["CompanyName"] == DBNull.Value ? null : row["CompanyName"]?.ToString(),
                         RefRegionId = row["Ref_RegionId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_RegionId"]),
@@ -615,6 +626,7 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@ProbationPeriodUnit",(object?)model.ProbationPeriodUnit ?? DBNull.Value),
                     new SqlParameter("@RefDesignationId",(object?)model.RefDesignationId ?? DBNull.Value),
                     new SqlParameter("@ReportingManagerId",(object?)model.ReportingManagerId ?? DBNull.Value),
+                    new SqlParameter("@ReportingHRManagerId",(object?)model.ReportingHRManagerId ?? DBNull.Value),
                     new SqlParameter("@RefOfficeId",(object?)model.RefOfficeId ?? DBNull.Value),
                     new SqlParameter("@RefDepartmentId",(object?)model.RefDepartmentId ?? DBNull.Value),
                     new SqlParameter("@RefRoleId",(object?)model.RefRoleId ?? DBNull.Value),
@@ -701,6 +713,28 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
+
+        public async Task<DataTable> GetHRManagersByOffice(int officeId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching HR managers for OfficeId: {OfficeId}", officeId);
+
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_NewEmployeeManagement",
+                    new SqlParameter("@Status", "GET_HR_EXECUTIVES_BY_OFFICE"),
+                    new SqlParameter("@OfficeId", officeId)
+                );
+
+                _logger.LogInformation("HR managers query completed. Rows: {RowCount}",dt?.Rows.Count ?? 0);
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,"Error fetching HR managers for OfficeId: {OfficeId}",officeId);
+                throw;
+            }
+        }
 
         public async Task<DataTable> GetProbationStatus()
         {

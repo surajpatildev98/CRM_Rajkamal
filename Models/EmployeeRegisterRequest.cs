@@ -22,6 +22,7 @@
         public string Password { get; set; }
         public int? RefDesignationId { get; set; }
         public int? ReportingManagerId { get; set; }
+        public int? ReportingHRManagerId { get; set; }
         public int RefOfficeId { get; set; }
         public int RefDepartmentId { get; set; }
         public int RefRoleId { get; set; }      
@@ -112,6 +113,8 @@
         public string? ShiftName { get; set; }
         public int? RefLeavePolicyId { get; set; }
         public string? LeavePolicyName { get; set; }
+        public int? RefReportingHRManagerId { get; set; }
+        public string? ReportingManagerID { get; set; }
     }
 
     public class EmployeeDetailsModel
@@ -175,6 +178,9 @@
         public string? ShiftName { get; set; }
         public int? RefLeavePolicyId { get; set; }
         public string? LeavePolicyName { get; set; }
+        public int? RefReportingHRManagerId { get; set; }
+        public string? ReportingHRManagerCode { get; set; }
+        public string? ReportingHRManagerName { get; set; }
     }
 
     public class EmployeeEducationModel
