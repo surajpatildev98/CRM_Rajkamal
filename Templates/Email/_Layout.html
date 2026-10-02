@@ -21,23 +21,26 @@
             <td align='center' style='padding:24px 12px;'>
 
                 <!--[if mso]><table role='presentation' width='620' cellpadding='0' cellspacing='0' border='0'><tr><td><![endif]-->
-                <table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='max-width:620px;'>
+                <table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='max-width:620px;border-radius:8px;overflow:hidden;'>
+
+                    {{{LogoBlock}}}
 
                     <tr>
-                        <td bgcolor='#1e3a8a' style='background-color:#1e3a8a;padding:24px 28px;border-radius:8px 8px 0 0;'>
-                            <div style='font-family:Arial,Helvetica,sans-serif;font-size:12px;letter-spacing:1px;color:#bfdbfe;text-transform:uppercase;'>CRM Notification</div>
-                            <div style='font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:700;color:#ffffff;padding-top:6px;'>{{Title}}</div>
+                        <td bgcolor='#ffffff' style='background-color:#ffffff;padding:22px 28px 16px 28px;border-bottom:3px solid {{HeaderColor}};'>
+                            <!--<div style='font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:1px;color:#64748b;text-transform:uppercase;'>CRM Notification</div>-->
+                            <div style='font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:1px;color:#64748b;text-transform:uppercase;'>{{HeaderLabel}}</div>
+                            <div style='font-family:Arial,Helvetica,sans-serif;font-size:22px;font-weight:700;color:{{HeaderColor}};padding-top:4px;'>{{Title}}</div>
                         </td>
                     </tr>
 
                     <tr>
-                        <td bgcolor='#ffffff' style='background-color:#ffffff;padding:28px;'>
+                        <td bgcolor='#ffffff' style='background-color:#ffffff;padding:24px 28px 28px 28px;'>
                             {{{Content}}}
                         </td>
                     </tr>
 
                     <tr>
-                        <td bgcolor='#f9fafb' style='background-color:#f9fafb;padding:18px 28px;border-top:1px solid #e5e7eb;border-radius:0 0 8px 8px;'>
+                        <td bgcolor='#f9fafb' style='background-color:#f9fafb;padding:18px 28px;border-top:1px solid #e5e7eb;'>
                             <p style='margin:0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#6b7280;text-align:center;'>
                                 Regards,<br>
                                 <b>Rajkamal CRM System</b><br>

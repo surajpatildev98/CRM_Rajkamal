@@ -21,6 +21,7 @@
         public string? ProbationPeriodUnit { get; set; }
         public int? RefDesignationId { get; set; }
         public int? ReportingManagerId { get; set; }
+        public int? ReportingHRManagerId { get; set; }
         public int? RefOfficeId { get; set; }
         public int? RefDepartmentId { get; set; }
         public int? RefRoleId { get; set; }
