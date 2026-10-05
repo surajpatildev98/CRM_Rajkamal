@@ -13,13 +13,16 @@ namespace CRMWebServices.Services
         private readonly IConfiguration _config;
         private readonly ILogger<SchedulerExecutionService> _logger;
 
-        public SchedulerExecutionService(IDatabaseService database, IFirebaseNotificationService firebase, IEmailService email, IConfiguration config, ILogger<SchedulerExecutionService> logger)
+        private readonly ISchedulerEmailComposer _emailComposer;
+
+        public SchedulerExecutionService(IDatabaseService database, IFirebaseNotificationService firebase, IEmailService email, IConfiguration config, ILogger<SchedulerExecutionService> logger, ISchedulerEmailComposer emailComposer )
         {
             _database = database;
             _firebase = firebase;
             _email = email;
             _config = config;
             _logger = logger;
+            _emailComposer = emailComposer;
         }
 
         public async Task ProcessDueItemsAsync(CancellationToken cancellationToken)
@@ -40,7 +43,6 @@ namespace CRMWebServices.Services
                 await ProcessItemAsync(schedulerJobItemId);
             }
         }
-
         private async Task<DataTable> GetDueItemsAsync()
         {
             return await _database.ExecuteDataTableAsync(SP_NAME,
@@ -48,7 +50,6 @@ namespace CRMWebServices.Services
                 new SqlParameter("@Status", "GET_DUE_ITEMS")
             );
         }
-
         private async Task ProcessItemAsync(long schedulerJobItemId)
         {
             try
@@ -70,20 +71,7 @@ namespace CRMWebServices.Services
 
                 var item = claimResult.Rows[0];
                 string entityType = item["EntityType"]?.ToString() ?? "";
-                int entityId = Convert.ToInt32(item["EntityId"]);
-
-                //switch (entityType.ToUpperInvariant())
-                //{
-                //    case "LEAD":
-                //        await ProcessLeadAsync(schedulerJobItemId, entityId);
-                //        break;
-
-                //    default:
-
-                //        _logger.LogWarning("Unsupported scheduler EntityType {EntityType} for JobItem {JobItemId}.",entityType,schedulerJobItemId);
-                //        await ExpireJobItemAsync(schedulerJobItemId);
-                //        break;
-                //}
+                int entityId = Convert.ToInt32(item["EntityId"]);               
 
                 switch (entityType.ToUpperInvariant())
                 {
@@ -95,12 +83,12 @@ namespace CRMWebServices.Services
                         await ProcessEmployeeProbationAsync(schedulerJobItemId, entityId);
                         break;
 
-                    default:
-                        _logger.LogWarning(
-                            "Unsupported scheduler EntityType {EntityType} for JobItem {JobItemId}.",
-                            entityType,
-                            schedulerJobItemId);
+                    case "EMPLOYEE_BIRTHDAY":
+                        await ProcessEmployeeBirthdayAsync(schedulerJobItemId);
+                        break;
 
+                    default:
+                        _logger.LogWarning("Unsupported scheduler EntityType {EntityType} for JobItem {JobItemId}.",entityType,schedulerJobItemId);
                         await ExpireJobItemAsync(schedulerJobItemId);
                         break;
                 }
@@ -200,13 +188,13 @@ namespace CRMWebServices.Services
         //}
         #endregion
 
+        #region Process Lead 
         private async Task ProcessLeadAsync(long schedulerJobItemId, int leadId)
         {
             try
             {
                 // 1. Check current Lead status
-                var statusTable = await _database.ExecuteDataTableAsync(
-                    SP_NAME,
+                var statusTable = await _database.ExecuteDataTableAsync(SP_NAME,
                     new SqlParameter("@Status", "CHECK_LEAD_STATUS"),
                     new SqlParameter("@EntityId", leadId)
                 );
@@ -222,23 +210,13 @@ namespace CRMWebServices.Services
                 // 2. Lead is assigned -> COMPLETE
                 if (!isUnassigned)
                 {
-                    _logger.LogInformation(
-                        "Lead {LeadId} is assigned. Completing scheduler item {JobItemId}.",
-                        leadId,
-                        schedulerJobItemId
-                    );
-
+                    _logger.LogInformation("Lead {LeadId} is assigned. Completing scheduler item {JobItemId}.",leadId,schedulerJobItemId);
                     await CompleteJobItemAsync(schedulerJobItemId);
                     return;
                 }
 
                 // 3. Lead is still unassigned -> send notification
-                _logger.LogInformation(
-                    "Lead {LeadId} is still unassigned. Sending notification for JobItem {JobItemId}.",
-                    leadId,
-                    schedulerJobItemId
-                );
-
+                _logger.LogInformation("Lead {LeadId} is still unassigned. Sending notification for JobItem {JobItemId}.",leadId,schedulerJobItemId);
                 await NotifyUnassignedLeadAsync(leadId);
 
                 // 4. IMPORTANT:
@@ -246,32 +224,24 @@ namespace CRMWebServices.Services
                 // Lead is still unassigned, so schedule the next attempt.
                 await RescheduleJobItemAsync(schedulerJobItemId);
 
-                _logger.LogInformation(
-                    "Lead {LeadId} is still unassigned. Scheduler item {JobItemId} rescheduled.",
-                    leadId,
-                    schedulerJobItemId
-                );
+                _logger.LogInformation("Lead {LeadId} is still unassigned. Scheduler item {JobItemId} rescheduled.",leadId,schedulerJobItemId);
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error processing unassigned Lead {LeadId}, JobItem {JobItemId}.",
-                    leadId,
-                    schedulerJobItemId
-                );
-
+                _logger.LogError(ex,"Error processing unassigned Lead {LeadId}, JobItem {JobItemId}.",leadId,schedulerJobItemId);
                 // Even if notification fails, retry according to scheduler configuration.
                 await RescheduleJobItemAsync(schedulerJobItemId);
             }
         }
+        #endregion
 
+        #region Send Employee Notification [Firebase]
         public async Task SendEmployeeNotificationAsync(long? schedulerJobItemId, int employeeId, int entityId, string title, string message, string entityType, string recipientType)
         {
             var devices = await _database.ExecuteDataTableAsync("USP_CRM_SchedulerManagement",
                 new SqlParameter("@Status", "GET_EMPLOYEE_DEVICES"),
                 new SqlParameter("@EmployeeId", employeeId)
-     );
+             );
 
             if (devices == null || devices.Rows.Count == 0)
             {
@@ -295,13 +265,7 @@ namespace CRMWebServices.Services
 
                 if (schedulerJobItemId.HasValue)
                 {
-                    var notification = await CreateNotificationAsync(
-                        schedulerJobItemId,
-                        employeeId,
-                        deviceToken,
-                        "PUSH",
-                        title,
-                        message);
+                    var notification = await CreateNotificationAsync(schedulerJobItemId,employeeId,deviceToken,"PUSH",title,message);
 
                     if (notification == null ||
                         notification.Rows.Count == 0)
@@ -314,10 +278,7 @@ namespace CRMWebServices.Services
                 
                 // SEND FIREBASE NOTIFICATION
                
-                var result = await _firebase.SendNotificationAsync(
-                    deviceToken,
-                    title,
-                    message,
+                var result = await _firebase.SendNotificationAsync(deviceToken,title,message,
                     new Dictionary<string, string>
                     {
                         ["EntityType"] = entityType,
@@ -354,12 +315,14 @@ namespace CRMWebServices.Services
             }
 
         }
+        #endregion
+
+        #region Notify Unassigned Lead at the time of Lead Creation
         public async Task NotifyUnassignedLeadAsync(int leadId)
         {
             _logger.LogInformation("Starting unassigned lead notification. LeadId: {LeadId}", leadId);
 
-            var recipients = await _database.ExecuteDataTableAsync(
-                SP_NAME,
+            var recipients = await _database.ExecuteDataTableAsync(SP_NAME,
                 new SqlParameter("@Status", "GET_LEAD_RECIPIENTS"),
                 new SqlParameter("@EntityId", leadId)
             );
@@ -367,7 +330,6 @@ namespace CRMWebServices.Services
             if (recipients == null || recipients.Rows.Count == 0)
             {
                 _logger.LogWarning("No recipients found for Lead {LeadId}.", leadId);
-
                 return;
             }
 
@@ -410,15 +372,26 @@ namespace CRMWebServices.Services
                         recipientType: recipientType);
 
                     //Added By Suraj on 01 - 09 - 2026: Send Email Notification for Unassigned Lead
+                    //await SendEmployeeEmailNotificationAsync(
+                    //    schedulerJobItemId: null,
+                    //    employeeId: employeeId,
+                    //    entityId: leadId,
+                    //    title: "Unassigned Lead",
+                    //    message: $"Lead #{leadId} is still unassigned.",
+                    //    entityType: "LEAD",
+                    //    recipientType: "MANAGER",
+                    //    actionType: "UNASSIGNED");
+
                     await SendEmployeeEmailNotificationAsync(
                         schedulerJobItemId: null,
                         employeeId: employeeId,
                         entityId: leadId,
-                        title: "Unassigned Lead",
-                        message: $"Lead #{leadId} is still unassigned.",
+                        title: title,
+                        message: message,
                         entityType: "LEAD",
-                        recipientType: "MANAGER",
-                        actionType: "UNASSIGNED");
+                        recipientType: recipientType,
+                        actionType: "UNASSIGNED",
+                        templateData: new Dictionary<string, string?> { ["LeadId"] = leadId.ToString() });
                 }
                 //catch (Exception ex)
                 //{
@@ -426,22 +399,17 @@ namespace CRMWebServices.Services
                 //}
                 catch (Exception ex)
                 {
-                    _logger.LogError(
-                        ex,
-                        "Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",
-                        employeeId,
-                        leadId
-                    );
-
+                    _logger.LogError(ex,"Failed to notify EmployeeId {EmployeeId} for Lead {LeadId}.",employeeId,leadId);
                     throw;
                 }
             }
         }
-       
+        #endregion
+
+        #region Database Operations For Scheduler
         private async Task<DataTable> ClaimJobItemAsync(long schedulerJobItemId)
         {
             return await _database.ExecuteDataTableAsync(SP_NAME,
-
                 new SqlParameter("@Status", "CLAIM_JOB_ITEM"),
                 new SqlParameter("@SchedulerJobItemId", schedulerJobItemId),
                 new SqlParameter("@UpdatedBy", DBNull.Value)
@@ -500,6 +468,9 @@ namespace CRMWebServices.Services
                 new SqlParameter("@EmployeeId", employeeId)
             );
         }
+        #endregion
+
+        #region Email Notification for Unassigned Lead [NOT IN USE]
         private async Task SendEmailNotificationAsync(long schedulerJobItemId, int leadId, int employeeId, string recipientType)
         {
             var employeeTable = await GetEmployeeEmailAsync(employeeId);
@@ -590,8 +561,65 @@ namespace CRMWebServices.Services
                 throw;
             }
         }
+        #endregion
 
-        public async Task SendEmployeeEmailNotificationAsync(long? schedulerJobItemId, int employeeId, int entityId,string title, string message, string entityType,string recipientType, string actionType)
+        #region Email Notification for Employee Probation Reminder
+        //public async Task SendEmployeeEmailNotificationAsync(long? schedulerJobItemId, int employeeId, int entityId,string title, string message, string entityType,string recipientType, string actionType)
+        //{
+        //    var employeeTable = await GetEmployeeEmailAsync(employeeId);
+
+        //    if (employeeTable == null || employeeTable.Rows.Count == 0)
+        //    {
+        //        _logger.LogWarning("No active email found for EmployeeId {EmployeeId}.", employeeId);
+        //        return;
+        //    }
+
+        //    string email = employeeTable.Rows[0]["OfficialEmail"]?.ToString() ?? string.Empty;
+
+        //    if (string.IsNullOrWhiteSpace(email))
+        //    {
+        //        _logger.LogWarning("Official email is empty for EmployeeId {EmployeeId}.", employeeId);
+        //        return;
+        //    }
+
+        //    string color = ActionColors.TryGetValue(actionType, out var c) ? c : "#333333";
+        //    string logoUrl = $"{_config["EmailSettings:PublicBaseUrl"]}/assets/companylogo.jpg";
+        //    string body = BuildEmailBody(title, color, message, logoUrl);
+
+        //    var notificationTable = await CreateNotificationAsync(schedulerJobItemId, employeeId, null, "EMAIL", title, message);
+
+        //    if (notificationTable == null || notificationTable.Rows.Count == 0)
+        //    {
+        //        _logger.LogWarning("Notification record was not created for EmployeeId {EmployeeId}.", employeeId);
+        //        return;
+        //    }
+
+        //    long notificationId = Convert.ToInt64(notificationTable.Rows[0]["SchedulerNotificationId"]);
+
+        //    try
+        //    {
+        //        var result = await _email.SendEmailAsync(email, title, body);
+
+        //        if (result.Success)
+        //        {
+        //            await MarkNotificationSentAsync(notificationId, null);
+        //            _logger.LogInformation("Email notification sent successfully to EmployeeId {EmployeeId}.", employeeId);
+        //        }
+        //        else
+        //        {
+        //            await MarkNotificationFailedAsync(notificationId, result.ErrorMessage);
+        //            _logger.LogWarning("Email notification failed for EmployeeId {EmployeeId}. Error: {Error}", employeeId, result.ErrorMessage);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        await MarkNotificationFailedAsync(notificationId, ex.Message);
+        //        throw;
+        //    }
+        //}
+        #endregion
+
+        public async Task SendEmployeeEmailNotificationAsync(long? schedulerJobItemId, int employeeId, int entityId, string title, string message, string entityType, string recipientType, string actionType, IReadOnlyDictionary<string, string?>? templateData = null)
         {
             var employeeTable = await GetEmployeeEmailAsync(employeeId);
 
@@ -609,12 +637,9 @@ namespace CRMWebServices.Services
                 return;
             }
 
-            string color = ActionColors.TryGetValue(actionType, out var c) ? c : "#333333";
-            string logoUrl = $"{_config["EmailSettings:PublicBaseUrl"]}/assets/companylogo.jpg";
-            string body = BuildEmailBody(title, color, message, logoUrl);
+            string body = _emailComposer.Compose(actionType, title, message, recipientType, templateData);
 
-            var notificationTable = await CreateNotificationAsync(
-                    schedulerJobItemId, employeeId, null, "EMAIL", title, message);
+            var notificationTable = await CreateNotificationAsync(schedulerJobItemId, employeeId, null, "EMAIL", title, message);
 
             if (notificationTable == null || notificationTable.Rows.Count == 0)
             {
@@ -645,6 +670,7 @@ namespace CRMWebServices.Services
                 throw;
             }
         }
+
         private async Task<DataTable?> CreateNotificationAsync(long? schedulerJobItemId, int employeeId, string? deviceToken, string notificationType, string title, string message)
         {
             var dt = await _database.ExecuteDataTableAsync(SP_NAME,
@@ -661,7 +687,6 @@ namespace CRMWebServices.Services
 
             return dt != null && dt.Rows.Count > 0 ? dt : null;
         }
-
         private static readonly Dictionary<string, string> ActionColors = new()
         {
             ["CREATED"] = "#6A1B9A",
@@ -669,29 +694,22 @@ namespace CRMWebServices.Services
             ["TRANSFERRED"] = "#1565C0",
             ["UNASSIGNED"] = "#C8161D",
             ["PROBATION_EXPIRY"] = "#C8161D",
+            ["BIRTHDAY"] = "#C8161D",
         };
-
         private async Task ProcessEmployeeProbationAsync(long schedulerJobItemId,int employeeProbationId)
         {
             try
             {
-                _logger.LogInformation(
-                    "Processing employee probation reminder. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",
-                    employeeProbationId,
-                    schedulerJobItemId);
+                _logger.LogInformation("Processing employee probation reminder. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",employeeProbationId,schedulerJobItemId);
 
-                var recipients = await _database.ExecuteDataTableAsync(
-                    SP_NAME,
+                var recipients = await _database.ExecuteDataTableAsync(SP_NAME,
                     new SqlParameter("@Status", "GET_EMPLOYEE_PROBATION_RECIPIENTS"),
                     new SqlParameter("@EntityId", employeeProbationId)
                 );
 
                 if (recipients == null || recipients.Rows.Count == 0)
                 {
-                    _logger.LogWarning(
-                        "No recipients found for EmployeeProbationId {EmployeeProbationId}.",
-                        employeeProbationId);
-
+                    _logger.LogWarning("No recipients found for EmployeeProbationId {EmployeeProbationId}.",employeeProbationId);
                     await RescheduleJobItemAsync(schedulerJobItemId);
                     return;
                 }
@@ -699,24 +717,11 @@ namespace CRMWebServices.Services
                 foreach (DataRow recipient in recipients.Rows)
                 {
                     int employeeId = Convert.ToInt32(recipient["EmployeeId"]);
-
-                    string recipientType =
-                        recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
-
-                    string employeeName =
-                        recipient["EmployeeName"]?.ToString() ?? "Employee";
-
-                    string probationEndDate =
-                        recipient["ProbationEndDate"] == DBNull.Value
-                            ? ""
-                            : Convert.ToDateTime(
-                                recipient["ProbationEndDate"])
-                                .ToString("dd-MM-yyyy");
-
+                    string recipientType =recipient["RecipientType"]?.ToString() ?? "RECIPIENT";
+                    string employeeName =recipient["EmployeeName"]?.ToString() ?? "Employee";
+                    string probationEndDate =recipient["ProbationEndDate"] == DBNull.Value? "": Convert.ToDateTime(recipient["ProbationEndDate"]).ToString("dd-MM-yyyy");
                     string title = "Probation Period Ending";
-
-                    string message =
-                        $"Probation period of {employeeName} is ending on {probationEndDate}.";
+                    string message =$"Probation period of {employeeName} is ending on {probationEndDate}.";
 
                     // Firebase notification
                     await SendEmployeeNotificationAsync(
@@ -738,29 +743,144 @@ namespace CRMWebServices.Services
                         message: message,
                         entityType: "EMPLOYEE_PROBATION",
                         recipientType: recipientType,
-                        actionType: "PROBATION_EXPIRY"
+                        actionType: "PROBATION_EXPIRY",
+                        templateData: new Dictionary<string, string?>
+                        {
+                            ["EmployeeName"] = employeeName,
+                            ["ProbationEndDate"] = probationEndDate
+                        }
                     );
                 }
 
                 await CompleteJobItemAsync(schedulerJobItemId);
 
-                _logger.LogInformation(
-                    "Employee probation reminder completed successfully. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",
-                    employeeProbationId,
-                    schedulerJobItemId);
+                _logger.LogInformation("Employee probation reminder completed successfully. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",employeeProbationId,schedulerJobItemId);
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Error processing employee probation. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",
-                    employeeProbationId,
-                    schedulerJobItemId);
-
+                _logger.LogError(ex,"Error processing employee probation. EmployeeProbationId: {EmployeeProbationId}, JobItemId: {JobItemId}",employeeProbationId,schedulerJobItemId);
                 throw;
             }
         }
 
+        private async Task ProcessEmployeeBirthdayAsync(long schedulerJobItemId)
+        {
+            try
+            {
+                _logger.LogInformation("Processing employee birthday reminders. JobItemId: {JobItemId}",schedulerJobItemId);
+
+                var birthdays = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status","GET_TODAY_EMPLOYEE_BIRTHDAYS")
+                );
+
+                if (birthdays == null || birthdays.Rows.Count == 0)
+                {
+                    _logger.LogInformation("No employee birthdays found for today.");
+                    await CompleteJobItemAsync(schedulerJobItemId);
+                    return;
+                }
+
+                foreach (DataRow row in birthdays.Rows)
+                {
+                    int employeeId =Convert.ToInt32(row["EmployeeId"]);
+                    string employeeName =row["EmployeeName"]?.ToString()?? "Employee";
+                    int? managerId =row["Ref_ReportingManagerId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_ReportingManagerId"]);
+                    int? hrManagerId =row["Ref_ReportingHRManagerId"] == DBNull.Value? null: Convert.ToInt32(row["Ref_ReportingHRManagerId"]);
+                    string title ="Employee Birthday Reminder";
+                    string message =$"Today is {employeeName}'s birthday.";
+                   
+                    // REPORTING MANAGER         
+                    if (managerId.HasValue)
+                    {
+                        await SendEmployeeNotificationAsync(
+                            schedulerJobItemId: schedulerJobItemId,
+                            employeeId: managerId.Value,
+                            entityId: employeeId,
+                            title: title,
+                            message: message,
+                            entityType: "EMPLOYEE_BIRTHDAY",
+                            recipientType: "MANAGER"
+                        );
+
+                        await SendEmployeeEmailNotificationAsync(
+                            schedulerJobItemId: schedulerJobItemId,
+                            employeeId: managerId.Value,
+                            entityId: employeeId,
+                            title: title,
+                            message: message,
+                            entityType: "EMPLOYEE_BIRTHDAY",
+                            recipientType: "MANAGER",
+                            actionType: "BIRTHDAY",
+                            templateData: new Dictionary<string, string?>
+                            {
+                                ["EmployeeName"] = employeeName,
+                                ["BirthdayDate"] = DateTime.Today.ToString("dd-MM-yyyy")
+                            }
+                        );
+
+
+                    }
+                                       
+                    // REPORTING HR MANAGER              
+                    if (hrManagerId.HasValue &&
+                        hrManagerId.Value != managerId)
+                    {
+                        await SendEmployeeNotificationAsync(
+                            schedulerJobItemId: schedulerJobItemId,
+                            employeeId: hrManagerId.Value,
+                            entityId: employeeId,
+                            title: title,
+                            message: message,
+                            entityType: "EMPLOYEE_BIRTHDAY",
+                            recipientType: "HR_MANAGER"
+                        );
+
+                        await SendEmployeeEmailNotificationAsync(
+                            schedulerJobItemId: schedulerJobItemId,
+                            employeeId: hrManagerId.Value,
+                            entityId: employeeId,
+                            title: title,
+                            message: message,
+                            entityType: "EMPLOYEE_BIRTHDAY",
+                            recipientType: "HR_MANAGER",
+                            actionType: "BIRTHDAY",
+                            templateData: new Dictionary<string, string?>
+                            {
+                                ["EmployeeName"] = employeeName,
+                                ["BirthdayDate"] = DateTime.Today.ToString("dd-MM-yyyy")
+                            }
+                        );
+
+                        // BIRTHDAY EMPLOYEE
+                        // BIRTHDAY EMPLOYEE
+                        await SendEmployeeEmailNotificationAsync(
+                            schedulerJobItemId: schedulerJobItemId,
+                            employeeId: employeeId,
+                            entityId: employeeId,
+                            title: $"🎉 Happy Birthday, {employeeName}!",
+                            message: $"Happy Birthday, {employeeName}!",
+                            entityType: "EMPLOYEE_BIRTHDAY",
+                            recipientType: "BIRTHDAY_EMPLOYEE",
+                            actionType: "BIRTHDAY_WISH",
+                            templateData: new Dictionary<string, string?>
+                            {
+                                ["EmployeeName"] = employeeName,
+                                ["HeaderLabel"] = "Birthday Wishes"
+                            }
+                        );
+                    }
+                }
+
+                await CompleteJobItemAsync(schedulerJobItemId);
+
+                _logger.LogInformation("Employee birthday reminders completed. JobItemId: {JobItemId}",schedulerJobItemId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,"Error processing employee birthday reminders. JobItemId: {JobItemId}",schedulerJobItemId);
+                throw;
+            }
+        }
         private string BuildEmailBody(string headerText, string color, string message, string logoUrl)
         {
             return $@"

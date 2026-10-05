@@ -18,26 +18,49 @@ namespace CRMWebServices.Models
             public string ScopeCode { get; set; } = string.Empty;
             public string ScopeName { get; set; } = string.Empty;
         }
-        
+
         // CREATE JOB       
+
+        //public class CreateSchedulerJobRequest
+        //{
+        //    public string JobCode { get; set; } = string.Empty;
+        //    public string JobName { get; set; } = string.Empty;
+        //    public string JobType { get; set; } = string.Empty;
+        //    public string? Description { get; set; }
+        //    public string EntityType { get; set; } = string.Empty;
+        //    public string ScopeCode { get; set; } = string.Empty;
+        //    public bool IsActive { get; set; } = true;
+        //    public string FrequencyType { get; set; } = string.Empty;
+        //    public int FrequencyValue { get; set; }
+        //    public DateTime? StartDate { get; set; }
+        //    public DateTime? EndDate { get; set; }
+        //    public int? MaxAttempts { get; set; }
+        //    public int? StopAfterMinutes { get; set; }
+        //}
 
         public class CreateSchedulerJobRequest
         {
-            public string JobCode { get; set; } = string.Empty;
-            public string JobName { get; set; } = string.Empty;
-            public string JobType { get; set; } = string.Empty;
+            public string? JobCode { get; set; }
+            public string? JobName { get; set; }
+
+            public string? JobType { get; set; } 
             public string? Description { get; set; }
+
             public string EntityType { get; set; } = string.Empty;
             public string ScopeCode { get; set; } = string.Empty;
+
             public bool IsActive { get; set; } = true;
+
             public string FrequencyType { get; set; } = string.Empty;
             public int FrequencyValue { get; set; }
+
             public DateTime? StartDate { get; set; }
             public DateTime? EndDate { get; set; }
+
             public int? MaxAttempts { get; set; }
             public int? StopAfterMinutes { get; set; }
         }
-        
+
         // UPDATE JOB       
 
         public class UpdateSchedulerJobRequest

@@ -5,10 +5,10 @@ using static CRMWebServices.Models.OpportunityModels;
 namespace CRMWebServices.Models
 {
     public class OpportunityQuotationModels
-    {        
+    {
         public class RaiseQuotationRequest
         {
-            public int Ref_OpportunityId { get; set; }      
+            public int Ref_OpportunityId { get; set; }
             public DateTime? QuotationDate { get; set; }
             public DateTime? ValidUntil { get; set; }
             public decimal? TaxAmount { get; set; }
@@ -56,7 +56,7 @@ namespace CRMWebServices.Models
             public string? Remarks { get; set; }
             public int? ReviewedByEmployeeId { get; set; }
             public int CreatedBy { get; set; }
-        }    
+        }
 
         public class QuotationInfo
         {
@@ -101,7 +101,7 @@ namespace CRMWebServices.Models
             public bool ODAApprovalRequired { get; set; }
             public bool ODAIncludedAutomatically { get; set; }
             public bool IsODAManagementReviewPending { get; set; }
-        }     
+        }
         public class QuotationItemInfo
         {
             public int OpportunityQuotationItemId { get; set; }
@@ -150,7 +150,7 @@ namespace CRMWebServices.Models
             public int? ReviewedByEmployeeId { get; set; }
             public DateTime? ReviewedOn { get; set; }
             public DateTime CreatedOn { get; set; }
-        }      
+        }
         public class RaiseQuotationItemResponse
         {
             public int OpportunityRequirementId { get; set; }
@@ -165,14 +165,43 @@ namespace CRMWebServices.Models
             public decimal CurrentRate { get; set; }
             public decimal Quantity { get; set; }
             public int? UnitId { get; set; }
-            public string? UnitName { get; set; }         
+            public string? UnitName { get; set; }
             public string? RequirementRemark { get; set; }
+        }
+
+        public class RaiseQuotationRaiserOfficeResponse
+        {
+            public int RaiserEmployeeId { get; set; }
+            public int OfficeId { get; set; }
+
+            public string? OfficeCode { get; set; }
+            public string? OfficeName { get; set; }
+            public string? OfficeShortName { get; set; }
+
+            public string? OfficeAddress { get; set; }
+            public string? OfficePincode { get; set; }
+            public string? OfficePhone { get; set; }
+            public string? OfficeEmail { get; set; }
+
+            public string? CountryName { get; set; }
+            public string? StateName { get; set; }
+            public string? CityName { get; set; }
         }
         public class RaiseQuotationPageResponse
         {
             public RaiseQuotationHeader Header { get; set; } = new();
             public List<RaiseQuotationItemResponse> Items { get; set; } = new();
             public List<FreightPolicySlabQuotationResponse> FreightPolicySlabs { get; set; } = new();
+            public List<RaiseQuotationCategoryTermsResponse> CategoryTermsAndConditions { get; set; } = new();
+            public RaiseQuotationRaiserOfficeResponse? RaiserOffice { get; set; }
+        }
+
+        public class RaiseQuotationCategoryTermsResponse
+        {
+            public int ProductCategoryId { get; set; }
+            public string? CategoryCode { get; set; }
+            public string? CategoryName { get; set; }
+            public string? TermsAndConditions { get; set; }
         }
         public class RaiseQuotationHeader
         {
@@ -227,6 +256,7 @@ namespace CRMWebServices.Models
             public int? OpportunityStageId { get; set; }
             public string? OpportunityStageCode { get; set; }
             public string? OpportunityStageName { get; set; }
+
         }
         public class ReviseQuotationRequest
         {
@@ -279,7 +309,7 @@ namespace CRMWebServices.Models
             public DateTime? CustomerResponseOn { get; set; }
             public string? CustomerResponseRemark { get; set; }
             public DateTime CreatedOn { get; set; }
-            public string? CreatedByName { get; set; }          
+            public string? CreatedByName { get; set; }
             public List<QuotationAttachmentInfo> Attachments { get; set; } = new();
 
         }
@@ -295,6 +325,7 @@ namespace CRMWebServices.Models
             public decimal? MaxOrderValue { get; set; }
             public decimal FreightAmount { get; set; }
         }
+
         public class QuotationDetailResponse
         {
             public QuotationInfo Quotation { get; set; } = null!;
@@ -303,6 +334,7 @@ namespace CRMWebServices.Models
             public List<QuotationHistoryInfo> History { get; set; } = new();
             public List<ManagementReviewInfo> Reviews { get; set; } = new();
             public List<FreightPolicySlabQuotationResponse> FreightPolicySlabs { get; set; } = new();
+            public List<RaiseQuotationCategoryTermsResponse> CategoryTermsAndConditions { get; set; } = new();
         }
 
         public class CheckODAResponse
@@ -312,6 +344,96 @@ namespace CRMWebServices.Models
             public bool IsODA { get; set; }
             public decimal ODACharge { get; set; }
             public decimal ODAMinOrderValue { get; set; }
+        }
+
+        public class ODAApprovalListRequest
+        {
+            public string? SearchText { get; set; }
+            public string? DecisionCode { get; set; }
+        }
+
+        public class ODAApprovalListResponse
+        {
+            public long ODAApprovalId { get; set; }
+            public int OpportunityQuotationId { get; set; }
+            public string QuotationNo { get; set; } = string.Empty;
+            public int VersionNumber { get; set; }
+            public int RevisionNumber { get; set; }
+            public DateTime QuotationDate { get; set; }
+            public int OpportunityId { get; set; }
+            public string OpportunityNo { get; set; } = string.Empty;
+            public string? CustomerName { get; set; }
+            public string? DeliveryPinCode { get; set; }
+            public bool IsODA { get; set; }
+            public decimal ODACharge { get; set; }
+            public decimal ODAMinOrderValue { get; set; }
+            public decimal SubTotal { get; set; }
+            public string DecisionCode { get; set; } = string.Empty;
+            public DateTime CreatedOn { get; set; }
+        }
+
+        public class ODAApprovalDetailResponse
+        {
+            public long ODAApprovalId { get; set; }
+            public int OpportunityQuotationId { get; set; }
+            public string QuotationNo { get; set; } = string.Empty;
+            public int VersionNumber { get; set; }
+            public int RevisionNumber { get; set; }
+            public DateTime QuotationDate { get; set; }
+            public DateTime? ValidUntil { get; set; }
+            public int OpportunityId { get; set; }
+            public string OpportunityNo { get; set; } = string.Empty;
+            public string? CustomerName { get; set; }
+            public string? DeliveryAddress { get; set; }
+            public string? DeliveryPinCode { get; set; }
+            public bool IsODA { get; set; }
+            public decimal ODACharge { get; set; }
+            public decimal ODAMinOrderValue { get; set; }
+            public decimal SubTotal { get; set; }
+            public decimal FreightCharge { get; set; }
+            public decimal TaxAmount { get; set; }
+            public decimal TaxPercent { get; set; }
+            public decimal TotalAmount { get; set; }
+            public string? TermsRemark { get; set; }
+            public string DecisionCode { get; set; } = string.Empty;
+            public bool? IncludeODAFreight { get; set; }
+            public string? Remarks { get; set; }
+            public int? ReviewedByEmployeeId { get; set; }
+            public DateTime? ReviewedOn { get; set; }
+            public DateTime CreatedOn { get; set; }
+        }
+
+        public class ODAApprovalItemInfo
+        {
+            public int OpportunityQuotationItemId { get; set; }
+            public int Ref_OpportunityRequirementId { get; set; }
+            public int? CategoryId { get; set; }
+            public string? CategoryName { get; set; }
+            public int? OfferingId { get; set; }
+            public string? OfferingName { get; set; }
+            public long? ProductId { get; set; }
+            public string? ProductCode { get; set; }
+            public string? ProductName { get; set; }
+            public string? Unit { get; set; }
+            public decimal Quantity { get; set; }
+            public decimal Rate { get; set; }
+            public decimal Amount { get; set; }
+        }
+
+        public class ODAApprovalDetailData
+        {
+            public ODAApprovalDetailResponse Approval { get; set; } = new();
+            public List<ODAApprovalItemInfo> Items { get; set; } = new();
+            public List<QuotationAttachmentInfo> Attachments { get; set; } = new();
+        }
+
+        public class DecideODAApprovalRequest
+        {
+            public int Ref_OpportunityQuotationId { get; set; }
+            public string DecisionCode { get; set; } = string.Empty;
+            public string? Remarks { get; set; }
+            public int ReviewedByEmployeeId { get; set; }
+            public int CreatedBy { get; set; }
         }
     }
 }
