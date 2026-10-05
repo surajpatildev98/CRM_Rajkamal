@@ -85,12 +85,16 @@ builder.Services.AddScoped<ILeaveRepository, LeaveRepository>();
 builder.Services.AddScoped<ITicketRepository, TicketRepository>();
 builder.Services.AddScoped<IFreightPolicyRepository, FreightPolicyRepository>();
 builder.Services.AddScoped<ICallLogRepository, CallLogRepository>();
+builder.Services.AddScoped<ILeavePolicyRepository, LeavePolicyRepository>();
+builder.Services.AddScoped<IEmployeeProbationRepository, EmployeeProbationRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailConfigurationRepository, EmailConfigurationRepository>();
 builder.Services.AddSingleton<IFirebaseNotificationService, FirebaseNotificationService>();
 builder.Services.AddScoped<ISchedulerExecutionService, SchedulerExecutionService>();
 builder.Services.AddHostedService<SchedulerWorker>();
+builder.Services.AddSingleton<IEmailTemplateRenderer, EmailTemplateRenderer>();
+builder.Services.AddSingleton<ISchedulerEmailComposer, SchedulerEmailComposer>();
 
 builder.Services.AddMemoryCache();
 

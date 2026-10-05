@@ -26,7 +26,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(SP_NAME,new SqlParameter("@Status", "GET_SCHEDULER_ENTITY_TYPES"));
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME, new SqlParameter("@Status", "GET_SCHEDULER_ENTITY_TYPES"));
 
                 var result = new List<SchedulerEntityTypeResponse>();
 
@@ -46,7 +46,7 @@ namespace CRMWebServices.Repository
                 return new ApiResponse
                 {
                     Status = true,
-                    Message = result.Count > 0 ? "Scheduler entity types fetched successfully.": "No scheduler entity types found.",
+                    Message = result.Count > 0 ? "Scheduler entity types fetched successfully." : "No scheduler entity types found.",
                     Data = result
                 };
             }
@@ -85,8 +85,8 @@ namespace CRMWebServices.Repository
                 }
 
                 var dt = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status","GET_SCHEDULER_SCOPES"),
-                    new SqlParameter("@EntityType",entityType)
+                    new SqlParameter("@Status", "GET_SCHEDULER_SCOPES"),
+                    new SqlParameter("@EntityType", entityType)
                 );
 
                 var result = new List<SchedulerScopeResponse>();
@@ -97,8 +97,8 @@ namespace CRMWebServices.Repository
                     {
                         result.Add(new SchedulerScopeResponse
                         {
-                            ScopeCode = row["ScopeCode"] == DBNull.Value? string.Empty: row["ScopeCode"].ToString()!,
-                            ScopeName = row["ScopeName"] == DBNull.Value? string.Empty: row["ScopeName"].ToString()!
+                            ScopeCode = row["ScopeCode"] == DBNull.Value ? string.Empty : row["ScopeCode"].ToString()!,
+                            ScopeName = row["ScopeName"] == DBNull.Value ? string.Empty : row["ScopeName"].ToString()!
                         });
                     }
                 }
@@ -106,7 +106,7 @@ namespace CRMWebServices.Repository
                 return new ApiResponse
                 {
                     Status = true,
-                    Message = result.Count > 0 ? "Scheduler scopes fetched successfully.": "No scheduler scopes found for the selected entity.",
+                    Message = result.Count > 0 ? "Scheduler scopes fetched successfully." : "No scheduler scopes found for the selected entity.",
                     Data = result
                 };
             }
@@ -135,7 +135,7 @@ namespace CRMWebServices.Repository
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(SP_NAME,new SqlParameter("@Status", "GET_JOBS"));
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME, new SqlParameter("@Status", "GET_JOBS"));
 
                 var result = new List<SchedulerJobListResponse>();
 
@@ -150,7 +150,7 @@ namespace CRMWebServices.Repository
                 return new ApiResponse
                 {
                     Status = true,
-                    Message = result.Count > 0 ? "Scheduler jobs fetched successfully.": "No scheduler jobs found.",
+                    Message = result.Count > 0 ? "Scheduler jobs fetched successfully." : "No scheduler jobs found.",
                     Data = result
                 };
             }
@@ -180,8 +180,8 @@ namespace CRMWebServices.Repository
             try
             {
                 var dt = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status","GET_JOB"),
-                    new SqlParameter("@SchedulerJobId",schedulerJobId)
+                    new SqlParameter("@Status", "GET_JOB"),
+                    new SqlParameter("@SchedulerJobId", schedulerJobId)
                 );
 
                 if (dt == null || dt.Rows.Count == 0)
@@ -223,26 +223,26 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region CREATE JOB
-        public async Task<ApiResponse> CreateJob(CreateSchedulerJobRequest model,int createdBy)
+        public async Task<ApiResponse> CreateJob(CreateSchedulerJobRequest model, int createdBy)
         {
             try
             {
                 var dt = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status","CREATE_JOB"),
-                    new SqlParameter("@JobCode",model.JobCode),
-                    new SqlParameter("@JobName",model.JobName),
-                    new SqlParameter("@JobType",model.JobType),
-                    new SqlParameter("@Description",(object?)model.Description ?? DBNull.Value),
-                    new SqlParameter("@EntityType",model.EntityType),
-                    new SqlParameter("@ScopeCode",model.ScopeCode),
-                    new SqlParameter("@IsActive",model.IsActive),
-                    new SqlParameter("@FrequencyType",model.FrequencyType),
-                    new SqlParameter("@FrequencyValue",model.FrequencyValue),
-                    new SqlParameter("@StartDate",(object?)model.StartDate ?? DBNull.Value),
-                    new SqlParameter("@EndDate",(object?)model.EndDate ?? DBNull.Value),
-                    new SqlParameter("@MaxAttempts",(object?)model.MaxAttempts ?? DBNull.Value),
-                    new SqlParameter("@StopAfterMinutes",(object?)model.StopAfterMinutes ?? DBNull.Value),
-                    new SqlParameter("@CreatedBy",createdBy)
+                    new SqlParameter("@Status", "CREATE_JOB"),
+                   new SqlParameter("@JobCode",string.IsNullOrWhiteSpace(model.JobCode)? DBNull.Value: model.JobCode),
+                    new SqlParameter("@JobName",string.IsNullOrWhiteSpace(model.JobName)? DBNull.Value: model.JobName),
+                    new SqlParameter("@JobType", (object?)model.JobType ?? DBNull.Value),
+                    new SqlParameter("@Description", (object?)model.Description ?? DBNull.Value),
+                    new SqlParameter("@EntityType", model.EntityType),
+                    new SqlParameter("@ScopeCode", model.ScopeCode),
+                    new SqlParameter("@IsActive", model.IsActive),
+                    new SqlParameter("@FrequencyType", model.FrequencyType),
+                    new SqlParameter("@FrequencyValue", model.FrequencyValue),
+                    new SqlParameter("@StartDate", (object?)model.StartDate ?? DBNull.Value),
+                    new SqlParameter("@EndDate", (object?)model.EndDate ?? DBNull.Value),
+                    new SqlParameter("@MaxAttempts", (object?)model.MaxAttempts ?? DBNull.Value),
+                    new SqlParameter("@StopAfterMinutes", (object?)model.StopAfterMinutes ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy", createdBy)
                 );
 
                 if (dt == null || dt.Rows.Count == 0)
@@ -284,26 +284,26 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region UPDATE JOB
-        public async Task<ApiResponse> UpdateJob(UpdateSchedulerJobRequest model,int updatedBy)
+        public async Task<ApiResponse> UpdateJob(UpdateSchedulerJobRequest model, int updatedBy)
         {
             try
             {
                 var dt = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status","UPDATE_JOB"),
-                    new SqlParameter("@SchedulerJobId",model.SchedulerJobId),
-                    new SqlParameter("@JobName",model.JobName),
-                    new SqlParameter("@JobType",model.JobType),
-                    new SqlParameter("@Description",(object?)model.Description ?? DBNull.Value),
-                    new SqlParameter("@EntityType",model.EntityType),
-                    new SqlParameter("@ScopeCode",model.ScopeCode),
-                    new SqlParameter("@IsActive",(object?)model.IsActive ?? DBNull.Value),
-                    new SqlParameter("@FrequencyType",model.FrequencyType),
-                    new SqlParameter("@FrequencyValue",model.FrequencyValue),
-                    new SqlParameter("@StartDate",(object?)model.StartDate ?? DBNull.Value),
-                    new SqlParameter("@EndDate",(object?)model.EndDate ?? DBNull.Value),
-                    new SqlParameter("@MaxAttempts",(object?)model.MaxAttempts ?? DBNull.Value),
-                    new SqlParameter("@StopAfterMinutes",(object?)model.StopAfterMinutes ?? DBNull.Value),
-                    new SqlParameter("@UpdatedBy",updatedBy)
+                    new SqlParameter("@Status", "UPDATE_JOB"),
+                    new SqlParameter("@SchedulerJobId", model.SchedulerJobId),
+                    new SqlParameter("@JobName", model.JobName),
+                    new SqlParameter("@JobType", model.JobType),
+                    new SqlParameter("@Description", (object?)model.Description ?? DBNull.Value),
+                    new SqlParameter("@EntityType", model.EntityType),
+                    new SqlParameter("@ScopeCode", model.ScopeCode),
+                    new SqlParameter("@IsActive", (object?)model.IsActive ?? DBNull.Value),
+                    new SqlParameter("@FrequencyType", model.FrequencyType),
+                    new SqlParameter("@FrequencyValue", model.FrequencyValue),
+                    new SqlParameter("@StartDate", (object?)model.StartDate ?? DBNull.Value),
+                    new SqlParameter("@EndDate", (object?)model.EndDate ?? DBNull.Value),
+                    new SqlParameter("@MaxAttempts", (object?)model.MaxAttempts ?? DBNull.Value),
+                    new SqlParameter("@StopAfterMinutes", (object?)model.StopAfterMinutes ?? DBNull.Value),
+                    new SqlParameter("@UpdatedBy", updatedBy)
                 );
 
                 if (dt == null || dt.Rows.Count == 0)
@@ -343,14 +343,14 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region ENABLE JOB
-        public async Task<ApiResponse> EnableJob(int schedulerJobId,int updatedBy)
+        public async Task<ApiResponse> EnableJob(int schedulerJobId, int updatedBy)
         {
             try
             {
                 var dt = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status","ENABLE_JOB"),
-                    new SqlParameter("@SchedulerJobId",schedulerJobId),
-                    new SqlParameter("@UpdatedBy",updatedBy)
+                    new SqlParameter("@Status", "ENABLE_JOB"),
+                    new SqlParameter("@SchedulerJobId", schedulerJobId),
+                    new SqlParameter("@UpdatedBy", updatedBy)
                 );
 
                 if (dt == null || dt.Rows.Count == 0)
@@ -390,14 +390,14 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region DISABLE JOB
-        public async Task<ApiResponse> DisableJob(int schedulerJobId,int updatedBy)
+        public async Task<ApiResponse> DisableJob(int schedulerJobId, int updatedBy)
         {
             try
             {
                 var dt = await _database.ExecuteDataTableAsync(SP_NAME,
-                    new SqlParameter("@Status","DISABLE_JOB"),
-                    new SqlParameter("@SchedulerJobId",schedulerJobId),
-                    new SqlParameter("@UpdatedBy",updatedBy)
+                    new SqlParameter("@Status", "DISABLE_JOB"),
+                    new SqlParameter("@SchedulerJobId", schedulerJobId),
+                    new SqlParameter("@UpdatedBy", updatedBy)
                 );
 
                 if (dt == null || dt.Rows.Count == 0)
@@ -441,28 +441,28 @@ namespace CRMWebServices.Repository
         {
             return new SchedulerJobListResponse
             {
-                SchedulerJobId =Convert.ToInt32(row["SchedulerJobId"]),
-                JobCode =row["JobCode"]?.ToString() ?? string.Empty,
-                JobName =row["JobName"]?.ToString() ?? string.Empty,
-                JobType =row["JobType"]?.ToString() ?? string.Empty,
-                Description =row["Description"] == DBNull.Value? null: row["Description"]?.ToString(),
-                EntityType =row["EntityType"]?.ToString() ?? string.Empty,
-                ScopeCode =row["ScopeCode"]?.ToString() ?? string.Empty,
-                ScopeName =row["ScopeName"] == DBNull.Value? null: row["ScopeName"]?.ToString(),
-                IsActive =Convert.ToBoolean(row["IsActive"]),
-                FrequencyType =row["FrequencyType"]?.ToString() ?? string.Empty,
-                FrequencyValue =Convert.ToInt32(row["FrequencyValue"]),
-                StartDate =row["StartDate"] == DBNull.Value? null: Convert.ToDateTime(row["StartDate"]),
-                EndDate =row["EndDate"] == DBNull.Value? null: Convert.ToDateTime(row["EndDate"]),
-                MaxAttempts =row["MaxAttempts"] == DBNull.Value? null: Convert.ToInt32(row["MaxAttempts"]),
-                StopAfterMinutes =row["StopAfterMinutes"] == DBNull.Value? null: Convert.ToInt32(row["StopAfterMinutes"]),
-                NextRunOn =row["NextRunOn"] == DBNull.Value? null: Convert.ToDateTime(row["NextRunOn"]),
-                LastRunOn =row["LastRunOn"] == DBNull.Value? null: Convert.ToDateTime(row["LastRunOn"]),
-                IsRunning =Convert.ToBoolean(row["IsRunning"]),
-                CreatedOn =Convert.ToDateTime(row["CreatedOn"]),
-                CreatedBy =row["CreatedBy"] == DBNull.Value? null: Convert.ToInt32(row["CreatedBy"]),
-                UpdatedOn =row["UpdatedOn"] == DBNull.Value? null: Convert.ToDateTime(row["UpdatedOn"]),
-                UpdatedBy =row["UpdatedBy"] == DBNull.Value? null: Convert.ToInt32(row["UpdatedBy"])
+                SchedulerJobId = Convert.ToInt32(row["SchedulerJobId"]),
+                JobCode = row["JobCode"]?.ToString() ?? string.Empty,
+                JobName = row["JobName"]?.ToString() ?? string.Empty,
+                JobType = row["JobType"]?.ToString() ?? string.Empty,
+                Description = row["Description"] == DBNull.Value ? null : row["Description"]?.ToString(),
+                EntityType = row["EntityType"]?.ToString() ?? string.Empty,
+                ScopeCode = row["ScopeCode"]?.ToString() ?? string.Empty,
+                ScopeName = row["ScopeName"] == DBNull.Value ? null : row["ScopeName"]?.ToString(),
+                IsActive = Convert.ToBoolean(row["IsActive"]),
+                FrequencyType = row["FrequencyType"]?.ToString() ?? string.Empty,
+                FrequencyValue = Convert.ToInt32(row["FrequencyValue"]),
+                StartDate = row["StartDate"] == DBNull.Value ? null : Convert.ToDateTime(row["StartDate"]),
+                EndDate = row["EndDate"] == DBNull.Value ? null : Convert.ToDateTime(row["EndDate"]),
+                MaxAttempts = row["MaxAttempts"] == DBNull.Value ? null : Convert.ToInt32(row["MaxAttempts"]),
+                StopAfterMinutes = row["StopAfterMinutes"] == DBNull.Value ? null : Convert.ToInt32(row["StopAfterMinutes"]),
+                NextRunOn = row["NextRunOn"] == DBNull.Value ? null : Convert.ToDateTime(row["NextRunOn"]),
+                LastRunOn = row["LastRunOn"] == DBNull.Value ? null : Convert.ToDateTime(row["LastRunOn"]),
+                IsRunning = Convert.ToBoolean(row["IsRunning"]),
+                CreatedOn = Convert.ToDateTime(row["CreatedOn"]),
+                CreatedBy = row["CreatedBy"] == DBNull.Value ? null : Convert.ToInt32(row["CreatedBy"]),
+                UpdatedOn = row["UpdatedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["UpdatedOn"]),
+                UpdatedBy = row["UpdatedBy"] == DBNull.Value ? null : Convert.ToInt32(row["UpdatedBy"])
             };
         }
 
@@ -473,28 +473,28 @@ namespace CRMWebServices.Repository
         {
             return new SchedulerJobDetailsResponse
             {
-                SchedulerJobId =Convert.ToInt32(row["SchedulerJobId"]),
-                JobCode =row["JobCode"]?.ToString() ?? string.Empty,
-                JobName =row["JobName"]?.ToString() ?? string.Empty,
-                JobType =row["JobType"]?.ToString() ?? string.Empty,
-                Description =row["Description"] == DBNull.Value? null: row["Description"]?.ToString(),
-                EntityType =row["EntityType"]?.ToString() ?? string.Empty,
-                ScopeCode =row["ScopeCode"]?.ToString() ?? string.Empty,
-                ScopeName =row["ScopeName"] == DBNull.Value? null: row["ScopeName"]?.ToString(),
-                IsActive =Convert.ToBoolean(row["IsActive"]),
-                FrequencyType =row["FrequencyType"]?.ToString() ?? string.Empty,
-                FrequencyValue =Convert.ToInt32(row["FrequencyValue"]),
-                StartDate =row["StartDate"] == DBNull.Value? null: Convert.ToDateTime(row["StartDate"]),
-                EndDate =row["EndDate"] == DBNull.Value? null: Convert.ToDateTime(row["EndDate"]),
-                MaxAttempts =row["MaxAttempts"] == DBNull.Value? null: Convert.ToInt32(row["MaxAttempts"]),
-                StopAfterMinutes =row["StopAfterMinutes"] == DBNull.Value? null: Convert.ToInt32(row["StopAfterMinutes"]),
-                NextRunOn =row["NextRunOn"] == DBNull.Value? null: Convert.ToDateTime(row["NextRunOn"]),
-                LastRunOn =row["LastRunOn"] == DBNull.Value? null: Convert.ToDateTime(row["LastRunOn"]),
-                IsRunning =Convert.ToBoolean(row["IsRunning"]),
-                CreatedOn =Convert.ToDateTime(row["CreatedOn"]),
-                CreatedBy =row["CreatedBy"] == DBNull.Value? null: Convert.ToInt32(row["CreatedBy"]),
-                UpdatedOn =row["UpdatedOn"] == DBNull.Value? null: Convert.ToDateTime(row["UpdatedOn"]),
-                UpdatedBy =row["UpdatedBy"] == DBNull.Value? null: Convert.ToInt32(row["UpdatedBy"])
+                SchedulerJobId = Convert.ToInt32(row["SchedulerJobId"]),
+                JobCode = row["JobCode"]?.ToString() ?? string.Empty,
+                JobName = row["JobName"]?.ToString() ?? string.Empty,
+                JobType = row["JobType"]?.ToString() ?? string.Empty,
+                Description = row["Description"] == DBNull.Value ? null : row["Description"]?.ToString(),
+                EntityType = row["EntityType"]?.ToString() ?? string.Empty,
+                ScopeCode = row["ScopeCode"]?.ToString() ?? string.Empty,
+                ScopeName = row["ScopeName"] == DBNull.Value ? null : row["ScopeName"]?.ToString(),
+                IsActive = Convert.ToBoolean(row["IsActive"]),
+                FrequencyType = row["FrequencyType"]?.ToString() ?? string.Empty,
+                FrequencyValue = Convert.ToInt32(row["FrequencyValue"]),
+                StartDate = row["StartDate"] == DBNull.Value ? null : Convert.ToDateTime(row["StartDate"]),
+                EndDate = row["EndDate"] == DBNull.Value ? null : Convert.ToDateTime(row["EndDate"]),
+                MaxAttempts = row["MaxAttempts"] == DBNull.Value ? null : Convert.ToInt32(row["MaxAttempts"]),
+                StopAfterMinutes = row["StopAfterMinutes"] == DBNull.Value ? null : Convert.ToInt32(row["StopAfterMinutes"]),
+                NextRunOn = row["NextRunOn"] == DBNull.Value ? null : Convert.ToDateTime(row["NextRunOn"]),
+                LastRunOn = row["LastRunOn"] == DBNull.Value ? null : Convert.ToDateTime(row["LastRunOn"]),
+                IsRunning = Convert.ToBoolean(row["IsRunning"]),
+                CreatedOn = Convert.ToDateTime(row["CreatedOn"]),
+                CreatedBy = row["CreatedBy"] == DBNull.Value ? null : Convert.ToInt32(row["CreatedBy"]),
+                UpdatedOn = row["UpdatedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["UpdatedOn"]),
+                UpdatedBy = row["UpdatedBy"] == DBNull.Value ? null : Convert.ToInt32(row["UpdatedBy"])
             };
         }
 

@@ -1,0 +1,95 @@
+﻿<p style='margin:0 0 14px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#111827;'>
+    Dear {{ApproverName}},
+</p>
+<p style='margin:0 0 22px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#374151;'>
+    Your approval is required for the quotation below. Please review the details and take the required action.
+</p>
+
+<div style='font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#1e3a8a;text-transform:uppercase;letter-spacing:0.5px;padding-bottom:8px;'>Quotation Details</div>
+<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border:1px solid #e5e7eb;border-collapse:collapse;'>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;width:45%;'>Quotation No</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;color:#111827;'>{{QuotationNo}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Opportunity No</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{OpportunityNo}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Opportunity</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{OpportunityName}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Customer</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{CustomerName}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Delivery PIN</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{DeliveryPinCode}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Raised By</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{RaisedBy}}</td>
+    </tr>
+</table>
+
+<div style='height:22px;line-height:22px;font-size:22px;'>&nbsp;</div>
+
+<div style='font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#1e3a8a;text-transform:uppercase;letter-spacing:0.5px;padding-bottom:8px;'>Charges Summary</div>
+<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border:1px solid #e5e7eb;border-collapse:collapse;'>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;width:45%;'>Sub Total</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>&#8377;{{SubTotal}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>ODA Minimum Order Value</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>&#8377;{{ODAMinOrderValue}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>ODA Charge</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>&#8377;{{ODACharge}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Current Freight</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>&#8377;{{FreightCharge}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Tax</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>&#8377;{{TaxAmount}}</td>
+    </tr>
+    <tr>
+        <td bgcolor='#eff6ff' style='padding:12px 14px;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#1e3a8a;'>Total Amount</td>
+        <td bgcolor='#eff6ff' align='right' style='padding:12px 14px;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:700;color:#1e3a8a;'>&#8377;{{TotalAmount}}</td>
+    </tr>
+</table>
+
+<div style='height:22px;line-height:22px;font-size:22px;'>&nbsp;</div>
+
+<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'>
+    <tr>
+        <td bgcolor='#fffbeb' style='background-color:#fffbeb;border-left:4px solid #f59e0b;padding:14px 16px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:21px;color:#78350f;'>
+            <b>Why approval is needed:</b> the delivery location is identified as ODA, and the quotation value is below the minimum order value required for automatic ODA inclusion.
+        </td>
+    </tr>
+</table>
+
+<table role='presentation' cellpadding='0' cellspacing='0' border='0' align='center' style='margin:28px auto 8px auto;'>
+    <tr>
+        <td align='center'>
+            <!--[if mso]>
+            <v:roundrect xmlns:v='urn:schemas-microsoft-com:vml' xmlns:w='urn:schemas-microsoft-com:office:word' href='{{ApprovalUrl}}' style='height:46px;v-text-anchor:middle;width:230px;' arcsize='12%' stroke='f' fillcolor='#1d4ed8'>
+                <w:anchorlock/>
+                <center style='color:#ffffff;font-family:Arial,sans-serif;font-size:15px;font-weight:bold;'>Review ODA Approval</center>
+            </v:roundrect>
+            <![endif]-->
+            <!--[if !mso]><!-->
+            <a href='{{ApprovalUrl}}' target='_blank' style='background-color:#1d4ed8;border-radius:6px;color:#ffffff;display:inline-block;font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:bold;line-height:46px;text-align:center;text-decoration:none;width:230px;'>Review ODA Approval</a>
+            <!--<![endif]-->
+        </td>
+    </tr>
+</table>
+
+<p style='margin:18px 0 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#6b7280;text-align:center;'>
+    Button not working? Copy and paste this link into your browser:<br>
+    <a href='{{ApprovalUrl}}' style='color:#1d4ed8;word-break:break-all;'>{{ApprovalUrl}}</a>
+</p>

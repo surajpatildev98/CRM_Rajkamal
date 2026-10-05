@@ -133,12 +133,12 @@ namespace CRMWebServices.Controllers
             try
             {
                 // Get UpdatedBy from logged-in user's token
-                var employeeIdClaim =User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
-                request.UpdatedBy =employeeIdClaim != null? int.Parse(employeeIdClaim): null;
+                var employeeIdClaim = User.Claims.FirstOrDefault(c => c.Type == "EmployeeId")?.Value;
+                request.UpdatedBy = employeeIdClaim != null ? int.Parse(employeeIdClaim) : null;
 
                 var response = await _repository.UpdateEmployee(request);
 
-                return response.Status? Ok(response): BadRequest(response);
+                return response.Status ? Ok(response) : BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -209,8 +209,7 @@ namespace CRMWebServices.Controllers
                     employeeCode = row["EmployeeCode"]?.ToString(),
                     firstName = row["FirstName"]?.ToString(),
                     lastName = row["LastName"] == DBNull.Value
-                        ? null
-                        : row["LastName"]?.ToString()
+                        ? null : row["LastName"]?.ToString()
                 }).ToList();
 
                 return Ok(new ApiResponse
@@ -223,8 +222,7 @@ namespace CRMWebServices.Controllers
             catch (Exception ex)
             {
                 // Log the original exception; do not expose internal details in production.
-                HttpContext.RequestServices
-                    .GetRequiredService<ILogger<EmployeeController>>()
+                HttpContext.RequestServices.GetRequiredService<ILogger<EmployeeController>>()
                     .LogError(ex, "Failed to fetch HR managers for office {OfficeId}",
                         officeId);
 
@@ -235,5 +233,6 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+
     }
 }
