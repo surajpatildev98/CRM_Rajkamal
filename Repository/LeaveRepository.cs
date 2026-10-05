@@ -3,6 +3,7 @@ using CRMWebServices.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
+using static CRMWebServices.Models.OpportunityModels;
 
 namespace CRMWebServices.Repository
 {
@@ -10,11 +11,15 @@ namespace CRMWebServices.Repository
     {
         private readonly IDatabaseService _database;
         private readonly ILogger<LeaveRepository> _logger;
+        private readonly ISchedulerExecutionService _schedulerExecutionService;
+        private readonly ILeadRepository _leadRepository;
 
-        public LeaveRepository(IDatabaseService database,ILogger<LeaveRepository> logger)
+        public LeaveRepository(IDatabaseService database,ILogger<LeaveRepository> logger, ISchedulerExecutionService schedulerExecutionService, ILeadRepository leadRepository)
         {
             _database = database;
             _logger  = logger;
+            _schedulerExecutionService = schedulerExecutionService;
+            _leadRepository = leadRepository;
         }
 
         #region GET LEAVE BALANCE
@@ -340,19 +345,65 @@ namespace CRMWebServices.Repository
 
                 if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
                 {
+                    var row = ds.Tables[1].Rows[0];
+
+                    int employeeLeaveId =
+                        Convert.ToInt32(row["EmployeeLeaveId"]);
+
+                    string leaveApplicationNo =
+                        row["LeaveApplicationNo"]?.ToString() ?? "";
+
+                    decimal totalDays =
+                        Convert.ToDecimal(row["TotalDays"]);
+
                     response.Data = new
                     {
-                        EmployeeLeaveId =
-                            Convert.ToInt32(
-                                ds.Tables[1].Rows[0]["EmployeeLeaveId"]),
-
-                        LeaveApplicationNo =
-                            ds.Tables[1].Rows[0]["LeaveApplicationNo"]?.ToString(),
-
-                        TotalDays =
-                            Convert.ToDecimal(
-                                ds.Tables[1].Rows[0]["TotalDays"])
+                        EmployeeLeaveId = employeeLeaveId,
+                        LeaveApplicationNo = leaveApplicationNo,
+                        TotalDays = totalDays
                     };
+                    if (response.Status)
+                    {
+                        try
+                        {
+                            int? managerEmployeeId =
+                                await _leadRepository.GetEmployeeManagerIdAsync(model.EmployeeId);
+
+                            string message =
+                                $"A new leave application has been submitted. " +
+                                $"Application No: {leaveApplicationNo}. " +
+                                $"From: {model.FromDate:dd-MM-yyyy}. " +
+                                $"To: {model.ToDate:dd-MM-yyyy}. " +
+                                $"Total Days: {totalDays}.";
+
+                            // REPORTING MANAGER
+                            if (managerEmployeeId.HasValue &&
+                                managerEmployeeId.Value != model.EmployeeId)
+                            {
+
+                                await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                                           schedulerJobItemId: null,
+                                           employeeId: managerEmployeeId.Value,
+                                           entityId: employeeLeaveId,
+                                           title: "New Leave Application",
+                                           message: message,
+                                           entityType: "LEAVE",
+                                           recipientType: "MANAGER"
+                                       );
+                            }
+
+                            // HR MANAGER
+                            // Add the HR Manager lookup here once its existing
+                            // role/table/stored-procedure mapping is confirmed.
+                        }
+                        catch (Exception notificationEx)
+                        {
+                            _logger.LogError(
+                                notificationEx,
+                                "Leave application succeeded, but notification processing failed. EmployeeId: {EmployeeId}",
+                                model.EmployeeId);
+                        }
+                    }
                 }
 
                 return response;
