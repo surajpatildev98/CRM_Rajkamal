@@ -195,5 +195,45 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+
+        [HttpGet("hr-managers")]
+        public async Task<IActionResult> GetHRManagersByOffice([FromQuery] int officeId)
+        {
+            try
+            {
+                var result = await _repository.GetHRManagersByOffice(officeId);
+
+                var data = result.AsEnumerable().Select(row => new
+                {
+                    employeeId = Convert.ToInt32(row["EmployeeId"]),
+                    employeeCode = row["EmployeeCode"]?.ToString(),
+                    firstName = row["FirstName"]?.ToString(),
+                    lastName = row["LastName"] == DBNull.Value
+                        ? null
+                        : row["LastName"]?.ToString()
+                }).ToList();
+
+                return Ok(new ApiResponse
+                {
+                    Status = true,
+                    Message = "HR managers fetched successfully.",
+                    Data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log the original exception; do not expose internal details in production.
+                HttpContext.RequestServices
+                    .GetRequiredService<ILogger<EmployeeController>>()
+                    .LogError(ex, "Failed to fetch HR managers for office {OfficeId}",
+                        officeId);
+
+                return StatusCode(500, new ApiResponse
+                {
+                    Status = false,
+                    Message = "Failed to fetch HR managers."
+                });
+            }
+        }
     }
 }
