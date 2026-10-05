@@ -59,10 +59,7 @@ namespace CRMWebServices.Services
                 if (action == "Assign")
                 {
                     return true;
-                }
-
-                // Default rule
-                //return owner.CreatedBy == employeeId || owner.AssignedEmployeeId == employeeId; // CMNTD 150926
+                }             
 
                 // Default rule
                 if (owner.CreatedBy == employeeId || owner.AssignedEmployeeId == employeeId)
@@ -77,9 +74,7 @@ namespace CRMWebServices.Services
                         new SqlParameter("@EmployeeId", employeeId)
                     );
 
-                    return dt != null &&
-                           dt.Rows.Count > 0 &&
-                           Convert.ToInt32(dt.Rows[0]["HasAccess"]) == 1;
+                    return dt != null && dt.Rows.Count > 0 && Convert.ToInt32(dt.Rows[0]["HasAccess"]) == 1;
                 }
 
                 return false;
