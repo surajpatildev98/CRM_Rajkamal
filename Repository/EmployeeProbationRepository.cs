@@ -124,11 +124,10 @@ namespace CRMWebServices.Repository
                     OfficialEmail = r["OfficialEmail"] == DBNull.Value? null: r["OfficialEmail"].ToString(),
                     Mobile = r["Mobile"] == DBNull.Value? null: r["Mobile"].ToString(),
                     DOJ = r["DOJ"] == DBNull.Value? null: Convert.ToDateTime(r["DOJ"]),
-                    DOB = r["DOB"] == DBNull.Value? null: Convert.ToDateTime(r["DOB"]),
-                    RefDesignationId = r["RefDesignationId"] == DBNull.Value? null: Convert.ToInt32(r["RefDesignationId"]), 
-                    DesignationId =r["DesignationId"] == DBNull.Value? null: Convert.ToInt32(r["DesignationId"]),
-                    DesignationCode =r["DesignationCode"] == DBNull.Value? null: r["DesignationCode"].ToString(),
-                    DesignationName =r["DesignationName"] == DBNull.Value? null: r["DesignationName"].ToString(),
+                    DOB = r["DOB"] == DBNull.Value? null: Convert.ToDateTime(r["DOB"]),                 
+                    RefDesignationId = r["DesignationId"] == DBNull.Value? null: Convert.ToInt32(r["DesignationId"]),
+                    DesignationCode = r["DesignationCode"] == DBNull.Value? null: r["DesignationCode"].ToString(),
+                    DesignationName = r["DesignationName"] == DBNull.Value? null: r["DesignationName"].ToString(),
                     RoleId =r["RoleId"] == DBNull.Value? null: Convert.ToInt32(r["RoleId"]),
                     RoleName =r["RoleName"] == DBNull.Value? null: r["RoleName"].ToString(),
                     RoleCode =r["RoleCode"] == DBNull.Value? null: r["RoleCode"].ToString(),
@@ -184,7 +183,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-
         #endregion
 
 
