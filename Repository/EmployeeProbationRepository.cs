@@ -11,13 +11,48 @@ namespace CRMWebServices.Repository
     {
         private readonly IDatabaseService _database;
         private readonly ILogger<EmployeeProbationRepository> _logger;
+        private readonly ISchedulerExecutionService _schedulerExecutionService;
         private const string SP_NAME = "USP_ORG_EmployeeProbationManagement";
-        public EmployeeProbationRepository(IDatabaseService database,ILogger<EmployeeProbationRepository> logger)
+        public EmployeeProbationRepository(IDatabaseService database,ILogger<EmployeeProbationRepository> logger,ISchedulerExecutionService schedulerExecutionService)
         {
             _database = database;
             _logger = logger;
+            _schedulerExecutionService = schedulerExecutionService;
         }
 
+        #region  Helper Methods
+        private string? BuildFileUrl(string? filePath)
+        {
+            if (string.IsNullOrEmpty(filePath))
+                return null;
+
+            var relative = filePath.Replace("Uploads/", "").Replace("Uploads\\", "");
+            var segments = relative.Split('/').Select(Uri.EscapeDataString);
+
+            return "/Uploads/" + string.Join("/", segments);
+        }
+        private string SaveBase64Attachment(string base64Content, string fileName, string subFolder)
+        {
+            var base64Data = base64Content.Contains(",")
+                ? base64Content.Substring(base64Content.IndexOf(",") + 1)
+                : base64Content;
+
+            byte[] fileBytes = Convert.FromBase64String(base64Data);
+
+            string uploadsRoot = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", subFolder);
+
+            if (!Directory.Exists(uploadsRoot))
+                Directory.CreateDirectory(uploadsRoot);
+
+            string uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
+            string fullPath = Path.Combine(uploadsRoot, uniqueFileName);
+
+            File.WriteAllBytes(fullPath, fileBytes);
+
+            return Path.Combine("Uploads", subFolder, uniqueFileName).Replace("\\", "/");
+        }
+       
+        #endregion
         #region GET EMPLOYEES
         public async Task<ApiResponse> GetProbationEmployees()
         {
@@ -152,7 +187,25 @@ namespace CRMWebServices.Repository
                     ExtensionReason = r["ExtensionReason"] == DBNull.Value? null: r["ExtensionReason"].ToString(),
                     ProbationConfirmationDate =r["ProbationConfirmationDate"] == DBNull.Value? null: Convert.ToDateTime(r["ProbationConfirmationDate"]),
                     ConfirmedBy = r["ConfirmedBy"] == DBNull.Value? null: Convert.ToInt32(r["ConfirmedBy"]),
-                    ConfirmationRemark = r["ConfirmationRemark"] == DBNull.Value? null: r["ConfirmationRemark"].ToString()
+                    ConfirmedByName = r["ConfirmedByName"] == DBNull.Value? null: r["ConfirmedByName"].ToString(),
+                    ConfirmationRemark = r["ConfirmationRemark"] == DBNull.Value? null: r["ConfirmationRemark"].ToString(),
+                    ConfirmationDocument =r["EmployeeDocumentId"] == DBNull.Value? null
+                    : new EmployeeDocumentInfo
+                    {
+                        EmployeeDocumentId =Convert.ToInt32(r["EmployeeDocumentId"]),
+                        Ref_EmployeeId =r["DocumentEmployeeId"] == DBNull.Value? 0: Convert.ToInt32(r["DocumentEmployeeId"]),
+                        Ref_EmployeeProbationId =r["DocumentProbationId"] == DBNull.Value? null: Convert.ToInt32(r["DocumentProbationId"]),
+                        DocumentCategory =r["DocumentCategory"] == DBNull.Value? null: r["DocumentCategory"].ToString(),
+                        DocumentType =r["DocumentType"] == DBNull.Value? null: r["DocumentType"].ToString(),
+                        FileName =r["FileName"] == DBNull.Value? null: r["FileName"].ToString(),
+                        FileType =r["FileType"] == DBNull.Value? null: r["FileType"].ToString(),
+                        FileSize =r["FileSize"] == DBNull.Value? null: Convert.ToInt64(r["FileSize"]),
+                        FileUrl =r["FilePath"] == DBNull.Value? null: BuildFileUrl(r["FilePath"].ToString()),
+                        DocumentDate =r["DocumentDate"] == DBNull.Value? null: Convert.ToDateTime(r["DocumentDate"]),
+                        EffectiveFrom =r["EffectiveFrom"] == DBNull.Value? null: Convert.ToDateTime(r["EffectiveFrom"]),
+                        EffectiveTo =r["EffectiveTo"] == DBNull.Value? null: Convert.ToDateTime(r["EffectiveTo"]),
+                        CreatedOn =r["DocumentCreatedOn"] == DBNull.Value? null: Convert.ToDateTime(r["DocumentCreatedOn"])
+                    }
                 };
 
                 return new ApiResponse
@@ -354,14 +407,182 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-
         #endregion
 
 
         #region CONFIRM PROBATION
-        public async Task<ApiResponse> ConfirmProbation(
-            EmployeeProbationManagementRequest model,
-            int employeeId)
+        //public async Task<ApiResponse> ConfirmProbation(EmployeeProbationManagementRequest model,int employeeId)
+        //{
+        //    try
+        //    {
+        //        if (model == null)
+        //        {
+        //            return new ApiResponse
+        //            {
+        //                Status = false,
+        //                Message = "Request is required."
+        //            };
+        //        }
+
+        //        var dt = await _database.ExecuteDataTableAsync(
+        //            SP_NAME,
+
+        //            new SqlParameter(
+        //                "@Status",
+        //                "CONFIRM_PROBATION"),
+
+        //            new SqlParameter(
+        //                "@EmployeeId",
+        //                model.EmployeeId ?? (object)DBNull.Value),
+
+        //            new SqlParameter(
+        //                "@ConfirmationDate",
+        //                model.ConfirmationDate ?? (object)DBNull.Value),
+
+        //            new SqlParameter(
+        //                "@ConfirmationRemark",
+        //                string.IsNullOrWhiteSpace(
+        //                    model.ConfirmationRemark)
+        //                    ? (object)DBNull.Value
+        //                    : model.ConfirmationRemark),
+
+        //            new SqlParameter(
+        //                "@UpdatedBy",
+        //                employeeId)
+        //        );
+
+        //        if (dt == null || dt.Rows.Count == 0)
+        //        {
+        //            return new ApiResponse
+        //            {
+        //                Status = false,
+        //                Message = "Employee confirmation failed."
+        //            };
+        //        }
+
+        //        var r = dt.Rows[0];
+
+        //        var result =
+        //            new EmployeeProbationOperationResponse
+        //            {
+        //                EmployeeProbationId =
+        //                    Convert.ToInt32(
+        //                        r["EmployeeProbationId"]),
+
+        //                EmployeeId =
+        //                    Convert.ToInt32(
+        //                        r["EmployeeId"]),
+
+        //                ProbationPeriodValue =
+        //                    r["ProbationPeriodValue"] == DBNull.Value
+        //                        ? null
+        //                        : Convert.ToInt32(
+        //                            r["ProbationPeriodValue"]),
+
+        //                ProbationPeriodUnit =
+        //                    r["ProbationPeriodUnit"] == DBNull.Value
+        //                        ? null
+        //                        : r["ProbationPeriodUnit"].ToString(),
+
+        //                ProbationStartDate =
+        //                    r["ProbationStartDate"] == DBNull.Value
+        //                        ? null
+        //                        : Convert.ToDateTime(
+        //                            r["ProbationStartDate"]),
+
+        //                ProbationEndDate =
+        //                    r["ProbationEndDate"] == DBNull.Value
+        //                        ? null
+        //                        : Convert.ToDateTime(
+        //                            r["ProbationEndDate"]),
+
+        //                ProbationStatusId =
+        //                    r["ProbationStatusId"] == DBNull.Value
+        //                        ? null
+        //                        : Convert.ToInt32(
+        //                            r["ProbationStatusId"]),
+
+        //                StatusCode =
+        //                    r["StatusCode"] == DBNull.Value
+        //                        ? null
+        //                        : r["StatusCode"].ToString(),
+
+        //                StatusName =
+        //                    r["StatusName"] == DBNull.Value
+        //                        ? null
+        //                        : r["StatusName"].ToString(),
+
+        //                IsCurrent =
+        //                    r["IsCurrent"] == DBNull.Value
+        //                        ? false
+        //                        : Convert.ToBoolean(
+        //                            r["IsCurrent"]),
+
+        //                PreviousProbationId =
+        //                    r["PreviousProbationId"] == DBNull.Value
+        //                        ? null
+        //                        : Convert.ToInt32(
+        //                            r["PreviousProbationId"]),
+
+        //                ExtensionReason =
+        //                    r["ExtensionReason"] == DBNull.Value
+        //                        ? null
+        //                        : r["ExtensionReason"].ToString(),
+
+        //                ConfirmationDate =
+        //                    r["ConfirmationDate"] == DBNull.Value
+        //                        ? null
+        //                        : Convert.ToDateTime(
+        //                            r["ConfirmationDate"]),
+
+        //                ConfirmedBy =
+        //                    r["ConfirmedBy"] == DBNull.Value
+        //                        ? null
+        //                        : Convert.ToInt32(
+        //                            r["ConfirmedBy"]),
+
+        //                ConfirmationRemark =
+        //                    r["ConfirmationRemark"] == DBNull.Value
+        //                        ? null
+        //                        : r["ConfirmationRemark"].ToString()
+        //            };
+
+        //        return new ApiResponse
+        //        {
+        //            Status = true,
+        //            Message = "Employee confirmed successfully.",
+        //            Data = result
+        //        };
+        //    }
+        //    catch (SqlException ex)
+        //    {
+        //        _logger.LogError(
+        //            ex,
+        //            "Database error while confirming probation for EmployeeId {EmployeeId}.",
+        //            employeeId);
+
+        //        return new ApiResponse
+        //        {
+        //            Status = false,
+        //            Message = $"Database Error: {ex.Message}"
+        //        };
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(
+        //            ex,
+        //            "Error while confirming probation for EmployeeId {EmployeeId}.",
+        //            employeeId);
+
+        //        return new ApiResponse
+        //        {
+        //            Status = false,
+        //            Message = $"Error: {ex.Message}"
+        //        };
+        //    }
+        //}
+
+        public async Task<ApiResponse> ConfirmProbation(EmployeeProbationManagementRequest model,int employeeId)
         {
             try
             {
@@ -374,31 +595,40 @@ namespace CRMWebServices.Repository
                     };
                 }
 
-                var dt = await _database.ExecuteDataTableAsync(
-                    SP_NAME,
+                if (!model.EmployeeId.HasValue)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "EmployeeId is required."
+                    };
+                }
 
-                    new SqlParameter(
-                        "@Status",
-                        "CONFIRM_PROBATION"),
+                if (string.IsNullOrWhiteSpace(model.ConfirmationPdfFileName))
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Confirmation PDF file name is required."
+                    };
+                }
 
-                    new SqlParameter(
-                        "@EmployeeId",
-                        model.EmployeeId ?? (object)DBNull.Value),
+                if (string.IsNullOrWhiteSpace(model.ConfirmationPdfBase64))
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Confirmation PDF is required."
+                    };
+                }
 
-                    new SqlParameter(
-                        "@ConfirmationDate",
-                        model.ConfirmationDate ?? (object)DBNull.Value),
 
-                    new SqlParameter(
-                        "@ConfirmationRemark",
-                        string.IsNullOrWhiteSpace(
-                            model.ConfirmationRemark)
-                            ? (object)DBNull.Value
-                            : model.ConfirmationRemark),
-
-                    new SqlParameter(
-                        "@UpdatedBy",
-                        employeeId)
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status","CONFIRM_PROBATION"),
+                    new SqlParameter("@EmployeeId",model.EmployeeId.Value),
+                    new SqlParameter("@ConfirmationDate",model.ConfirmationDate ?? (object)DBNull.Value),
+                    new SqlParameter("@ConfirmationRemark",string.IsNullOrWhiteSpace(model.ConfirmationRemark)? (object)DBNull.Value: model.ConfirmationRemark),
+                    new SqlParameter("@UpdatedBy",employeeId)
                 );
 
                 if (dt == null || dt.Rows.Count == 0)
@@ -410,92 +640,131 @@ namespace CRMWebServices.Repository
                     };
                 }
 
+
                 var r = dt.Rows[0];
 
-                var result =
-                    new EmployeeProbationOperationResponse
+
+                var result =new EmployeeProbationOperationResponse
                     {
-                        EmployeeProbationId =
-                            Convert.ToInt32(
-                                r["EmployeeProbationId"]),
-
-                        EmployeeId =
-                            Convert.ToInt32(
-                                r["EmployeeId"]),
-
-                        ProbationPeriodValue =
-                            r["ProbationPeriodValue"] == DBNull.Value
-                                ? null
-                                : Convert.ToInt32(
-                                    r["ProbationPeriodValue"]),
-
-                        ProbationPeriodUnit =
-                            r["ProbationPeriodUnit"] == DBNull.Value
-                                ? null
-                                : r["ProbationPeriodUnit"].ToString(),
-
-                        ProbationStartDate =
-                            r["ProbationStartDate"] == DBNull.Value
-                                ? null
-                                : Convert.ToDateTime(
-                                    r["ProbationStartDate"]),
-
-                        ProbationEndDate =
-                            r["ProbationEndDate"] == DBNull.Value
-                                ? null
-                                : Convert.ToDateTime(
-                                    r["ProbationEndDate"]),
-
-                        ProbationStatusId =
-                            r["ProbationStatusId"] == DBNull.Value
-                                ? null
-                                : Convert.ToInt32(
-                                    r["ProbationStatusId"]),
-
-                        StatusCode =
-                            r["StatusCode"] == DBNull.Value
-                                ? null
-                                : r["StatusCode"].ToString(),
-
-                        StatusName =
-                            r["StatusName"] == DBNull.Value
-                                ? null
-                                : r["StatusName"].ToString(),
-
-                        IsCurrent =
-                            r["IsCurrent"] == DBNull.Value
-                                ? false
-                                : Convert.ToBoolean(
-                                    r["IsCurrent"]),
-
-                        PreviousProbationId =
-                            r["PreviousProbationId"] == DBNull.Value
-                                ? null
-                                : Convert.ToInt32(
-                                    r["PreviousProbationId"]),
-
-                        ExtensionReason =
-                            r["ExtensionReason"] == DBNull.Value
-                                ? null
-                                : r["ExtensionReason"].ToString(),
-
-                        ConfirmationDate =
-                            r["ConfirmationDate"] == DBNull.Value
-                                ? null
-                                : Convert.ToDateTime(
-                                    r["ConfirmationDate"]),
-
-                        ConfirmedBy =
-                            r["ConfirmedBy"] == DBNull.Value
-                                ? null
-                                : Convert.ToInt32(
-                                    r["ConfirmedBy"]),
-
-                        ConfirmationRemark =
-                            r["ConfirmationRemark"] == DBNull.Value
-                                ? null
-                                : r["ConfirmationRemark"].ToString()
+                        EmployeeProbationId =Convert.ToInt32(r["EmployeeProbationId"]),
+                        EmployeeId =Convert.ToInt32(r["EmployeeId"]),
+                        EmployeeName =r["EmployeeName"] == DBNull.Value? null: r["EmployeeName"].ToString(),
+                        ProbationPeriodValue =r["ProbationPeriodValue"] == DBNull.Value? null: Convert.ToInt32(r["ProbationPeriodValue"]),
+                        ProbationPeriodUnit =r["ProbationPeriodUnit"] == DBNull.Value? null: r["ProbationPeriodUnit"].ToString(),
+                        ProbationStartDate =r["ProbationStartDate"] == DBNull.Value? null: Convert.ToDateTime(r["ProbationStartDate"]),
+                        ProbationEndDate =r["ProbationEndDate"] == DBNull.Value? null: Convert.ToDateTime(r["ProbationEndDate"]),
+                        ProbationStatusId =r["ProbationStatusId"] == DBNull.Value? null: Convert.ToInt32(r["ProbationStatusId"]),
+                        StatusCode =r["StatusCode"] == DBNull.Value? null: r["StatusCode"].ToString(),                       
+                        StatusName =r["StatusName"] == DBNull.Value? null: r["StatusName"].ToString(),
+                        IsCurrent =r["IsCurrent"] == DBNull.Value? false: Convert.ToBoolean(r["IsCurrent"]),
+                        PreviousProbationId =r["PreviousProbationId"] == DBNull.Value? null: Convert.ToInt32(r["PreviousProbationId"]),
+                        ExtensionReason =r["ExtensionReason"] == DBNull.Value? null: r["ExtensionReason"].ToString(),
+                        ConfirmationDate =r["ConfirmationDate"] == DBNull.Value? null: Convert.ToDateTime(r["ConfirmationDate"]),
+                        ConfirmedBy =r["ConfirmedBy"] == DBNull.Value? null: Convert.ToInt32(r["ConfirmedBy"]),
+                        ConfirmationRemark =r["ConfirmationRemark"] == DBNull.Value? null: r["ConfirmationRemark"].ToString()
                     };
+        
+                // 2. SAVE CONFIRMATION PDF              
+
+                string base64Data =model.ConfirmationPdfBase64.Contains(",")? model.ConfirmationPdfBase64.Substring(model.ConfirmationPdfBase64.IndexOf(",") + 1): model.ConfirmationPdfBase64;
+                byte[] fileBytes;
+
+                try
+                {
+                    fileBytes = Convert.FromBase64String(base64Data);
+                }
+                catch (FormatException)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message = "Invalid confirmation PDF."
+                    };
+                }
+
+
+                string savedPath;
+
+                try
+                {
+                    savedPath = SaveBase64Attachment(model.ConfirmationPdfBase64,model.ConfirmationPdfFileName,"EmployeeDocuments");
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex,"Error saving confirmation PDF for EmployeeId {EmployeeId}.",model.EmployeeId);
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message ="Employee confirmed, but confirmation PDF could not be saved."
+                    };
+                }
+
+
+                string fileType =Path.GetExtension(model.ConfirmationPdfFileName).TrimStart('.').ToLowerInvariant();
+                long fileSize = fileBytes.Length;
+
+
+                // 3. SAVE DOCUMENT METADATA
+              
+                var documentDt =
+                    await _database.ExecuteDataTableAsync(SP_NAME,
+                        new SqlParameter("@Status","ADD_EMPLOYEE_DOCUMENT"),
+                        new SqlParameter("@EmployeeId",result.EmployeeId),
+                        new SqlParameter("@EmployeeProbationId",result.EmployeeProbationId),
+                        new SqlParameter("@DocumentCategory","PROBATION"),
+                        new SqlParameter("@DocumentType","CONFIRMATION_LETTER"),
+                        new SqlParameter("@FileName",model.ConfirmationPdfFileName),
+                        new SqlParameter("@FilePath",savedPath),
+                        new SqlParameter("@FileType",fileType),
+                        new SqlParameter("@FileSize",fileSize),
+                        new SqlParameter("@DocumentDate",model.ConfirmationDate ?? (object)DBNull.Value),
+                        new SqlParameter("@EffectiveFrom",model.ConfirmationDate ?? (object)DBNull.Value),
+                        new SqlParameter("@CreatedBy",employeeId)
+                    );
+
+                if (documentDt == null ||
+                    documentDt.Rows.Count == 0)
+                {
+                    return new ApiResponse
+                    {
+                        Status = false,
+                        Message ="Employee confirmed and PDF saved, but document record could not be created."
+                    };
+                }  
+                
+                // 4. SEND CONFIRMATION EMAIL
+                try
+                {
+                    await _schedulerExecutionService
+                        .SendEmployeeEmailNotificationAsync(
+                            schedulerJobItemId: null,
+                            employeeId: result.EmployeeId,
+                            entityId: result.EmployeeId,
+                            title: "Probation Confirmation",
+                            message:$"Congratulations {result.EmployeeName ?? "Employee"}, " +"your probation has been successfully completed " +"and you are now confirmed as an employee.",
+                            entityType: "EMPLOYEE_PROBATION",
+                            recipientType: "CONFIRMED_EMPLOYEE",
+                            actionType: "PROBATION_CONFIRMED",
+                            templateData:
+                            new Dictionary<string, string?>
+                            {
+                                ["EmployeeName"] = result.EmployeeName,
+                                ["ConfirmationDate"] = (result.ConfirmationDate ?? DateTime.Today).ToString("dd-MM-yyyy"),
+                                ["ConfirmationRemark"] = result.ConfirmationRemark,
+                                ["HeaderLabel"] = "HR Notification"
+                            }
+                        );
+                }
+                catch (Exception ex)
+                {
+                    // Email failure should NOT undo successful confirmation.
+                    _logger.LogError(
+                        ex,
+                        "Employee confirmed successfully, but confirmation email failed. EmployeeId {EmployeeId}.",
+                        result.EmployeeId);
+                }
+
+                // 5. FINAL RESPONSE              
 
                 return new ApiResponse
                 {
@@ -531,23 +800,16 @@ namespace CRMWebServices.Repository
                 };
             }
         }
-
         #endregion
-
         public async Task<ApiResponse> FailProbation(EmployeeProbationManagementRequest model,int employeeId)
         {
             try
             {
-                var parameters = new[]
-                {
+                var parameters = new[]{
                     new SqlParameter("@Status", "FAIL_PROBATION"),
-                    new SqlParameter("@EmployeeId", employeeId),
-                    new SqlParameter("@EmployeeProbationId",
-                        (object?)model.EmployeeProbationId ?? DBNull.Value),
-
-                    new SqlParameter("@FailureReason",
-                        (object?)model.FailureReason ?? DBNull.Value),
-
+                    new SqlParameter("@EmployeeId",model.EmployeeId ?? (object)DBNull.Value),
+                    new SqlParameter("@EmployeeProbationId",(object?)model.EmployeeProbationId ?? DBNull.Value),
+                    new SqlParameter("@FailureReason",(object?)model.FailureReason ?? DBNull.Value),
                     new SqlParameter("@CreatedBy", employeeId),
                     new SqlParameter("@UpdatedBy", employeeId)
                 };
@@ -665,12 +927,12 @@ namespace CRMWebServices.Repository
                 var parameters = new[]
                 {
                     new SqlParameter("@Status", "CANCEL_PROBATION"),
-                    new SqlParameter("@EmployeeId", employeeId),
+                    new SqlParameter("@EmployeeId",model.EmployeeId ?? (object)DBNull.Value),
                     new SqlParameter("@EmployeeProbationId",(object?)model.EmployeeProbationId ?? DBNull.Value),
                     new SqlParameter("@CancellationReason",(object?)model.CancellationReason ?? DBNull.Value),
                     new SqlParameter("@CreatedBy", employeeId),
                     new SqlParameter("@UpdatedBy", employeeId)
-                };
+                 };
 
                 var ds = await _database.ExecuteDataSetAsync("USP_ORG_EmployeeProbationManagement",parameters);
 
