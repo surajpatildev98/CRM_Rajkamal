@@ -15,6 +15,7 @@ namespace CRMWebServices.Services
             ["BIRTHDAY"] = "EmployeeBirthday",
             ["UNASSIGNED"] = "UnassignedLead",
             ["BIRTHDAY_WISH"] = "BirthdayWish",
+            ["PROBATION_CONFIRMED"] = "ProbationConfirmed",
         };
 
         // moved from SchedulerExecutionService.ActionColors
@@ -27,6 +28,7 @@ namespace CRMWebServices.Services
             ["PROBATION_EXPIRY"] = "#C8161D",
             ["BIRTHDAY"] = "#C8161D",
             ["BIRTHDAY_WISH"] = "#C8161D",
+            ["PROBATION_CONFIRMED"] = "#C8161D",
         };
 
         private readonly IEmailTemplateRenderer _renderer;

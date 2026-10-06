@@ -197,7 +197,6 @@ namespace CRMWebServices.Services
                 filter.FilterType = "All";
                 return filter;
             }
-
             // Check View permission
             if (await HasPermission(user, $"{resourceType}_View"))
             {
@@ -219,7 +218,6 @@ namespace CRMWebServices.Services
             {
                 filter.FilterType = "None";
             }
-
             return filter;
         }
         #endregion
