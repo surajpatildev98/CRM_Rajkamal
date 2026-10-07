@@ -19,6 +19,10 @@
             public string? ConfirmationRemark { get; set; }
             public string? FailureReason { get; set; }
             public string? CancellationReason { get; set; }
+
+            public string? ConfirmationPdfFileName { get; set; }
+
+            public string? ConfirmationPdfBase64 { get; set; }
         }
 
 
@@ -122,9 +126,40 @@
             public string? ExtensionReason { get; set; }
             public DateTime? ProbationConfirmationDate { get; set; }
             public int? ConfirmedBy { get; set; }
+            public string? ConfirmedByName { get; set; }
             public string? ConfirmationRemark { get; set; }
+
+            public EmployeeDocumentInfo? ConfirmationDocument { get; set; }
         }
 
+        public class EmployeeDocumentInfo
+        {
+            public int EmployeeDocumentId { get; set; }
+
+            public int Ref_EmployeeId { get; set; }
+
+            public int? Ref_EmployeeProbationId { get; set; }
+
+            public string? DocumentCategory { get; set; }
+
+            public string? DocumentType { get; set; }
+
+            public string? FileName { get; set; }
+
+            public string? FileType { get; set; }
+
+            public long? FileSize { get; set; }
+
+            public string? FileUrl { get; set; }
+
+            public DateTime? DocumentDate { get; set; }
+
+            public DateTime? EffectiveFrom { get; set; }
+
+            public DateTime? EffectiveTo { get; set; }
+
+            public DateTime? CreatedOn { get; set; }
+        }
 
         // ============================================================
         // PROBATION HISTORY
@@ -209,6 +244,7 @@
             public DateTime? ConfirmationDate { get; set; }
 
             public int? ConfirmedBy { get; set; }
+            public string? EmployeeName { get; set; }
 
             public string? ConfirmationRemark { get; set; }
             public string? FailureReason { get; set; }

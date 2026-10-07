@@ -639,7 +639,9 @@ namespace CRMWebServices.Services
 
             string body = _emailComposer.Compose(actionType, title, message, recipientType, templateData);
 
-            var notificationTable = await CreateNotificationAsync(schedulerJobItemId, employeeId, null, "EMAIL", title, message);
+            //var notificationTable = await CreateNotificationAsync(schedulerJobItemId, employeeId, null, "EMAIL", title, message);
+
+            var notificationTable = await CreateNotificationAsync(schedulerJobItemId,employeeId,entityId,entityType,null,"EMAIL",title,message);
 
             if (notificationTable == null || notificationTable.Rows.Count == 0)
             {
@@ -671,6 +673,25 @@ namespace CRMWebServices.Services
             }
         }
 
+        
+
+        //private async Task<DataTable?> CreateNotificationAsync(long? schedulerJobItemId, int employeeId, string? deviceToken, string notificationType, string title, string message)
+        //{
+        //    var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+
+        //            new SqlParameter("@Status", "CREATE_NOTIFICATION"),
+        //            new SqlParameter("@SchedulerJobItemId", (object?)schedulerJobItemId ?? DBNull.Value),
+        //            new SqlParameter("@RecipientEmployeeId", employeeId),
+        //            new SqlParameter("@DeviceToken", (object?)deviceToken ?? DBNull.Value),
+        //            new SqlParameter("@NotificationType", notificationType),
+        //            new SqlParameter("@Title", title),
+        //            new SqlParameter("@Message", message),
+        //            new SqlParameter("@CreatedBy", DBNull.Value)
+        //        );
+
+        //    return dt != null && dt.Rows.Count > 0 ? dt : null;
+        //}
+
         private async Task<DataTable?> CreateNotificationAsync(long? schedulerJobItemId, int employeeId, string? deviceToken, string notificationType, string title, string message)
         {
             var dt = await _database.ExecuteDataTableAsync(SP_NAME,
@@ -687,15 +708,26 @@ namespace CRMWebServices.Services
 
             return dt != null && dt.Rows.Count > 0 ? dt : null;
         }
-        private static readonly Dictionary<string, string> ActionColors = new()
+
+        private async Task<DataTable?> CreateNotificationAsync(long? schedulerJobItemId,int employeeId,int entityId,string entityType,string? deviceToken,string notificationType,string title,string message)
         {
-            ["CREATED"] = "#6A1B9A",
-            ["ASSIGNED"] = "#2E7D32",
-            ["TRANSFERRED"] = "#1565C0",
-            ["UNASSIGNED"] = "#C8161D",
-            ["PROBATION_EXPIRY"] = "#C8161D",
-            ["BIRTHDAY"] = "#C8161D",
-        };
+            var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                new SqlParameter("@Status", "CREATE_NOTIFICATION"),
+                new SqlParameter("@SchedulerJobItemId",(object?)schedulerJobItemId ?? DBNull.Value),
+                new SqlParameter("@RecipientEmployeeId", employeeId),
+                new SqlParameter("@DeviceToken",(object?)deviceToken ?? DBNull.Value),
+                new SqlParameter("@NotificationType", notificationType),
+                new SqlParameter("@Title", title),
+                new SqlParameter("@Message", message),
+                new SqlParameter("@EntityType", entityType),
+                new SqlParameter("@EntityId", entityId),
+                new SqlParameter("@CreatedBy", DBNull.Value)
+            );
+
+            return dt != null && dt.Rows.Count > 0 ? dt : null;
+        }
+
+      
         private async Task ProcessEmployeeProbationAsync(long schedulerJobItemId,int employeeProbationId)
         {
             try
@@ -762,7 +794,6 @@ namespace CRMWebServices.Services
                 throw;
             }
         }
-
         private async Task ProcessEmployeeBirthdayAsync(long schedulerJobItemId)
         {
             try
@@ -881,6 +912,8 @@ namespace CRMWebServices.Services
                 throw;
             }
         }
+
+        #region Deprecated: Build Email Body
         private string BuildEmailBody(string headerText, string color, string message, string logoUrl)
         {
             return $@"
@@ -936,5 +969,6 @@ namespace CRMWebServices.Services
                 </body>
                 </html>";
         }
+        #endregion
     }
 }

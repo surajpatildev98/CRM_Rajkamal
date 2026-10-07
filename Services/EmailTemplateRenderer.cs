@@ -8,12 +8,9 @@ namespace CRMWebServices.Services
     public class EmailTemplateRenderer : IEmailTemplateRenderer
     {
         // {{{Raw}}} or {{Encoded}}
-        private static readonly Regex TokenRegex =
-            new(@"\{\{\{\s*(\w+)\s*\}\}\}|\{\{\s*(\w+)\s*\}\}", RegexOptions.Compiled);
-
-        private static readonly string TemplateRoot =
-            Path.Combine(AppContext.BaseDirectory, "Templates", "Email");
-
+        private static readonly Regex TokenRegex = new(@"\{\{\{\s*(\w+)\s*\}\}\}|\{\{\s*(\w+)\s*\}\}", RegexOptions.Compiled);
+        private static readonly Regex IfRegex = new(@"\{\{#if\s+(\w+)\s*\}\}(.*?)\{\{/if\}\}", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static readonly string TemplateRoot = Path.Combine(AppContext.BaseDirectory, "Templates", "Email");
         private readonly ConcurrentDictionary<string, string> _cache = new();
         private readonly ILogger<EmailTemplateRenderer> _logger;
 
@@ -67,9 +64,33 @@ namespace CRMWebServices.Services
                 return File.ReadAllText(path);
             });
 
+        //private string Replace(string template, IReadOnlyDictionary<string, string?> values)
+        //{
+        //    var lookup = new Dictionary<string, string?>(values, StringComparer.OrdinalIgnoreCase);
+
+        //    return TokenRegex.Replace(template, m =>
+        //    {
+        //        bool raw = m.Groups[1].Success;
+        //        string key = raw ? m.Groups[1].Value : m.Groups[2].Value;
+
+        //        if (!lookup.TryGetValue(key, out var value))
+        //        {
+        //            _logger.LogWarning("Email template token '{Token}' has no value.", key);
+        //            return "";
+        //        }
+
+        //        return raw ? value ?? "" : WebUtility.HtmlEncode(value ?? "");
+        //    });
+        //}
         private string Replace(string template, IReadOnlyDictionary<string, string?> values)
         {
             var lookup = new Dictionary<string, string?>(values, StringComparer.OrdinalIgnoreCase);
+
+            // {{#if Key}} ... {{/if}} is kept only when Key has a non-empty value
+            template = IfRegex.Replace(template, m =>
+                lookup.TryGetValue(m.Groups[1].Value, out var v) && !string.IsNullOrWhiteSpace(v)
+                    ? m.Groups[2].Value
+                    : "");
 
             return TokenRegex.Replace(template, m =>
             {
