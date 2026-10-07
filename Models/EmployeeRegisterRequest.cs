@@ -181,9 +181,7 @@
         public string? ShiftName { get; set; }
         public int? RefLeavePolicyId { get; set; }
         public string? LeavePolicyName { get; set; }
-        public int? RefReportingHRManagerId { get; set; }
-        public string? ReportingHRManagerCode { get; set; }
-        public string? ReportingHRManagerName { get; set; }
+        
     }
 
     public class EmployeeEducationModel
