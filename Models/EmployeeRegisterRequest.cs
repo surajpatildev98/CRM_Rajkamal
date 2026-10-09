@@ -38,6 +38,7 @@
     public class EmployeeEducationRequest
     {
         public int QualificationId { get; set; }
+        public string? OtherQualification { get; set; }
         public string? InstituteName { get; set; }
         public string? UniversityName { get; set; }
         public int? PassingYear { get; set; }
@@ -49,6 +50,7 @@
     public class EmployeeBankRequest
     {
         public int BankId { get; set; }
+        public string? OtherBankName { get; set; }
         public int AccountTypeId { get; set; }
         public string? AccountHolderName { get; set; }
         public string? AccountNumber { get; set; }
@@ -60,6 +62,7 @@
     public class EmployeeFamilyRequest
     {
         public int RelationshipId { get; set; }
+        public string? OtherRelationship { get; set; }
         public string? FamilyMemberName { get; set; }
         public string? Occupation { get; set; }
         public string? ContactNumber { get; set; }
@@ -70,6 +73,7 @@
     public class EmployeeDocumentRequest
     {
         public int DocumentTypeId { get; set; }
+        public string? OtherDocumentType { get; set; }
         public string? DocumentName { get; set; }
         public string? DocumentPath { get; set; }
         public string? DocumentNumber { get; set; }
@@ -187,6 +191,7 @@
     public class EmployeeEducationModel
     {
         public int ? EducationId { get; set; }
+        public string? OtherQualification { get; set; }
         public int QualificationId { get; set; }
         public string? QualificationName { get; set; }
         public string? UniversityName { get; set; }
@@ -201,6 +206,7 @@
     public class EmployeeBankModel
     {
         public int BankId { get; set; }
+        public string? OtherBankName { get; set; }
         public string? BankName { get; set; }
         public int AccountTypeId { get; set; }
         public string? AccountTypeName { get; set; }
@@ -212,6 +218,7 @@
     public class EmployeeFamilyModel
     {
         public int RelationshipId { get; set; }
+        public string? OtherRelationship { get; set; }
         public string? RelationshipName { get; set; }
         public string? FamilyMemberName { get; set; }
         public string? Occupation { get; set; }
@@ -224,6 +231,7 @@
     public class EmployeeDocumentModel
     {
         public int DocumentTypeId { get; set; }
+        public string? OtherDocumentType { get; set; }
         public string? DocumentTypeName { get; set; }
         public bool IsMandatory { get; set; }
         public string? DocumentName { get; set; }
