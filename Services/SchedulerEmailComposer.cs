@@ -16,6 +16,7 @@ namespace CRMWebServices.Services
             ["UNASSIGNED"] = "UnassignedLead",
             ["BIRTHDAY_WISH"] = "BirthdayWish",
             ["PROBATION_CONFIRMED"] = "ProbationConfirmed",
+            ["ANNOUNCEMENT"] = "Announcement",
         };
 
         // moved from SchedulerExecutionService.ActionColors
@@ -29,6 +30,7 @@ namespace CRMWebServices.Services
             ["BIRTHDAY"] = "#C8161D",
             ["BIRTHDAY_WISH"] = "#C8161D",
             ["PROBATION_CONFIRMED"] = "#C8161D",
+            ["ANNOUNCEMENT"] = "#C8161D",
         };
 
         private readonly IEmailTemplateRenderer _renderer;
@@ -62,6 +64,7 @@ namespace CRMWebServices.Services
                 //["LogoBlock"] = _logoBlock,
                 ["RecipientRole"] = RoleLabel(recipientType),
                 ["CompanyName"] = "Rajkamal BarScan Systems Pvt. Ltd.",
+                ["MessageHtml"] = ToHtml(message),
             };
 
             if (data != null)
@@ -70,6 +73,12 @@ namespace CRMWebServices.Services
 
             return _renderer.Render(template, values);
         }
+
+        private static string ToHtml(string? text) =>
+            WebUtility.HtmlEncode(text ?? "")
+            .Replace("\r\n", "<br>")
+            .Replace("\n", "<br>")
+            .Replace("\r", "<br>");
 
         private static string RoleLabel(string? recipientType) =>
             (recipientType ?? "").ToUpperInvariant() switch
