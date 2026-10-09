@@ -176,6 +176,7 @@ namespace CRMWebServices.Repository
                             savedDocuments.Add(new
                             {
                                 DocumentTypeId = doc.DocumentTypeId,
+                                OtherDocumentType = doc.OtherDocumentType,
                                 DocumentName = doc.DocumentName,
                                 DocumentPath = savedPath,
                                 DocumentNumber = doc.DocumentNumber,
@@ -428,6 +429,7 @@ namespace CRMWebServices.Repository
                         {
                             EducationId = row["EducationId"] == DBNull.Value ? null : Convert.ToInt32(row["EducationId"]),
                             QualificationId = Convert.ToInt32(row["QualificationId"]),
+                            OtherQualification = row["OtherQualification"] == DBNull.Value ? null : row["OtherQualification"]?.ToString(),
                             QualificationName = row["QualificationName"] == DBNull.Value? null: row["QualificationName"]?.ToString(),
                             UniversityName = row["UniversityName"] == DBNull.Value? null: row["UniversityName"]?.ToString(),
                             InstituteName = row["InstituteName"] == DBNull.Value? null: row["InstituteName"]?.ToString(),
@@ -449,6 +451,7 @@ namespace CRMWebServices.Repository
                         result.BankDetails.Add(new EmployeeBankModel
                         {
                             BankId = Convert.ToInt32(row["BankId"]),
+                            OtherBankName = row["OtherBankName"] == DBNull.Value ? null : row["OtherBankName"]?.ToString(),
                             BankName = row["BankName"] == DBNull.Value ? null: row["BankName"]?.ToString(),
                             AccountTypeId = Convert.ToInt32(row["AccountTypeId"]),
                             AccountTypeName = row["AccountTypeName"] == DBNull.Value? null: row["AccountTypeName"]?.ToString(),
@@ -469,6 +472,7 @@ namespace CRMWebServices.Repository
                         {
                             RelationshipId = Convert.ToInt32(row["RelationshipId"]),
                             RelationshipName = row["RelationshipName"] == DBNull.Value? null: row["RelationshipName"]?.ToString(),
+                            OtherRelationship = row["OtherRelationship"] == DBNull.Value ? null : row["OtherRelationship"]?.ToString(),
                             FamilyMemberName = row["FamilyMemberName"] == DBNull.Value? null: row["FamilyMemberName"]?.ToString(),
                             Occupation = row["Occupation"] == DBNull.Value? null: row["Occupation"]?.ToString(),
                             ContactNumber = row["ContactNumber"] == DBNull.Value? null: row["ContactNumber"]?.ToString(),
@@ -489,6 +493,7 @@ namespace CRMWebServices.Repository
                         {
                           
                             DocumentTypeId = Convert.ToInt32(row["DocumentTypeId"]),
+                            OtherDocumentType = row["OtherDocumentType"] == DBNull.Value ? null : row["OtherDocumentType"]?.ToString(),
                             DocumentTypeName = row["DocumentTypeName"] == DBNull.Value ? null: row["DocumentTypeName"]?.ToString(),
                             IsMandatory = row["IsMandatory"] != DBNull.Value && Convert.ToBoolean(row["IsMandatory"]),
                             FieldKind = row.Table.Columns.Contains("FieldKind") && row["FieldKind"] != DBNull.Value? row["FieldKind"]?.ToString(): null,
@@ -585,6 +590,7 @@ namespace CRMWebServices.Repository
                         documentList.Add(new
                         {
                             DocumentTypeId = doc.DocumentTypeId,
+                            OtherDocumentType = doc.OtherDocumentType,
                             DocumentName = doc.DocumentName,
                             DocumentPath = documentPath,
                             DocumentNumber = doc.DocumentNumber,
