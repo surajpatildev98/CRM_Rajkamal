@@ -10,12 +10,12 @@ using Microsoft.AspNetCore.Mvc;
 public class LeavePolicyController : ControllerBase
 {
     private readonly ILeavePolicyRepository _leavePolicyRepository;
-
     public LeavePolicyController(ILeavePolicyRepository leavePolicyRepository)
     {
         _leavePolicyRepository = leavePolicyRepository;
     }
 
+    #region POST: SaveLeavePolicy
     [HttpPost("SaveLeavePolicy")]
     public async Task<IActionResult> SaveLeavePolicy([FromBody] LeavePolicyModels.LeavePolicySaveRequest request)
     {
@@ -53,7 +53,9 @@ public class LeavePolicyController : ControllerBase
             });
         }
     }
+    #endregion
 
+    #region POST: UpdateLeavePolicy
     [HttpPost("UpdateLeavePolicy")]
     public async Task<IActionResult> UpdateLeavePolicy([FromBody] LeavePolicyModels.LeavePolicyUpdateRequest request)
     {
@@ -91,7 +93,9 @@ public class LeavePolicyController : ControllerBase
             });
         }
     }
+    #endregion
 
+    #region GET: GetLeavePolicyList
     [HttpGet("GetLeavePolicyList")]
     public async Task<IActionResult> GetLeavePolicyList([FromQuery] LeavePolicyModels.LeavePolicyListRequest request)
     {
@@ -109,7 +113,9 @@ public class LeavePolicyController : ControllerBase
             });
         }
     }
+    #endregion
 
+    #region GET: GetLeavePolicyDetails
     [HttpGet("GetLeavePolicyDetails/{leavePolicyId}")]
     public async Task<IActionResult> GetLeavePolicyDetails(int leavePolicyId)
     {
@@ -127,7 +133,9 @@ public class LeavePolicyController : ControllerBase
             });
         }
     }
+    #endregion
 
+    #region GET :Leave types
     [HttpGet("GetLeaveTypes")]
     public async Task<IActionResult> GetLeaveTypes()
     {
@@ -145,4 +153,5 @@ public class LeavePolicyController : ControllerBase
             });
         }
     }
+    #endregion
 }

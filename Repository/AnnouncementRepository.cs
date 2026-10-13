@@ -14,7 +14,6 @@ namespace CRMWebServices.Repository
         private readonly IDatabaseService _database;
         private readonly ILogger<AnnouncementRepository> _logger;
         private readonly ISchedulerExecutionService _schedulerExecutionService;
-
         private const string SP_NAME ="USP_ORG_AnnouncementManagement";
 
         public AnnouncementRepository(IDatabaseService database,ILogger<AnnouncementRepository> logger,ISchedulerExecutionService schedulerExecutionService)
@@ -72,7 +71,6 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
-
 
         #region GET ANNOUNCEMENT
         public async Task<ApiResponse> GetAnnouncement(int announcementId)
@@ -135,7 +133,6 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
-
 
         #region CREATE ANNOUNCEMENT
         public async Task<ApiResponse> CreateAnnouncement(AnnouncementRequest model,int employeeId)
@@ -205,7 +202,6 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
-
         
         #region UPDATE ANNOUNCEMENT
         public async Task<ApiResponse> UpdateAnnouncement(AnnouncementRequest model,int employeeId)
@@ -286,7 +282,6 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
         #region ADD ANNOUNCEMENT TARGET
         public async Task<ApiResponse> AddAnnouncementTarget(int announcementId,AnnouncementTargetRequest model,int employeeId)
         {
@@ -357,7 +352,6 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
         #region GET ANNOUNCEMENT TARGETS
         public async Task<ApiResponse> GetAnnouncementTargets(int announcementId)
         {
@@ -405,10 +399,7 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
-
         #region GET ANNOUNCEMENT RECIPIENTS
-
         public async Task<ApiResponse> GetAnnouncementRecipients(int announcementId)
         {
             try
@@ -542,28 +533,6 @@ namespace CRMWebServices.Repository
 
                     string displayName = string.IsNullOrWhiteSpace(employeeName) ? "Team Member" : employeeName;
 
-
-                    //try
-                    //{
-                    //    await _schedulerExecutionService.SendEmployeeNotificationAsync(
-                    //            schedulerJobItemId: null,
-                    //            employeeId: recipient.EmployeeId,
-                    //            entityId: announcementId,
-                    //            title: announcement.Title ?? "Announcement",
-                    //            message: announcement.Message ?? string.Empty,
-                    //            entityType: "ANNOUNCEMENT",
-                    //            recipientType: "ANNOUNCEMENT_RECIPIENT"
-                    //    );
-
-                    //    notificationSent++;
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    notificationFailed++;
-
-                    //    _logger.LogError(ex,"Failed to send announcement notification. " +"AnnouncementId {AnnouncementId}, EmployeeId {EmployeeId}",announcementId,recipient.EmployeeId);
-                    //}
-
                     if (recipient.SendPush)
                     {
                         try
@@ -625,33 +594,7 @@ namespace CRMWebServices.Repository
                                 announcementId,
                                 recipient.EmployeeId);
                         }
-                    }
-                    //try
-                    //{
-                    //    await _schedulerExecutionService.SendEmployeeEmailNotificationAsync(
-                    //        schedulerJobItemId: null,
-                    //        employeeId: recipient.EmployeeId,
-                    //        entityId: announcementId,
-                    //        title: announcement.Title ?? "Announcement",
-                    //        message: announcement.Message ?? string.Empty,
-                    //        entityType: "ANNOUNCEMENT",
-                    //        recipientType: "ANNOUNCEMENT_RECIPIENT",
-                    //        actionType: "ANNOUNCEMENT",
-                    //        templateData: new Dictionary<string, string?>
-                    //        {
-                    //            ["EmployeeName"] = displayName,
-                    //            ["AnnouncementDate"] = DateTime.Today.ToString("dd MMM yyyy"),
-                    //            ["HeaderLabel"] = "Company Announcement"
-                    //        });
-
-                    //    emailSent++;
-                    //}
-                    //catch (Exception ex)
-                    //{
-                    //    emailFailed++;
-
-                    //    _logger.LogError(ex, "Failed to send announcement email. AnnouncementId {AnnouncementId}, EmployeeId {EmployeeId}", announcementId, recipient.EmployeeId);
-                    //}                   
+                    }                                
                 }
 
                
@@ -708,7 +651,6 @@ namespace CRMWebServices.Repository
         #endregion
 
         #region GET OFFICES BY COMPANY
-
         public async Task<ApiResponse> GetOfficesByCompany(int companyId)
         {
             try
@@ -736,22 +678,11 @@ namespace CRMWebServices.Repository
                              .Select(row => new OfficeLookupInfo
                              {
                                  OfficeId = Convert.ToInt32(row["OfficeId"]),
-
-                                 OfficeName = row["OfficeName"] == DBNull.Value
-                                     ? null
-                                     : row["OfficeName"].ToString(),
-
+                                 OfficeName = row["OfficeName"] == DBNull.Value? null: row["OfficeName"].ToString(),
                                  RegionId = Convert.ToInt32(row["RegionId"]),
-
-                                 RegionName = row["RegionName"] == DBNull.Value
-                                     ? null
-                                     : row["RegionName"].ToString(),
-
+                                 RegionName = row["RegionName"] == DBNull.Value? null: row["RegionName"].ToString(),
                                  StateId = Convert.ToInt32(row["StateId"]),
-
-                                 StateName = row["StateName"] == DBNull.Value
-                                     ? null
-                                     : row["StateName"].ToString()
+                                 StateName = row["StateName"] == DBNull.Value? null: row["StateName"].ToString()
                              })
                              .ToList();
                 }
@@ -765,10 +696,7 @@ namespace CRMWebServices.Repository
             }
             catch (SqlException ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Database error while getting offices for CompanyId {CompanyId}.",
-                    companyId);
+                _logger.LogError(ex,"Database error while getting offices for CompanyId {CompanyId}.",companyId);
 
                 return new ApiResponse
                 {
@@ -778,10 +706,7 @@ namespace CRMWebServices.Repository
             }
             catch (Exception ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Unexpected error while getting offices for CompanyId {CompanyId}.",
-                    companyId);
+                _logger.LogError(ex,"Unexpected error while getting offices for CompanyId {CompanyId}.",companyId);
 
                 return new ApiResponse
                 {
@@ -822,10 +747,7 @@ namespace CRMWebServices.Repository
                              .Select(row => new DepartmentLookupInfo
                              {
                                  DepartmentId = Convert.ToInt32(row["DepartmentId"]),
-
-                                 DepartmentName = row["DepartmentName"] == DBNull.Value
-                                     ? null
-                                     : row["DepartmentName"].ToString()
+                                 DepartmentName = row["DepartmentName"] == DBNull.Value? null: row["DepartmentName"].ToString()
                              })
                              .ToList();
                 }
@@ -839,10 +761,7 @@ namespace CRMWebServices.Repository
             }
             catch (SqlException ex)
             {
-                _logger.LogError(
-                    ex,
-                    "Database error while getting departments for OfficeId {OfficeId}.",
-                    officeId);
+                _logger.LogError(ex,"Database error while getting departments for OfficeId {OfficeId}.",officeId);
 
                 return new ApiResponse
                 {

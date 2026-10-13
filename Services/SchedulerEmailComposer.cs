@@ -39,13 +39,7 @@ namespace CRMWebServices.Services
         public SchedulerEmailComposer(IEmailTemplateRenderer renderer, IConfiguration config)
         {
             _renderer = renderer;
-
-            string? baseUrl = config["EmailSettings:PublicBaseUrl"];
-            //_logoBlock = string.IsNullOrWhiteSpace(baseUrl)
-            //    ? ""
-            //    : "<tr><td align='center' bgcolor='#ffffff' style='background-color:#ffffff;padding:20px 28px 16px 28px;border-bottom:1px solid #e5e7eb;'>" +
-            //      $"<img src='{WebUtility.HtmlEncode(baseUrl.TrimEnd('/'))}/assets/companylogo.jpg' alt='Rajkamal Bar Scan Systems Pvt. Ltd.' width='200' style='display:block;height:auto;max-width:200px;border:0;' />" +
-            //      "</td></tr>";
+            string? baseUrl = config["EmailSettings:PublicBaseUrl"];          
         }
 
         public string Compose(string actionType, string title, string message, string recipientType,

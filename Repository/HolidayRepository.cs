@@ -14,6 +14,7 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
+        #region Save Holiday Calendar
         public async Task<ApiResponse> SaveHolidayCalendar(HolidayCalendarSaveRequest request)
         {
             try
@@ -94,7 +95,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region Get Holiday Calendars
         public async Task<HolidayCalendarResponse> GetCalendars()
         {
             try
@@ -154,7 +157,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region Get Holidays for a Calendar
         public async Task<HolidayResponse> GetHolidays( int holidayCalendarId)
         {
             try
@@ -166,10 +171,6 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@HolidayCalendarId",holidayCalendarId)
                 );
 
-                //=========================================
-                // Result Set 1 - Status and Message
-                //=========================================
-
                 if (ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
                 {
                     var row = ds.Tables[0].Rows[0];
@@ -177,10 +178,6 @@ namespace CRMWebServices.Repository
                     response.Status = row["Status"] != DBNull.Value && Convert.ToBoolean(row["Status"]);
                     response.Message = row["Message"]?.ToString() ?? "";
                 }
-
-                //=========================================
-                // Result Set 2 - Holiday Data
-                //=========================================
 
                 if (ds.Tables.Count > 1 && ds.Tables[1].Rows.Count > 0)
                 {
@@ -223,5 +220,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
     }
 }

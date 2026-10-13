@@ -15,254 +15,7 @@ namespace CRMWebServices.Repository
             _database = database;
         }
 
-        //public async Task<ApiResponse> SaveLeavePolicy(LeavePolicyModels.LeavePolicySaveRequest request)
-        //{
-        //    try
-        //    {              
-
-        //        if (request == null)
-        //        {
-        //            return new ApiResponse
-        //            {
-        //                Status = false,
-        //                Message = "Leave Policy request is required."
-        //            };
-        //        }
-
-        //        if (string.IsNullOrWhiteSpace(request.PolicyName))
-        //        {
-        //            return new ApiResponse
-        //            {
-        //                Status = false,
-        //                Message = "Policy Name is required."
-        //            };
-        //        }
-
-        //        if (!request.Ref_CompanyId.HasValue || request.Ref_CompanyId <= 0)
-        //        {
-        //            return new ApiResponse
-        //            {
-        //                Status = false,
-        //                Message = "Company is required."
-        //            };
-        //        }
-
-
-
-        //        if (request.Details == null)
-        //        {
-        //            request.Details =new List<LeavePolicyModels.LeavePolicyDetailRequest>();
-        //        }
-
-        //        // Duplicate Leave Type check
-        //        var duplicateLeaveTypes = request.Details.GroupBy(x => x.Ref_LeaveTypeId).Where(x => x.Key <= 0 || x.Count() > 1).Select(x => x.Key).ToList();
-        //        if (duplicateLeaveTypes.Any())
-        //        {
-        //            return new ApiResponse
-        //            {
-        //                Status = false,
-        //                Message = "Same Leave Type cannot be added more than once in a policy."
-        //            };
-        //        }            
-
-        //        var detailTable = new DataTable();
-
-        //        detailTable.Columns.Add("LeavePolicyDetailId",typeof(int));
-        //        detailTable.Columns.Add("Ref_LeaveTypeId",typeof(int));
-        //        detailTable.Columns.Add("AnnualEntitlement",typeof(decimal));
-        //        detailTable.Columns.Add("AccrualType",typeof(string));
-        //        detailTable.Columns.Add("AccrualValue",typeof(decimal));
-        //        detailTable.Columns.Add("CarryForwardAllowed",typeof(bool));
-        //        detailTable.Columns.Add("MaxCarryForward",typeof(decimal));
-        //        detailTable.Columns.Add("EncashmentAllowed",typeof(bool));
-        //        detailTable.Columns.Add("MaxEncashment",typeof(decimal));
-        //        detailTable.Columns.Add("AllowNegativeBalance",typeof(bool));
-        //        detailTable.Columns.Add("MaxDaysPerApplication",typeof(decimal));
-        //        detailTable.Columns.Add("NoticeDays",typeof(int));
-        //        detailTable.Columns.Add("IncludeWeekends",typeof(bool));
-        //        detailTable.Columns.Add("IncludeHolidays",typeof(bool));
-        //        detailTable.Columns.Add("SandwichRule",typeof(bool));
-        //        detailTable.Columns.Add("IsHalfDayAllowed",typeof(bool));
-        //        detailTable.Columns.Add("RequiresDocument",typeof(bool));
-        //        detailTable.Columns.Add("IsActive",typeof(bool));
-        //        detailTable.Columns.Add("IsHourlyAllowed",typeof(bool));
-
-        //        // ADD DETAIL RECORDS
-        //        foreach (var detail in request.Details)
-        //        {
-        //            if (detail.Ref_LeaveTypeId <= 0)
-        //            {
-        //                return new ApiResponse
-        //                {
-        //                    Status = false,
-        //                    Message = "Invalid Leave Type selected."
-        //                };
-        //            }
-
-        //            if (detail.AnnualEntitlement < 0)
-        //            {
-        //                return new ApiResponse
-        //                {
-        //                    Status = false,
-        //                    Message =$"Annual Entitlement cannot be negative for Leave Type Id {detail.Ref_LeaveTypeId}."
-        //                };
-        //            }
-
-        //            if (detail.AccrualValue < 0)
-        //            {
-        //                return new ApiResponse
-        //                {
-        //                    Status = false,
-        //                    Message =$"Accrual Value cannot be negative for Leave Type Id {detail.Ref_LeaveTypeId}."
-        //                };
-        //            }
-
-        //            if (detail.MaxCarryForward < 0)
-        //            {
-        //                return new ApiResponse
-        //                {
-        //                    Status = false,
-        //                    Message =$"Max Carry Forward cannot be negative for Leave Type Id {detail.Ref_LeaveTypeId}."
-        //                };
-        //            }
-
-        //            if (detail.MaxEncashment < 0)
-        //            {
-        //                return new ApiResponse
-        //                {
-        //                    Status = false,
-        //                    Message =$"Max Encashment cannot be negative for Leave Type Id {detail.Ref_LeaveTypeId}."
-        //                };
-        //            }
-
-        //            if (detail.MaxDaysPerApplication < 0)
-        //            {
-        //                return new ApiResponse
-        //                {
-        //                    Status = false,
-        //                    Message =$"Max Days Per Application cannot be negative for Leave Type Id {detail.Ref_LeaveTypeId}."
-        //                };
-        //            }
-
-        //            if (detail.NoticeDays < 0)
-        //            {
-        //                return new ApiResponse
-        //                {
-        //                    Status = false,
-        //                    Message =$"Notice Days cannot be negative for Leave Type Id {detail.Ref_LeaveTypeId}."
-        //                };
-        //            }
-
-        //            if (string.IsNullOrWhiteSpace(detail.AccrualType))
-        //            {
-        //                return new ApiResponse
-        //                {
-        //                    Status = false,
-        //                    Message =$"Accrual Type is required for Leave Type Id {detail.Ref_LeaveTypeId}."
-        //                };
-        //            }
-
-
-        //            detailTable.Rows.Add(detail.LeavePolicyDetailId.HasValue && detail.LeavePolicyDetailId.Value > 0 ? detail.LeavePolicyDetailId.Value: DBNull.Value,
-
-        //                detail.Ref_LeaveTypeId,
-        //                detail.AnnualEntitlement,
-        //                detail.AccrualType.Trim(),
-        //                detail.AccrualValue,
-        //                detail.CarryForwardAllowed,
-        //                detail.MaxCarryForward,
-        //                detail.EncashmentAllowed,
-        //                detail.MaxEncashment,
-        //                detail.AllowNegativeBalance,
-        //                detail.MaxDaysPerApplication,
-        //                detail.NoticeDays,
-        //                detail.IncludeWeekends,
-        //                detail.IncludeHolidays,
-        //                detail.SandwichRule,
-        //                detail.IsHalfDayAllowed,
-        //                detail.RequiresDocument,
-        //                detail.IsActive,
-        //                detail.IsHourlyAllowed
-        //            );
-        //        }              
-
-        //        var dt = await _database.ExecuteDataTableAsync("USP_ORG_LeavePolicyManagement",
-
-        //            new SqlParameter("@Status","SAVE_LEAVE_POLICY"),
-        //            new SqlParameter("@LeavePolicyId",request.LeavePolicyId.HasValue &&request.LeavePolicyId.Value > 0? request.LeavePolicyId.Value: DBNull.Value),
-        //            new SqlParameter("@PolicyName",request.PolicyName.Trim()),
-        //            new SqlParameter("@Ref_CompanyId",request.Ref_CompanyId.Value),
-        //            new SqlParameter("@IsActive",request.IsActive),                   
-        //            new SqlParameter("@LeavePolicyDetails", detailTable)
-        //            {
-        //                SqlDbType = SqlDbType.Structured,
-        //                TypeName = "dbo.ORG_LeavePolicyDetailType"
-        //            }
-        //        );
-
-        //        // DATABASE RESPONSE VALIDATION           
-        //        if (dt == null || dt.Rows.Count == 0)
-        //        {
-        //            return new ApiResponse
-        //            {
-        //                Status = false,
-        //                Message = "No response returned from database."
-        //            };
-        //        }
-
-
-        //        var row = dt.Rows[0];
-        //        bool status =row.Table.Columns.Contains("Status") &&row["Status"] != DBNull.Value &&Convert.ToInt32(row["Status"]) == 1;
-        //        string message =row.Table.Columns.Contains("Message") &&row["Message"] != DBNull.Value? row["Message"]?.ToString() ?? "": "No message returned from database.";
-
-        //        if (status)
-        //        {
-        //            int? leavePolicyId = null;
-
-        //            if (row.Table.Columns.Contains("LeavePolicyId") && row["LeavePolicyId"] != DBNull.Value)
-        //            {
-        //                leavePolicyId =Convert.ToInt32(row["LeavePolicyId"]);
-        //            }
-
-        //            return new ApiResponse
-        //            {
-        //                Status = true,
-        //                Message = message,
-        //                Data = new
-        //                {
-        //                    LeavePolicyId = leavePolicyId
-        //                }
-        //            };
-        //        }
-
-        //        // DATABASE BUSINESS VALIDATION FAILURE             
-
-        //        return new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = message
-        //        };
-        //    }
-        //    catch (SqlException ex)
-        //    {
-        //        return new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = $"Database Error: {ex.Message}"
-        //        };
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return new ApiResponse
-        //        {
-        //            Status = false,
-        //            Message = $"Error: {ex.Message}"
-        //        };
-        //    }
-        //}
-
-        // GET LEAVE POLICY LIST    
-
+        #region SAVE LEAVE POLICY
         public async Task<ApiResponse> SaveLeavePolicy(LeavePolicyModels.LeavePolicySaveRequest request,int createdBy)
         {
             try
@@ -515,7 +268,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region UPDATE LEAVE POLICY
         public async Task<ApiResponse> UpdateLeavePolicy(LeavePolicyModels.LeavePolicyUpdateRequest request,int updatedBy)
         {
             try
@@ -775,28 +530,18 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
+
+        #region GET LEAVE POLICY LIST
         public async Task<ApiResponse> GetLeavePolicyList(LeavePolicyModels.LeavePolicyListRequest request)
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_LeavePolicyManagement",
-
-                    new SqlParameter(
-                        "@Status",
-                        "GET_LEAVE_POLICY_LIST"),
-
-                    new SqlParameter(
-                        "@SearchText",
-                        (object?)request.SearchText ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@FilterCompanyId",
-                        (object?)request.FilterCompanyId ?? DBNull.Value),
-
-                    new SqlParameter(
-                        "@FilterIsActive",
-                        (object?)request.FilterIsActive ?? DBNull.Value)
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_LeavePolicyManagement",
+                    new SqlParameter("@Status","GET_LEAVE_POLICY_LIST"),
+                    new SqlParameter("@SearchText",(object?)request.SearchText ?? DBNull.Value),
+                    new SqlParameter("@FilterCompanyId",(object?)request.FilterCompanyId ?? DBNull.Value),
+                    new SqlParameter("@FilterIsActive",(object?)request.FilterIsActive ?? DBNull.Value)
                 );
 
                 if (dt == null || dt.Rows.Count == 0)
@@ -818,38 +563,15 @@ namespace CRMWebServices.Repository
                     result.Add(
                         new LeavePolicyModels.LeavePolicyListResponse
                         {
-                            LeavePolicyId =
-                                Convert.ToInt32(row["LeavePolicyId"]),
-
-                            PolicyName =
-                                row["PolicyName"]?.ToString(),
-
-                            Ref_CompanyId =
-                                Convert.ToInt32(row["Ref_CompanyId"]),
-
-                            IsActive =
-                                Convert.ToBoolean(row["IsActive"]),
-
-                            LeaveTypeCount =
-                                Convert.ToInt32(row["LeaveTypeCount"]),
-
-                            CreatedOn =
-                                Convert.ToDateTime(row["CreatedOn"]),
-
-                            CreatedBy =
-                                row["CreatedBy"] == DBNull.Value
-                                    ? null
-                                    : Convert.ToInt32(row["CreatedBy"]),
-
-                            UpdatedOn =
-                                row["UpdatedOn"] == DBNull.Value
-                                    ? null
-                                    : Convert.ToDateTime(row["UpdatedOn"]),
-
-                            UpdatedBy =
-                                row["UpdatedBy"] == DBNull.Value
-                                    ? null
-                                    : Convert.ToInt32(row["UpdatedBy"])
+                            LeavePolicyId =Convert.ToInt32(row["LeavePolicyId"]),
+                            PolicyName =row["PolicyName"]?.ToString(),
+                            Ref_CompanyId =Convert.ToInt32(row["Ref_CompanyId"]),
+                            IsActive =Convert.ToBoolean(row["IsActive"]),
+                            LeaveTypeCount =Convert.ToInt32(row["LeaveTypeCount"]),
+                            CreatedOn =Convert.ToDateTime(row["CreatedOn"]),
+                            CreatedBy =row["CreatedBy"] == DBNull.Value? null: Convert.ToInt32(row["CreatedBy"]),
+                            UpdatedOn =row["UpdatedOn"] == DBNull.Value? null: Convert.ToDateTime(row["UpdatedOn"]),
+                            UpdatedBy =row["UpdatedBy"] == DBNull.Value? null: Convert.ToInt32(row["UpdatedBy"])
                         });
                 }
 
@@ -877,8 +599,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
-        // GET LEAVE POLICY DETAILS    
+        #region GET LEAVE POLICY DETAILS
         public async Task<ApiResponse> GetLeavePolicyDetails(int leavePolicyId)
         {
             try
@@ -1003,18 +726,15 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
-        // GET LEAVE TYPES   
+        #region GET LEAVE TYPES
         public async Task<ApiResponse> GetLeaveTypes()
         {
             try
             {
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_LeavePolicyManagement",
-
-                    new SqlParameter(
-                        "@Status",
-                        "GET_LEAVE_TYPES")
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_LeavePolicyManagement",
+                    new SqlParameter("@Status","GET_LEAVE_TYPES")
                 );
 
                 if (dt == null || dt.Rows.Count == 0)
@@ -1036,23 +756,12 @@ namespace CRMWebServices.Repository
                     result.Add(
                         new LeavePolicyModels.LeaveTypeDropdown
                         {
-                            LeaveTypeId =
-                                Convert.ToInt32(row["LeaveTypeId"]),
-
-                            LeaveCode =
-                                row["LeaveCode"]?.ToString(),
-
-                            LeaveName =
-                                row["LeaveName"]?.ToString(),
-
-                            IsPaid =
-                                Convert.ToBoolean(row["IsPaid"]),
-
-                            IsActive =
-                                Convert.ToBoolean(row["IsActive"]),
-
-                            IsHourlyAllowed =
-                                Convert.ToBoolean(row["IsHourlyAllowed"])
+                            LeaveTypeId =Convert.ToInt32(row["LeaveTypeId"]),
+                            LeaveCode =row["LeaveCode"]?.ToString(),
+                            LeaveName =row["LeaveName"]?.ToString(),
+                            IsPaid =Convert.ToBoolean(row["IsPaid"]),
+                            IsActive =Convert.ToBoolean(row["IsActive"]),
+                            IsHourlyAllowed =Convert.ToBoolean(row["IsHourlyAllowed"])
                         });
                 }
 
@@ -1080,5 +789,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
     }
 }

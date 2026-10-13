@@ -30,18 +30,14 @@ namespace CRMWebServices.Controllers
         public async Task<IActionResult> GetAnnouncement(
             int announcementId)
         {
-            var response =
-                await _announcementRepository.GetAnnouncement(
-                    announcementId);
-
+            var response =await _announcementRepository.GetAnnouncement(announcementId);
             return Ok(response);
         }
 
 
         // POST: api/Announcement
         [HttpPost("CreateAnnouncement")]
-        public async Task<IActionResult> CreateAnnouncement(
-            [FromBody] AnnouncementRequest model)
+        public async Task<IActionResult> CreateAnnouncement([FromBody] AnnouncementRequest model)
         {
             if (model == null)
             {
@@ -52,11 +48,7 @@ namespace CRMWebServices.Controllers
                 });
             }
 
-            var response =
-                await _announcementRepository.CreateAnnouncement(
-                    model,
-                    model.CreatedBy);
-
+            var response =await _announcementRepository.CreateAnnouncement(model,model.CreatedBy);
             return Ok(response);
         }
 
@@ -74,42 +66,11 @@ namespace CRMWebServices.Controllers
                 });
             }
 
-            int employeeId =
-                model.UpdatedBy ??
-                model.CreatedBy;
-
-            var response =
-                await _announcementRepository.UpdateAnnouncement(
-                    model,
-                    employeeId);
-
+            int employeeId =model.UpdatedBy ?? model.CreatedBy;
+            var response =await _announcementRepository.UpdateAnnouncement(model,employeeId);
             return Ok(response);
         }
 
-
-        // POST: api/Announcement/1/target
-        //[HttpPost("{announcementId:int}/target")]
-        //public async Task<IActionResult> AddAnnouncementTarget(
-        //    int announcementId,
-        //    [FromBody] AnnouncementTargetRequest model)
-        //{
-        //    if (model == null)
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            Status = false,
-        //            Message = "Announcement target is required."
-        //        });
-        //    }
-
-        //    var response =
-        //        await _announcementRepository.AddAnnouncementTarget(
-        //            announcementId,
-        //            model,
-        //            model.AnnouncementTargetId ?? 0);
-
-        //    return Ok(response);
-        //}
 
         [HttpPost("{announcementId:int}/target")]
         public async Task<IActionResult> AddAnnouncementTarget(int announcementId,[FromBody] AnnouncementTargetRequest model,[FromQuery] int employeeId)
@@ -133,10 +94,7 @@ namespace CRMWebServices.Controllers
         public async Task<IActionResult> GetAnnouncementTargets(
             int announcementId)
         {
-            var response =
-                await _announcementRepository.GetAnnouncementTargets(
-                    announcementId);
-
+            var response =await _announcementRepository.GetAnnouncementTargets(announcementId);
             return Ok(response);
         }
 
@@ -146,10 +104,7 @@ namespace CRMWebServices.Controllers
         public async Task<IActionResult> GetAnnouncementRecipients(
             int announcementId)
         {
-            var response =
-                await _announcementRepository.GetAnnouncementRecipients(
-                    announcementId);
-
+            var response =await _announcementRepository.GetAnnouncementRecipients(announcementId);
             return Ok(response);
         }
 
@@ -158,11 +113,7 @@ namespace CRMWebServices.Controllers
         [HttpPost("{announcementId:int}/send")]
         public async Task<IActionResult> SendAnnouncement(int announcementId,[FromQuery] int employeeId)
         {
-            var response =
-                await _announcementRepository.SendAnnouncement(
-                    announcementId,
-                    employeeId);
-
+            var response =await _announcementRepository.SendAnnouncement(announcementId,employeeId);
             return Ok(response);
         }
 
@@ -170,7 +121,6 @@ namespace CRMWebServices.Controllers
         public async Task<IActionResult> GetOfficesByCompany(int companyId)
         {
             var response = await _announcementRepository.GetOfficesByCompany(companyId);
-
             return Ok(response);
         }
 
@@ -178,7 +128,6 @@ namespace CRMWebServices.Controllers
         public async Task<IActionResult> GetDepartmentsByOffice(int officeId)
         {
             var response = await _announcementRepository.GetDepartmentsByOffice(officeId);
-
             return Ok(response);
         }
     }

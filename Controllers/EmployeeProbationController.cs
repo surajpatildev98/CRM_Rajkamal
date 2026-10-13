@@ -19,20 +19,14 @@ namespace CRMWebServices.Controllers
             _repository = repository;
         }
 
-        // ============================================================
-        // GET EMPLOYEES
-        // ============================================================
-
+        #region GET EMPLOYEES ON PROBATION
         [HttpGet("employees")]
         public async Task<IActionResult> GetEmployees()
         {
             try
             {
                 var response = await _repository.GetProbationEmployees();
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -43,23 +37,16 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-        // ============================================================
-        // GET EMPLOYEE PROBATION DETAIL
-        // ============================================================
-
+        #region GET EMPLOYEE PROBATION DETAILS
         [HttpGet("detail/{employeeId:int}")]
-        public async Task<IActionResult> GetEmployeeProbation(
-            int employeeId)
+        public async Task<IActionResult> GetEmployeeProbation(int employeeId)
         {
             try
             {
-                var response =
-                    await _repository.GetEmployeeProbation(employeeId);
-
-                return response.Status
-                    ? Ok(response)
-                    : NotFound(response);
+                var response =await _repository.GetEmployeeProbation(employeeId);
+                return response.Status? Ok(response): NotFound(response);
             }
             catch (Exception ex)
             {
@@ -70,23 +57,16 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-        // ============================================================
-        // GET PROBATION HISTORY
-        // ============================================================
-
+        #region GET EMPLOYEE PROBATION HISTORY
         [HttpGet("history/{employeeId:int}")]
-        public async Task<IActionResult> GetProbationHistory(
-            int employeeId)
+        public async Task<IActionResult> GetProbationHistory(int employeeId)
         {
             try
             {
-                var response =
-                    await _repository.GetProbationHistory(employeeId);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                var response =await _repository.GetProbationHistory(employeeId);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -97,14 +77,11 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-        // ============================================================
-        // EXTEND PROBATION
-        // ============================================================
-
+        #region EXTEND EMPLOYEE PROBATION
         [HttpPost("extend")]
-        public async Task<IActionResult> ExtendProbation(
-            [FromBody] EmployeeProbationManagementRequest request)
+        public async Task<IActionResult> ExtendProbation([FromBody] EmployeeProbationManagementRequest request)
         {
             if (request == null)
             {
@@ -118,15 +95,8 @@ namespace CRMWebServices.Controllers
             try
             {
                 var employeeId = User.EmployeeId();
-
-                var response =
-                    await _repository.ExtendProbation(
-                        request,
-                        employeeId);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                var response =await _repository.ExtendProbation(request,employeeId);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -137,11 +107,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-        // ============================================================
-        // CONFIRM EMPLOYEE
-        // ============================================================
-
+        #region CONFIRM EMPLOYEE PROBATION
         [HttpPost("confirm")]
         public async Task<IActionResult> ConfirmProbation(
             [FromBody] EmployeeProbationManagementRequest request)
@@ -158,15 +126,8 @@ namespace CRMWebServices.Controllers
             try
             {
                 var employeeId = User.EmployeeId();
-
-                var response =
-                    await _repository.ConfirmProbation(
-                        request,
-                        employeeId);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                var response =await _repository.ConfirmProbation(request,employeeId);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -177,14 +138,11 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-        // ============================================================
-        // FAIL PROBATION
-        // ============================================================
-
+        #region Fail EMPLOYEE PROBATION
         [HttpPost("fail")]
-        public async Task<IActionResult> FailProbation(
-            [FromBody] EmployeeProbationManagementRequest request)
+        public async Task<IActionResult> FailProbation([FromBody] EmployeeProbationManagementRequest request)
         {
             if (request == null)
             {
@@ -199,14 +157,8 @@ namespace CRMWebServices.Controllers
             {
                 var employeeId = User.EmployeeId();
 
-                var response =
-                    await _repository.FailProbation(
-                        request,
-                        employeeId);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                var response =await _repository.FailProbation(request,employeeId);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -217,14 +169,11 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
-        // ============================================================
-        // CANCEL PROBATION
-        // ============================================================
-
+        #region Cancel EMPLOYEE PROBATION
         [HttpPost("cancel")]
-        public async Task<IActionResult> CancelProbation(
-            [FromBody] EmployeeProbationManagementRequest request)
+        public async Task<IActionResult> CancelProbation([FromBody] EmployeeProbationManagementRequest request)
         {
             if (request == null)
             {
@@ -238,15 +187,8 @@ namespace CRMWebServices.Controllers
             try
             {
                 var employeeId = User.EmployeeId();
-
-                var response =
-                    await _repository.CancelProbation(
-                        request,
-                        employeeId);
-
-                return response.Status
-                    ? Ok(response)
-                    : BadRequest(response);
+                var response =await _repository.CancelProbation(request,employeeId);
+                return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
             {
@@ -257,5 +199,6 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
     }
 }
