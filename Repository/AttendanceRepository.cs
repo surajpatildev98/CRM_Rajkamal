@@ -54,8 +54,7 @@ namespace CRMWebServices.Repository
         }
 
 
-        public async Task<AttendanceResponse> GetAttendance(
-            AttendanceRequest request)
+        public async Task<AttendanceResponse> GetAttendance(AttendanceRequest request)
         {
             try
             {

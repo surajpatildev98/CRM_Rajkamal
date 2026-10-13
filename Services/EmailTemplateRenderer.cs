@@ -27,18 +27,6 @@ namespace CRMWebServices.Services
             _logger = logger;
         }
 
-        //public string Render(string templateName, IReadOnlyDictionary<string, string?> values)
-        //{
-        //    string body = Replace(Load(templateName), values);
-
-        //    var layoutValues = new Dictionary<string, string?>(values, StringComparer.OrdinalIgnoreCase)
-        //    {
-        //        ["Content"] = body
-        //    };
-
-        //    return Replace(Load("_Layout"), layoutValues);
-        //}
-
         public string Render(string templateName, IReadOnlyDictionary<string, string?> values)
         {
             var all = new Dictionary<string, string?>(StringComparer.OrdinalIgnoreCase)
@@ -63,25 +51,7 @@ namespace CRMWebServices.Services
                 if (!File.Exists(path)) throw new FileNotFoundException($"Email template not found: {path}");
                 return File.ReadAllText(path);
             });
-
-        //private string Replace(string template, IReadOnlyDictionary<string, string?> values)
-        //{
-        //    var lookup = new Dictionary<string, string?>(values, StringComparer.OrdinalIgnoreCase);
-
-        //    return TokenRegex.Replace(template, m =>
-        //    {
-        //        bool raw = m.Groups[1].Success;
-        //        string key = raw ? m.Groups[1].Value : m.Groups[2].Value;
-
-        //        if (!lookup.TryGetValue(key, out var value))
-        //        {
-        //            _logger.LogWarning("Email template token '{Token}' has no value.", key);
-        //            return "";
-        //        }
-
-        //        return raw ? value ?? "" : WebUtility.HtmlEncode(value ?? "");
-        //    });
-        //}
+       
         private string Replace(string template, IReadOnlyDictionary<string, string?> values)
         {
             var lookup = new Dictionary<string, string?>(values, StringComparer.OrdinalIgnoreCase);

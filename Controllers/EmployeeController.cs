@@ -151,6 +151,7 @@ namespace CRMWebServices.Controllers
         }
         #endregion
 
+        #region API : api/Employee/probation-status
         [HttpGet("probation-status")]
         public async Task<IActionResult> GetProbationStatus()
         {
@@ -195,7 +196,9 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
+        #endregion
 
+        #region API : api/Employee/hr-managers?officeId={officeId}
         [HttpGet("hr-managers")]
         public async Task<IActionResult> GetHRManagersByOffice([FromQuery] int officeId)
         {
@@ -233,6 +236,6 @@ namespace CRMWebServices.Controllers
                 });
             }
         }
-
+        #endregion
     }
 }
