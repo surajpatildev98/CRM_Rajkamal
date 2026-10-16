@@ -62,19 +62,61 @@ namespace CRMWebServices.Repository
             return list;
         }
 
+        public async Task<string> ResolveViewScope(int employeeId, string roleScope)
+        {
+            // HR roles / explicit Manager role already decided
+            if (roleScope != "SELF") return roleScope;
+
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_Attendance",
+                    new SqlParameter("@Status", "GET_IS_MANAGER"),
+                    new SqlParameter("@LoggedInEmployeeId", employeeId)
+                );
+
+                if (dt.Rows.Count > 0
+                    && dt.Columns.Contains("IsManager")
+                    && dt.Rows[0]["IsManager"] != DBNull.Value
+                    && Convert.ToBoolean(dt.Rows[0]["IsManager"]))
+                {
+                    return "TEAM";
+                }
+            }
+            catch
+            {
+                // if the check fails, fall back to the safest scope
+            }
+
+            return "SELF";
+        }
 
         public async Task<AttendanceResponse> GetAttendance(
-            AttendanceRequest request)
+    AttendanceRequest request, int loggedInEmployeeId, string viewScope)
         {
             try
             {
                 var dt = await _database.ExecuteDataTableAsync("USP_ORG_Attendance",
                     new SqlParameter("@Status", "GET"),
                     new SqlParameter("@AttendanceDate", request.AttendanceDate.HasValue ? request.AttendanceDate.Value.Date : DBNull.Value),
-                    new SqlParameter("@OfficeId",request.OfficeId ?? (object)DBNull.Value),
-                    new SqlParameter("@DepartmentId",request.DepartmentId ?? (object)DBNull.Value),
-                    new SqlParameter("@Search",string.IsNullOrWhiteSpace(request.Search) ? DBNull.Value : request.Search.Trim())
+                    new SqlParameter("@OfficeId", request.OfficeId ?? (object)DBNull.Value),
+                    new SqlParameter("@DepartmentId", request.DepartmentId ?? (object)DBNull.Value),
+                    new SqlParameter("@Search", string.IsNullOrWhiteSpace(request.Search) ? DBNull.Value : request.Search.Trim()),
+                    new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
+                    new SqlParameter("@ViewScope", viewScope)
                 );
+
+                // SP validation error comes back as (Status, Message)
+                if (dt.Columns.Contains("Message") && !dt.Columns.Contains("AttendanceId"))
+                {
+                    return new AttendanceResponse
+                    {
+                        Status = false,
+                        Message = dt.Rows.Count > 0
+                            ? dt.Rows[0]["Message"]?.ToString() ?? "Unable to fetch attendance."
+                            : "Unable to fetch attendance.",
+                        Data = new List<AttendanceModel>()
+                    };
+                }
 
                 return new AttendanceResponse
                 {
@@ -88,7 +130,7 @@ namespace CRMWebServices.Repository
                 return new AttendanceResponse
                 {
                     Status = false,
-                    Message =$"Database Error: {ex.Message}",
+                    Message = $"Database Error: {ex.Message}",
                     Data = new List<AttendanceModel>()
                 };
             }
@@ -97,20 +139,36 @@ namespace CRMWebServices.Repository
                 return new AttendanceResponse
                 {
                     Status = false,
-                    Message =$"Error: {ex.Message}",
+                    Message = $"Error: {ex.Message}",
                     Data = new List<AttendanceModel>()
                 };
             }
         }
 
-        public async Task<AttendancePunchResponse> GetPunches(AttendancePunchRequest request)
+        public async Task<AttendancePunchResponse> GetPunches(
+    AttendancePunchRequest request, int loggedInEmployeeId, string viewScope)
         {
             try
             {
                 var dt = await _database.ExecuteDataTableAsync("USP_ORG_Attendance",
                     new SqlParameter("@Status", "GET_PUNCHES"),
-                    new SqlParameter("@AttendanceId",request.AttendanceId)
+                    new SqlParameter("@AttendanceId", request.AttendanceId),
+                    new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
+                    new SqlParameter("@ViewScope", viewScope)
                 );
+
+                // SP validation / permission error
+                if (dt.Columns.Contains("Message") && !dt.Columns.Contains("AttendancePunchId"))
+                {
+                    return new AttendancePunchResponse
+                    {
+                        Status = false,
+                        Message = dt.Rows.Count > 0
+                            ? dt.Rows[0]["Message"]?.ToString() ?? "Unable to fetch punches."
+                            : "Unable to fetch punches.",
+                        Data = new List<AttendancePunchModel>()
+                    };
+                }
 
                 var list = new List<AttendancePunchModel>();
 
@@ -118,15 +176,18 @@ namespace CRMWebServices.Repository
                 {
                     list.Add(new AttendancePunchModel
                     {
-                        AttendancePunchId = row["AttendancePunchId"] != DBNull.Value ? Convert.ToInt32(row["AttendancePunchId"]) : 0,
-                        AttendanceId = row["AttendanceId"] != DBNull.Value ? Convert.ToInt32(row["AttendanceId"]): 0,
-                        EmployeeId = row["EmployeeId"] != DBNull.Value ? Convert.ToInt32(row["EmployeeId"]) : 0,
-                        PunchDateTime = row["PunchDateTime"] != DBNull.Value ? Convert.ToDateTime(row["PunchDateTime"]) : DateTime.MinValue,
-                        PunchType = row["PunchType"] != DBNull.Value ? row["PunchType"]?.ToString() : null,
-                        PunchSource = row["PunchSource"] != DBNull.Value ? row["PunchSource"]?.ToString() : null,
-                        Remarks = row["Remarks"] != DBNull.Value ? row["Remarks"]?.ToString() : null,
-                        CreatedOn = row["CreatedOn"] != DBNull.Value ? Convert.ToDateTime(row["CreatedOn"]) : null,
-                        CreatedBy = row["CreatedBy"] != DBNull.Value ? Convert.ToInt32(row["CreatedBy"]) : null
+                        AttendancePunchId = RInt(row, "AttendancePunchId"),
+                        AttendanceId = RInt(row, "AttendanceId"),
+                        EmployeeId = RInt(row, "EmployeeId"),
+                        PunchDateTime = RDate(row, "PunchDateTime"),
+
+                        // "IN" / "OUT" instead of "I" / "O"
+                        PunchType = RStr(row, "PunchTypeName") ?? RStr(row, "PunchType"),
+
+                        PunchSource = RStr(row, "PunchSource"),
+                        Remarks = RStr(row, "Remarks"),
+                        CreatedOn = RNDate(row, "CreatedOn"),
+                        CreatedBy = RNInt(row, "CreatedBy")
                     });
                 }
 
@@ -411,8 +472,7 @@ namespace CRMWebServices.Repository
         }
 
         // ---------- 2. one employee, From - To ----------
-        public async Task<AttendanceEmployeeReportResponse> GetEmployeeReport(
-            AttendanceEmployeeReportRequest request, int loggedInEmployeeId, string viewScope)
+        public async Task<AttendanceEmployeeReportResponse> GetEmployeeReport(AttendanceEmployeeReportRequest request, int loggedInEmployeeId, string viewScope)
         {
             try
             {
