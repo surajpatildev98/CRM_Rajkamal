@@ -1,52 +1,103 @@
 #======================
-# .NET Build Output
+# SECRETS / CREDENTIALS (most important)
+#======================
+
+# Environment-specific appsettings (contain DB / JWT secrets)
+appsettings.*.json
+!appsettings.json
+appsettings.Local.json
+secrets.json
+
+# .env files
+.env
+.env.*
+!.env.example
+
+# Firebase service account (FCM private key)
+Firebase/firebase-service-account.json
+Firebase/*.json
+*firebase-adminsdk*.json
+google-services.json
+GoogleService-Info.plist
+
+# Certificates and private keys
+*.pfx
+*.p12
+*.pem
+*.key
+*.cer
+*.crt
+*.snk
+
+# Publish settings (can embed passwords)
+*.pubxml
+*.pubxml.user
+*.publishsettings
+Properties/PublishProfiles/
+
+# Local DB / backups / dumps
+*.mdf
+*.ldf
+*.ndf
+*.bak
+*.dump
+*.sql.bak
+
+
+#======================
+# USER UPLOADS (real customer / employee files)
+#======================
+
+Uploads/
+wwwroot/uploads/
+wwwroot/logs/
+
+
+#======================
+# LOGS
+#======================
+
+*.log
+Logs/
+logs/
+crm-log-*.txt
+
+
+#======================
+# .NET build output
 #======================
 
 bin/
 obj/
-
-# Build configurations
-Debug/
-Release/
+[Dd]ebug/
+[Rr]elease/
 x64/
 x86/
-
-# Compiled binaries
+publish/
+Publish/
+artifacts/
 *.dll
 *.exe
 *.pdb
 *.cache
 *.ilk
-*.tmp
 
 
 #======================
-# Visual Studio
+# Visual Studio / IDEs
 #======================
 
 .vs/
 .vscode/
-
+.idea/
+.history/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
-
-# Visual Studio Code
-.history/
-
-
-#======================
-# Logs
-#======================
-
-*.log
-logs/
-Logs/
-
-# Application logs
-app.log
-application.log
+*.rsuser
+_ReSharper*/
+*.DotSettings.user
 
 
 #======================
@@ -62,74 +113,25 @@ project.fragment.lock.json
 
 
 #======================
-# ASP.NET Core
-#======================
-
-wwwroot/uploads/
-wwwroot/logs/
-
-# Generated files
-Properties/PublishProfiles/
-
-
-#======================
-# Test Results
+# Tests / coverage
 #======================
 
 TestResults/
 *.trx
-
-
-#======================
-# Coverage
-#======================
-
 coverage/
-.coverage
-.coveragexml
+*.coverage
+*.coveragexml
 
 
 #======================
-# OS Files
+# OS / temp files
 #======================
 
-# Windows
 Thumbs.db
 Desktop.ini
-
-# macOS
 .DS_Store
-
-
-#======================
-# Temporary Files
-#======================
-
 *.tmp
 *.temp
-*.bak
 *.swp
 *.swo
-*.pubxml.user
-
-
-#======================
-# Environment / Secrets
-#======================
-
-.env
-.env.*
-!.env.example
-
-# ASP.NET local settings
-appsettings.Development.json
-appsettings.Local.json
-
-
-#======================
-# Publish Output
-#======================
-
-publish/
-Publish/
-artifacts/Firebase/firebase-service-account.json 
+*~
