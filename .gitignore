@@ -78,7 +78,7 @@ Properties/PublishProfiles/
 
 TestResults/
 *.trx
-
+Firebase/firebase-service-account.json
 
 #======================
 # Coverage
