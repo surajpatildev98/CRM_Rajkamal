@@ -37,6 +37,7 @@
     public class EducationModel
     {
         public int? EducationId { get; set; }
+        public string? OtherQualification { get; set; }
         public int QualificationId { get; set; }
         public string? UniversityName { get; set; }
         public string? InstituteName { get; set; }
@@ -50,6 +51,7 @@
     public class BankModel
     {
         public int BankId { get; set; }
+        public string? OtherBankName { get; set; }
         public int AccountTypeId { get; set; }
         public string? AccountHolderName { get; set; }
         public string? AccountNumber { get; set; }
@@ -60,6 +62,7 @@
     public class FamilyModel
     {
         public int RelationshipId { get; set; }
+        public string? OtherRelationship { get; set; }
         public string? FamilyMemberName { get; set; }
         public string? Occupation { get; set; }
         public string? ContactNumber { get; set; }
@@ -71,6 +74,7 @@
     public class DocumentModel
     {
         public int? DocumentId { get; set; }
+        public string? OtherDocumentType { get; set; }
         public int DocumentTypeId { get; set; }
         public string? DocumentName { get; set; }
         public string? DocumentPath { get; set; }
