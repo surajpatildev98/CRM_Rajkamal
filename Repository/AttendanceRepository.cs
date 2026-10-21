@@ -90,27 +90,19 @@ namespace CRMWebServices.Repository
             return "SELF";
         }
 
-        //public async Task<AttendanceResponse> GetAttendance(AttendanceRequest request)
-
-        public async Task<AttendanceResponse> GetAttendance(AttendanceRequest request, int loggedInEmployeeId, string viewScope)
-
+        public async Task<AttendanceResponse> GetAttendance(
+    AttendanceRequest request, int loggedInEmployeeId, string viewScope)
         {
             try
             {
                 var dt = await _database.ExecuteDataTableAsync("USP_ORG_Attendance",
                     new SqlParameter("@Status", "GET"),
                     new SqlParameter("@AttendanceDate", request.AttendanceDate.HasValue ? request.AttendanceDate.Value.Date : DBNull.Value),
-
-                    new SqlParameter("@OfficeId",request.OfficeId ?? (object)DBNull.Value),
-                    new SqlParameter("@DepartmentId",request.DepartmentId ?? (object)DBNull.Value),
-                    new SqlParameter("@Search",string.IsNullOrWhiteSpace(request.Search) ? DBNull.Value : request.Search.Trim()),
-
                     new SqlParameter("@OfficeId", request.OfficeId ?? (object)DBNull.Value),
                     new SqlParameter("@DepartmentId", request.DepartmentId ?? (object)DBNull.Value),
                     new SqlParameter("@Search", string.IsNullOrWhiteSpace(request.Search) ? DBNull.Value : request.Search.Trim()),
                     new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
                     new SqlParameter("@ViewScope", viewScope)
-
                 );
 
                 // SP validation error comes back as (Status, Message)
@@ -138,8 +130,7 @@ namespace CRMWebServices.Repository
                 return new AttendanceResponse
                 {
                     Status = false,
-                    Message =$"Database Error: {ex.Message}",  
-
+                    Message = $"Database Error: {ex.Message}",
                     Data = new List<AttendanceModel>()
                 };
             }
@@ -148,8 +139,7 @@ namespace CRMWebServices.Repository
                 return new AttendanceResponse
                 {
                     Status = false,
-                    Message =$"Error: {ex.Message}",
-                   
+                    Message = $"Error: {ex.Message}",
                     Data = new List<AttendanceModel>()
                 };
             }
@@ -161,9 +151,6 @@ namespace CRMWebServices.Repository
             {
                 var dt = await _database.ExecuteDataTableAsync("USP_ORG_Attendance",
                     new SqlParameter("@Status", "GET_PUNCHES"),
-
-                    new SqlParameter("@AttendanceId",request.AttendanceId),
-
                     new SqlParameter("@AttendanceId", request.AttendanceId),
                     new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
                     new SqlParameter("@ViewScope", viewScope)
@@ -188,18 +175,18 @@ namespace CRMWebServices.Repository
                 {
                     list.Add(new AttendancePunchModel
                     {
-                        AttendancePunchId = row["AttendancePunchId"] != DBNull.Value ? Convert.ToInt32(row["AttendancePunchId"]) : 0,
-                        AttendanceId = row["AttendanceId"] != DBNull.Value ? Convert.ToInt32(row["AttendanceId"]): 0,
-                        EmployeeId = row["EmployeeId"] != DBNull.Value ? Convert.ToInt32(row["EmployeeId"]) : 0,
-                        PunchDateTime = row["PunchDateTime"] != DBNull.Value ? Convert.ToDateTime(row["PunchDateTime"]) : DateTime.MinValue,
-                        PunchType = row["PunchType"] != DBNull.Value ? row["PunchType"]?.ToString() : null,
-                        PunchSource = row["PunchSource"] != DBNull.Value ? row["PunchSource"]?.ToString() : null,
-                        Remarks = row["Remarks"] != DBNull.Value ? row["Remarks"]?.ToString() : null,
-                        CreatedOn = row["CreatedOn"] != DBNull.Value ? Convert.ToDateTime(row["CreatedOn"]) : null,
-                        CreatedBy = row["CreatedBy"] != DBNull.Value ? Convert.ToInt32(row["CreatedBy"]) : null
-                       
+                        AttendancePunchId = RInt(row, "AttendancePunchId"),
+                        AttendanceId = RInt(row, "AttendanceId"),
+                        EmployeeId = RInt(row, "EmployeeId"),
+                        PunchDateTime = RDate(row, "PunchDateTime"),
 
-                     
+                        // "IN" / "OUT" instead of "I" / "O"
+                        PunchType = RStr(row, "PunchTypeName") ?? RStr(row, "PunchType"),
+
+                        PunchSource = RStr(row, "PunchSource"),
+                        Remarks = RStr(row, "Remarks"),
+                        CreatedOn = RNDate(row, "CreatedOn"),
+                        CreatedBy = RNInt(row, "CreatedBy")
                     });
                 }
 
@@ -335,11 +322,10 @@ namespace CRMWebServices.Repository
                 var dashboard = new AttendanceDashboardModel
                 {
                     Present = row["Present"] != DBNull.Value ? Convert.ToInt32(row["Present"]) : 0,
-                    Absent =  row["Absent"] != DBNull.Value ? Convert.ToInt32(row["Absent"]) : 0,
-                    Late =  row["Late"] != DBNull.Value ? Convert.ToInt32(row["Late"]) : 0,
-                    OnLeave = row["OnLeave"] != DBNull.Value ? Convert.ToInt32(row["OnLeave"]) : 0,
-                    TotalAttendance = row["TotalAttendance"] != DBNull.Value ? Convert.ToInt32(row["TotalAttendance"]) : 0,
-                   
+                    Absent = row["Absent"] != DBNull.Value ? Convert.ToInt32(row["Absent"]) : 0,
+                    Late = row["Late"] != DBNull.Value ? Convert.ToInt32(row["Late"]) : 0,
+                    OnLeave = row["Leave"] != DBNull.Value ? Convert.ToInt32(row["Leave"]) : 0,          // was "OnLeave"
+                    TotalAttendance = row["TotalDays"] != DBNull.Value ? Convert.ToInt32(row["TotalDays"]) : 0, // was "TotalAttendance"
                     FromDate = row["FromDate"] != DBNull.Value ? Convert.ToDateTime(row["FromDate"]) : DateTime.MinValue,
                     ToDate = row["ToDate"] != DBNull.Value ? Convert.ToDateTime(row["ToDate"]) : DateTime.MinValue
                 };
@@ -352,12 +338,12 @@ namespace CRMWebServices.Repository
                     {
                         dashboard.AttendanceTrend.Add(new AttendanceTrendModel
                             {
-                                Date = trendRow["Date"] != DBNull.Value ? Convert.ToDateTime(trendRow["Date"] ) : DateTime.MinValue,
-                                Present = trendRow["Present"] != DBNull.Value ? Convert.ToInt32(trendRow["Present"]): 0,
-                                Absent = trendRow["Absent"] != DBNull.Value ? Convert.ToInt32(trendRow["Absent"]): 0,
-                                Late = trendRow["Late"] != DBNull.Value  ? Convert.ToInt32( trendRow["Late"] ): 0,
-                                OnLeave = trendRow["OnLeave"] != DBNull.Value ? Convert.ToInt32( trendRow["OnLeave"] ): 0
-                                                            }
+                                Date = trendRow["AttendanceDate"] != DBNull.Value ? Convert.ToDateTime(trendRow["AttendanceDate"]) : DateTime.MinValue, // was "Date"
+                                Present = Convert.ToInt32(trendRow["IsPresent"]),   // was "Present"
+                                Absent = Convert.ToInt32(trendRow["IsAbsent"]),     // was "Absent"
+                                Late = Convert.ToInt32(trendRow["IsLate"]),         // was "Late"
+                                OnLeave = Convert.ToInt32(trendRow["IsLeave"])
+                            }
                         );
                     }
                 }

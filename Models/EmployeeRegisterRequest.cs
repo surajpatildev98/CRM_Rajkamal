@@ -165,8 +165,8 @@
         public string? DesignationName { get; set; }
         public int? RefReportingManagerId { get; set; }
         public string? ReportingManagerCode { get; set; }
-        public string? ReportingManagerName { get; set; }     
-              public int? RefReportingHRManagerId { get; set; }
+        public string? ReportingManagerName { get; set; }
+        public int? RefReportingHRManagerId { get; set; }
         public string? ReportingHRManagerCode { get; set; }
         public string? ReportingHRManagerName { get; set; }
         public int? RefCompanyId { get; set; }
@@ -185,7 +185,6 @@
         public string? ShiftName { get; set; }
         public int? RefLeavePolicyId { get; set; }
         public string? LeavePolicyName { get; set; }
-        
         
     }
 
