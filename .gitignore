@@ -134,4 +134,30 @@ Desktop.ini
 *.temp
 *.swp
 *.swo
+<<<<<<< HEAD
 *~
+=======
+*.pubxml.user
+
+
+#======================
+# Environment / Secrets
+#======================
+
+.env
+.env.*
+!.env.example
+
+# ASP.NET local settings
+appsettings.Development.json
+appsettings.Local.json
+
+
+#======================
+# Publish Output
+#======================
+
+publish/
+Publish/
+artifacts/Firebase/firebase-service-account.json 
+>>>>>>> 156c1cd18bf9dc43d7ec148c4fdc898307ce2dd6
