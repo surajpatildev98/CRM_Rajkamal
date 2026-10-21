@@ -8,7 +8,6 @@ namespace CRMWebServices.Repository
     public class DashboardRepository : IDashboardRepository
     {
         private readonly IDatabaseService _database;
-
         public DashboardRepository(IDatabaseService database)
         {
             _database = database;

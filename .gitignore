@@ -134,9 +134,6 @@ Desktop.ini
 *.temp
 *.swp
 *.swo
-<<<<<<< HEAD
-*~
-=======
 *.pubxml.user
 
 
@@ -160,4 +157,3 @@ appsettings.Local.json
 publish/
 Publish/
 artifacts/Firebase/firebase-service-account.json 
->>>>>>> 156c1cd18bf9dc43d7ec148c4fdc898307ce2dd6
