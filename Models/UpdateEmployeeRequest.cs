@@ -74,6 +74,7 @@
     public class DocumentModel
     {
         public int? DocumentId { get; set; }
+
         public string? OtherDocumentType { get; set; }
         public int DocumentTypeId { get; set; }
         public string? DocumentName { get; set; }
