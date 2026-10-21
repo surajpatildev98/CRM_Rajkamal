@@ -128,5 +128,32 @@ namespace CRMWebServices.Controllers
             }
         }
         #endregion
+
+        #region  API : api/dashboard/hrms-details
+        [HttpGet]
+        [Route("hrms-details")]
+        public async Task<IActionResult> HrmsDetails()
+        {
+            try
+            {
+                var loggedInEmployeeId = User.EmployeeId();
+
+                // Admin/HR -> org-wide. Everyone else -> SP decides TEAM (has reportees) or SELF
+                bool isAdmin = await _authorization.CanViewAll(User, "HRMSDashboard");
+
+                var response = await _repository.GetHrmsDashboardFull(loggedInEmployeeId, isAdmin);
+
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = ex.Message
+                });
+            }
+        }
+        #endregion
     }
 }

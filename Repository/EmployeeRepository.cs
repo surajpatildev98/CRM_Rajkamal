@@ -719,8 +719,6 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
-
-
         public async Task<DataTable> GetProbationStatus()
         {
             return await _database.ExecuteDataTableAsync("USP_ORG_NewEmployeeManagement",
