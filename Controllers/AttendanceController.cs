@@ -30,12 +30,34 @@ namespace CRMWebServices.Controllers
         // scope from the ROLE claims (HR roles + explicit Manager role)
         private string GetRoleScope()
         {
+            /*var roles = User.FindAll(ClaimTypes.Role)
+                .Select(r => r.Value.Replace(" ", "").Replace("_", "").ToUpperInvariant())
+                .ToList();
+
+            *//* if (roles.Contains("HRMANAGER")) return "ALL";
+             if (roles.Contains("HREXECUTIVE")) return "MAPPED";
+             if (roles.Contains("MANAGER")) return "TEAM";
+             return "SELF";*//*
+            // any HR role -> everyone
+            if (roles.Any(r => r.StartsWith("HR"))) return "ALL";   // HRMANAGER, HREXECUTIVE...
+            if (roles.Contains("MANAGER")) return "TEAM";
+            return "SELF";   // ResolveViewScope upgrades to TEAM if people report to him*/
+
+            // role names (works once the token carries them)
             var roles = User.FindAll(ClaimTypes.Role)
                 .Select(r => r.Value.Replace(" ", "").Replace("_", "").ToUpperInvariant())
                 .ToList();
 
-            if (roles.Contains("HRMANAGER")) return "ALL";
-            if (roles.Contains("HREXECUTIVE")) return "MAPPED";
+            // role ids from the token ("8" or "8,12")
+            var roleIds = (User.FindFirst("RoleIds")?.Value ?? "")
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToList();
+
+            // 8 = HR Manager
+            if (roleIds.Contains("8") || roles.Any(r => r.StartsWith("HR")))
+                return "ALL";
+
             if (roles.Contains("MANAGER")) return "TEAM";
             return "SELF";
         }
