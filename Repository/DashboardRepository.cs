@@ -8,7 +8,6 @@ namespace CRMWebServices.Repository
     public class DashboardRepository : IDashboardRepository
     {
         private readonly IDatabaseService _database;
-
         public DashboardRepository(IDatabaseService database)
         {
             _database = database;
@@ -102,6 +101,58 @@ namespace CRMWebServices.Repository
             foreach (DataColumn col in row.Table.Columns)
                 dict[col.ColumnName] = row[col] == DBNull.Value ? null : row[col];
             return dict;
+        }
+        #endregion
+
+        #region  GetHrmsDashboardFull
+        public async Task<ApiResponse> GetHrmsDashboardFull(int employeeId, bool isAdmin)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync("USP_CRM_DashboardManagement",
+                    new SqlParameter("@Status", "GET_HRMS_DASHBOARD_FULL"),
+                    new SqlParameter("@EmployeeId", employeeId),
+                    new SqlParameter("@FromDate", DBNull.Value),
+                    new SqlParameter("@ToDate", DBNull.Value),
+                    new SqlParameter("@IsAdmin", isAdmin ? 1 : 0));
+
+                if (ds.Tables.Count < 18)
+                    return new ApiResponse { Status = false, Message = "Unexpected response from database." };
+
+                Dictionary<string, object> First(int i) =>
+                    ds.Tables[i].Rows.Count > 0 ? RowToDict(ds.Tables[i].Rows[0]) : null;
+                List<Dictionary<string, object>> All(int i) =>
+                    ds.Tables[i].Rows.Cast<DataRow>().Select(RowToDict).ToList();
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = "HRMS dashboard data fetched successfully.",
+                    Data = new
+                    {
+                        kpi = First(0) ?? new Dictionary<string, object>(),
+                        myAttendanceToday = First(1),
+                        myMonthSummary = First(2),
+                        myLeaveBalance = All(3),
+                        myShift = First(4),
+                        myResignation = First(5),
+                        myNoticePeriod = First(6),
+                        myProbation = First(7),
+                        myRecentPunches = All(8),
+                        todayStatusBreakdown = All(9),
+                        workModeSplit = All(10),
+                        attendanceTrend = All(11),
+                        activeResignations = All(12),
+                        employeesOnProbation = All(13),
+                        employmentTypeCount = All(14),
+                        upcomingBirthdays = All(15),
+                        workAnniversaries = All(16),
+                        newJoiners = All(17)
+                    }
+                };
+            }
+            catch (SqlException ex) { return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" }; }
+            catch (Exception ex) { return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" }; }
         }
         #endregion
     }

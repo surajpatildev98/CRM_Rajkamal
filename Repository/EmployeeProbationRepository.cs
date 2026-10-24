@@ -53,6 +53,7 @@ namespace CRMWebServices.Repository
         }
        
         #endregion
+
         #region GET EMPLOYEES
         public async Task<ApiResponse> GetProbationEmployees()
         {
@@ -128,7 +129,6 @@ namespace CRMWebServices.Repository
         }
 
         #endregion
-
 
         #region GET EMPLOYEE PROBATION
         public async Task<ApiResponse> GetEmployeeProbation(int employeeId)
@@ -238,7 +238,6 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-
         #region GET PROBATION HISTORY
 
         public async Task<ApiResponse> GetProbationHistory(int employeeId)
@@ -316,7 +315,6 @@ namespace CRMWebServices.Repository
         }
 
         #endregion
-
 
         #region EXTEND PROBATION
         public async Task<ApiResponse> ExtendProbation(EmployeeProbationManagementRequest model,int employeeId)
@@ -408,7 +406,6 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
-
 
         #region CONFIRM PROBATION
         //public async Task<ApiResponse> ConfirmProbation(EmployeeProbationManagementRequest model,int employeeId)
@@ -801,6 +798,8 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
+
+        #region Currently NOT USED - FAIL PROBATION
         public async Task<ApiResponse> FailProbation(EmployeeProbationManagementRequest model,int employeeId)
         {
             try
@@ -919,7 +918,9 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
 
+        #region Cancel Probation
         public async Task<ApiResponse> CancelProbation(EmployeeProbationManagementRequest model,int employeeId)
         {
             try
@@ -997,5 +998,6 @@ namespace CRMWebServices.Repository
                 };
             }
         }
+        #endregion
     }
 }

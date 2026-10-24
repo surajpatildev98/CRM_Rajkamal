@@ -145,8 +145,7 @@ namespace CRMWebServices.Repository
             }
         }
 
-        public async Task<AttendancePunchResponse> GetPunches(
-    AttendancePunchRequest request, int loggedInEmployeeId, string viewScope)
+        public async Task<AttendancePunchResponse> GetPunches(AttendancePunchRequest request, int loggedInEmployeeId, string viewScope)
         {
             try
             {

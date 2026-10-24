@@ -99,6 +99,8 @@ namespace CRMWebServices.Repository
                 Data = extraData.Count > 0 ? extraData : null
             };
         }
+
+        private static string Money(decimal value) => value.ToString("N2", CultureInfo.GetCultureInfo("en-IN"));
         #endregion
 
         #region Get Data for Raise Quotation Page           
@@ -1446,6 +1448,6 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
-        private static string Money(decimal value) => value.ToString("N2", CultureInfo.GetCultureInfo("en-IN"));
+       
     }
 }

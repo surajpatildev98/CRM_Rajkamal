@@ -720,6 +720,27 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
+        public async Task<DataTable> GetHRManagersByOffice(int officeId)
+        {
+            try
+            {
+                _logger.LogInformation("Fetching HR managers for OfficeId: {OfficeId}", officeId);
+
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_NewEmployeeManagement",
+                    new SqlParameter("@Status", "GET_HR_EXECUTIVES_BY_OFFICE"),
+                    new SqlParameter("@OfficeId", officeId)
+                );
+
+                _logger.LogInformation("HR managers query completed. Rows: {RowCount}",dt?.Rows.Count ?? 0);
+
+                return dt;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex,"Error fetching HR managers for OfficeId: {OfficeId}",officeId);
+                throw;
+            }
+        }
 
         public async Task<DataTable> GetProbationStatus()
         {
@@ -727,36 +748,7 @@ namespace CRMWebServices.Repository
                 new SqlParameter("@Status", "GET_PROBATION_STATUS")
             );
         }
-
-        public async Task<DataTable> GetHRManagersByOffice(int officeId)
-        {
-            try
-            {
-                _logger.LogInformation(
-                    "Fetching HR managers for OfficeId: {OfficeId}", officeId);
-
-                var dt = await _database.ExecuteDataTableAsync(
-                    "USP_ORG_NewEmployeeManagement",
-                    new SqlParameter("@Status", "GET_HR_EXECUTIVES_BY_OFFICE"),
-                    new SqlParameter("@OfficeId", officeId)
-                );
-
-                _logger.LogInformation(
-                    "HR managers query completed. Rows: {RowCount}",
-                    dt?.Rows.Count ?? 0);
-
-                return dt;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(
-                    ex,
-                    "Error fetching HR managers for OfficeId: {OfficeId}",
-                    officeId);
-
-                throw;
-            }
-        }
+       
 
     }
 }
