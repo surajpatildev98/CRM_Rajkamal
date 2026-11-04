@@ -107,7 +107,12 @@ namespace CRMWebServices.Models
             public DateTime? UpdatedOn { get; set; }
             public int? UpdatedBy { get; set; }
         }
-        
+
+        public class DisableJobRequest
+        {
+            public int SchedulerJobId { get; set; }
+        }
+
         // JOB DETAILS       
 
         public class SchedulerJobDetailsResponse

@@ -19,6 +19,8 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> AssignLead(LeadAssignRequest model); 
         Task<ApiResponse> CheckCustomerExists(string? gst, string? customerName,string? pan);
         Task<ApiResponse> SearchCustomer(string searchText);
+        Task<ApiResponse> SearchCustomerAll(string searchText);
+        Task<ApiResponse> EnsureWmsCustomer(int wmsCustomerMasterId, int? leadId, int? createdBy);
         Task<ApiResponse> AddActivityExpenses(LeadActivityExpenseRequest model);
         Task<ApiResponse> GetActivityExpenseMasters();
         Task<int?> GetEmployeeManagerIdAsync(int employeeId);

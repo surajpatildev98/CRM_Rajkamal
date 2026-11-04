@@ -49,7 +49,7 @@ namespace CRMWebServices.Controllers
                    
                 }
 
-                var response = await _repository.GetDashboardFull(employeeId, fromDate, toDate);
+                var response = await _repository.GetDashboardFull(employeeId, fromDate, toDate,loggedInEmployeeId);
 
                 // ✅ If non-admin and no data, show friendly message
                 if (!canViewAll && response.Status && response.Data == null)
@@ -78,8 +78,9 @@ namespace CRMWebServices.Controllers
             try
             {
                 var employeeId = User.EmployeeId();
+                var loggedInEmployeeId = User.EmployeeId();
 
-                var response = await _repository.GetDashboardFull(employeeId, fromDate, toDate);
+                var response = await _repository.GetDashboardFull(employeeId, fromDate, toDate, loggedInEmployeeId);
 
                 return response.Status ? Ok(response) : BadRequest(response);
             }

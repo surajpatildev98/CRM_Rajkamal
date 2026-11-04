@@ -87,7 +87,10 @@ builder.Services.AddScoped<IFreightPolicyRepository, FreightPolicyRepository>();
 builder.Services.AddScoped<ICallLogRepository, CallLogRepository>();
 builder.Services.AddScoped<ILeavePolicyRepository, LeavePolicyRepository>();
 builder.Services.AddScoped<IEmployeeProbationRepository, EmployeeProbationRepository>();
+builder.Services.AddScoped<IResignationRepository, ResignationRepository>();
+builder.Services.AddScoped<IPayslipRepository, PayslipRepository>();
 builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
+builder.Services.AddScoped<ITicketSupportRepository, TicketSupportRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailConfigurationRepository, EmailConfigurationRepository>();

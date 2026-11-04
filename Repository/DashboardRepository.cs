@@ -14,7 +14,7 @@ namespace CRMWebServices.Repository
         }
 
         #region  GetDashboardFull used for both Admin and Employee dashboards
-        public async Task<ApiResponse> GetDashboardFull(int? employeeId, DateTime? fromDate, DateTime? toDate)
+        public async Task<ApiResponse> GetDashboardFull(int? employeeId, DateTime? fromDate, DateTime? toDate, int loggedInEmployeeId)
         {
             try
             {
@@ -23,7 +23,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@EmployeeId", (object?)employeeId ?? DBNull.Value),
                     new SqlParameter("@FromDate", (object?)fromDate ?? DBNull.Value),
                     new SqlParameter("@ToDate", (object?)toDate ?? DBNull.Value),
-                    new SqlParameter("@IsAdmin", employeeId == null ? 1 : 0)  // ← If employeeId is null, it's Admin viewing all
+                    new SqlParameter("@IsAdmin", employeeId == null ? 1 : 0),  // ← If employeeId is null, it's Admin viewing all
+                    new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId)
                 );
 
                 if (ds.Tables.Count < 7)

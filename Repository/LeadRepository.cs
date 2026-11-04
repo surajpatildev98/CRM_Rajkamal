@@ -262,7 +262,20 @@ namespace CRMWebServices.Repository
                 if (response.Status)
                 {
                     int leadId = Convert.ToInt32(dt.Rows[0]["LeadId"]);
-                    string leadNo =dt.Rows[0]["LeadNo"]?.ToString() ?? "";                 
+                    string leadNo =dt.Rows[0]["LeadNo"]?.ToString() ?? "";
+
+                    // Customer picked from WMS: map it into CUS_Customer and link this lead's
+                    // organization (best-effort, the lead itself is already saved).
+                    if (model.WmsCustomerMasterId.HasValue && model.WmsCustomerMasterId.Value > 0)
+                    {
+                        var link = await EnsureWmsCustomer(model.WmsCustomerMasterId.Value, leadId, model.CreatedBy);
+                        if (!link.Status)
+                        {
+                            _logger.LogError(
+                                "Failed to map WMS customer {WmsCustomerMasterId} for Lead {LeadId}: {Message}",
+                                model.WmsCustomerMasterId.Value, leadId, link.Message);
+                        }
+                    }                 
 
                     if (model.AssignedToEmployeeId.HasValue)
                     {
@@ -1708,6 +1721,98 @@ namespace CRMWebServices.Repository
                     Status = true,
                     Message = customers.Count > 0 ? "Customer(s) found." : "No customer found.",
                     Data = customers
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse { Status = false, Message = ex.Message };
+            }
+        }
+        #endregion
+
+        #region  Search Customer (CRM + WMS)
+        public async Task<ApiResponse> SearchCustomerAll(string searchText)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_CustomerManagement",
+                    new SqlParameter("@Status", "SEARCH_CUSTOMER_ALL"),
+                    new SqlParameter("@SearchText", searchText)
+                );
+
+                static string? S(DataRow r, string c) => r[c] == DBNull.Value ? null : r[c]?.ToString();
+                static int? I(DataRow r, string c) => r[c] == DBNull.Value ? null : Convert.ToInt32(r[c]);
+
+                var customers = new List<CustomerSearchAllResponse>();
+                foreach (DataRow row in dt.Rows)
+                {
+                    customers.Add(new CustomerSearchAllResponse
+                    {
+                        SourceSystem = S(row, "SourceSystem") ?? "CRM",
+                        CustomerId = Convert.ToInt32(row["CustomerId"]),
+                        LeadOrganizationId = I(row, "LeadOrganizationId"),
+                        Ref_LeadCompanyId = I(row, "Ref_LeadCompanyId"),
+                        CustomerCode = S(row, "CustomerCode"),
+                        CustomerName = S(row, "CustomerName"),
+                        CityName = S(row, "CityName"),
+                        StateName = S(row, "StateName"),
+                        DisplayName = S(row, "DisplayName"),
+                        Address = S(row, "Address"),
+                        PinCode = S(row, "PinCode"),
+                        Gst = S(row, "Gst"),
+                        Pan = S(row, "Pan"),
+                        Ref_CountryId = I(row, "Ref_CountryId"),
+                        Ref_StateId = I(row, "Ref_StateId"),
+                        Ref_CityId = I(row, "Ref_CityId"),
+                        ContactPerson = S(row, "ContactPerson"),
+                        ContactNumber = S(row, "ContactNumber"),
+                        Email = S(row, "Email")
+                    });
+                }
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = customers.Count > 0 ? "Customer(s) found." : "No customer found.",
+                    Data = customers
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse { Status = false, Message = ex.Message };
+            }
+        }
+
+        /// <summary>
+        /// Returns the CUS_Customer record for a WMS customer, creating it on first use.
+        /// Optional leadId links it to that lead's organization (used by Lead -> Opportunity conversion).
+        /// </summary>
+        public async Task<ApiResponse> EnsureWmsCustomer(int wmsCustomerMasterId, int? leadId, int? createdBy)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync("USP_CRM_CustomerManagement",
+                    new SqlParameter("@Status", "ENSURE_WMS_CUSTOMER"),
+                    new SqlParameter("@WmsCustomerMasterId", wmsCustomerMasterId),
+                    new SqlParameter("@LeadId", (object?)leadId ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy", (object?)createdBy ?? DBNull.Value)
+                );
+
+                if (dt == null || dt.Rows.Count == 0)
+                    return new ApiResponse { Status = false, Message = "WMS customer could not be mapped." };
+
+                var row = dt.Rows[0];
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = "Customer mapped.",
+                    Data = new
+                    {
+                        CustomerId = Convert.ToInt32(row["CustomerId"]),
+                        CustomerCode = row["CustomerCode"]?.ToString(),
+                        CustomerName = row["CustomerName"]?.ToString(),
+                        IsNew = Convert.ToBoolean(row["IsNew"])
+                    }
                 };
             }
             catch (Exception ex)

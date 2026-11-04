@@ -228,8 +228,15 @@ namespace CRMWebServices.Controllers
                 if (leadId == null)
                 {                   
 
-                    filter.LoggedInEmployeeId = User.EmployeeId();
-                    filter.LoggedInEmployeeId = User.EmployeeId();
+                  //  filter.LoggedInEmployeeId = User.EmployeeId();
+                    //   filter.LoggedInEmployeeId = User.EmployeeId();
+
+                    var employeeId = User.EmployeeId();
+
+                    Console.WriteLine($"Logged In Employee ID: {employeeId}");
+
+                    filter.LoggedInEmployeeId = employeeId;
+
                     var listResponse = await _repository.GetLeadList(filter);
                     return Ok(listResponse);
                 }
@@ -305,6 +312,25 @@ namespace CRMWebServices.Controllers
                     Message = ex.Message
                 });
             }
+        }
+        #endregion
+
+        #region  API : api/Lead/search-customer-all  (CRM + WMS customers)
+        [HttpGet]
+        [Route("search-customer-all")]
+        public async Task<IActionResult> SearchCustomerAll(string searchText)
+        {
+            if (string.IsNullOrWhiteSpace(searchText))
+            {
+                return BadRequest(new ApiResponse
+                {
+                    Status = false,
+                    Message = "Search text is required."
+                });
+            }
+
+            var response = await _repository.SearchCustomerAll(searchText.Trim());
+            return response.Status ? Ok(response) : BadRequest(response);
         }
         #endregion
 

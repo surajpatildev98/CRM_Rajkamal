@@ -575,5 +575,149 @@ namespace CRMWebServices.Repository
                 return new AttendanceEmployeeReportResponse { Status = false, Message = $"Error: {ex.Message}" };
             }
         }
+
+        // ==================== REGULARIZATION ====================
+
+        public Task<RegularizationListResponse> GetMyRegularizations(int loggedInEmployeeId)
+            => GetRegularizations("GET_MY", loggedInEmployeeId);
+
+        public Task<RegularizationListResponse> GetTeamRegularizations(int loggedInEmployeeId)
+            => GetRegularizations("GET_TEAM", loggedInEmployeeId);
+
+        private async Task<RegularizationListResponse> GetRegularizations(string status, int loggedInEmployeeId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_AttendanceRegularization",
+                    new SqlParameter("@Status", status),
+                    new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId)
+                );
+
+                // SP validation error comes back as (Status, Message)
+                if (dt.Columns.Contains("Message") && !dt.Columns.Contains("RegularizationId"))
+                {
+                    return new RegularizationListResponse
+                    {
+                        Status = false,
+                        Message = dt.Rows.Count > 0 ? dt.Rows[0]["Message"]?.ToString() ?? "Unable to fetch requests." : "Unable to fetch requests."
+                    };
+                }
+
+                var list = new List<RegularizationModel>();
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    list.Add(new RegularizationModel
+                    {
+                        RegularizationId = RInt(row, "RegularizationId"),
+                        RequestNo = RStr(row, "RequestNo"),
+                        EmployeeId = RInt(row, "EmployeeId"),
+                        EmployeeCode = RStr(row, "EmployeeCode"),
+                        EmployeeName = RStr(row, "EmployeeName"),
+                        AttendanceDate = RDate(row, "AttendanceDate"),
+                        RegularizationType = RStr(row, "RegularizationType") ?? string.Empty,
+                        CurrentInTime = RNDate(row, "CurrentInTime"),
+                        CurrentOutTime = RNDate(row, "CurrentOutTime"),
+                        RequestedInTime = RNDate(row, "RequestedInTime"),
+                        RequestedOutTime = RNDate(row, "RequestedOutTime"),
+                        Reason = RStr(row, "Reason"),
+                        Status = RStr(row, "RequestStatus") ?? "PENDING",
+                        AppliedOn = RNDate(row, "AppliedOn"),
+                        ReviewedBy = RNInt(row, "ReviewedBy"),
+                        ReviewedByName = RStr(row, "ReviewedByName"),
+                        ReviewedOn = RNDate(row, "ReviewedOn"),
+                        ReviewerRemarks = RStr(row, "ReviewerRemarks")
+                    });
+                }
+
+                return new RegularizationListResponse
+                {
+                    Status = true,
+                    Message = "Regularization requests fetched successfully.",
+                    Data = list
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new RegularizationListResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+            }
+            catch (Exception ex)
+            {
+                return new RegularizationListResponse { Status = false, Message = $"Error: {ex.Message}" };
+            }
+        }
+
+        public Task<RegularizationActionResponse> ApplyRegularization(ApplyRegularizationRequest request, int loggedInEmployeeId)
+            => RunRegularizationAction(
+                new SqlParameter("@Status", "APPLY"),
+                new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
+                new SqlParameter("@AttendanceDate", request.AttendanceDate.HasValue ? request.AttendanceDate.Value.Date : DBNull.Value),
+                new SqlParameter("@RegularizationType", string.IsNullOrWhiteSpace(request.RegularizationType) ? DBNull.Value : request.RegularizationType.Trim()),
+                new SqlParameter("@RequestedInTime", request.RequestedInTime ?? (object)DBNull.Value),
+                new SqlParameter("@RequestedOutTime", request.RequestedOutTime ?? (object)DBNull.Value),
+                new SqlParameter("@Reason", string.IsNullOrWhiteSpace(request.Reason) ? DBNull.Value : request.Reason.Trim())
+            );
+
+        public Task<RegularizationActionResponse> CancelRegularization(RegularizationActionRequest request, int loggedInEmployeeId)
+            => RunRegularizationAction(
+                new SqlParameter("@Status", "CANCEL"),
+                new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
+                new SqlParameter("@RegularizationId", request.RegularizationId),
+                new SqlParameter("@Reason", string.IsNullOrWhiteSpace(request.Reason) ? DBNull.Value : request.Reason.Trim())
+            );
+
+        // On approval the SP writes the requested punches (source REGULARIZATION)
+        // and recalculates that day's attendance.
+        public Task<RegularizationActionResponse> ApproveRegularization(RegularizationActionRequest request, int loggedInEmployeeId)
+            => RunRegularizationAction(
+                new SqlParameter("@Status", "APPROVE"),
+                new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
+                new SqlParameter("@RegularizationId", request.RegularizationId),
+                new SqlParameter("@Remarks", string.IsNullOrWhiteSpace(request.Remarks) ? DBNull.Value : request.Remarks.Trim())
+            );
+
+        public Task<RegularizationActionResponse> RejectRegularization(RegularizationActionRequest request, int loggedInEmployeeId)
+            => RunRegularizationAction(
+                new SqlParameter("@Status", "REJECT"),
+                new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
+                new SqlParameter("@RegularizationId", request.RegularizationId),
+                new SqlParameter("@Reason", string.IsNullOrWhiteSpace(request.Reason) ? DBNull.Value : request.Reason.Trim())
+            );
+
+        private async Task<RegularizationActionResponse> RunRegularizationAction(params SqlParameter[] parameters)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync("USP_ORG_AttendanceRegularization", parameters);
+
+                if (dt.Rows.Count == 0)
+                {
+                    return new RegularizationActionResponse
+                    {
+                        Status = false,
+                        Message = "No response received from regularization procedure."
+                    };
+                }
+
+                var row = dt.Rows[0];
+
+                return new RegularizationActionResponse
+                {
+                    Status = RBool(row, "Status"),
+                    Message = RStr(row, "Message") ?? string.Empty,
+                    RegularizationId = RNInt(row, "RegularizationId"),
+                    RequestNo = RStr(row, "RequestNo"),
+                    AttendanceId = RNInt(row, "AttendanceId")
+                };
+            }
+            catch (SqlException ex)
+            {
+                return new RegularizationActionResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+            }
+            catch (Exception ex)
+            {
+                return new RegularizationActionResponse { Status = false, Message = $"Error: {ex.Message}" };
+            }
+        }
     }
 }

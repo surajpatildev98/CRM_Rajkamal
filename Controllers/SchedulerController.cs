@@ -219,7 +219,7 @@ namespace CRMWebServices.Controllers
 
         #region DISABLE Job
         [HttpPost("job/disable")]
-        public async Task<IActionResult> DisableJob(int schedulerJobId)
+        public async Task<IActionResult> DisableJob([FromBody] DisableJobRequest request)
         {
             if (!IsAdmin())
             {
@@ -234,7 +234,7 @@ namespace CRMWebServices.Controllers
             try
             {
                 var employeeId =User.EmployeeId();
-                var response =await _repository.DisableJob(schedulerJobId,employeeId);
+                var response =await _repository.DisableJob(request.SchedulerJobId, employeeId);
                 return response.Status? Ok(response): BadRequest(response);
             }
             catch (Exception ex)
@@ -249,4 +249,6 @@ namespace CRMWebServices.Controllers
         }
         #endregion
     }
+
+  
 }
