@@ -21,6 +21,9 @@
         public int? CreatedBy { get; set; }      
         public List<LeadRequirementItem> Requirements { get; set; }    
         public List<LeadAttachmentItem> Attachments { get; set; }
+        // Set when the customer was picked from the WMS customer master (search-customer-all, SourceSystem = "WMS").
+        // After the lead is created the WMS customer is mapped into CUS_Customer (USP_CRM_CustomerManagement 'ENSURE_WMS_CUSTOMER').
+        public int? WmsCustomerMasterId { get; set; }
         public int? LeadOrganizationId { get; set; } // added for existing customer, if the lead is for an existing customer, this will be the id of that customer in the LeadOrganization table
     }
     public class LeadAttachmentItem
@@ -157,6 +160,30 @@
         public string Email { get; set; }
         public int? Ref_DesignationId { get; set; }
     }
+    /// <summary>Row of search-customer-all. Identify a customer by SourceSystem + CustomerId (IDs overlap across sources).</summary>
+    public class CustomerSearchAllResponse
+    {
+        public string SourceSystem { get; set; } = "CRM"; // CRM | WMS
+        public int CustomerId { get; set; }               // CRM: LeadOrganizationId, WMS: CustomerMasterID
+        public int? LeadOrganizationId { get; set; }
+        public int? Ref_LeadCompanyId { get; set; }
+        public string? CustomerCode { get; set; }
+        public string? CustomerName { get; set; }
+        public string? CityName { get; set; }
+        public string? StateName { get; set; }
+        public string? DisplayName { get; set; }
+        public string? Address { get; set; }
+        public string? PinCode { get; set; }
+        public string? Gst { get; set; }
+        public string? Pan { get; set; }
+        public int? Ref_CountryId { get; set; }
+        public int? Ref_StateId { get; set; }
+        public int? Ref_CityId { get; set; }
+        public string? ContactPerson { get; set; }
+        public string? ContactNumber { get; set; }
+        public string? Email { get; set; }
+    }
+
     public class CustomerSearchResponse
     {
         public int LeadOrganizationId { get; set; }

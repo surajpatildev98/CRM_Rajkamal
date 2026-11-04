@@ -21,5 +21,13 @@ namespace CRMWebServices.Interfaces
         
          // NEW : upgrades SELF -> TEAM when the employee has people reporting to him
         Task<string> ResolveViewScope(int employeeId, string roleScope);
+
+        // ---------- regularization (employee request -> manager approval) ----------
+        Task<RegularizationListResponse> GetMyRegularizations(int loggedInEmployeeId);
+        Task<RegularizationListResponse> GetTeamRegularizations(int loggedInEmployeeId);
+        Task<RegularizationActionResponse> ApplyRegularization(ApplyRegularizationRequest request, int loggedInEmployeeId);
+        Task<RegularizationActionResponse> CancelRegularization(RegularizationActionRequest request, int loggedInEmployeeId);
+        Task<RegularizationActionResponse> ApproveRegularization(RegularizationActionRequest request, int loggedInEmployeeId);
+        Task<RegularizationActionResponse> RejectRegularization(RegularizationActionRequest request, int loggedInEmployeeId);
     }
 }
