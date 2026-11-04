@@ -148,6 +148,7 @@ Clients send **Base64** strings. They are saved under `Uploads/<Folder>/` and th
 | **Quotation / Negotiation / Mgmt Review / ODA** | [OpportunityQuotationController](Controllers/OpportunityQuotationController.cs) | [OpportunityQuotationRepository](Repository/OpportunityQuotationRepository.cs) | IOpportunityQuotationRepository | OpportunityQuotationModels | `USP_CRM_OpportunityQuotationManagement` |
 | Freight policy | [FreightPolicyController](Controllers/FreightPolicyController.cs) | [FreightPolicyRepository](Repository/FreightPolicyRepository.cs) | IFreightPolicyRepository | FreightPolicyModels | `USP_CRM_FreightPolicyManagement` |
 | Ticket | [TicketController](Controllers/TicketController.cs) | [TicketRepository](Repository/TicketRepository.cs) | ITicketRepository | TicketModels | `USP_CRM_TicketManagement` |
+| Support ticket (field service) | [TicketSupportController](Controllers/TicketSupportController.cs) | [TicketSupportRepository](Repository/TicketSupportRepository.cs) | ITicketSupportRepository | TicketSupportModels | `USP_TKT_TicketManagement` (script [Database/TicketSupport.sql](Database/TicketSupport.sql)) |
 | Call log | [CallLogController](Controllers/CallLogController.cs) | [CallLogRepository](Repository/CallLogRepository.cs) | ICallLogRepository | Models/Call Log | `USP_CRM_CallLogManagement` |
 | CRM dashboard | [DashboardController](Controllers/DashboardController.cs) | [DashboardRepository](Repository/DashboardRepository.cs) | IDashboardRepository | — | `USP_CRM_DashboardManagement` |
 | Reports | [ReportsController](Controllers/ReportsController.cs) | [ReportsRepository](Repository/ReportsRepository.cs) | IReportsRepository | ReportModels | `USP_CRM_Reports` |
@@ -933,6 +934,15 @@ Evidence is given as file:line. **These are documented, not fixed.**
 - **Validation:** no DataAnnotations on any request model; no GST/PAN/mobile/email/date/probability range validation in C#.
 
 ---
+
+## 12a. Live sync update (commit a91c245, 2026-11-04) — VERIFIED from code
+
+- **Support Ticket module** (`api/TicketSupport`, `[Authorize]`): create, list, counts, details/{ticketId}, send-for-approval, decide, check-in, activity, expense, complete, attachments, service-mode, cancel, manager-dashboard, team, approvals. Actor = `User.EmployeeId()`. Manager = `RoleIds` claim contains `"9"` (Support Manager), parsed in the controller (not `IsInRole`). Tables `TKT_Ticket`, `TKT_TicketActivity`, `TKT_TicketExpense`, `TKT_TicketAttachment`, `TKT_TicketStatusLog`. SP `USP_TKT_TicketManagement` @Status: CREATE_TICKET, GET_TICKETS, MY_COUNTS, TICKET_DETAILS, SEND_FOR_APPROVAL, APPROVE_TICKET, APPROVE_EXPENSE, CHECK_IN, ADD_ACTIVITY, ADD_EXPENSE, COMPLETE_TICKET, ADD_ATTACHMENTS, CANCEL_TICKET, MANAGER_DASHBOARD, TEAM_LIST, SET_SERVICE_MODE, PENDING_APPROVALS. Separate from CRM `Ticket` (`USP_CRM_TicketManagement`).
+- **CRM + WMS customer search**: `GET api/Lead/search-customer-all` → `ILeadRepository.SearchCustomerAll` (CRM customers + `Rkl_WMS_Live.dbo.CustomerMaster`, read only). On lead save with `WmsCustomerMasterId`, `EnsureWmsCustomer` copies the WMS customer into `CUS_Customer` once, linked by new column `CUS_Customer.Ref_WmsCustomerMasterId` (unique index). SP `USP_CRM_CustomerManagement`, script [Database/CustomerSearch_CRM_WMS.sql](Database/CustomerSearch_CRM_WMS.sql). `USP_CRM_LeadManagement` unchanged. Requires both DBs on the same SQL Server.
+- **Dashboard**: `GetDashboardFull` now also passes `@LoggedInEmployeeId` to `USP_CRM_DashboardManagement`.
+- **Scheduler**: `POST` DisableJob takes `DisableJobRequest { SchedulerJobId }`.
+- **HRMS**: Payslip, Attendance Regularization ([Database/AttendanceRegularization.sql](Database/AttendanceRegularization.sql)), Resignation — see §7.
+- `Helpers/UserContext.cs` re-added by the merge; still do **not** use it (AGENTS.md).
 
 ## 13. Frontend / UI
 - **No frontend exists in this repository** (VERIFIED: no .cshtml, .razor, .js, .ts or Dart files; `wwwroot` holds only `assets/companylogo.jpg`). Clients are a Flutter/Android app (README; CORS policy `AllowFlutterWeb`; deep link scheme `rajkamalcrm://`).

@@ -63,3 +63,6 @@
 
 ## Next steps for a future batch
 - With DB access: run `SELECT name, type_desc FROM sys.objects WHERE is_ms_shipped=0` and `sp_helptext` on the SPs above. Then update BRAIN.md §5, §6, §8 and §11, and flip the labels.
+
+## Update 2026-11-04 (live code, commit a91c245)
+Added BRAIN.md §12a: Support Ticket module (`USP_TKT_TicketManagement`), CRM+WMS customer search (`USP_CRM_CustomerManagement`, `CUS_Customer.Ref_WmsCustomerMasterId`), dashboard `@LoggedInEmployeeId`, scheduler `DisableJobRequest`. NOT VERIFIED: live DB has these SQL scripts applied.

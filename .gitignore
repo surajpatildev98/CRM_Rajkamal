@@ -136,24 +136,5 @@ Desktop.ini
 *.swo
 *.pubxml.user
 
-
-#======================
-# Environment / Secrets
-#======================
-
-.env
-.env.*
-!.env.example
-
-# ASP.NET local settings
-appsettings.Development.json
-appsettings.Local.json
-
-
-#======================
-# Publish Output
-#======================
-
-publish/
-Publish/
-artifacts/Firebase/firebase-service-account.json 
+# Local AI tooling state
+.claude/settings.local.json
