@@ -12,7 +12,7 @@
        approved; PERSONAL_CAR, STAY, OTHER need Support Manager approval.
      * Complete is blocked while the ticket or any expense is pending.
    Approver = the Support Manager the assignee reports to.
-   Requires: Database/CustomerSearch_CRM_WMS.sql (USP_CRM_CustomerManagement).
+   Requires: Database/CustomerSync_00..05_*.sql (USP_CRM_CustomerManagement).
    Run on Rkl_EnterpriseSuiteDB_Live.
    ===================================================================== */
 
@@ -234,6 +234,14 @@ BEGIN
         SET @Priority = ISNULL(NULLIF(@Priority, ''), 'MEDIUM');
         IF (@Priority NOT IN ('LOW','MEDIUM','HIGH'))
             THROW 50014, 'Invalid priority.', 1;
+
+        -- CRM source (lead organization): link the existing master customer when there is one.
+        -- Lookup only, never inserts, so the selected customer is never saved twice.
+        IF (@CustomerSource = 'CRM' AND @Ref_CustomerId IS NULL)
+            SELECT TOP 1 @Ref_CustomerId = CustomerId
+            FROM dbo.CUS_Customer
+            WHERE Ref_LeadOrganizationId = @SourceCustomerId AND IsActive = 1
+            ORDER BY CustomerId;
 
         DECLARE @ByManager BIT = 0;
         IF (@IsManager = 1)
@@ -790,3 +798,15 @@ SELECT R.RoleId, 4013, 1, GETDATE(), 1
 FROM (VALUES (4), (9)) R(RoleId)
 WHERE NOT EXISTS (SELECT 1 FROM dbo.ORG_RoleModuleAccess A WHERE A.Ref_RoleId = R.RoleId AND A.Ref_ModuleId = 4013);
 */
+
+/* ===== Backfill (idempotent): CRM-source tickets created before the CREATE_TICKET
+   lookup above get their master customer. Only fills NULLs. ===== */
+UPDATE T
+SET Ref_CustomerId = C.CustomerId
+FROM dbo.TKT_Ticket T
+CROSS APPLY (SELECT TOP 1 CU.CustomerId FROM dbo.CUS_Customer CU
+             WHERE CU.Ref_LeadOrganizationId = T.SourceCustomerId AND CU.IsActive = 1
+             ORDER BY CU.CustomerId) C
+WHERE T.CustomerSource = 'CRM' AND T.Ref_CustomerId IS NULL;
+SELECT @@ROWCOUNT AS TicketsLinked;
+GO
