@@ -22,6 +22,24 @@ namespace CRMWebServices.Repository
         private const long MaxFileSizeBytes = 10 * 1024 * 1024; // 10 MB
 
         private static readonly string[] TravelModes = { "BUS", "TRAIN", "AUTO", "PERSONAL_BIKE", "PERSONAL_CAR", "STAY", "OTHER" };
+        private static readonly string[] ServiceTypeValues = { "WARRANTY", "AMC", "BILLABLE", "TESTING", "OTHER" };
+
+        /// <summary>Requirement items → @ItemsJson for TKT_TicketItem.</summary>
+        private static string? ToItemsJson(List<TicketRequirementItem>? items)
+        {
+            if (items == null || items.Count == 0) return null;
+            return JsonConvert.SerializeObject(items.Select(i => new
+            {
+                categoryId = i.CategoryId,
+                categoryName = i.CategoryName?.Trim(),
+                offeringId = i.OfferingId,
+                offeringName = i.OfferingName?.Trim(),
+                productId = i.ProductId,
+                productName = i.ProductName?.Trim(),
+                serialNo = i.SerialNo?.Trim(),
+                remark = i.Remark?.Trim()
+            }));
+        }
 
         private readonly IDatabaseService _database;
         private readonly ILeadRepository _leadRepository;
@@ -49,6 +67,27 @@ namespace CRMWebServices.Repository
                 return Fail("Please select a company.");
             if (!ValidTravel(model.Travel, out var travelError)) return Fail(travelError);
 
+            var types = (model.ServiceTypes ?? new List<string>())
+                .Select(t => (t ?? "").Trim().ToUpperInvariant())
+                .Where(t => t.Length > 0)
+                .Distinct()
+                .ToList();
+            if (types.Count == 0) return Fail("Please select a service type.");
+            if (types.Any(t => !ServiceTypeValues.Contains(t))) return Fail("Invalid service type.");
+            if (types.Contains("OTHER") && string.IsNullOrWhiteSpace(model.ServiceTypeOther))
+                return Fail("Please enter the other service type.");
+            var serviceTypes = string.Join(",", types);
+
+            var items = model.Requirements ?? new List<TicketRequirementItem>();
+            for (var i = 0; i < items.Count; i++)
+            {
+                var it = items[i];
+                if (it.CategoryId == null || it.ProductId == null)
+                    return Fail($"Please select Category and Product for Item {i + 1}.");
+                if ((it.SerialNo ?? "").Trim().Length > 100)
+                    return Fail($"Serial number is too long for Item {i + 1}.");
+            }
+
             // WMS customer: map into the CRM customer master (CUS_Customer) on first use.
             int? customerId = null;
             if (source == "WMS")
@@ -68,7 +107,10 @@ namespace CRMWebServices.Repository
                 P("@ServiceMode", model.ServiceMode?.Trim().ToUpperInvariant()),
                 P("@ExpectedDate", model.ExpectedDate.Date),
                 P("@AssignedTo", isManager ? model.AssignedTo : null),
-                P("@ExpensesJson", ToExpenseJson(model.Travel, null)));
+                P("@ExpensesJson", ToExpenseJson(model.Travel, null)),
+                P("@ServiceTypes", serviceTypes),
+                P("@ServiceTypeOther", serviceTypes.Contains("OTHER") ? model.ServiceTypeOther?.Trim() : null),
+                P("@ItemsJson", ToItemsJson(model.Requirements)));
 
             if (response.Status && response.Data is Dictionary<string, object?> row)
             {
@@ -111,7 +153,8 @@ namespace CRMWebServices.Repository
                     Activities = Rows(ds.Tables[1]),
                     Expenses = expenses,
                     Attachments = attachments,
-                    StatusLog = Rows(ds.Tables[4])
+                    StatusLog = Rows(ds.Tables[4]),
+                    Items = ds.Tables.Count > 5 ? Rows(ds.Tables[5]) : new List<Dictionary<string, object?>>()
                 });
             }
             catch (SqlException ex) { return Fail(ex.Message); }
@@ -164,6 +207,64 @@ namespace CRMWebServices.Repository
                 P("@TicketId", model.TicketId), P("@Latitude", model.Latitude),
                 P("@Longitude", model.Longitude), P("@Address", model.Address?.Trim()));
 
+        public Task<ApiResponse> CheckOut(TicketCheckInRequest model, int employeeId, bool isManager) =>
+            model == null ? Task.FromResult(Fail("Request is required.")) :
+            Mutate("CHECK_OUT", employeeId, isManager,
+                P("@TicketId", model.TicketId), P("@Latitude", model.Latitude),
+                P("@Longitude", model.Longitude), P("@Address", model.Address?.Trim()));
+
+        public Task<ApiResponse> CompleteActivity(TicketCompleteActivityRequest model, int employeeId, bool isManager) =>
+            model == null ? Task.FromResult(Fail("Request is required.")) :
+            Mutate("COMPLETE_ACTIVITY", employeeId, isManager,
+                P("@TicketId", model.TicketId),
+                P("@TicketActivityId", model.TicketActivityId),
+                P("@Remarks", model.Remarks?.Trim()));
+
+        public async Task<ApiResponse> DecideClose(TicketCloseDecisionRequest model, int employeeId, bool isManager)
+        {
+            if (model == null) return Fail("Request is required.");
+            var decision = (model.Decision ?? "").Trim().ToUpperInvariant();
+            if (decision != "APPROVE" && decision != "REJECT") return Fail("Decision must be Approve or Reject.");
+
+            var response = await Mutate("DECIDE_CLOSE", employeeId, isManager,
+                P("@TicketId", model.TicketId),
+                P("@Decision", decision),
+                P("@Remarks", model.Remarks?.Trim()));
+
+            if (response.Status && response.Data is Dictionary<string, object?> row)
+                await Notify(Int(row, "assignedTo"), model.TicketId,
+                    decision == "APPROVE" ? "Ticket Closed" : "Close Request Rejected",
+                    decision == "APPROVE"
+                        ? $"Ticket {Str(row, "ticketNo")} has been closed."
+                        : $"Ticket {Str(row, "ticketNo")}: close request rejected. {model.Remarks?.Trim()}",
+                    "ASSIGNEE");
+            return response;
+        }
+
+        public async Task<ApiResponse> Reassign(TicketReassignRequest model, int employeeId, bool isManager)
+        {
+            if (model == null || model.AssignedTo <= 0) return Fail("Please select an employee.");
+
+            var response = await Mutate("REASSIGN_TICKET", employeeId, isManager,
+                P("@TicketId", model.TicketId),
+                P("@AssignedTo", model.AssignedTo),
+                P("@Remarks", model.Remarks?.Trim()));
+
+            if (response.Status && response.Data is Dictionary<string, object?> row)
+            {
+                var ticketNo = Str(row, "ticketNo");
+                var newAssignee = Int(row, "assignedTo");
+                var previous = Int(row, "previousAssignedTo");
+                if (newAssignee != employeeId)
+                    await Notify(newAssignee, model.TicketId, "New Ticket Assigned",
+                        $"Ticket {ticketNo} ({Str(row, "customerName")}) has been assigned to you.", "ASSIGNEE");
+                if (previous != employeeId)
+                    await Notify(previous, model.TicketId, "Ticket Reassigned",
+                        $"Ticket {ticketNo} has been reassigned to another employee.", "ASSIGNEE");
+            }
+            return response;
+        }
+
         public Task<ApiResponse> AddActivity(TicketActivityRequest model, int employeeId, bool isManager) =>
             model == null ? Task.FromResult(Fail("Request is required.")) :
             Mutate("ADD_ACTIVITY", employeeId, isManager,
@@ -210,11 +311,20 @@ namespace CRMWebServices.Repository
                 P("@Remarks", model.ResolutionRemarks.Trim()),
                 P("@AttachmentsJson", files));
 
-            if (response.Status && response.Data is Dictionary<string, object?> row)
+            if (response.Status && response.Data is Dictionary<string, object?> row
+                && Str(row, "ticketStatus") == "CLOSE_REQUESTED")
             {
-                var msg = $"Ticket {Str(row, "ticketNo")} has been completed.";
-                var raisedBy = Int(row, "raisedBy");
-                var approver = Int(row, "approverId");
+                // Assignee can't close a ticket someone else raised: the raiser decides.
+                await Notify(Int(row, "raisedBy"), model.TicketId, "Close Request",
+                    $"Ticket {Str(row, "ticketNo")} ({Str(row, "customerName")}): close request sent. Please review.", "RAISER");
+                return response;
+            }
+
+            if (response.Status && response.Data is Dictionary<string, object?> done)
+            {
+                var msg = $"Ticket {Str(done, "ticketNo")} has been completed.";
+                var raisedBy = Int(done, "raisedBy");
+                var approver = Int(done, "approverId");
                 if (raisedBy != employeeId) await Notify(raisedBy, model.TicketId, "Ticket Completed", msg, "RAISER");
                 if (approver != employeeId && approver != raisedBy) await Notify(approver, model.TicketId, "Ticket Completed", msg, "MANAGER");
             }
@@ -442,6 +552,56 @@ namespace CRMWebServices.Repository
             return "/Uploads/" + string.Join("/", relative.Split('/').Select(Uri.EscapeDataString));
         }
 
+        /// <summary>
+        /// Ticket fields for Templates/Email/TicketNotification.html.
+        /// Empty values just leave the row blank; a failed lookup still sends the email.
+        /// </summary>
+        private async Task<Dictionary<string, string?>> TicketEmailData(int ticketId, int recipientId, string title)
+        {
+            var data = new Dictionary<string, string?> { ["HeaderLabel"] = "Ticket Support" };
+            try
+            {
+                var ds = await Exec("TICKET_EMAIL_DATA", recipientId, false, P("@TicketId", ticketId));
+                if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0) return data;
+                var r = Rows(ds.Tables[0])[0];
+
+                string? S(string key) => r.GetValueOrDefault(key)?.ToString()?.Trim();
+                string? Label(string? code) => string.IsNullOrWhiteSpace(code) ? null :
+                    string.Join(" ", code.Split('_', StringSplitOptions.RemoveEmptyEntries)
+                        .Select(w => w.Length == 0 ? w : char.ToUpperInvariant(w[0]) + w[1..].ToLowerInvariant()));
+                string? Date(string key, string format) =>
+                    r.GetValueOrDefault(key) is DateTime d ? d.ToString(format) : null;
+
+                var types = (S("serviceTypes") ?? "")
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                    .Select(t => t.Trim() == "OTHER" && !string.IsNullOrWhiteSpace(S("serviceTypeOther"))
+                        ? $"Other ({S("serviceTypeOther")})"
+                        : t.Trim() == "AMC" ? "AMC" : Label(t.Trim()));
+
+                var recipient = S("recipientName");
+                data["RecipientName"] = string.IsNullOrWhiteSpace(recipient) ? "Team" : recipient;
+                data["TicketNo"] = S("ticketNo");
+                data["TicketStatus"] = Label(S("ticketStatus"));
+                data["CustomerName"] = S("customerName");
+                data["Issue"] = S("issue");
+                data["Priority"] = Label(S("priority"));
+                data["ServiceMode"] = Label(S("serviceMode"));
+                data["ServiceTypes"] = string.Join(", ", types);
+                data["RaisedOn"] = Date("raisedOn", "dd MMM yyyy, hh:mm tt");
+                data["ExpectedDate"] = Date("expectedDate", "dd MMM yyyy");
+                data["RaisedByName"] = S("raisedByName");
+                data["AssignedToName"] = S("assignedToName");
+                data["ResolutionRemarks"] = S("resolutionRemarks");
+                data["DecisionRemark"] = S("decisionRemark");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Ticket email data failed. TicketId {TicketId}", ticketId);
+                data["RecipientName"] = "Team";
+            }
+            return data;
+        }
+
         /// <summary>Push + email notification, best-effort (same pattern as Lead assignment).</summary>
         private async Task Notify(int employeeId, int ticketId, string title, string message, string recipientType)
         {
@@ -461,7 +621,8 @@ namespace CRMWebServices.Repository
             try
             {
                 await _scheduler.SendEmployeeEmailNotificationAsync(null, employeeId, ticketId, title, message, ENTITY_TYPE, recipientType,
-                    actionType: recipientType == "MANAGER" ? "APPROVAL" : "ASSIGNED");
+                    actionType: "TICKET",
+                    templateData: await TicketEmailData(ticketId, employeeId, title));
             }
             catch (Exception ex)
             {

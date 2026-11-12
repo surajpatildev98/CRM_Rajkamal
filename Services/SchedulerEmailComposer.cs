@@ -17,6 +17,7 @@ namespace CRMWebServices.Services
             ["BIRTHDAY_WISH"] = "BirthdayWish",
             ["PROBATION_CONFIRMED"] = "ProbationConfirmed",
             ["ANNOUNCEMENT"] = "Announcement",
+            ["TICKET"] = "TicketNotification",
         };
 
         // moved from SchedulerExecutionService.ActionColors
@@ -31,6 +32,7 @@ namespace CRMWebServices.Services
             ["BIRTHDAY_WISH"] = "#C8161D",
             ["PROBATION_CONFIRMED"] = "#C8161D",
             ["ANNOUNCEMENT"] = "#C8161D",
+            ["TICKET"] = "#1e3a8a",
         };
 
         private readonly IEmailTemplateRenderer _renderer;

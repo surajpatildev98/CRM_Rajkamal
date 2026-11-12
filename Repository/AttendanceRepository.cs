@@ -8,6 +8,9 @@ namespace CRMWebServices.Repository
     public class AttendanceRepository : IAttendanceRepository
     {
         private readonly IDatabaseService _database;
+        private readonly ISchedulerExecutionService _schedulerExecutionService;
+        private readonly ILogger<AttendanceRepository> _logger;
+        private readonly string _connectionString;
         private static bool Has(DataRow r, string c) => r.Table.Columns.Contains(c) && r[c] != DBNull.Value;
         private static int RInt(DataRow r, string c) => Has(r, c) ? Convert.ToInt32(r[c]) : 0;
         private static int? RNInt(DataRow r, string c) => Has(r, c) ? Convert.ToInt32(r[c]) : null;
@@ -18,9 +21,16 @@ namespace CRMWebServices.Repository
         private static DateTime RDate(DataRow r, string c) => Has(r, c) ? Convert.ToDateTime(r[c]) : DateTime.MinValue;
         private static DateTime? RNDate(DataRow r, string c) => Has(r, c) ? Convert.ToDateTime(r[c]) : null;
 
-        public AttendanceRepository(IDatabaseService database)
+        public AttendanceRepository(
+            IDatabaseService database,
+            ISchedulerExecutionService schedulerExecutionService,
+            ILogger<AttendanceRepository> logger,
+            IConfiguration config)
         {
+            _connectionString = config.GetConnectionString("DefaultConnection") ?? string.Empty;
             _database = database;
+            _schedulerExecutionService = schedulerExecutionService;
+            _logger = logger;
         }
         private List<AttendanceModel> MapAttendance(DataTable dt)
         {
@@ -647,8 +657,9 @@ namespace CRMWebServices.Repository
             }
         }
 
-        public Task<RegularizationActionResponse> ApplyRegularization(ApplyRegularizationRequest request, int loggedInEmployeeId)
-            => RunRegularizationAction(
+        public async Task<RegularizationActionResponse> ApplyRegularization(ApplyRegularizationRequest request, int loggedInEmployeeId)
+        {
+            var result = await RunRegularizationAction(
                 new SqlParameter("@Status", "APPLY"),
                 new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
                 new SqlParameter("@AttendanceDate", request.AttendanceDate.HasValue ? request.AttendanceDate.Value.Date : DBNull.Value),
@@ -657,6 +668,79 @@ namespace CRMWebServices.Repository
                 new SqlParameter("@RequestedOutTime", request.RequestedOutTime ?? (object)DBNull.Value),
                 new SqlParameter("@Reason", string.IsNullOrWhiteSpace(request.Reason) ? DBNull.Value : request.Reason.Trim())
             );
+
+            if (result.Status)
+                await NotifyManagersOfNewRegularization(loggedInEmployeeId, request, result);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Best-effort push to the employee's reporting manager and reporting HR
+        /// manager, the same people GET_TEAM lets review the request.
+        /// Never fails the request.
+        /// </summary>
+        private async Task NotifyManagersOfNewRegularization(int employeeId, ApplyRegularizationRequest request, RegularizationActionResponse result)
+        {
+            try
+            {
+                string employeeName = string.Empty;
+                var managerIds = new HashSet<int>();
+
+                // Read-only lookup; same columns the regularization SP uses for GET_TEAM.
+                await using (var conn = new SqlConnection(_connectionString))
+                {
+                    await conn.OpenAsync();
+                    await using var cmd = conn.CreateCommand();
+                    cmd.CommandText = @"SELECT Ref_ReportingManagerId, Ref_ReportingHRManagerId,
+                                               LTRIM(RTRIM(ISNULL(FirstName,'') + ' ' + ISNULL(LastName,''))) AS EmployeeName
+                                        FROM dbo.ORG_Employee WHERE EmployeeId = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", employeeId));
+
+                    await using var r = await cmd.ExecuteReaderAsync();
+                    if (await r.ReadAsync())
+                    {
+                        if (!r.IsDBNull(0)) managerIds.Add(Convert.ToInt32(r.GetValue(0)));
+                        if (!r.IsDBNull(1)) managerIds.Add(Convert.ToInt32(r.GetValue(1)));
+                        employeeName = r.IsDBNull(2) ? string.Empty : r.GetString(2);
+                    }
+                }
+
+                managerIds.Remove(employeeId);
+                if (managerIds.Count == 0)
+                {
+                    _logger.LogWarning("Regularization {Id}: employee {EmployeeId} has no reporting manager, notification skipped.", result.RegularizationId, employeeId);
+                    return;
+                }
+
+                var who = string.IsNullOrWhiteSpace(employeeName) ? "An employee" : employeeName;
+                var date = request.AttendanceDate?.ToString("dd-MMM-yyyy") ?? string.Empty;
+
+                foreach (var managerId in managerIds)
+                {
+                    try
+                    {
+                        await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                            schedulerJobItemId: null,
+                            employeeId: managerId,
+                            entityId: result.RegularizationId ?? 0,
+                            title: "New Regularization Request",
+                            message: $"{who} applied for regularization {result.RequestNo} for {date}.",
+                            entityType: "REGULARIZATION_REQUEST",
+                            recipientType: "MANAGER"
+                        );
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Regularization {Id}: notification to manager {ManagerId} failed.", result.RegularizationId, managerId);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Regularization {Id}: manager notification failed.", result.RegularizationId);
+            }
+        }
 
         public Task<RegularizationActionResponse> CancelRegularization(RegularizationActionRequest request, int loggedInEmployeeId)
             => RunRegularizationAction(
@@ -668,21 +752,88 @@ namespace CRMWebServices.Repository
 
         // On approval the SP writes the requested punches (source REGULARIZATION)
         // and recalculates that day's attendance.
-        public Task<RegularizationActionResponse> ApproveRegularization(RegularizationActionRequest request, int loggedInEmployeeId)
-            => RunRegularizationAction(
+        public async Task<RegularizationActionResponse> ApproveRegularization(RegularizationActionRequest request, int loggedInEmployeeId)
+        {
+            var target = await FindTeamRegularization(loggedInEmployeeId, request.RegularizationId);
+
+            var result = await RunRegularizationAction(
                 new SqlParameter("@Status", "APPROVE"),
                 new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
                 new SqlParameter("@RegularizationId", request.RegularizationId),
                 new SqlParameter("@Remarks", string.IsNullOrWhiteSpace(request.Remarks) ? DBNull.Value : request.Remarks.Trim())
             );
 
-        public Task<RegularizationActionResponse> RejectRegularization(RegularizationActionRequest request, int loggedInEmployeeId)
-            => RunRegularizationAction(
+            if (result.Status)
+                await NotifyRegularizationDecision(target, request.RegularizationId, approved: true, request.Remarks);
+
+            return result;
+        }
+
+        public async Task<RegularizationActionResponse> RejectRegularization(RegularizationActionRequest request, int loggedInEmployeeId)
+        {
+            var target = await FindTeamRegularization(loggedInEmployeeId, request.RegularizationId);
+
+            var result = await RunRegularizationAction(
                 new SqlParameter("@Status", "REJECT"),
                 new SqlParameter("@LoggedInEmployeeId", loggedInEmployeeId),
                 new SqlParameter("@RegularizationId", request.RegularizationId),
                 new SqlParameter("@Reason", string.IsNullOrWhiteSpace(request.Reason) ? DBNull.Value : request.Reason.Trim())
             );
+
+            if (result.Status)
+                await NotifyRegularizationDecision(target, request.RegularizationId, approved: false, request.Reason);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Finds the request in the reviewer's team list (GET_TEAM), which gives the
+        /// applicant and date. The APPROVE/REJECT result sets don't include them.
+        /// Returns null if not found; the notification is then skipped.
+        /// </summary>
+        private async Task<RegularizationModel?> FindTeamRegularization(int loggedInEmployeeId, int regularizationId)
+        {
+            try
+            {
+                var team = await GetTeamRegularizations(loggedInEmployeeId);
+                return team.Data?.FirstOrDefault(r => r.RegularizationId == regularizationId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Regularization {Id}: could not load request for notification.", regularizationId);
+                return null;
+            }
+        }
+
+        /// <summary>Best-effort push to the applicant. Never fails the request.</summary>
+        private async Task NotifyRegularizationDecision(RegularizationModel? target, int regularizationId, bool approved, string? remarks)
+        {
+            if (target == null || target.EmployeeId <= 0)
+            {
+                _logger.LogWarning("Regularization {Id}: applicant not found, notification skipped.", regularizationId);
+                return;
+            }
+
+            try
+            {
+                var date = target.AttendanceDate.ToString("dd-MMM-yyyy");
+                var note = string.IsNullOrWhiteSpace(remarks) ? "." : $": {remarks.Trim()}";
+
+                await _schedulerExecutionService.SendEmployeeNotificationAsync(
+                    schedulerJobItemId: null,
+                    employeeId: target.EmployeeId,
+                    entityId: regularizationId,
+                    title: approved ? "Regularization Approved" : "Regularization Rejected",
+                    message: $"Your regularization request {target.RequestNo} for {date} was {(approved ? "approved" : "rejected")}{note}",
+                    entityType: "REGULARIZATION",
+                    recipientType: "EMPLOYEE"
+                );
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Regularization {Id}: notification failed.", regularizationId);
+            }
+        }
 
         private async Task<RegularizationActionResponse> RunRegularizationAction(params SqlParameter[] parameters)
         {

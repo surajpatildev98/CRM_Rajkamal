@@ -1,4 +1,4 @@
-using CRMWebServices.Data;
+﻿using CRMWebServices.Data;
 using CRMWebServices.Helpers;
 using CRMWebServices.Interfaces;
 using CRMWebServices.Repositories;
@@ -155,6 +155,19 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(uploadsPath),
     RequestPath = "/Uploads"
+});
+// In-app update: APK files in <publish folder>pk are served at /apk/<file>.apk
+var apkPath = Path.Combine(builder.Environment.ContentRootPath, "apk");
+Directory.CreateDirectory(apkPath);
+var apkContentTypes = new Microsoft.AspNetCore.StaticFiles.FileExtensionContentTypeProvider();
+apkContentTypes.Mappings[".apk"] = "application/vnd.android.package-archive";
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(apkPath),
+    RequestPath = "/apk",
+    ContentTypeProvider = apkContentTypes,
+    // Always fetch the real file, never a cached older APK.
+    OnPrepareResponse = ctx => ctx.Context.Response.Headers.CacheControl = "no-cache"
 });
 app.UseCors("AllowFlutterWeb");
 app.UseAuthentication();   // must come BEFORE UseAuthorization
