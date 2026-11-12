@@ -53,7 +53,7 @@ CREATE TABLE dbo.TKT_Ticket
     UpdatedBy           INT            NULL,
     CONSTRAINT UQ_TKT_Ticket_TicketNo UNIQUE (TicketNo),
     CONSTRAINT CK_TKT_Ticket_CustomerSource CHECK (CustomerSource IN ('CRM','WMS')),
-    CONSTRAINT CK_TKT_Ticket_ServiceMode CHECK (ServiceMode IN ('ONLINE','VISIT')),
+    CONSTRAINT CK_TKT_Ticket_ServiceMode CHECK (ServiceMode IN ('ONLINE','CARRY_IN','VISIT')),
     CONSTRAINT CK_TKT_Ticket_Priority CHECK (Priority IN ('LOW','MEDIUM','HIGH'))
 );
 GO
@@ -148,6 +148,59 @@ CREATE TABLE dbo.TKT_TicketStatusLog
 );
 GO
 
+/* ---- Service Mode: add CARRY_IN (works like ONLINE: no travel / approval / check-in) ---- */
+IF EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = 'CK_TKT_Ticket_ServiceMode'
+           AND definition NOT LIKE '%CARRY_IN%')
+    ALTER TABLE dbo.TKT_Ticket DROP CONSTRAINT CK_TKT_Ticket_ServiceMode;
+IF NOT EXISTS (SELECT 1 FROM sys.check_constraints WHERE name = 'CK_TKT_Ticket_ServiceMode')
+    ALTER TABLE dbo.TKT_Ticket ADD CONSTRAINT CK_TKT_Ticket_ServiceMode
+        CHECK (ServiceMode IN ('ONLINE','CARRY_IN','VISIT'));
+GO
+
+/* ---- Check-out (after check-in) ---- */
+IF COL_LENGTH('dbo.TKT_Ticket', 'CheckOutOn') IS NULL
+    ALTER TABLE dbo.TKT_Ticket ADD CheckOutOn DATETIME NULL,
+                                   CheckOutLatitude DECIMAL(9,6) NULL,
+                                   CheckOutLongitude DECIMAL(9,6) NULL,
+                                   CheckOutAddress NVARCHAR(500) NULL;
+/* ---- Close request (assignee -> raiser) ---- */
+IF COL_LENGTH('dbo.TKT_Ticket', 'CloseRequestedOn') IS NULL
+    ALTER TABLE dbo.TKT_Ticket ADD CloseRequestedOn DATETIME NULL,
+                                   CloseDecisionRemark NVARCHAR(500) NULL;
+/* ---- Planned activity completed later ---- */
+IF COL_LENGTH('dbo.TKT_TicketActivity', 'CompletedOn') IS NULL
+    ALTER TABLE dbo.TKT_TicketActivity ADD CompletedOn DATETIME NULL;
+GO
+
+/* ---- Service Type (Warranty / AMC / Billable / Testing / Other) ---- */
+IF COL_LENGTH('dbo.TKT_Ticket', 'ServiceTypes') IS NULL
+    ALTER TABLE dbo.TKT_Ticket ADD ServiceTypes VARCHAR(100) NULL;          -- comma list: WARRANTY,AMC,BILLABLE,TESTING,OTHER
+IF COL_LENGTH('dbo.TKT_Ticket', 'ServiceTypeOther') IS NULL
+    ALTER TABLE dbo.TKT_Ticket ADD ServiceTypeOther NVARCHAR(200) NULL;     -- text when OTHER is ticked
+GO
+
+/* ---- Requirement / Offering items (Category > Offering > Product + Serial No) ---- */
+IF OBJECT_ID('dbo.TKT_TicketItem') IS NULL
+CREATE TABLE dbo.TKT_TicketItem
+(
+    TicketItemId            INT IDENTITY(1,1) NOT NULL CONSTRAINT PK_TKT_TicketItem PRIMARY KEY,
+    Ref_TicketId            INT            NOT NULL CONSTRAINT FK_TKT_TicketItem_Ticket REFERENCES dbo.TKT_Ticket (TicketId),
+    Ref_ProductCategoryId   INT            NULL,
+    CategoryName            NVARCHAR(200)  NULL,
+    Ref_OfferingId          INT            NULL,
+    OfferingName            NVARCHAR(200)  NULL,
+    Ref_ProductId           BIGINT         NULL,
+    ProductName             NVARCHAR(255)  NULL,
+    SerialNo                NVARCHAR(100)  NULL,
+    ItemRemark              NVARCHAR(500)  NULL,
+    CreatedOn               DATETIME       NOT NULL CONSTRAINT DF_TKT_TicketItem_CreatedOn DEFAULT (GETDATE()),
+    CreatedBy               INT            NOT NULL
+);
+GO
+IF NOT EXISTS (SELECT 1 FROM sys.indexes WHERE name = 'IX_TKT_TicketItem_Ticket')
+    CREATE INDEX IX_TKT_TicketItem_Ticket ON dbo.TKT_TicketItem (Ref_TicketId);
+GO
+
 /* ========================= PROCEDURE ========================= */
 CREATE OR ALTER PROCEDURE dbo.USP_TKT_TicketManagement
     @Status             VARCHAR(50),
@@ -176,7 +229,11 @@ CREATE OR ALTER PROCEDURE dbo.USP_TKT_TicketManagement
     @Title              NVARCHAR(200)  = NULL,
     @ActivityOn         DATETIME       = NULL,
     @ContactPerson      NVARCHAR(150)  = NULL,
-    @ActivityStatus     VARCHAR(20)    = NULL
+    @ActivityStatus     VARCHAR(20)    = NULL,
+    @ServiceTypes       VARCHAR(100)   = NULL,   -- comma list: WARRANTY,AMC,BILLABLE,TESTING,OTHER
+    @ServiceTypeOther   NVARCHAR(200)  = NULL,
+    @ItemsJson          NVARCHAR(MAX)  = NULL,   -- [{categoryId,categoryName,offeringId,offeringName,productId,productName,serialNo,remark}]
+    @TicketActivityId   INT            = NULL
 AS
 BEGIN
     SET NOCOUNT ON;
@@ -188,6 +245,25 @@ BEGIN
     /* Expense modes that need Support Manager approval. */
     DECLARE @ApprovalModes TABLE (TravelMode VARCHAR(20) PRIMARY KEY);
     INSERT INTO @ApprovalModes VALUES ('PERSONAL_CAR'), ('STAY'), ('OTHER');
+
+    /* ===================== TICKET_EMAIL_DATA (internal: email body) =====================
+       Called only by the API when sending a notification email, after the action
+       itself passed the access check. @EmployeeId = email recipient. */
+    IF (@Status = 'TICKET_EMAIL_DATA')
+    BEGIN
+        SELECT T.TicketNo, T.CustomerName, T.Issue, T.Priority, T.ServiceMode, T.ExpectedDate, T.RaisedOn,
+               T.Status AS TicketStatus, T.ServiceTypes, T.ServiceTypeOther, T.ResolutionRemarks,
+               ISNULL(T.CloseDecisionRemark, T.ApprovalRemark) AS DecisionRemark,
+               LTRIM(RTRIM(ISNULL(RB.FirstName, '') + ' ' + ISNULL(RB.LastName, ''))) AS RaisedByName,
+               LTRIM(RTRIM(ISNULL(AE.FirstName, '') + ' ' + ISNULL(AE.LastName, ''))) AS AssignedToName,
+               LTRIM(RTRIM(ISNULL(RC.FirstName, '') + ' ' + ISNULL(RC.LastName, ''))) AS RecipientName
+        FROM dbo.TKT_Ticket T
+        LEFT JOIN dbo.ORG_Employee RB ON RB.EmployeeId = T.RaisedBy
+        LEFT JOIN dbo.ORG_Employee AE ON AE.EmployeeId = T.AssignedTo
+        LEFT JOIN dbo.ORG_Employee RC ON RC.EmployeeId = @EmployeeId
+        WHERE T.TicketId = @TicketId;
+        RETURN;
+    END;
 
     /* ---- Access: raiser, assignee, or the assignee's Support Manager ---- */
     DECLARE @CanView BIT = 0, @IsApprover BIT = 0;
@@ -227,13 +303,24 @@ BEGIN
         -- Online / Visit on the ticket later (SET_SERVICE_MODE).
         IF (@IsManager = 1 AND @AssignedTo IS NOT NULL AND @AssignedTo <> @EmployeeId)
             SET @ServiceMode = ISNULL(@ServiceMode, 'ONLINE');
-        IF (ISNULL(@ServiceMode, '') NOT IN ('ONLINE','VISIT'))
-            THROW 50012, 'Service mode must be Online or Visit.', 1;
+        IF (ISNULL(@ServiceMode, '') NOT IN ('ONLINE','CARRY_IN','VISIT'))
+            THROW 50012, 'Service mode must be Online, Carry In or Visit.', 1;
         IF (@ExpectedDate IS NULL OR @ExpectedDate < @Today)
             THROW 50013, 'Service expected date cannot be in the past.', 1;
         SET @Priority = ISNULL(NULLIF(@Priority, ''), 'MEDIUM');
         IF (@Priority NOT IN ('LOW','MEDIUM','HIGH'))
             THROW 50014, 'Invalid priority.', 1;
+        SET @ServiceTypes = NULLIF(LTRIM(RTRIM(@ServiceTypes)), '');
+        SET @ServiceTypeOther = NULLIF(LTRIM(RTRIM(@ServiceTypeOther)), '');
+        IF (@ServiceTypes IS NULL)
+            THROW 50016, 'Please select a service type.', 1;
+        IF EXISTS (SELECT 1 FROM STRING_SPLIT(@ServiceTypes, ',')
+                   WHERE LTRIM(RTRIM(value)) NOT IN ('WARRANTY','AMC','BILLABLE','TESTING','OTHER'))
+            THROW 50017, 'Invalid service type.', 1;
+        IF (',' + @ServiceTypes + ',' LIKE '%,OTHER,%' AND @ServiceTypeOther IS NULL)
+            THROW 50018, 'Please enter the other service type.', 1;
+        IF (',' + @ServiceTypes + ',' NOT LIKE '%,OTHER,%')
+            SET @ServiceTypeOther = NULL;
 
         -- CRM source (lead organization): link the existing master customer when there is one.
         -- Lookup only, never inserts, so the selected customer is never saved twice.
@@ -272,15 +359,29 @@ BEGIN
             (
                 TicketNo, CustomerSource, SourceCustomerId, Ref_CustomerId, CustomerName, Issue, Priority,
                 ServiceMode, RaisedOn, ExpectedDate, RaisedBy, IsRaisedByManager, AssignedTo, Status,
-                ApprovalStatus, CreatedOn, CreatedBy
+                ApprovalStatus, CreatedOn, CreatedBy, ServiceTypes, ServiceTypeOther
             )
             VALUES
             (
                 'TKT-' + RIGHT('0000' + CAST(@NextNo AS VARCHAR(10)), 4), @CustomerSource, @SourceCustomerId,
                 @Ref_CustomerId, LTRIM(RTRIM(@CustomerName)), LTRIM(RTRIM(@Issue)), @Priority, @ServiceMode, @Now,
-                @ExpectedDate, @EmployeeId, @ByManager, @AssignedTo, @NewStatus, @NewApproval, @Now, @EmployeeId
+                @ExpectedDate, @EmployeeId, @ByManager, @AssignedTo, @NewStatus, @NewApproval, @Now, @EmployeeId,
+                @ServiceTypes, @ServiceTypeOther
             );
             DECLARE @NewTicketId INT = SCOPE_IDENTITY();
+
+            -- Requirement / Offering items with serial numbers.
+            IF (@ItemsJson IS NOT NULL)
+                INSERT INTO dbo.TKT_TicketItem
+                    (Ref_TicketId, Ref_ProductCategoryId, CategoryName, Ref_OfferingId, OfferingName,
+                     Ref_ProductId, ProductName, SerialNo, ItemRemark, CreatedOn, CreatedBy)
+                SELECT @NewTicketId, J.categoryId, J.categoryName, J.offeringId, J.offeringName,
+                       J.productId, J.productName, NULLIF(LTRIM(RTRIM(J.serialNo)), ''),
+                       NULLIF(LTRIM(RTRIM(J.remark)), ''), @Now, @EmployeeId
+                FROM OPENJSON(@ItemsJson) WITH (
+                        categoryId INT, categoryName NVARCHAR(200), offeringId INT, offeringName NVARCHAR(200),
+                        productId BIGINT, productName NVARCHAR(255), serialNo NVARCHAR(100), remark NVARCHAR(500)) J
+                WHERE J.categoryId IS NOT NULL AND J.productId IS NOT NULL;
 
             -- Travel request sent together with an employee-raised Visit ticket.
             IF (@ExpensesJson IS NOT NULL)
@@ -320,7 +421,7 @@ BEGIN
         WHERE (@ListType = 'ASSIGNED' AND T.AssignedTo = @EmployeeId)
            OR (@ListType = 'RAISED' AND T.RaisedBy = @EmployeeId)
            OR (@ListType = 'TEAM_OPEN' AND @IsManager = 1 AND AE.Ref_ReportingManagerId = @EmployeeId
-               AND T.Status IN ('OPEN','APPROVAL_PENDING','IN_PROGRESS'))
+               AND T.Status IN ('OPEN','APPROVAL_PENDING','IN_PROGRESS','CLOSE_REQUESTED'))
            OR (@ListType = 'TEAM_CLOSED' AND @IsManager = 1 AND AE.Ref_ReportingManagerId = @EmployeeId
                AND T.Status IN ('COMPLETED','REJECTED','CANCELLED'))
         ORDER BY CASE WHEN T.Status IN ('COMPLETED','REJECTED','CANCELLED') THEN 1 ELSE 0 END, T.ExpectedDate, T.TicketId DESC;
@@ -331,7 +432,7 @@ BEGIN
    IF (@Status = 'MY_COUNTS')
 BEGIN
     SELECT
-        ISNULL(SUM(CASE WHEN T.Status IN ('OPEN','IN_PROGRESS') THEN 1 ELSE 0 END), 0) AS OpenCount,
+        ISNULL(SUM(CASE WHEN T.Status IN ('OPEN','IN_PROGRESS','CLOSE_REQUESTED') THEN 1 ELSE 0 END), 0) AS OpenCount,
         ISNULL(SUM(CASE WHEN T.Status = 'APPROVAL_PENDING' OR PX.HasPending = 1 THEN 1 ELSE 0 END), 0) AS AwaitingApprovalCount,
         ISNULL(SUM(CASE WHEN T.Status = 'COMPLETED' THEN 1 ELSE 0 END), 0) AS CompletedCount
     FROM dbo.TKT_Ticket T
@@ -382,6 +483,9 @@ END;
         SELECT L.*, LTRIM(RTRIM(ISNULL(E.FirstName, '') + ' ' + ISNULL(E.LastName, ''))) AS CreatedByName
         FROM dbo.TKT_TicketStatusLog L LEFT JOIN dbo.ORG_Employee E ON E.EmployeeId = L.CreatedBy
         WHERE L.Ref_TicketId = @TicketId ORDER BY L.TicketStatusLogId;
+
+        -- T5 requirement / offering items
+        SELECT * FROM dbo.TKT_TicketItem WHERE Ref_TicketId = @TicketId ORDER BY TicketItemId;
         RETURN;
     END;
 
@@ -531,12 +635,131 @@ END;
         RETURN;
     END;
 
+    /* ===================== CHECK_OUT (after check-in) ===================== */
+    IF (@Status = 'CHECK_OUT')
+    BEGIN
+        IF (@TAssignedTo <> @EmployeeId)
+            THROW 50055, 'Only the assigned employee can check out.', 1;
+        IF (@TStatus <> 'IN_PROGRESS'
+            OR NOT EXISTS (SELECT 1 FROM dbo.TKT_Ticket WHERE TicketId = @TicketId AND CheckInOn IS NOT NULL))
+            THROW 50056, 'Please check in first.', 1;
+        IF EXISTS (SELECT 1 FROM dbo.TKT_Ticket WHERE TicketId = @TicketId AND CheckOutOn IS NOT NULL)
+            THROW 50057, 'Already checked out.', 1;
+        IF (@Latitude IS NULL OR @Longitude IS NULL)
+            THROW 50058, 'Location is required for check-out.', 1;
+
+        BEGIN TRAN;
+            UPDATE dbo.TKT_Ticket
+            SET CheckOutOn = @Now, CheckOutLatitude = @Latitude, CheckOutLongitude = @Longitude, CheckOutAddress = @Address,
+                UpdatedOn = @Now, UpdatedBy = @EmployeeId
+            WHERE TicketId = @TicketId;
+
+            INSERT INTO dbo.TKT_TicketStatusLog (Ref_TicketId, FromStatus, ToStatus, Remarks, CreatedOn, CreatedBy)
+            VALUES (@TicketId, @TStatus, @TStatus, 'Checked out: ' + ISNULL(@Address, ''), @Now, @EmployeeId);
+        COMMIT;
+
+        SELECT 1 AS Status, 'Checked out.' AS Message, @TicketId AS TicketId;
+        RETURN;
+    END;
+
+    /* ===================== COMPLETE_ACTIVITY (planned -> completed) ===================== */
+    IF (@Status = 'COMPLETE_ACTIVITY')
+    BEGIN
+        IF (@TAssignedTo <> @EmployeeId)
+            THROW 50065, 'Only the assigned employee can update activities.', 1;
+        IF (@TStatus IN ('COMPLETED','REJECTED','CANCELLED','CLOSE_REQUESTED'))
+            THROW 50066, 'Ticket is closed.', 1;
+        IF NOT EXISTS (SELECT 1 FROM dbo.TKT_TicketActivity
+                       WHERE TicketActivityId = @TicketActivityId AND Ref_TicketId = @TicketId AND ActivityStatus = 'PLANNED')
+            THROW 50067, 'Planned activity not found.', 1;
+
+        UPDATE dbo.TKT_TicketActivity
+        SET ActivityStatus = 'COMPLETED', CompletedOn = @Now,
+            Remarks = ISNULL(NULLIF(LTRIM(RTRIM(@Remarks)), ''), Remarks)
+        WHERE TicketActivityId = @TicketActivityId;
+
+        SELECT 1 AS Status, 'Activity completed.' AS Message, @TicketId AS TicketId, @TicketActivityId AS TicketActivityId;
+        RETURN;
+    END;
+
+    /* ===================== DECIDE_CLOSE (raiser approves / rejects a close request) ===================== */
+    IF (@Status = 'DECIDE_CLOSE')
+    BEGIN
+        IF (@TRaisedBy <> @EmployeeId)
+            THROW 50085, 'Only the person who raised the ticket can close it.', 1;
+        IF (@TStatus <> 'CLOSE_REQUESTED')
+            THROW 50086, 'There is no close request on this ticket.', 1;
+        IF (@Decision NOT IN ('APPROVE','REJECT'))
+            THROW 50087, 'Decision must be Approve or Reject.', 1;
+        IF (@Decision = 'REJECT' AND NULLIF(LTRIM(RTRIM(@Remarks)), '') IS NULL)
+            THROW 50088, 'Please enter the reason.', 1;
+
+        DECLARE @CloseTo VARCHAR(20) = CASE WHEN @Decision = 'APPROVE' THEN 'COMPLETED' ELSE 'IN_PROGRESS' END;
+        BEGIN TRAN;
+            UPDATE dbo.TKT_Ticket
+            SET Status = @CloseTo,
+                CompletedOn = CASE WHEN @Decision = 'APPROVE' THEN @Now ELSE NULL END,
+                CloseDecisionRemark = NULLIF(LTRIM(RTRIM(@Remarks)), ''),
+                UpdatedOn = @Now, UpdatedBy = @EmployeeId
+            WHERE TicketId = @TicketId;
+
+            INSERT INTO dbo.TKT_TicketStatusLog (Ref_TicketId, FromStatus, ToStatus, Remarks, CreatedOn, CreatedBy)
+            VALUES (@TicketId, @TStatus, @CloseTo,
+                    CASE WHEN @Decision = 'APPROVE' THEN 'Close request approved' ELSE 'Close request rejected: ' + LTRIM(RTRIM(@Remarks)) END,
+                    @Now, @EmployeeId);
+        COMMIT;
+
+        SELECT 1 AS Status,
+               CASE WHEN @Decision = 'APPROVE' THEN 'Ticket closed.' ELSE 'Close request rejected.' END AS Message,
+               @TicketId AS TicketId, T.TicketNo, T.Status AS TicketStatus, T.AssignedTo
+        FROM dbo.TKT_Ticket T WHERE T.TicketId = @TicketId;
+        RETURN;
+    END;
+
+    /* ===================== REASSIGN_TICKET (raiser, on a close request) ===================== */
+    IF (@Status = 'REASSIGN_TICKET')
+    BEGIN
+        IF (@TRaisedBy <> @EmployeeId OR @IsManager = 0)
+            THROW 50095, 'Only the Support Manager who raised the ticket can reassign it.', 1;
+        IF (@TStatus <> 'CLOSE_REQUESTED')
+            THROW 50096, 'Ticket can be reassigned only on a close request.', 1;
+        IF (@AssignedTo IS NULL OR @AssignedTo = @TAssignedTo)
+            THROW 50097, 'Please select a different employee.', 1;
+        IF (@AssignedTo <> @EmployeeId AND NOT EXISTS (SELECT 1 FROM dbo.ORG_Employee
+                        WHERE EmployeeId = @AssignedTo AND Ref_ReportingManagerId = @EmployeeId AND IsActive = 1))
+            THROW 50098, 'You can assign tickets only to your mapped employees.', 1;
+
+        BEGIN TRAN;
+            -- New assignee starts fresh: check-in / check-out / resolution are cleared.
+            UPDATE dbo.TKT_Ticket
+            SET AssignedTo = @AssignedTo, Status = 'OPEN',
+                CheckInOn = NULL, CheckInLatitude = NULL, CheckInLongitude = NULL, CheckInAddress = NULL,
+                CheckOutOn = NULL, CheckOutLatitude = NULL, CheckOutLongitude = NULL, CheckOutAddress = NULL,
+                ResolutionRemarks = NULL, CloseRequestedOn = NULL,
+                CloseDecisionRemark = NULLIF(LTRIM(RTRIM(@Remarks)), ''),
+                UpdatedOn = @Now, UpdatedBy = @EmployeeId
+            WHERE TicketId = @TicketId;
+
+            INSERT INTO dbo.TKT_TicketStatusLog (Ref_TicketId, FromStatus, ToStatus, Remarks, CreatedOn, CreatedBy)
+            SELECT @TicketId, @TStatus, 'OPEN',
+                   'Reassigned to ' + LTRIM(RTRIM(ISNULL(E.FirstName, '') + ' ' + ISNULL(E.LastName, '')))
+                   + ISNULL(': ' + NULLIF(LTRIM(RTRIM(@Remarks)), ''), ''),
+                   @Now, @EmployeeId
+            FROM dbo.ORG_Employee E WHERE E.EmployeeId = @AssignedTo;
+        COMMIT;
+
+        SELECT 1 AS Status, 'Ticket reassigned.' AS Message, @TicketId AS TicketId, T.TicketNo, T.CustomerName,
+               T.AssignedTo, @TAssignedTo AS PreviousAssignedTo
+        FROM dbo.TKT_Ticket T WHERE T.TicketId = @TicketId;
+        RETURN;
+    END;
+
     /* ===================== ADD_ACTIVITY ===================== */
     IF (@Status = 'ADD_ACTIVITY')
     BEGIN
         IF (@TAssignedTo <> @EmployeeId)
             THROW 50060, 'Only the assigned employee can add activities.', 1;
-        IF (@TStatus IN ('COMPLETED','REJECTED','CANCELLED'))
+        IF (@TStatus IN ('COMPLETED','REJECTED','CANCELLED','CLOSE_REQUESTED'))
             THROW 50061, 'Ticket is closed.', 1;
         IF (@ActivityType NOT IN ('SITE_VISIT','CALL','ONLINE'))
             THROW 50062, 'Invalid activity type.', 1;
@@ -602,17 +825,30 @@ END;
             THROW 50080, 'Only the assigned employee can complete the ticket.', 1;
         IF (@TStatus IN ('COMPLETED','REJECTED','CANCELLED'))
             THROW 50081, 'Ticket is already closed.', 1;
+        IF (@TStatus = 'CLOSE_REQUESTED')
+            THROW 50089, 'Close request is already sent.', 1;
         IF (@TApproval = 'PENDING' OR @TStatus = 'APPROVAL_PENDING'
             OR EXISTS (SELECT 1 FROM dbo.TKT_TicketExpense WHERE Ref_TicketId = @TicketId AND ApprovalStatus = 'PENDING'))
             THROW 50082, 'Complete is locked until the Support Manager approves.', 1;
         IF (@TMode = 'VISIT' AND NOT EXISTS (SELECT 1 FROM dbo.TKT_Ticket WHERE TicketId = @TicketId AND CheckInOn IS NOT NULL))
             THROW 50083, 'Please check in at the client site first.', 1;
+        IF EXISTS (SELECT 1 FROM dbo.TKT_Ticket WHERE TicketId = @TicketId AND CheckInOn IS NOT NULL AND CheckOutOn IS NULL)
+            THROW 50092, 'Please check out first.', 1;
+        IF EXISTS (SELECT 1 FROM dbo.TKT_TicketActivity WHERE Ref_TicketId = @TicketId AND ActivityStatus = 'PLANNED')
+            THROW 50093, 'Please complete all planned activities first.', 1;
         IF (NULLIF(LTRIM(RTRIM(@Remarks)), '') IS NULL)
             THROW 50084, 'Resolution remarks are required.', 1;
 
+        -- Raised by someone else (manager): the assignee only requests closing;
+        -- the raiser approves it (DECIDE_CLOSE). Own ticket: closed directly.
+        DECLARE @CompleteTo VARCHAR(20) = CASE WHEN @TRaisedBy = @EmployeeId THEN 'COMPLETED' ELSE 'CLOSE_REQUESTED' END;
+
         BEGIN TRAN;
             UPDATE dbo.TKT_Ticket
-            SET Status = 'COMPLETED', ResolutionRemarks = LTRIM(RTRIM(@Remarks)), CompletedOn = @Now,
+            SET Status = @CompleteTo, ResolutionRemarks = LTRIM(RTRIM(@Remarks)),
+                CompletedOn = CASE WHEN @CompleteTo = 'COMPLETED' THEN @Now ELSE NULL END,
+                CloseRequestedOn = CASE WHEN @CompleteTo = 'CLOSE_REQUESTED' THEN @Now ELSE NULL END,
+                CloseDecisionRemark = NULL,
                 UpdatedOn = @Now, UpdatedBy = @EmployeeId
             WHERE TicketId = @TicketId;
 
@@ -623,10 +859,13 @@ END;
                 WHERE J.filePath IS NOT NULL;
 
             INSERT INTO dbo.TKT_TicketStatusLog (Ref_TicketId, FromStatus, ToStatus, Remarks, CreatedOn, CreatedBy)
-            VALUES (@TicketId, @TStatus, 'COMPLETED', 'Ticket completed', @Now, @EmployeeId);
+            VALUES (@TicketId, @TStatus, @CompleteTo,
+                    CASE WHEN @CompleteTo = 'COMPLETED' THEN 'Ticket completed' ELSE 'Close request sent' END, @Now, @EmployeeId);
         COMMIT;
 
-        SELECT 1 AS Status, 'Ticket completed.' AS Message, @TicketId AS TicketId, T.TicketNo, 'COMPLETED' AS TicketStatus,
+        SELECT 1 AS Status,
+               CASE WHEN @CompleteTo = 'COMPLETED' THEN 'Ticket completed.' ELSE 'Close request sent.' END AS Message,
+               @TicketId AS TicketId, T.TicketNo, T.CustomerName, @CompleteTo AS TicketStatus,
                T.RaisedBy, (SELECT Ref_ReportingManagerId FROM dbo.ORG_Employee WHERE EmployeeId = T.AssignedTo) AS ApproverId
         FROM dbo.TKT_Ticket T WHERE T.TicketId = @TicketId;
         RETURN;
@@ -705,7 +944,7 @@ END;
             (SELECT COUNT(*) FROM #Team WHERE FieldStatus = 'ON_FIELD')  AS OnFieldCount,
             (SELECT COUNT(*) FROM #Team WHERE FieldStatus = 'VISITED')   AS VisitedCount,
             (SELECT COUNT(*) FROM dbo.TKT_Ticket T JOIN #Team M ON M.EmployeeId = T.AssignedTo
-              WHERE T.Status IN ('OPEN','APPROVAL_PENDING','IN_PROGRESS')) AS OpenTicketCount,
+              WHERE T.Status IN ('OPEN','APPROVAL_PENDING','IN_PROGRESS','CLOSE_REQUESTED')) AS OpenTicketCount,
             (SELECT COUNT(*) FROM dbo.TKT_Ticket T JOIN #Team M ON M.EmployeeId = T.AssignedTo
               WHERE T.Status NOT IN ('REJECTED','CANCELLED')
                 AND (T.ApprovalStatus = 'PENDING'
@@ -740,12 +979,12 @@ END;
     BEGIN
         IF (@TAssignedTo <> @EmployeeId)
             THROW 50140, 'Only the assigned employee can change the service mode.', 1;
-        IF (@ServiceMode NOT IN ('ONLINE','VISIT'))
-            THROW 50141, 'Service mode must be Online or Visit.', 1;
+        IF (@ServiceMode NOT IN ('ONLINE','CARRY_IN','VISIT'))
+            THROW 50141, 'Service mode must be Online, Carry In or Visit.', 1;
         IF (@TStatus NOT IN ('OPEN','APPROVAL_PENDING')
             OR EXISTS (SELECT 1 FROM dbo.TKT_Ticket WHERE TicketId = @TicketId AND CheckInOn IS NOT NULL))
             THROW 50142, 'Service mode cannot be changed after work has started.', 1;
-        IF (@ServiceMode = 'ONLINE' AND EXISTS (SELECT 1 FROM dbo.TKT_TicketExpense
+        IF (@ServiceMode IN ('ONLINE','CARRY_IN') AND EXISTS (SELECT 1 FROM dbo.TKT_TicketExpense
                                                 WHERE Ref_TicketId = @TicketId AND ExpenseSource = 'TRAVEL' AND ApprovalStatus <> 'REJECTED'))
             THROW 50143, 'Travel is already requested for this ticket.', 1;
 

@@ -67,6 +67,25 @@ namespace CRMWebServices.Controllers
         public async Task<IActionResult> CheckIn([FromBody] TicketCheckInRequest model) =>
             Result(await _repository.CheckIn(model, EmployeeId, IsSupportManager));
 
+        [HttpPost("check-out")]
+        public async Task<IActionResult> CheckOut([FromBody] TicketCheckInRequest model) =>
+            Result(await _repository.CheckOut(model, EmployeeId, IsSupportManager));
+
+        /// <summary>Assignee marks a PLANNED activity as completed.</summary>
+        [HttpPost("activity-complete")]
+        public async Task<IActionResult> CompleteActivity([FromBody] TicketCompleteActivityRequest model) =>
+            Result(await _repository.CompleteActivity(model, EmployeeId, IsSupportManager));
+
+        /// <summary>Raiser approves / rejects the assignee's close request.</summary>
+        [HttpPost("close-decision")]
+        public async Task<IActionResult> CloseDecision([FromBody] TicketCloseDecisionRequest model) =>
+            Result(await _repository.DecideClose(model, EmployeeId, IsSupportManager));
+
+        /// <summary>Raiser (Support Manager) reassigns a ticket that has a close request.</summary>
+        [HttpPost("reassign")]
+        public async Task<IActionResult> Reassign([FromBody] TicketReassignRequest model) =>
+            Result(await _repository.Reassign(model, EmployeeId, IsSupportManager));
+
         [HttpPost("activity")]
         public async Task<IActionResult> AddActivity([FromBody] TicketActivityRequest model) =>
             Result(await _repository.AddActivity(model, EmployeeId, IsSupportManager));

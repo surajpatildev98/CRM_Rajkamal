@@ -1,0 +1,82 @@
+﻿<p style='margin:0 0 14px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#111827;'>
+    Dear {{RecipientName}},
+</p>
+<p style='margin:0 0 22px 0;font-family:Arial,Helvetica,sans-serif;font-size:15px;line-height:22px;color:#374151;'>
+    {{{MessageHtml}}}
+</p>
+
+<div style='font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#1e3a8a;text-transform:uppercase;letter-spacing:0.5px;padding-bottom:8px;'>Ticket Details</div>
+<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border:1px solid #e5e7eb;border-collapse:collapse;'>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;width:45%;'>Ticket No</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;color:#111827;'>{{TicketNo}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Status</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700;color:{{HeaderColor}};'>{{TicketStatus}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Customer</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{CustomerName}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Issue</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{Issue}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Priority</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{Priority}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Service Mode</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{ServiceMode}}</td>
+    </tr>
+    {{#if ServiceTypes}}
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Service Type</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{ServiceTypes}}</td>
+    </tr>
+    {{/if}}
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Raised On</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{RaisedOn}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Expected Date</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{ExpectedDate}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Raised By</td>
+        <td align='right' style='padding:11px 14px;border-bottom:1px solid #e5e7eb;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{RaisedByName}}</td>
+    </tr>
+    <tr>
+        <td style='padding:11px 14px;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#6b7280;'>Assigned To</td>
+        <td align='right' style='padding:11px 14px;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#111827;'>{{AssignedToName}}</td>
+    </tr>
+</table>
+
+{{#if ResolutionRemarks}}
+<div style='height:22px;line-height:22px;font-size:22px;'>&nbsp;</div>
+<div style='font-family:Arial,Helvetica,sans-serif;font-size:13px;font-weight:700;color:#1e3a8a;text-transform:uppercase;letter-spacing:0.5px;padding-bottom:8px;'>Resolution Remarks</div>
+<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'>
+    <tr>
+        <td bgcolor='#f0fdf4' style='background-color:#f0fdf4;border-left:4px solid #16a34a;padding:14px 16px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:21px;color:#14532d;'>{{ResolutionRemarks}}</td>
+    </tr>
+</table>
+{{/if}}
+
+{{#if DecisionRemark}}
+<div style='height:22px;line-height:22px;font-size:22px;'>&nbsp;</div>
+<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'>
+    <tr>
+        <td bgcolor='#fffbeb' style='background-color:#fffbeb;border-left:4px solid #f59e0b;padding:14px 16px;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:21px;color:#78350f;'>
+            <b>Remarks:</b> {{DecisionRemark}}
+        </td>
+    </tr>
+</table>
+{{/if}}
+
+<p style='margin:24px 0 0 0;font-family:Arial,Helvetica,sans-serif;font-size:12px;line-height:18px;color:#6b7280;text-align:center;'>
+    Please open the HRMS app &rarr; Ticket Support to view the ticket and take action.<br>
+    This is an automated message from {{CompanyName}}.
+</p>

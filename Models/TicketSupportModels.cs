@@ -44,6 +44,32 @@ namespace CRMWebServices.Models
             public int? AssignedTo { get; set; }
             /// <summary>Travel request sent with an employee-raised Visit ticket.</summary>
             public List<TicketExpenseItem>? Travel { get; set; }
+            /// <summary>Requirement / Offering items (Category, Offering, Product, Serial No).</summary>
+            public List<TicketRequirementItem>? Requirements { get; set; }
+            /// <summary>WARRANTY | AMC | BILLABLE | TESTING | OTHER (one or more).</summary>
+            public List<string>? ServiceTypes { get; set; }
+            /// <summary>Required when ServiceTypes contains OTHER.</summary>
+            public string? ServiceTypeOther { get; set; }
+        }
+
+        public class TicketRequirementItem
+        {
+            [Newtonsoft.Json.JsonProperty("ref_ProductCategoryId")]
+            [System.Text.Json.Serialization.JsonPropertyName("ref_ProductCategoryId")]
+            public int? CategoryId { get; set; }
+            public string? CategoryName { get; set; }
+            [Newtonsoft.Json.JsonProperty("ref_OfferingId")]
+            [System.Text.Json.Serialization.JsonPropertyName("ref_OfferingId")]
+            public int? OfferingId { get; set; }
+            public string? OfferingName { get; set; }
+            [Newtonsoft.Json.JsonProperty("ref_ProductId")]
+            [System.Text.Json.Serialization.JsonPropertyName("ref_ProductId")]
+            public long? ProductId { get; set; }
+            public string? ProductName { get; set; }
+            public string? SerialNo { get; set; }
+            [Newtonsoft.Json.JsonProperty("requirementRemark")]
+            [System.Text.Json.Serialization.JsonPropertyName("requirementRemark")]
+            public string? Remark { get; set; }
         }
 
         public class TicketTravelRequest
@@ -68,6 +94,28 @@ namespace CRMWebServices.Models
             public decimal Latitude { get; set; }
             public decimal Longitude { get; set; }
             public string? Address { get; set; }
+        }
+
+        public class TicketCompleteActivityRequest
+        {
+            public int TicketId { get; set; }
+            public int TicketActivityId { get; set; }
+            public string? Remarks { get; set; }
+        }
+
+        public class TicketCloseDecisionRequest
+        {
+            public int TicketId { get; set; }
+            /// <summary>APPROVE | REJECT</summary>
+            public string Decision { get; set; } = string.Empty;
+            public string? Remarks { get; set; }
+        }
+
+        public class TicketReassignRequest
+        {
+            public int TicketId { get; set; }
+            public int AssignedTo { get; set; }
+            public string? Remarks { get; set; }
         }
 
         public class TicketActivityRequest
@@ -108,7 +156,7 @@ namespace CRMWebServices.Models
         public class TicketServiceModeRequest
         {
             public int TicketId { get; set; }
-            /// <summary>ONLINE | VISIT</summary>
+            /// <summary>ONLINE | CARRY_IN | VISIT</summary>
             public string ServiceMode { get; set; } = string.Empty;
         }
 

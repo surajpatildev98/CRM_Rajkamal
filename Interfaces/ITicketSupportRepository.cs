@@ -16,6 +16,10 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> SendForApproval(TicketTravelRequest model, int employeeId, bool isManager);
         Task<ApiResponse> Decide(TicketDecisionRequest model, int employeeId, bool isManager);
         Task<ApiResponse> CheckIn(TicketCheckInRequest model, int employeeId, bool isManager);
+        Task<ApiResponse> CheckOut(TicketCheckInRequest model, int employeeId, bool isManager);
+        Task<ApiResponse> CompleteActivity(TicketCompleteActivityRequest model, int employeeId, bool isManager);
+        Task<ApiResponse> DecideClose(TicketCloseDecisionRequest model, int employeeId, bool isManager);
+        Task<ApiResponse> Reassign(TicketReassignRequest model, int employeeId, bool isManager);
         Task<ApiResponse> AddActivity(TicketActivityRequest model, int employeeId, bool isManager);
         Task<ApiResponse> AddExpenses(TicketExpenseRequest model, int employeeId, bool isManager);
         Task<ApiResponse> CompleteTicket(TicketCompleteRequest model, int employeeId, bool isManager);
