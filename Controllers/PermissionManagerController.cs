@@ -12,9 +12,11 @@ namespace CRMWebServices.Controllers
     public class PermissionManagerController : ControllerBase
     {
         private readonly IPermissionManagerRepository _repository;
-        public PermissionManagerController(IPermissionManagerRepository repository)
+        private readonly IPermissionService _permissionService;
+        public PermissionManagerController(IPermissionManagerRepository repository, IPermissionService permissionService)
         {
             _repository = repository;
+            _permissionService = permissionService;
         }
 
         // TEMP: Admin-only gate until a bootstrapped permission code exists for this module.
@@ -182,6 +184,36 @@ namespace CRMWebServices.Controllers
             var response = await _repository.SaveRoleModuleAccess(request);
 
             // TODO: invalidate cache for every employee holding this role — see cache staleness note
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+        #endregion
+
+        #region GET api/PermissionManager/user/{employeeId}/overrides
+        [HttpGet("user/{employeeId}/overrides")]
+        public async Task<IActionResult> GetUserOverrides(int employeeId, [FromQuery] int? moduleId, [FromQuery] int? superModuleId)
+        {
+            if (!IsAdmin())
+                return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
+
+            var response = await _repository.GetUserOverrides(employeeId, moduleId, superModuleId);
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+        #endregion
+
+        #region POST api/PermissionManager/user/overrides/save
+        [HttpPost("user/overrides/save")]
+        public async Task<IActionResult> SaveUserOverrides([FromBody] SaveUserOverridesRequest request)
+        {
+            if (!IsAdmin())
+                return StatusCode(StatusCodes.Status403Forbidden, new ApiResponse { Status = false, Message = "Not authorized." });
+
+            request.CreatedBy = User.EmployeeId();
+            var (response, permissionCodes) = await _repository.SaveUserOverrides(request);
+
+            // Overrides are per employee, so this user's cached permissions can be cleared right away.
+            if (response.Status)
+                _permissionService.InvalidateCache(request.EmployeeId, permissionCodes);
+
             return response.Status ? Ok(response) : BadRequest(response);
         }
         #endregion

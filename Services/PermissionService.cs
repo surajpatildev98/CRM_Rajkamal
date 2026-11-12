@@ -231,10 +231,12 @@ namespace CRMWebServices.Services
         #endregion
 
         #region InvalidateCache used for clearing cached permissions for a user
-        public void InvalidateCache(int employeeId)
+        public void InvalidateCache(int employeeId, IEnumerable<string>? permissionCodes = null)
         {
             _cache.Remove($"UserPermissions_{employeeId}");
             _cache.Remove($"UserPermissionsDict_{employeeId}");
+            foreach (var code in permissionCodes ?? Enumerable.Empty<string>())
+                _cache.Remove($"Permission_{employeeId}_{code}");
             _logger.LogInformation("Cache invalidated for user {EmployeeId}", employeeId);
         }
         #endregion

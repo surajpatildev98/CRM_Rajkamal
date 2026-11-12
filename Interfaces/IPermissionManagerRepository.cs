@@ -31,5 +31,9 @@ namespace CRMWebServices.Interfaces
         // Role -> Module access
         Task<ApiResponse> GetRoleModuleAccess(int roleId);
         Task<ApiResponse> SaveRoleModuleAccess(SaveRoleModuleAccessRequest request);
+
+        // Employee -> Permission override (on top of role)
+        Task<ApiResponse> GetUserOverrides(int employeeId, int? moduleId, int? superModuleId);
+        Task<(ApiResponse Response, List<string> PermissionCodes)> SaveUserOverrides(SaveUserOverridesRequest request);
     }
 }

@@ -298,7 +298,78 @@ namespace CRMWebServices.Repository
         }
         #endregion
 
-        #region SAVE_ROLE_PERMISSIONS  
+        #region GET_USER_OVERRIDES
+        public async Task<ApiResponse> GetUserOverrides(int employeeId, int? moduleId, int? superModuleId)
+        {
+            try
+            {
+                var dt = await _database.ExecuteDataTableAsync(SP_NAME,
+                    new SqlParameter("@Status", "GET_USER_OVERRIDES"),
+                    new SqlParameter("@EmployeeId", employeeId),
+                    new SqlParameter("@ModuleId", (object?)moduleId ?? DBNull.Value),
+                    new SqlParameter("@Ref_SuperModuleId", (object?)superModuleId ?? DBNull.Value)
+                );
+
+                var result = dt.Rows.Cast<DataRow>().Select(r => new UserOverrideItem
+                {
+                    ModuleId = Convert.ToInt32(r["ModuleId"]),
+                    ModuleName = r["ModuleName"]?.ToString(),
+                    PermissionId = Convert.ToInt32(r["PermissionId"]),
+                    PermissionCode = r["PermissionCode"]?.ToString(),
+                    PermissionName = r["PermissionName"]?.ToString(),
+                    Description = r["Description"] == DBNull.Value ? null : r["Description"].ToString(),
+                    RoleIsAllowed = Convert.ToBoolean(r["RoleIsAllowed"]),
+                    OverrideIsAllowed = r["OverrideIsAllowed"] == DBNull.Value ? null : Convert.ToBoolean(r["OverrideIsAllowed"]),
+                    IsAllowed = Convert.ToBoolean(r["IsAllowed"]),
+                    Reason = r["Reason"] == DBNull.Value ? null : r["Reason"].ToString(),
+                    OverrideUpdatedOn = r["OverrideUpdatedOn"] == DBNull.Value ? null : Convert.ToDateTime(r["OverrideUpdatedOn"])
+                }).ToList();
+
+                return new ApiResponse { Status = true, Message = "User overrides fetched successfully.", Data = result };
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error fetching user overrides for employee {EmployeeId}", employeeId);
+                return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" };
+            }
+        }
+        #endregion
+
+        #region SAVE_USER_OVERRIDES
+        public async Task<(ApiResponse Response, List<string> PermissionCodes)> SaveUserOverrides(SaveUserOverridesRequest request)
+        {
+            var codes = new List<string>();
+            try
+            {
+                if (request.Permissions == null || request.Permissions.Count == 0)
+                    return (new ApiResponse { Status = false, Message = "No override changes provided." }, codes);
+
+                var ds = await _database.ExecuteDataSetAsync(SP_NAME,
+                    new SqlParameter("@Status", "SAVE_USER_OVERRIDES"),
+                    new SqlParameter("@EmployeeId", request.EmployeeId),
+                    new SqlParameter("@EmployeeOverridesJson", JsonConvert.SerializeObject(request.Permissions)),
+                    new SqlParameter("@Description", (object?)request.Reason ?? DBNull.Value),
+                    new SqlParameter("@CreatedBy", (object?)request.CreatedBy ?? DBNull.Value)
+                );
+
+                if (ds.Tables.Count == 0 || ds.Tables[0].Rows.Count == 0)
+                    return (new ApiResponse { Status = false, Message = "No response received from database." }, codes);
+
+                var row = ds.Tables[0].Rows[0];
+                if (ds.Tables.Count > 1)
+                    codes = ds.Tables[1].Rows.Cast<DataRow>().Select(r => r["PermissionCode"]?.ToString() ?? string.Empty).ToList();
+
+                return (new ApiResponse { Status = Convert.ToBoolean(row["Success"]), Message = row["Message"]?.ToString() }, codes);
+            }
+            catch (SqlException ex)
+            {
+                _logger.LogError(ex, "Error saving user overrides for employee {EmployeeId}", request.EmployeeId);
+                return (new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" }, codes);
+            }
+        }
+        #endregion
+
+        #region SAVE_ROLE_PERMISSIONS
        
         public async Task<ApiResponse> SaveRolePermissions(SaveRolePermissionsRequest request)
         {

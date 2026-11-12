@@ -299,5 +299,35 @@
             public List<SaveRoleSuperModuleAccessItem>? SuperModules { get; set; }
             public int? CreatedBy { get; set; }
         }
+
+        // ----- USER PERMISSION OVERRIDE -----
+        public class UserOverrideItem
+        {
+            public int ModuleId { get; set; }
+            public string? ModuleName { get; set; }
+            public int PermissionId { get; set; }
+            public string? PermissionCode { get; set; }
+            public string? PermissionName { get; set; }
+            public string? Description { get; set; }
+            public bool RoleIsAllowed { get; set; }
+            public bool? OverrideIsAllowed { get; set; }   // null = from role, true = granted, false = blocked
+            public bool IsAllowed { get; set; }            // final access
+            public string? Reason { get; set; }
+            public DateTime? OverrideUpdatedOn { get; set; }
+        }
+
+        public class SaveUserOverrideItem
+        {
+            public int PermissionId { get; set; }
+            public bool? IsAllowed { get; set; }           // null = reset to role
+        }
+
+        public class SaveUserOverridesRequest
+        {
+            public int EmployeeId { get; set; }            // employee being overridden
+            public List<SaveUserOverrideItem> Permissions { get; set; } = new();
+            public string? Reason { get; set; }
+            public int? CreatedBy { get; set; }
+        }
     }
 }

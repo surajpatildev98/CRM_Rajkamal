@@ -36,6 +36,6 @@ namespace CRMWebServices.Interfaces
         Task<List<ModulePermission>> GetUserModules(ClaimsPrincipal user);
 
         // Invalidate cache
-        void InvalidateCache(int employeeId);
+        void InvalidateCache(int employeeId, IEnumerable<string>? permissionCodes = null);
     }
 }
