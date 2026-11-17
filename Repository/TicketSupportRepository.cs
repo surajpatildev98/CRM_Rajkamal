@@ -45,14 +45,17 @@ namespace CRMWebServices.Repository
         private readonly ILeadRepository _leadRepository;
         private readonly ISchedulerExecutionService _scheduler;
         private readonly ILogger<TicketSupportRepository> _logger;
+        private readonly IAmcRepository _amcRepository;
 
         public TicketSupportRepository(
             IDatabaseService database,
             ILeadRepository leadRepository,
             ISchedulerExecutionService scheduler,
-            ILogger<TicketSupportRepository> logger)
+            ILogger<TicketSupportRepository> logger,
+            IAmcRepository amcRepository)
         {
             _database = database;
+            _amcRepository = amcRepository;
             _leadRepository = leadRepository;
             _scheduler = scheduler;
             _logger = logger;
@@ -117,6 +120,7 @@ namespace CRMWebServices.Repository
                 var ticketId = Int(row, "ticketId");
                 var ticketNo = Str(row, "ticketNo");
                 var assignedTo = Int(row, "assignedTo");
+                await _amcRepository.LinkTicket(ticketId);   // AMC badge: COVERED / NOT_COVERED / VISIT_LIMIT_EXCEEDED
                 if (assignedTo != employeeId)
                     await Notify(assignedTo, ticketId, "New Ticket Assigned",
                         $"Ticket {ticketNo} ({model.CustomerName}) has been assigned to you.", "ASSIGNEE");
@@ -436,7 +440,7 @@ namespace CRMWebServices.Repository
         }
 
         /// <summary>Rows as dictionaries with camelCase keys and DBNull → null.</summary>
-        private static List<Dictionary<string, object?>> Rows(DataTable table)
+        internal static List<Dictionary<string, object?>> Rows(DataTable table)
         {
             var list = new List<Dictionary<string, object?>>();
             foreach (DataRow dr in table.Rows)
@@ -524,7 +528,7 @@ namespace CRMWebServices.Repository
             return saved.Count == 0 ? null : JsonConvert.SerializeObject(saved);
         }
 
-        private static string SaveBase64(string base64, string originalFileName, string folderName)
+        internal static string SaveBase64(string base64, string originalFileName, string folderName)
         {
             if (string.IsNullOrWhiteSpace(originalFileName)) throw new Exception("File name is required.");
             if (base64.Contains(',')) base64 = base64.Substring(base64.IndexOf(',') + 1);
@@ -545,7 +549,7 @@ namespace CRMWebServices.Repository
             return Path.Combine("Uploads", folderName, unique).Replace("\\", "/");
         }
 
-        private static string? FileUrl(string? filePath)
+        internal static string? FileUrl(string? filePath)
         {
             if (string.IsNullOrEmpty(filePath)) return null;
             var relative = filePath.Replace("Uploads/", "").Replace("Uploads\\", "");

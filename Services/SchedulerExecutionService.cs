@@ -1,4 +1,7 @@
 ﻿using CRMWebServices.Interfaces;
+using CRMWebServices.Models;
+using System.Globalization;
+using System.Net;
 using Microsoft.Data.SqlClient;
 using System.Data;
 
@@ -85,6 +88,10 @@ namespace CRMWebServices.Services
 
                     case "EMPLOYEE_BIRTHDAY":
                         await ProcessEmployeeBirthdayAsync(schedulerJobItemId);
+                        break;
+
+                    case "AMC_EXPIRY":
+                        await ProcessAmcExpiryAsync(schedulerJobItemId, Convert.ToInt32(item["SchedulerJobId"]));
                         break;
 
                     default:
@@ -652,5 +659,114 @@ namespace CRMWebServices.Services
         }
         #endregion
 
+            #region AMC Expiry Reminder
+        /// <summary>
+        /// Daily item (EntityId 0): mails each customer whose AMC reaches 30/15/10/5/1 days before the end date,
+        /// CC + push to employees allowed AMC_ExpiryReminder. A contract is logged (REMINDER_SENT) only after its
+        /// mail is sent, so a failed one is retried next day. The next day's item is always created.
+        /// </summary>
+        private async Task ProcessAmcExpiryAsync(long schedulerJobItemId, int schedulerJobId)
+        {
+            const string AmcSp = "USP_AMC_ContractManagement";
+            try
+            {
+                var due = await _database.ExecuteDataSetAsync(AmcSp,
+                    new SqlParameter("@Status", "GET_DUE_REMINDERS"), new SqlParameter("@EmployeeId", 0));
+                var contracts = due.Tables[0];
+                if (contracts.Rows.Count > 0)
+                {
+                    var staff = await _database.ExecuteDataTableAsync(AmcSp,
+                        new SqlParameter("@Status", "GET_REMINDER_RECIPIENTS"), new SqlParameter("@EmployeeId", 0));
+                    var ccEmails = staff.AsEnumerable()
+                        .Select(r => r["OfficialEmail"]?.ToString())
+                        .Where(e => !string.IsNullOrWhiteSpace(e)).Select(e => e!.Trim()).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+
+                    foreach (DataRow c in contracts.Rows)
+                    {
+                        int amcId = Convert.ToInt32(c["AmcContractId"]);
+                        int reminderDays = Convert.ToInt32(c["ReminderDays"]);
+                        int daysLeft = Convert.ToInt32(c["DaysLeft"]);
+                        string amcNo = c["AmcNo"]?.ToString() ?? "";
+                        string customer = c["CustomerName"]?.ToString() ?? "";
+                        string endDate = Convert.ToDateTime(c["EndDate"]).ToString("dd-MMM-yyyy");
+                        string? customerEmail = c["ContactEmail"] as string;
+                        string daysText = daysLeft <= 0 ? "TODAY" : daysLeft == 1 ? "1 DAY" : $"{daysLeft} DAYS";
+                        string title = $"AMC Renewal Reminder - {amcNo} expires on {endDate}";
+                        string message = $"AMC {amcNo} of {customer} expires on {endDate} ({daysText.ToLowerInvariant()} left).";
+
+                        const string Cell = "padding:8px 12px;border-top:1px solid #e2e8f0;font-family:Arial,Helvetica,sans-serif;font-size:13px;";
+                        var items = due.Tables[1].AsEnumerable()
+                            .Where(r => Convert.ToInt32(r["AmcContractId"]) == amcId)
+                            .Select(r => $"<tr><td style=\"{Cell}color:#0f172a;\">{WebUtility.HtmlEncode(r["ProductName"]?.ToString() ?? "")}</td>"
+                                       + $"<td style=\"{Cell}color:#475569;\">{WebUtility.HtmlEncode((r["SerialNo"] as string) ?? (r["LicenseKey"] as string) ?? "-")}</td></tr>");
+
+                        string body = _emailComposer.Compose("AMC_EXPIRY", title, message, "CUSTOMER", new Dictionary<string, string?>
+                        {
+                            ["HeaderLabel"] = "AMC Renewal Reminder",
+                            ["CustomerName"] = customer,
+                            ["AmcNo"] = amcNo,
+                            ["AmcTypeText"] = $"{Pretty(c["AmcType"])} - {Pretty(c["CoverageType"])}",
+                            ["StartDate"] = Convert.ToDateTime(c["StartDate"]).ToString("dd-MMM-yyyy"),
+                            ["EndDate"] = endDate,
+                            ["DaysLeftText"] = daysText,
+                            ["ItemsHtml"] = string.Concat(items)
+                        });
+
+                        // No customer email: send to the internal list only, so someone still follows up.
+                        var to = !string.IsNullOrWhiteSpace(customerEmail) ? customerEmail.Trim() : ccEmails.FirstOrDefault();
+                        if (to == null)
+                        {
+                            _logger.LogWarning("AMC {AmcNo}: no customer email and no AMC_ExpiryReminder recipients.", amcNo);
+                            continue;
+                        }
+
+                        bool sent = await _email.SendAsync(new EmailMessage
+                        {
+                            ToEmail = to,
+                            Subject = title,
+                            HtmlBody = body,
+                            CcEmails = ccEmails.Where(e => !e.Equals(to, StringComparison.OrdinalIgnoreCase)).ToList()
+                        });
+                        if (!sent)
+                        {
+                            _logger.LogWarning("AMC {AmcNo}: reminder mail failed, will retry next run.", amcNo);
+                            continue;
+                        }
+
+                        await _database.ExecuteDataTableAsync(AmcSp,
+                            new SqlParameter("@Status", "MARK_REMINDER_SENT"), new SqlParameter("@EmployeeId", 0),
+                            new SqlParameter("@AmcContractId", amcId), new SqlParameter("@ReminderDays", reminderDays),
+                            new SqlParameter("@Reason", $"{reminderDays}-day reminder sent to {to}" + (ccEmails.Count > 0 ? $"; CC {string.Join(", ", ccEmails)}" : "")));
+
+                        foreach (DataRow e in staff.Rows)
+                        {
+                            try
+                            {
+                                await SendEmployeeNotificationAsync(schedulerJobItemId, Convert.ToInt32(e["EmployeeId"]), amcId,
+                                    "AMC Expiry Reminder", message, "AMC_EXPIRY", "SUPPORT");
+                            }
+                            catch (Exception ex) { _logger.LogWarning(ex, "AMC {AmcNo}: push failed.", amcNo); }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "AMC expiry reminder run failed. JobItemId: {JobItemId}", schedulerJobItemId);
+            }
+
+            await CompleteJobItemAsync(schedulerJobItemId);
+            await _database.ExecuteDataTableAsync(SP_NAME,
+                new SqlParameter("@Status", "CREATE_JOB_ITEM"),
+                new SqlParameter("@SchedulerJobId", schedulerJobId),
+                new SqlParameter("@EntityType", "AMC_EXPIRY"),
+                new SqlParameter("@EntityId", 0),
+                new SqlParameter("@ScheduledOn", DateTime.Today.AddDays(1).AddHours(9)),
+                new SqlParameter("@SuppressResultSet", true));
+        }
+
+        private static string Pretty(object? value) =>
+            CultureInfo.InvariantCulture.TextInfo.ToTitleCase((value?.ToString() ?? "").Replace('_', '-').ToLowerInvariant());
+        #endregion
     }
 }

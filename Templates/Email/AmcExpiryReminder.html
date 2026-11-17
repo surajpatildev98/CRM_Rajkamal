@@ -1,0 +1,82 @@
+<p style='margin:0 0 6px 0;font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:24px;color:#0f172a;'>Dear {{CustomerName}},</p>
+<p style='margin:0 0 18px 0;font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:22px;color:#475569;'>
+    This is a friendly reminder that your Annual Maintenance Contract with us is about to expire.
+    Please renew it before the end date to keep your support and service coverage active without a break.
+</p>
+
+<table role='presentation' cellpadding='0' cellspacing='0' border='0' style='margin:0 0 20px 0;'>
+    <tr>
+        <td bgcolor='#fef3c7' style='background-color:#fef3c7;border-radius:999px;padding:6px 14px;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;letter-spacing:0.6px;color:#92400e;'>
+            &#9679;&nbsp; EXPIRES IN {{DaysLeftText}}
+        </td>
+    </tr>
+</table>
+
+<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'>
+    <tr>
+        <td width='50%' valign='top' style='padding:0 6px 12px 0;'>
+            <table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border:1px solid #e2e8f0;border-radius:8px;'>
+                <tr>
+                    <td bgcolor='#f8fafc' style='background-color:#f8fafc;border-radius:8px;padding:12px 14px;'>
+                        <div style='font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.8px;color:#64748b;text-transform:uppercase;'>AMC No.</div>
+                        <div style='font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#0f172a;padding-top:4px;'>{{AmcNo}}</div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td width='50%' valign='top' style='padding:0 0 12px 6px;'>
+            <table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border:1px solid #e2e8f0;border-radius:8px;'>
+                <tr>
+                    <td bgcolor='#fef2f2' style='background-color:#fef2f2;border-radius:8px;padding:12px 14px;'>
+                        <div style='font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.8px;color:#991b1b;text-transform:uppercase;'>Expires On</div>
+                        <div style='font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#991b1b;padding-top:4px;'>{{EndDate}}</div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td width='50%' valign='top' style='padding:0 6px 12px 0;'>
+            <table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border:1px solid #e2e8f0;border-radius:8px;'>
+                <tr>
+                    <td bgcolor='#f8fafc' style='background-color:#f8fafc;border-radius:8px;padding:12px 14px;'>
+                        <div style='font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.8px;color:#64748b;text-transform:uppercase;'>AMC Type</div>
+                        <div style='font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#0f172a;padding-top:4px;'>{{AmcTypeText}}</div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+        <td width='50%' valign='top' style='padding:0 0 12px 6px;'>
+            <table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border:1px solid #e2e8f0;border-radius:8px;'>
+                <tr>
+                    <td bgcolor='#f8fafc' style='background-color:#f8fafc;border-radius:8px;padding:12px 14px;'>
+                        <div style='font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.8px;color:#64748b;text-transform:uppercase;'>Contract Period</div>
+                        <div style='font-family:Arial,Helvetica,sans-serif;font-size:15px;font-weight:700;color:#0f172a;padding-top:4px;'>{{StartDate}} &ndash; {{EndDate}}</div>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+{{#if ItemsHtml}}
+<div style='font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:0.8px;color:#64748b;text-transform:uppercase;padding:4px 0 8px 0;'>Covered Items</div>
+<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0' style='border:1px solid #e2e8f0;border-radius:8px;border-collapse:separate;'>
+    <tr>
+        <td bgcolor='#f1f5f9' style='background-color:#f1f5f9;padding:8px 12px;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;color:#334155;'>Product</td>
+        <td bgcolor='#f1f5f9' style='background-color:#f1f5f9;padding:8px 12px;font-family:Arial,Helvetica,sans-serif;font-size:12px;font-weight:700;color:#334155;'>Serial No. / License</td>
+    </tr>
+    {{{ItemsHtml}}}
+</table>
+<div style='height:16px;line-height:16px;font-size:16px;'>&nbsp;</div>
+{{/if}}
+
+<table role='presentation' width='100%' cellpadding='0' cellspacing='0' border='0'>
+    <tr>
+        <td bgcolor='#fef2f2' style='background-color:#fef2f2;border-left:4px solid #c8161d;border-radius:6px;padding:14px 16px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:20px;color:#7f1d1d;'>
+            <b>Renew your AMC</b><br>
+            After the end date, service visits and support for these items will be chargeable.
+            Please contact our sales or support team to renew.
+        </td>
+    </tr>
+</table>

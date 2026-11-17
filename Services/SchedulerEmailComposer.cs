@@ -18,6 +18,7 @@ namespace CRMWebServices.Services
             ["PROBATION_CONFIRMED"] = "ProbationConfirmed",
             ["ANNOUNCEMENT"] = "Announcement",
             ["TICKET"] = "TicketNotification",
+            ["AMC_EXPIRY"] = "AmcExpiryReminder",
         };
 
         // moved from SchedulerExecutionService.ActionColors
@@ -33,6 +34,7 @@ namespace CRMWebServices.Services
             ["PROBATION_CONFIRMED"] = "#C8161D",
             ["ANNOUNCEMENT"] = "#C8161D",
             ["TICKET"] = "#1e3a8a",
+            ["AMC_EXPIRY"] = "#C8161D",
         };
 
         private readonly IEmailTemplateRenderer _renderer;

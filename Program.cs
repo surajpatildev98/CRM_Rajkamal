@@ -91,6 +91,7 @@ builder.Services.AddScoped<IResignationRepository, ResignationRepository>();
 builder.Services.AddScoped<IPayslipRepository, PayslipRepository>();
 builder.Services.AddScoped<IAnnouncementRepository, AnnouncementRepository>();
 builder.Services.AddScoped<ITicketSupportRepository, TicketSupportRepository>();
+builder.Services.AddScoped<IAmcRepository, AmcRepository>();
 
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailConfigurationRepository, EmailConfigurationRepository>();

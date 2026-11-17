@@ -48,6 +48,8 @@ namespace CRMWebServices.Services
 
                 email.From.Add(new MailboxAddress(config.FromName,config.FromEmail));
                 email.To.Add(MailboxAddress.Parse(message.ToEmail));
+                foreach (var cc in message.CcEmails ?? new List<string>())
+                    if (MailboxAddress.TryParse(cc, out var ccAddress)) email.Cc.Add(ccAddress);
                 email.Subject = message.Subject;
 
                 var builder = new BodyBuilder { HtmlBody = message.HtmlBody };
