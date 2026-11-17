@@ -509,7 +509,6 @@
             public DateTime CreatedOn { get; set; }
         }
 
-
         public class CRMReportActivityAttachmentResponse
         {
             public int AttachmentId { get; set; }

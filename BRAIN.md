@@ -1,4 +1,4 @@
-# BRAIN.md — CRMWebServices (Rajkamal Business Management Platform) Knowledge Base
+﻿# BRAIN.md — CRMWebServices (Rajkamal Business Management Platform) Knowledge Base
 
 > **Read this first.** Future AI agents: start here, find your module in §3, and open only the files listed for it. See §14 for working rules and [AGENTS.md](AGENTS.md).
 >
@@ -234,6 +234,8 @@ sequenceDiagram
 
 - **Password reset:** `forgot_password` (6-digit OTP from `RandomNumberGenerator`, BCrypt-hashed, `GENERATE_RESET_OTP`, emailed, valid 10 min) → `verify_otp` (`GET_RESET_OTP`, max 5 attempts, `INCREMENT_OTP_ATTEMPT`, `VERIFY_RESET_OTP` returns a Guid `ResetToken`) → `Reset_password` (policy: at least 8 characters with upper, lower, digit and special; `GET_RESET_EMPLOYEE`, `RESET_PASSWORD` with a BCrypt hash).
 - **Logout:** `LOGOUT_DEVICE`. The JWT is **not revoked**; there is no deny-list.
+
+- **Login history:** on successful login `AuthController.Login` calls `IAuthRepository.LogLogin` (best-effort, try/catch) → `USP_ORG_LoginActivity @Status=LOG_LOGIN` → table `ORG_EmployeeLoginLog`. Script: [Database/LoginActivity_01_DEV.sql](Database/LoginActivity_01_DEV.sql). Read by `GET api/dashboard/login-activity?date=` (access: role code `SUPERADMIN`/`ADMIN`/`HRMANAGER` via `@Status=CAN_VIEW`, or `HRMSDashboard_ViewAll`; data via `@Status=GET_DAY_SUMMARY`: T0 summary, T1 loggedIn, T2 notLoggedIn). NOT VERIFIED against DB until the script is run.
 
 ### 4.2 JWT — VERIFIED ([Helpers/JwtHelper.cs](Helpers/JwtHelper.cs), [Program.cs:110-124](Program.cs#L110-L124))
 | Claim | Value |
@@ -607,6 +609,8 @@ employees, detail, history, extend, **confirm** (SP → save the client-generate
   - Rules: at most 90 days back, no future dates, one PENDING request per employee per day, and the reviewer must be the employee's mapped reporting manager or HR manager.
   - Approve runs in one transaction that rewrites punches (`PunchSource='REGULARIZATION'`) and recomputes late minutes, early exit, working hours and break hours.
   - **Notifications (2026-11-05):** after a successful APPROVE / REJECT the applicant gets a push ("Regularization Approved" / "Regularization Rejected") via `SendEmployeeNotificationAsync`, `EntityType=REGULARIZATION`, `EntityId=RegularizationId`, `RecipientType=EMPLOYEE`. The applicant and date are looked up first through `GET_TEAM`, because the APPROVE/REJECT result sets don't return them. No SP change. Best-effort: if the push fails, it is only logged. Not yet tested end-to-end (NOT VERIFIED). After a successful APPLY, the employee's `Ref_ReportingManagerId` and `Ref_ReportingHRManagerId` (read-only SELECT on `ORG_Employee`, same pattern as `ResignationRepository.GetApproversAsync`) each get "New Regularization Request", `EntityType=REGULARIZATION_REQUEST`, `RecipientType=MANAGER`. Best-effort; NOT VERIFIED.
+
+- **WFH confirmation:** `ManualPunch` with `WorkMode=WFH` and `PunchType=I` requires `WfhConfirmedById` (an EmployeeId). Passed as `@WfhConfirmedById` to `USP_ORG_Attendance @Status=MANUAL_PUNCH`, which validates it and stores it in new column `ORG_Attendance.Ref_WfhConfirmedById` (FK `ORG_Employee`). Script: [Database/WfhApproval_01_DEV.sql](Database/WfhApproval_01_DEV.sql). NOT VERIFIED against DB until the script is run.
 
 ### 7.4 Leave / Leave policy / Shift / Holiday
 - Leave (`USP_ORG_LeaveManagement`): balance, my leaves, apply types, apply, cancel, team leaves, approve, reject. **employeeId comes from the query or body** (no token check).

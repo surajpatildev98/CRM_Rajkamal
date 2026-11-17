@@ -625,5 +625,17 @@ namespace CRMWebServices.Repository
             }
         }
         #endregion
+
+        #region LogLogin - records a successful login for the daily login activity card
+        public async Task LogLogin(int employeeId, string? deviceId, string? deviceType, string? appVersion)
+        {
+            await _database.ExecuteNonQueryAsync("USP_ORG_LoginActivity",
+                new SqlParameter("@Status", "LOG_LOGIN"),
+                new SqlParameter("@EmployeeId", employeeId),
+                new SqlParameter("@DeviceId", (object?)deviceId ?? DBNull.Value),
+                new SqlParameter("@DeviceType", (object?)deviceType ?? DBNull.Value),
+                new SqlParameter("@AppVersion", (object?)appVersion ?? DBNull.Value));
+        }
+        #endregion
     }
 }

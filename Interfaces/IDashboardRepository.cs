@@ -7,5 +7,7 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> GetDashboardFull(int? employeeId, DateTime? fromDate, DateTime? toDate, int loggedInEmployeeId);
         Task<ApiResponse> GetEmployeePerformance();
         Task<ApiResponse> GetHrmsDashboardFull(int employeeId, bool isAdmin);
+        Task<ApiResponse> GetLoginActivity(DateTime? date);
+        Task<bool> CanViewLoginActivity(int employeeId);
     }
 }

@@ -156,5 +156,45 @@ namespace CRMWebServices.Repository
             catch (Exception ex) { return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" }; }
         }
         #endregion
+
+        #region  CanViewLoginActivity - role code SUPERADMIN / ADMIN / HRMANAGER
+        public async Task<bool> CanViewLoginActivity(int employeeId)
+        {
+            var dt = await _database.ExecuteDataTableAsync("USP_ORG_LoginActivity",
+                new SqlParameter("@Status", "CAN_VIEW"),
+                new SqlParameter("@EmployeeId", employeeId));
+
+            return dt.Rows.Count > 0 && dt.Rows[0]["CanView"] != DBNull.Value && Convert.ToBoolean(dt.Rows[0]["CanView"]);
+        }
+        #endregion
+
+        #region  GetLoginActivity - per-day login count + who logged in / who did not
+        public async Task<ApiResponse> GetLoginActivity(DateTime? date)
+        {
+            try
+            {
+                var ds = await _database.ExecuteDataSetAsync("USP_ORG_LoginActivity",
+                    new SqlParameter("@Status", "GET_DAY_SUMMARY"),
+                    new SqlParameter("@Date", (object?)date?.Date ?? DBNull.Value));
+
+                if (ds.Tables.Count < 3)
+                    return new ApiResponse { Status = false, Message = "Unexpected response from database." };
+
+                return new ApiResponse
+                {
+                    Status = true,
+                    Message = "Login activity fetched successfully.",
+                    Data = new
+                    {
+                        summary = ds.Tables[0].Rows.Count > 0 ? RowToDict(ds.Tables[0].Rows[0]) : new Dictionary<string, object>(),
+                        loggedIn = ds.Tables[1].Rows.Cast<DataRow>().Select(RowToDict).ToList(),
+                        notLoggedIn = ds.Tables[2].Rows.Cast<DataRow>().Select(RowToDict).ToList()
+                    }
+                };
+            }
+            catch (SqlException ex) { return new ApiResponse { Status = false, Message = $"Database Error: {ex.Message}" }; }
+            catch (Exception ex) { return new ApiResponse { Status = false, Message = $"Error: {ex.Message}" }; }
+        }
+        #endregion
     }
 }

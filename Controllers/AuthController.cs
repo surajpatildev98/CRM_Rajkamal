@@ -162,6 +162,10 @@ namespace CRMWebServices.Controllers
 
             string token = _jwt.GenerateToken(employeeId, request.LoginId, employeeCode, roleIds);
 
+            // Best-effort: login history for the daily login activity card. Never block login.
+            try { await _authRepo.LogLogin(employeeId, request.DeviceId, request.DeviceType, request.AppVersion); }
+            catch { }
+
             response.Status = true;
             response.Message = "Login Successful";
             response.Data = new

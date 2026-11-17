@@ -19,5 +19,6 @@ namespace CRMWebServices.Interfaces
         Task<ApiResponse> VerifyResetOtp(int employeeId);
         Task<ApiResponse> ResetPassword(int employeeId,Guid resetToken,string newPasswordHash);
         Task<int?> GetResetEmployeeByToken(Guid resetToken);
+        Task LogLogin(int employeeId, string? deviceId, string? deviceType, string? appVersion);
     }
 }
