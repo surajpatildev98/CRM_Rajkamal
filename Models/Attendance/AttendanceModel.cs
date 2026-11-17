@@ -83,6 +83,9 @@
         public decimal Longitude { get; set; }
         public string? Remarks { get; set; }
         public int CreatedBy { get; set; }
+
+        /// EmployeeId of who confirmed the WFH. Required when WorkMode = WFH and PunchType = I.
+        public int? WfhConfirmedById { get; set; }
     }
 
     public class ManualPunchResponse

@@ -231,6 +231,13 @@ namespace CRMWebServices.Repository
         {
             try
             {
+                bool isWfhPunchIn =
+                    string.Equals(request.WorkMode, "WFH", StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(request.PunchType, "I", StringComparison.OrdinalIgnoreCase);
+
+                if (isWfhPunchIn && (request.WfhConfirmedById ?? 0) <= 0)
+                    return new ManualPunchResponse { Status = false, Message = "Please select who confirmed your WFH." };
+
                 var dt = await _database.ExecuteDataTableAsync("USP_ORG_Attendance",
                     new SqlParameter("@Status", "MANUAL_PUNCH"),
                     new SqlParameter("@EmployeeId", request.EmployeeId),
@@ -239,7 +246,8 @@ namespace CRMWebServices.Repository
                     new SqlParameter("@Latitude",request.Latitude),
                     new SqlParameter("@Longitude",request.Longitude),
                     new SqlParameter("@Remarks",string.IsNullOrWhiteSpace(request.Remarks) ? DBNull.Value : request.Remarks),
-                    new SqlParameter("@CreatedBy",request.CreatedBy)
+                    new SqlParameter("@CreatedBy",request.CreatedBy),
+                    new SqlParameter("@WfhConfirmedById", isWfhPunchIn ? request.WfhConfirmedById!.Value : DBNull.Value)
                 );
 
                 if (dt.Rows.Count == 0)

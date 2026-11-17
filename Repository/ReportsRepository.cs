@@ -161,6 +161,66 @@ namespace CRMWebServices.Repository
                     });
                 }
 
+                // RESULT SET 5 : LEADS (Total Leads card drill-down)
+                var leads = new List<ReportModels.CRMReportLeadListResponse>();
+
+                if (ds.Tables.Count > 4)
+                {
+                    foreach (DataRow row in ds.Tables[4].Rows)
+                    {
+                        leads.Add(new ReportModels.CRMReportLeadListResponse
+                        {
+                            LeadId = Convert.ToInt32(row["LeadId"]),
+                            LeadNo = row["LeadNo"]?.ToString(),
+                            LeadTitle = row["LeadTitle"] == DBNull.Value ? null : row["LeadTitle"].ToString(),
+                            Ref_LeadOrganizationId = Convert.ToInt32(row["Ref_LeadOrganizationId"]),
+                            CompanyName = row["CompanyName"] == DBNull.Value ? null : row["CompanyName"].ToString(),
+                            Ref_LeadStatusId = row["Ref_LeadStatusId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_LeadStatusId"]),
+                            LeadStatusName = row["LeadStatusName"] == DBNull.Value ? null : row["LeadStatusName"].ToString(),
+                            Ref_LeadSourceId = row["Ref_LeadSourceId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_LeadSourceId"]),
+                            LeadSourceName = row["LeadSourceName"] == DBNull.Value ? null : row["LeadSourceName"].ToString(),
+                            Ref_CurrentAssignedEmployeeId = row["Ref_CurrentAssignedEmployeeId"] == DBNull.Value ? null : Convert.ToInt32(row["Ref_CurrentAssignedEmployeeId"]),
+                            OwnerName = row["OwnerName"] == DBNull.Value ? null : row["OwnerName"].ToString(),
+                            ExpectedValue = row["ExpectedValue"] == DBNull.Value ? null : Convert.ToDecimal(row["ExpectedValue"]),
+                            CreatedOn = row["CreatedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["CreatedOn"]),
+                            UpdatedOn = row["UpdatedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["UpdatedOn"]),
+                            ClosedOn = row["ClosedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["ClosedOn"]),
+                            HasOpportunity = Convert.ToBoolean(row["HasOpportunity"])
+                        });
+                    }
+                }
+
+                // RESULT SET 6 : QUOTATIONS (Total Quotations card drill-down)
+                var quotations = new List<ReportModels.CRMReportQuotationListResponse>();
+
+                if (ds.Tables.Count > 5)
+                {
+                    foreach (DataRow row in ds.Tables[5].Rows)
+                    {
+                        quotations.Add(new ReportModels.CRMReportQuotationListResponse
+                        {
+                            OpportunityQuotationId = Convert.ToInt32(row["OpportunityQuotationId"]),
+                            QuotationNo = row["QuotationNo"] == DBNull.Value ? null : row["QuotationNo"].ToString(),
+                            RevisionNumber = row["RevisionNumber"] == DBNull.Value ? null : Convert.ToInt32(row["RevisionNumber"]),
+                            IsCurrent = row["IsCurrent"] == DBNull.Value ? null : Convert.ToBoolean(row["IsCurrent"]),
+                            QuotationDate = row["QuotationDate"] == DBNull.Value ? null : Convert.ToDateTime(row["QuotationDate"]),
+                            ValidUntil = row["ValidUntil"] == DBNull.Value ? null : Convert.ToDateTime(row["ValidUntil"]),
+                            OpportunityId = Convert.ToInt32(row["OpportunityId"]),
+                            OpportunityNo = row["OpportunityNo"] == DBNull.Value ? null : row["OpportunityNo"].ToString(),
+                            OpportunityName = row["OpportunityName"] == DBNull.Value ? null : row["OpportunityName"].ToString(),
+                            Ref_LeadId = Convert.ToInt32(row["Ref_LeadId"]),
+                            CompanyName = row["CompanyName"] == DBNull.Value ? null : row["CompanyName"].ToString(),
+                            OwnerName = row["OwnerName"] == DBNull.Value ? null : row["OwnerName"].ToString(),
+                            SubTotal = row["SubTotal"] == DBNull.Value ? null : Convert.ToDecimal(row["SubTotal"]),
+                            TaxAmount = row["TaxAmount"] == DBNull.Value ? null : Convert.ToDecimal(row["TaxAmount"]),
+                            TotalAmount = row["TotalAmount"] == DBNull.Value ? null : Convert.ToDecimal(row["TotalAmount"]),
+                            CustomerResponseCode = row["CustomerResponseCode"] == DBNull.Value ? null : row["CustomerResponseCode"].ToString(),
+                            SentOn = row["SentOn"] == DBNull.Value ? null : Convert.ToDateTime(row["SentOn"]),
+                            CreatedOn = row["CreatedOn"] == DBNull.Value ? null : Convert.ToDateTime(row["CreatedOn"])
+                        });
+                    }
+                }
+
                 // FINAL RESPONSE  
                 return new ApiResponse
                 {
@@ -171,7 +231,9 @@ namespace CRMWebServices.Repository
                         Dashboard = kpi,
                         StagePipeline = stagePipeline,
                         Opportunities = opportunities,
-                        Conversions = conversions
+                        Conversions = conversions,
+                        Leads = leads,
+                        Quotations = quotations
                     }
                 };
             }

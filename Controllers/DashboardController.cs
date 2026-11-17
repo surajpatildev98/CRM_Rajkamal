@@ -151,5 +151,28 @@ namespace CRMWebServices.Controllers
             }
         }
         #endregion
+
+        #region  API : api/dashboard/login-activity?date=yyyy-MM-dd  (Admin / HR only)
+        [HttpGet]
+        [Route("login-activity")]
+        public async Task<IActionResult> LoginActivity([FromQuery] DateTime? date)
+        {
+            try
+            {
+                // Role code SUPERADMIN / ADMIN / HRMANAGER, or anyone granted HRMSDashboard_ViewAll.
+                if (!await _repository.CanViewLoginActivity(User.EmployeeId())
+                    && !await _authorization.CanViewAll(User, "HRMSDashboard"))
+                    return StatusCode(StatusCodes.Status403Forbidden,
+                        new ApiResponse { Status = false, Message = "You are not authorized to view login activity." });
+
+                var response = await _repository.GetLoginActivity(date);
+                return response.Status ? Ok(response) : BadRequest(response);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new ApiResponse { Status = false, Message = ex.Message });
+            }
+        }
+        #endregion
     }
 }
