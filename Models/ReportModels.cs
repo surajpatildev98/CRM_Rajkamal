@@ -43,6 +43,8 @@
             public List<CRMReportStagePipelineResponse> StagePipeline { get; set; }= new List<CRMReportStagePipelineResponse>();
             public List<CRMReportOpportunityResponse> Opportunities { get; set; }= new List<CRMReportOpportunityResponse>();
             public List<CRMReportConversionResponse> Conversions { get; set; }= new List<CRMReportConversionResponse>();
+            public List<CRMReportLeadListResponse> Leads { get; set; } = new List<CRMReportLeadListResponse>();
+            public List<CRMReportQuotationListResponse> Quotations { get; set; } = new List<CRMReportQuotationListResponse>();
         }
         public class CRMReportKpiResponse
         {
@@ -121,6 +123,48 @@
             public string? OpportunityOwner { get; set; }
             public DateTime? ConversionDate { get; set; }
             public string? AssignmentRemark { get; set; }
+        }
+
+        public class CRMReportLeadListResponse
+        {
+            public int LeadId { get; set; }
+            public string? LeadNo { get; set; }
+            public string? LeadTitle { get; set; }
+            public int Ref_LeadOrganizationId { get; set; }
+            public string? CompanyName { get; set; }
+            public int? Ref_LeadStatusId { get; set; }
+            public string? LeadStatusName { get; set; }
+            public int? Ref_LeadSourceId { get; set; }
+            public string? LeadSourceName { get; set; }
+            public int? Ref_CurrentAssignedEmployeeId { get; set; }
+            public string? OwnerName { get; set; }
+            public decimal? ExpectedValue { get; set; }
+            public DateTime? CreatedOn { get; set; }
+            public DateTime? UpdatedOn { get; set; }
+            public DateTime? ClosedOn { get; set; }
+            public bool HasOpportunity { get; set; }
+        }
+
+        public class CRMReportQuotationListResponse
+        {
+            public int OpportunityQuotationId { get; set; }
+            public string? QuotationNo { get; set; }
+            public int? RevisionNumber { get; set; }
+            public bool? IsCurrent { get; set; }
+            public DateTime? QuotationDate { get; set; }
+            public DateTime? ValidUntil { get; set; }
+            public int OpportunityId { get; set; }
+            public string? OpportunityNo { get; set; }
+            public string? OpportunityName { get; set; }
+            public int Ref_LeadId { get; set; }
+            public string? CompanyName { get; set; }
+            public string? OwnerName { get; set; }
+            public decimal? SubTotal { get; set; }
+            public decimal? TaxAmount { get; set; }
+            public decimal? TotalAmount { get; set; }
+            public string? CustomerResponseCode { get; set; }
+            public DateTime? SentOn { get; set; }
+            public DateTime? CreatedOn { get; set; }
         }
 
         public class CRMReportJourneyResponse
